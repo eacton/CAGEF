@@ -1,145 +1,240 @@
 ---
-title: "Brainstorming R Sessions 1-6"
-output: html_notebook
+title: "Brainstorming Content for R Sessions 1-6"
+output: 
+  html_notebook:
+          toc: TRUE
+          toc_depth: 2
 ---
-
-Brainstorming Content for R Lessons 1-6
 
 Approximate time: 1.5 hours per lesson
 
 Comprehension questions as we go along on Socrative
 
-Lesson 1 - should this be split into 2 lessons?
+##Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R
 
-Objective: At the end of this session you will be able to import data into R (tsv, csv, xls(x), googlesheets), filter and manipulate your data, learn the principles of 'tidy' data, and export your new analysis. You will also learn about basic data structures in R and the basics of trouble-shooting.
+***
+__Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
 
--R & R-Studio will hopefully have been installed ahead of time, but there is always at least one person that will not have done this or will need additional help setting up. Perhaps they can come 15 minutes before the start of the class for setup help.
+R & R-Studio will hopefully have been installed ahead of time, but there is always at least one person that will not have done this or will need additional help setting up. Perhaps they can come 15 minutes before the start of the class for setup help.
 
--Quick Intro to the R Environment
-  ie. setting working directory (also, absolute and relative paths), how to check out variables in the global environment, how to get help, global options, trouble-shooting checklist, annotating your code
+_Quick Intro to the R Environment_
 
--Quick Intro to R Data Structures
-  ie. vectors, matrices, data frames, lists
-    -numerical, integer, character, factor, logical types of data
-    -how to create each of these data classes, explain pros and cons
-    -str()
-    -simple matrix calculation using apply(), maybe transpose t() as well
-    -being careful with factors and setting factor levels
-    
--Installing and importing libraries
-    -from CRAN, Bioconductor, GitHub
-    
--Reading in data & writing data
-    ie. read.delim(), read.csv(), read_csv(), readxl(), gs_read() - good opportunity to look at help files for the default differences, corresponding write fxns
+- setting working directory (also, absolute and relative paths)
+- check out variables in the global environment and viewer
+- changing global options
+- how to get help
 
-Basic, basic data cleaning, to the extent that column names won't mess them up if they are ugly when imported. 
+_Making Life Easier_
 
--Data Manipulation
-  -dplyr() - how to subset data, create new columns, simple calculations
-      -filter(), select(), arrange(), summarize(), group_by(), mutate(), bind_rows(), glance()
-   -tidyr() - transforming data from wide to long and back again (or reshape2())
-      -spread(), gather(), unite(), separate()
-    -merging/adding data - all of the joins
-      
-Challenge: Take one of the provided test sets and calculate an average that requires subsetting and grouping. Perhaps make a separate question for say, a choice of 4 datasets (cars, iris, gapminder, lotr).
+- trouble-shooting basics
+- annotating your code
+- finding answers online
+
+_Quick Intro to R Data Structures_ - ie. vectors, matrices, data frames, lists
   
-Resources:  
-https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd
-http://seananderson.ca/2013/10/19/reshape.html
-https://github.com/wmhall/tidyr_lesson/blob/master/tidyr_lesson.md
-http://stat545.com/syllabus.html
+- numerical, integer, character, factor, logical types of data
+- controlling/setting factor levels
+- how to create each of these data classes
+- str(), dim(), nrow(), ncol(), class(), length()
+- transpose a matrix, t()
+- simple calculation using apply()
+
+_Installing and importing libraries_
+
+- from CRAN, Bioconductor, GitHub
+    
+_Reading in data & writing data_
+
+- read.delim(), read.csv(), read_csv(), readxl(), gs_read() 
+- look at help files for the differences in function defaults
+- corresponding write fxns
+
+_Basic, basic data cleaning_, to the extent that column names won't mess them up if they are ugly when imported. 
+        
+__Challenge:__     
+
+Read in one of the provided test sheets. Change the column names to something user friendly. How many rows and columns in the dataset? What flavour of variables are there? Write the data to a csv file. 
+
+_Bonus:_ Try reading in one of your own datasets. Write it to a different file format. 
+  
+__Resources:__  
+https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd     
+http://stat545.com/syllabus.html     
 http://sisbid.github.io/Module1/
 
-Lesson 2
+##Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data 
 
-Objective: At the end of this session you will be able to use ggplot2() to make a ton of different types of plots with your data for both for data exploration and for publication-quality figures.   
+***
+__Objective:__ At the end of this session you will know the principles of tidy data, and be able to subset and transform your data, merge data frames, and perform simple calculations.
 
--Intro to the Grammar of Graphics
-  -general structure of ggplot2 syntax()
-  -dependence of ggplot2 on the tidy data format
+_Why tidy data?_
 
--Data Exploration - plot all the things!
-  -dot plots, line graphs, scatter plots, bar graphs, histograms, facetting
-  -heatmaps and correlation plots
+- Know the principles of tidy data and why it is useful to have your data in this format
+- Intro to the tidyverse
+
+_Data Manipulation_     
+
+- dplyr() 
+      + how to subset data
+      + how to order data
+      + filter(), select(), arrange(), glance()
+- tidyr() 
+      + transforming data from wide to long and back again (or reshape2())
+      + spread(), gather(), unite(), separate()
+- merging/adding data 
+      + join/merge functions
+      + binding functions with caveats
+      
+_Simple Statistics_
   
--Making Figures
-  -labels, scaling, ggsave(), regression lines, error bars, changing axis limits, rotating labels, adding text to data points, changing the legend, alpha, colors, shapes
-  -forcats pkg: controlling categorical variable order in your legend
-  -alternatives to pie charts
-  -customize with ggthemes
-  
-Taking it up a notch - Maybe preview these, and if time vote on one to look at in more detail
-  -Interactive graphics (d3heatmap, ggvis, plotly)
-  -Network diagrams (DiagrammR, igraph)
-  -dygraphs() - time series data, migest - circos plots
-  -that damn bar chart/line graph alternative to pie charts
-  -geospatial data? interest?
-  -phylogenetics data - ggtree, treeman, metacoder
-  -genomics data - ggbio
-   
-Challenge: Take one of the provided test sets and plot: 
-  1. a qualitative variable with a quantitative variable (at least 2 ways). Facet your plot by the qualitative variable.
-  2. two quantitative variables (at least 2 ways). Add a regression line to your plot.
-Choice of 4 datasets (cars, iris, gapminder, lotr).
-    airquality, game of thrones
+- how to perform simple calculations and store the results in new columns
+    + using summarize() to get mean, median, modes, quantiles and standard deviations
+    + using mutate() to add columns 
+    + using group_by() to perform calculations on factored data 
     
-Resources:
+- revisitng the apply() function
+
+- performing t-tests in R
+        
+__Challenge:__     
+Take one of the provided test sets and calculate an average that requires subsetting and grouping. Perhaps make a separate question for say, a choice of 4 datasets (cars, iris, gapminder, lotr). (Add t-test question with the gapminder dataset).
+  
+__Resources:__  
+http://seananderson.ca/2013/10/19/reshape.html     
+https://github.com/wmhall/tidyr_lesson/blob/master/tidyr_lesson.md     
+http://stat545.com/syllabus.html
+
+
+##Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures
+***
+__Objective:__ At the end of this session you will be able to use ggplot2() to make a ton of different types of plots with your data for both for data exploration and for publication-quality figures.   
+
+_Intro to the Grammar of Graphics_
+
+- general structure of ggplot2 syntax()
+- dependence of ggplot2 on the tidy data format
+
+_Data Exploration - plot all the things!_
+
+- dot plots, line graphs, scatter plots, bar graphs, histograms, facetting
+- heatmaps and correlation plots
+  
+_Making Figures_
+
+- labels, scaling, ggsave(), regression lines, error bars, changing axis limits, rotating labels, adding text to data points, changing the legend, alpha, colors, shapes
+- forcats pkg: controlling categorical variable order in your legend
+- alternatives to pie charts
+- customize with ggthemes
+  
+_Taking it up a notch_ - Maybe preview these, and if time vote on one to look at in more detail
+
+- Interactive graphics (d3heatmap, ggvis, plotly)
+- Network diagrams (DiagrammR, igraph)
+- dygraphs() - time series data, migest - circos plots
+- that damn bar chart/line graph alternative to pie charts
+- geospatial data? interest?
+- phylogenetics data - ggtree, treeman, metacoder
+- genomics data - ggbio
+   
+__Challenge:__ 
+
+Take one of the provided test sets (cars, iris, gapminder, lotr, game of thrones, air quality) and plot: 
+
+  1. a qualitative variable with a quantitative variable (at least 2 ways). 
+    + Facet your plot by the qualitative variable.
+  2. two quantitative variables (at least 2 ways). 
+    + Add a regression line to your plot.
+
+__Resources:__     
 http://stat545.com/syllabus.html
     
-Lesson 3 - should this be split into 2 lessons?
+##Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions
+***
+__Objective:__ At the end of this session you will be able to use regular expressions to 'clean' your data. You will also learn R markdown and be able to render your R code into slides, a pdf, html, a word document, or a notebook.
 
-Objective: At the end of this session you will be able to use regular expressions to 'clean' your data. You will also learn R markdown and be able to render your R code into slides, a pdf, html, a word document, or a notebook.
+_Intro to regular expressions_
 
--Intro to regular expressions
-  ie. escape characters, character classes, quantifiers and all that jazz
+- escape characters, character classes, quantifiers and all that jazz
 
--Text manipulation with stringr/i
-  -searching for a word/patterns, subset using character strings, collapse and expand character vectors, replacement, replacing NAs, splitting/combining at a delimiter
+_Text manipulation with stringr/i_
 
--R markdown and knitr
-  -r markdown syntax
-  -knitr code chunk options
-    ie. suppressing pkg load warnings, eval = T/F, re-running some chunks while keeping others in memory
-    -tables in knitr
-  - making things pretty: adding table of contents, images, hyperlinks, urls
-  -installing pandoc
-  -sharing on Rpubs
+- searching for a word/patterns, subset using character strings, collapse and expand character vectors, replacement, replacing NAs, splitting/combining at a delimiter
 
-Challenge: Take the original gapminder dataset and covert it to the 'clean' dataset found in the gapminder package / find some horrible dataset to clean. Present in a knitr table, explaining some of your data cleaning challenges in rmarkdown. Knit the document to a pdf.
+_R markdown and knitr_
+
+- r markdown syntax
+    +  making things pretty: adding table of contents, images, hyperlinks, urls
+- knitr code chunk options
+    + suppressing pkg load warnings, eval = T/F, re-running some chunks while keeping others in memory
+    + tables in knitr
+- rendering to pdf, html, word documents (any interest in slides?)
+- sharing on Rpubs
+
+__Challenge:__      
+
+Take the original gapminder dataset and covert it to the 'clean' dataset found in the gapminder package / find some horrible dataset to clean. Present in a knitr table, explaining some of your data cleaning challenges in rmarkdown. Knit the document to a pdf.
    
-Resources:      
+__Resources:__      
 http://stat545.com/syllabus.html   
     
-Lesson 4
+##Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job
+***
+__Objective:__ At the end of this session you will be able to perform simple linear or non-linear regression on your dataset. You will be able to interpret the statistics that come out of this model, and use these statistics to select the best model for the job. 
 
-Objective: At the end of this session you will be able to perform simple linear or non-linear regression on your dataset. You will be able to interpret the statistics that come out of this model, and use these statistics to select the best model for the job. 
 
--Let's think about what question we are asking
+_Simple linear regression_
 
--Dealing with dummy variables/encoding categorical variables
+- Taking a moment to think about the question we are asking...
+- Assumptions of the model
+- Dealing with dummy variables/encoding categorical variables
+- Is it necessary to scale our data?
+- Using broom() to get a data frame of our result statistics
+- Interpreting the output of our model
 
--Is it necessary to scale our data?
+_Non-linear regression_
 
--Simple linear regression
+_Multiple linear regression_
 
--Using broom() to get a data frame of our result statistics
+__Challenge:__      
 
--Interpreting the output of our model
+Given this dataset, answer this question. Is this the best model for the job? What else could you apply? Can you prove this is any better?
 
--Non-linear regression
-
-Challenge: Given this dataset, answer this question. Is this the best model for the job? What else could you apply? Can you prove this is any better?
-
-Resources: 
-https://github.com/ttimbers/lm_and_glm/blob/master/lm_and_glm.Rmd
+__Resources:__      
+https://github.com/ttimbers/lm_and_glm/blob/master/lm_and_glm.Rmd     
 https://github.com/seananderson/glmm-course
     
-Lesson 5
--still need to throw in a t.test somewhere? with summarize? apply? lm?
--functions are useful
--different methods of clustering and pca? Go through the vegan pkg?
--de analysis?
--get into lists?
+##Lesson 6 - Scaling up your Analyses: Writing Functions in R
+***
+__Objective:__ At the end of this session you will be able to write functions, making your coding more efficient, understandable, reproducible, and hopefully less frustrating.
 
-Thoughts: Should probably create the first lessons and see...
 
+_Basic Syntax of Functions in R_
+
+- the structure of a function
+- understanding scoping
+- naming conventions
+- adding '...'
+- the output of your function
+- sourcing functions
+  
+_Handling Errors_
+
+- stopifnot(), warning(), suppressWarnings(), tryCatch()
+
+_Testing Arguments and Validity of your Function_
+
+- testthat() for formal unit testing
+
+
+__Challenge:__
+
+1. Write a function to check that the packages c("dplyr", "readxml", "tidyr") are installed and to load the packages. The function should install the packages if they are not already installled. Write a warning if the package is not installed, but is being installed. Will this function work for other packages? 
+
+2. Write a function to read all .csv files in a directory into R and save each of them in a separate data frame.
+
+__Resources:__ 
+
+http://stat545.com/block011_write-your-own-function-01.html     
+http://stat545.com/block011_write-your-own-function-02.html     
+http://stat545.com/block011_write-your-own-function-03.html     
+http://mazamascience.com/WorkingWithData/?p=912
