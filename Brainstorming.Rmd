@@ -59,7 +59,8 @@ _Bonus:_ Try reading in one of your own datasets. Write it to a different file f
   
 __Resources:__  
 https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd     
-http://stat545.com/syllabus.html     
+http://stat545.com/block002_hello-r-workspace-wd-project.html  
+http://stat545.com/block026_file-out-in.html     
 http://sisbid.github.io/Module1/
 
 ##Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data 
@@ -102,7 +103,8 @@ Take one of the provided test sets and calculate an average that requires subset
 __Resources:__  
 http://seananderson.ca/2013/10/19/reshape.html     
 https://github.com/wmhall/tidyr_lesson/blob/master/tidyr_lesson.md     
-http://stat545.com/syllabus.html
+http://stat545.com/block009_dplyr-intro.html     
+http://stat545.com/block010_dplyr-end-single-table.html
 
 
 ##Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures
@@ -146,7 +148,7 @@ Take one of the provided test sets (cars, iris, gapminder, lotr, game of thrones
     + Add a regression line to your plot.
 
 __Resources:__     
-http://stat545.com/syllabus.html
+https://github.com/jennybc/ggplot2-tutorial
     
 ##Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions
 ***
@@ -175,25 +177,35 @@ __Challenge:__
 Take the original gapminder dataset and covert it to the 'clean' dataset found in the gapminder package / find some horrible dataset to clean. Present in a knitr table, explaining some of your data cleaning challenges in rmarkdown. Knit the document to a pdf.
    
 __Resources:__      
-http://stat545.com/syllabus.html   
+http://stat545.com/block028_character-data.html     
+http://r4ds.had.co.nz/strings.html
     
 ##Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job
 ***
-__Objective:__ At the end of this session you will be able to perform simple linear or non-linear regression on your dataset. You will be able to interpret the statistics that come out of this model, and use these statistics to select the best model for the job. 
+__Objective:__ At the end of this session you will be able to perform simple and multiple linear or non-linear regression on your dataset. You will be able to interpret the statistics that come out of this model, and use these statistics to select the best model for the job. 
+
+_Models we will Consider_
+
+- Simple linear regression
+- Non-linear regression
+- Multiple linear regression
 
 
-_Simple linear regression_
+_How we Evaluate which Model to Use_
 
 - Taking a moment to think about the question we are asking...
 - Assumptions of the model
+- Interpreting the output of our model
+- Assessing the performance of the model (feedback)
+    + Diagnostic plots (ie. residuals, Q-Q plots)
+
+
+_Running the Model_
+
 - Dealing with dummy variables/encoding categorical variables
 - Is it necessary to scale our data?
 - Using broom() to get a data frame of our result statistics
-- Interpreting the output of our model
-
-_Non-linear regression_
-
-_Multiple linear regression_
+- Predictors 
 
 __Challenge:__      
 
@@ -201,7 +213,8 @@ Given this dataset, answer this question. Is this the best model for the job? Wh
 
 __Resources:__      
 https://github.com/ttimbers/lm_and_glm/blob/master/lm_and_glm.Rmd     
-https://github.com/seananderson/glmm-course
+https://github.com/seananderson/glmm-course     
+http://michael.hahsler.net/SMU/EMIS7331/R/regression.html
     
 ##Lesson 6 - Scaling up your Analyses: Writing Functions in R
 ***
