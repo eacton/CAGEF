@@ -1,0 +1,282 @@
+---
+title: "Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R"
+output: 
+  html_notebook:
+          toc: TRUE
+          toc_depth: 2
+---
+
+__Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
+
+
+_Quick Intro to Jupyter Notebooks/Lab_
+
+_Quick Intro to the R Environment_
+
+
+- setting working directory (also, absolute and relative paths)
+- check out variables in the global environment and viewer
+- changing global options
+- how to get help
+
+_Making Life Easier_
+
+- trouble-shooting basics
+- annotating your code
+- finding answers online
+
+_Quick Intro to R Data Structures_ - ie. vectors, matrices, data frames, lists
+  
+- numerical, integer, character, factor, logical types of data
+- controlling/setting factor levels
+- how to create each of these data classes
+- str(), dim(), nrow(), ncol(), class(), length()
+- transpose a matrix, t()
+- how to do simple mathematical calculations (+, - , ^, *, /)
+- simple calculation using apply()
+
+##Installing and importing libraries
+
+There are a few different places you can install packages from R. Listed in order of decreasing sketchiness:
+- Bioconductor (Bioinformatics focus)
+  + Guidelines for submission, reviewed, and must have a vignette.
+- CRAN (The Comprehensive R Archive Network)
+  + Guidelines for submission, reviewed. Where the majority of packages are.
+- GitHub
+  + No formal review process, but peers can opens issues to highlight problems or suggest fixes.
+  + The is an increasing number of publication-related packages.
+- Joe's website
+  + No review process. Not sure I trust that guy. 
+
+Readr is a package that will help us to read in our files (easily). It is installed from CRAN.
+
+```{r}
+install.packages('readr') #would be better to have something with dependencies here
+```
+
+R may give you package installation warnings. Don't panic. In general, your package will either be installed and R will test if the installed package can be loaded, or R will give you a non-zero exit status - which means your package did not install. If you read the entire error message, it will give you a hint as to why the package did not install.
+
+Some packages depend on previously developed packages and can only be installed after said package is installed in your library. Similarly, the previous package may depend on another package... here is the solution to install the package and all of the prior packages it relies on.
+
+```{r}
+install.packages('readr', dependencies = TRUE)
+```
+
+You can install more than one package at once.
+
+```{r}
+install.packages(c('dplyr', 'devtools', 'readxl'), dependencies = TRUE)
+```
+
+To load a package (ie. to actually use it):
+
+```{r}
+library(devtools) # or library('devtools')
+
+```
+
+Likewise, you can install many packages at once:
+
+```{r}
+library(c('dplyr', 'readxl'))
+```
+
+To install from Bioconductor you can either always use source to use biocLite...
+
+```{r}
+source("https://bioconductor.org/biocLite.R")
+biocLite("BiocInstaller")
+```
+
+Or you can install the BiocInstaller package. I prefer this as I always forget the url.
+
+```{r}
+library(BiocInstaller)
+biocLite('limma')
+```
+
+
+Devtools is required to install from GitHub. We don't actually need to load the entire library for devtools if we are only going to use one function.
+
+```{r}
+devtools::install_github("jennybc/googlesheets")
+
+```
+
+Libraries from Bioconductor and GitHub load the same as packages from CRAN.
+
+```{r}
+library(googlesheets)
+```
+
+
+_Challenge_
+
+Install and load the package 'DESeq2'.
+#need to look up that it is a Bioconductor pkg, use biocLite and has dependencies
+***
+
+
+
+_Our Dataset_
+
+Metagenomic 16SrRNA sequencing of latrines from Tanzania and Vietnam at different depths (multiples of 20cm). 
+
+We have 2 csv files (change one to tsv or xlsx - maybe both and make an additional files and get a google spreadsheet): 
+1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.
+2. A table of species abundance.
+
+B Torondel, JHJ Ensink, O Gundogdu, UZ Ijaz, J Parkhill, F Abdelahi, V-A Nguyen, S Sudgen, W Gibson, AW Walker, and C Quince.
+Assessment of the influence of intrinsic environmental and geographical factors on the bacterial ecology of pit latrines
+Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
+
+
+##Reading in data & writing data_
+***
+
+Let's read our metadata file into R. While we do these exercises, we are going to become friends with the help menu.
+
+To see the result, we can either click on meta in the global environment to open it in the viewer, or we can write code to view the variable.
+
+```{r}
+meta <- read.table(file = "ENV_pitlatrine.csv")
+
+```
+
+This is pretty ugly looking. Why?
+In the help file the default 'sep' or what is separating columns is expected to be a space. We need to use specify a comma instead.  
+
+```{r}
+meta <- read.table(file = "ENV_pitlatrine.csv", sep = ",")
+View(meta)
+```
+
+Better. Our columns are now separated appropriately, but what about our column titles?
+
+```{r}
+meta <- read.table(file = "ENV_pitlatrine.csv", sep = ",", header = TRUE)
+View(meta)
+```
+
+These samples are not replicates. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)
+
+```{r}
+meta <- read.table(file = "ENV_pitlatrine.csv", sep = ",", header = T, stringsAsFactors = F)
+
+```
+
+__Challenge__
+
+Use a paramter in read.table to read in metadata such that all non-character columns are numeric.
+#use of colClasses
+
+__Challenge__
+
+Read our data table into R using any function under Usage in the read.table help menu. Save your result in a variable called dat.
+#discuss values for read.table, read.delim, did anyone try read.csv
+
+
+Hopefully this exercise forced you to look at the differences in the default values of the parameters in these different functions. I suggest that you keep these in mind as we look at some functions that were aimed to make a few typing shortcuts. Let's load the readr library.
+
+```{r}
+library(readr)
+```
+
+Use read_csv() to read in your metadata file. What is different from read.csv?
+#checking the help menu
+
+```{r}
+meta <- read_csv("ENV_pitlatrine.csv")
+```
+Note that readr tells you exactly how it parsed your file, and how each column is encoded.
+
+But what happens if we have a good, old-fashioned excel file? The readxl package will recognize both xls and xlsx files. It expects tabular data.
+
+```{r}
+ex <- read_excel()
+
+```
+
+If you have a workbook with multiple sheets, you probably don't remember what their names are.
+
+```{r}
+excel_sheets(ex)
+```
+
+If you have a workbook with multipile sheets, you can access them by name or number. 
+(Note: I am not saving the following examples in a variable, so we can quickly see what we are importing in our notebook.)
+
+
+```{r}
+read_excel(ex, sheet = "")
+
+read_excel(ex, sheet = )
+```
+
+You can also subset using cell numbers or ranges.
+
+
+```{r}
+read_excel(ex, sheet = "", range = "C1:D9")
+
+read_excel(ex, sheet = "", range = cell_rows("1:9"))
+
+read_excel(ex, sheet = "", range = cell_cols("B:D"))
+
+```
+
+
+- read.delim(), read.csv(), read_csv(), readxl(), gs_read() 
+- look at help files for the differences in function defaults
+- corresponding write fxns
+
+_Basic, basic data cleaning_, to the extent that column names won't mess them up if they are ugly when imported. 
+
+
+
+
+ _Each lesson will have:_
+ 
+ - Comprehension questions as we go along on Socrative.
+ - How to read help pages online.
+ - Give the class a function not previously used during the lesson and have them figure out what it does and how to use it.
+ - Each lesson will start from an excel spreadsheet with imperfect data.
+
+
+
+
+
+
+    
+
+        
+__Challenge:__     
+
+Read in one of the provided test sheets. Change the column names to something user friendly. How many rows and columns in the dataset? What flavour of variables are there? Write the data to a csv file. 
+
+_Bonus:_ Try reading in one of your own datasets. Write it to a different file format. 
+  
+__Resources:__  
+https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd     
+http://stat545.com/block002_hello-r-workspace-wd-project.html  
+http://stat545.com/block026_file-out-in.html     
+http://sisbid.github.io/Module1/
+
+
+##Post-Lesson Assessment
+***
+_Questions_
+
+- Speed: Too slow, too fast, just right
+- Content: Too easy, too hard, just right
+- From the description of the lesson, the content was what I expected to learn. T/F
+- What was the most useful thing you learned?
+- What was the least useful thing?
+- Comments/suggestions for improvement.
+
+
+##Notes
+***
+- Possibly split lesson 5 into 2 lessons: Basic Statistics and Linear regression
+- Maybe switch Regex and Plotting lesson order
+- SurveyMonkey for post-lesson assessment
