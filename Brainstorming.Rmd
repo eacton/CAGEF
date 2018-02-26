@@ -6,9 +6,14 @@ output:
           toc_depth: 2
 ---
 
-Approximate time: 1.5 hours per lesson
+Approximate time: 2 hours per lesson
 
-Comprehension questions as we go along on Socrative
+ _Each lesson will have:_
+ 
+ - Comprehension questions as we go along on Socrative.
+ - How to read help pages online.
+ - Give the class a function not previously used during the lesson and have them figure out what it does and how to use it.
+ - Each lesson will start from an excel spreadsheet with imperfect data.
 
 ##Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R
 
@@ -16,6 +21,8 @@ Comprehension questions as we go along on Socrative
 __Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
 
 R & R-Studio will hopefully have been installed ahead of time, but there is always at least one person that will not have done this or will need additional help setting up. Perhaps they can come 15 minutes before the start of the class for setup help.
+
+_Quick Intro to Jupyter Notebooks/Lab_
 
 _Quick Intro to the R Environment_
 
@@ -37,6 +44,7 @@ _Quick Intro to R Data Structures_ - ie. vectors, matrices, data frames, lists
 - how to create each of these data classes
 - str(), dim(), nrow(), ncol(), class(), length()
 - transpose a matrix, t()
+- how to do simple mathematical calculations (+, - , ^, *, /)
 - simple calculation using apply()
 
 _Installing and importing libraries_
@@ -89,7 +97,7 @@ _Data Manipulation_
 _Simple Statistics_
   
 - how to perform simple calculations and store the results in new columns
-    + using summarize() to get mean, median, modes, quantiles and standard deviations
+    + using summarize() to get mean, median, modes, quantiles and standard deviations, variance, skew
     + using mutate() to add columns 
     + using group_by() to perform calculations on factored data 
     
@@ -118,7 +126,8 @@ _Intro to the Grammar of Graphics_
 
 _Data Exploration - plot all the things!_
 
-- dot plots, line graphs, scatter plots, bar graphs, histograms, facetting
+- dot plots, line graphs, scatter plots, bar graphs, violin plots, histograms, facetting
+- emphasis on boxplots + explanation, beeswarm plots
 - heatmaps and correlation plots
   
 _Making Figures_
@@ -133,7 +142,7 @@ _Taking it up a notch_ - Maybe preview these, and if time vote on one to look at
 - Interactive graphics (d3heatmap, ggvis, plotly)
 - Network diagrams (DiagrammR, igraph)
 - dygraphs() - time series data, migest - circos plots
-- that damn bar chart/line graph alternative to pie charts
+- upset plots
 - geospatial data? interest?
 - phylogenetics data - ggtree, treeman, metacoder
 - genomics data - ggbio
@@ -184,12 +193,19 @@ http://r4ds.had.co.nz/strings.html
 ***
 __Objective:__ At the end of this session you will be able to perform simple and multiple linear or non-linear regression on your dataset. You will be able to interpret the statistics that come out of this model, and use these statistics to select the best model for the job. 
 
+_Commonly used statistics_
+
+- quick review: mean, median, mode, quantiles, sd, variance     
+- t-tests     
+- correlations     
+- explain parametric vs non-parametric data     
+
 _Models we will Consider_
 
 - Simple linear regression
 - Non-linear regression
 - Multiple linear regression
-
+- ANOVA
 
 _How we Evaluate which Model to Use_
 
@@ -251,3 +267,21 @@ http://stat545.com/block011_write-your-own-function-01.html
 http://stat545.com/block011_write-your-own-function-02.html     
 http://stat545.com/block011_write-your-own-function-03.html     
 http://mazamascience.com/WorkingWithData/?p=912
+
+
+##Post-Lesson Assessment
+***
+_Questions_
+
+- Speed: Too slow, too fast, just right
+- Content: Too easy, too hard, just right
+- From the description of the lesson, the content was what I expected to learn. T/F
+- What was the most useful thing you learned?
+- What was the least useful thing?
+- Comments/suggestions for improvement.
+
+
+##Notes
+***
+- Possibly split lesson 5 into 2 lessons: Basic Statistics and Linear regression
+- Maybe switch Regex and Plotting lesson order
