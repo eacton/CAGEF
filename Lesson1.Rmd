@@ -25,8 +25,262 @@ _Making Life Easier_
 - annotating your code
 - finding answers online
 
-_Quick Intro to R Data Structures_ - ie. vectors, matrices, data frames, lists
-  
+_Quick Intro to R Data Structures_ 
+
+
+There are 4 types of data structures in R.
+
+1. vectors - 1D - hold one type of data
+2. lists - 1D - hold multiple data types
+3. matrices - 2D - Multidimensional - hold numeric data only
+4. data frames - 2D - hold multiple data types
+5. arrays - nD - holds one type of data
+
+What do I mean by 'type of data'?
+- character - a#c$E 
+- numeric (double, integer) - 1, 7.5
+- logical - TRUE, FALSE
+
+Let's make some structures!! 
+
+The assignment operator '<-' assigns a value to an object. The equals sign '=' is also an assignment operator. However, since equals signs are used in logical statements (==, >=, <=, !=) with a different meaning, I prefer to use <-. You will see both outside this course.
+
+```{r}
+object_name <- value
+#or equivalently
+object_name = value
+
+```
+
+Vectors
+
+Here are what vectors of each 'type' would look like. Note that character items must be in quotations. 
+
+```{r}
+vec_char <- c("bacteria", "virus", "archaea")
+#this is equivalent to 
+vec_char <- c('bacteria', 'virus', 'archaea')
+
+vec_num <- c(1:10)
+
+vec_log <- c(TRUE, FALSE, TRUE)
+```
+
+What happens if we try to include more than one type of data?
+
+```{r}
+vec_mixed <- c("bacteria", 1, TRUE)
+
+```
+
+R will force your vector to be of one type, in this case the type that is most inclusive is a character vector. 
+What do you think will happen if 'bacteria' is removed from the vector? Will it be the same?
+
+```{r}
+vec_mixed <- c(1, TRUE)
+
+```
+R has forced the vector to be numeric. TRUE and FALSE may be represented by 1 and 0, respectively.
+
+```{r}
+vec_test <- as.numeric(vec_log)
+
+```
+
+Does it work to change it back into TRUE and FALSE?
+
+```{r}
+vec_log <- as.logical(vec_test)
+
+```
+What about for our mixed vector?
+
+```{r}
+vec_mixed <- as.logical(vec_mixed)
+```
+
+I am highlighting this for a couple of reasons. Keep your data types in mind. It is good practice to look at your object or the global environment to make sure the object that you just made is what you think it is. Secondly, it can be useful for data analysis to be able to switch from TRUE/FALSE to 1/0, and it is pretty easy, as we have just seen.
+
+You can name the contents of your vectors. 
+
+```{r}
+names(vec_log) <- c("male", "elderly", "heart attack")
+```
+
+The number of elements in a vector is its length.
+
+```{r}
+length(vec_char)
+
+length(vec_num)
+
+length(vec_log)
+```
+
+
+You can grab a specific element by its index, or by its name. 
+
+```{r}
+vec_char[3]
+
+vec_char[2:3] #first and last inclusive (this is not the same for all programming languages)
+
+vec_log["male"]
+```
+
+
+Lists
+
+Lists can hold mixed data types of different lengths.
+
+```{r}
+list_mix <- list(character = c('bacteria', 'virus', 'archaea'), 
+                 num = c(1:10), 
+                 log = c(TRUE, FALSE, TRUE))
+
+#equivalent, but less reader friendly for longer lists
+list_mix = list(character = c('bacteria', 'virus', 'archaea'), num = c(1:10), log = c(TRUE, FALSE, TRUE))
+
+```
+Lists can get complicated. If you forget what is in your list, use the str() function to check out its structure. It will tell you the number of items in your list and their data types. You can (and should) call str() on any R object. You can also try it on one of our vectors.
+
+```{r}
+str(list_mix)
+
+str(vec_mixed)
+```
+
+
+To subset for 'virus', I first have to subset for the character element of the list. Kind of like a Russian nested doll or a present, where you have to open the outer layer to get to the next.
+
+```{r}
+list_mix[[1]]
+
+list_mix[[1]][2]
+```
+
+
+Matrices
+
+Create a demo matrix.  
+
+```{r}
+mat <- matrix(c(rep(0, 10), rep(1,10)), nrow = 5, ncol = 5)
+
+```
+
+_Pause_ What has happened here? Look up the rep() function. Why has R not thrown an error? How would I make this same matrix without vector recycling?
+
+_Challenge_ Make a 4 x 4 matrix that looks like this, using the seq() function at least once.
+
+2   4  6  8
+10 12  3  6
+9  12  0  1
+0   1  0  1
+
+A matrix is a 2D object. 
+
+```{r}
+str(mat)
+
+nrow(mat)
+ncol(mat)
+
+dim(mat)
+
+length(mat)
+```
+
+
+
+Data Frames
+
+```{r}
+
+```
+
+
+Arrays
+
+```{r}
+
+```
+
+
+_Using R for a Calculator_
+
+So you can do math...
+
+Addition
+```{r}
+3 + 4
+```
+Subtraction
+```{r}
+3 - 4
+```
+
+Multiplication
+```{r}
+3 * 4
+```
+
+Division
+```{r}
+3 / 4
+```
+
+Exponents
+```{r}
+3^4
+```
+
+
+So you can do math... on a vector.
+
+```{r}
+vec_num * 4
+
+```
+So you can do math... on a vector.
+
+```{r}
+vec_num * 4
+
+vec_log * 4 #uh oh - that is probably not what you want... 
+```
+
+So you can do math... on a list.
+
+```{r}
+list_mix * 4 
+
+list_mix[[2]] * 4
+
+list_mix[[2]][2:4] * 4
+
+```
+
+So you can do math... on a matrix.
+
+```{r}
+vec_num * 4
+
+```
+
+So you can do math... on a data frame.
+
+```{r}
+vec_num * 4
+
+```
+
+So you can do math... on an array.
+
+```{r}
+vec_num * 4
+
+```
 - numerical, integer, character, factor, logical types of data
 - controlling/setting factor levels
 - how to create each of these data classes
@@ -34,6 +288,7 @@ _Quick Intro to R Data Structures_ - ie. vectors, matrices, data frames, lists
 - transpose a matrix, t()
 - how to do simple mathematical calculations (+, - , ^, *, /)
 - simple calculation using apply()
+- attributes
 
 ##Installing and importing libraries
 
@@ -44,7 +299,7 @@ There are a few different places you can install packages from R. Listed in orde
   + Guidelines for submission, reviewed. Where the majority of packages are.
 - GitHub
   + No formal review process, but peers can opens issues to highlight problems or suggest fixes.
-  + The is an increasing number of publication-related packages.
+  + The is an increasing number of publibacteriaion-related packages.
 - Joe's website
   + No review process. Not sure I trust that guy. 
 
@@ -52,6 +307,7 @@ Readr is a package that will help us to read in our files (easily). It is instal
 
 ```{r}
 install.packages('readr') #would be better to have something with dependencies here
+
 ```
 
 R may give you package installation warnings. Don't panic. In general, your package will either be installed and R will test if the installed package can be loaded, or R will give you a non-zero exit status - which means your package did not install. If you read the entire error message, it will give you a hint as to why the package did not install.
@@ -60,6 +316,7 @@ Some packages depend on previously developed packages and can only be installed 
 
 ```{r}
 install.packages('readr', dependencies = TRUE)
+
 ```
 
 You can install more than one package at once.
@@ -126,7 +383,7 @@ We have 2 csv files (change one to tsv or xlsx - maybe both and make an addition
 1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.
 2. A table of species abundance.
 
-B Torondel, JHJ Ensink, O Gundogdu, UZ Ijaz, J Parkhill, F Abdelahi, V-A Nguyen, S Sudgen, W Gibson, AW Walker, and C Quince.
+B Torondel, JHJ Ensink, O Gunvirusdu, UZ Ijaz, J Parkhill, F Abdelahi, V-A Nguyen, S Sudgen, W Gibson, AW Walker, and C Quince.
 Assessment of the influence of intrinsic environmental and geographical factors on the bacterial ecology of pit latrines
 Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
 
@@ -158,7 +415,7 @@ meta <- read.table(file = "ENV_pitlatrine.csv", sep = ",", header = TRUE)
 View(meta)
 ```
 
-These samples are not replicates. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)
+These samples are not replibacteriaes. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)
 
 ```{r}
 meta <- read.table(file = "ENV_pitlatrine.csv", sep = ",", header = T, stringsAsFactors = F)
@@ -180,6 +437,7 @@ Hopefully this exercise forced you to look at the differences in the default val
 
 ```{r}
 library(readr)
+
 ```
 
 Use read_csv() to read in your metadata file. What is different from read.csv?
@@ -187,6 +445,7 @@ Use read_csv() to read in your metadata file. What is different from read.csv?
 
 ```{r}
 meta <- read_csv("ENV_pitlatrine.csv")
+
 ```
 Note that readr tells you exactly how it parsed your file, and how each column is encoded.
 
@@ -225,10 +484,80 @@ read_excel(ex, sheet = "", range = cell_cols("B:D"))
 
 ```
 
+At this point, you will be able to use your excel worksheet as a normal data frame in R.
 
-- read.delim(), read.csv(), read_csv(), readxl(), gs_read() 
-- look at help files for the differences in function defaults
-- corresponding write fxns
+Googlesheets have a similar structure to excel workbooks, the only tricky thing is getting the name of your googlesheet to input.
+
+If you load googlesheets and ask it to list the googlesheets you have, googlesheets will open a new window and ask if it can have access to your googlesheets. If you say yes, you can return to R and breathe a sigh of relief. Your import of your googlesheets worked.
+
+```{r}
+library(googlesheets) #hypothetically already loaded from earlier code
+
+gs_ls()
+
+#tail(gs_ls())
+```
+
+Register the sheet you are going to use with the sheet title.
+
+```{r}
+books <- gs_title('Books Everyone Should Read')
+```
+
+How many worksheets are in this spreadsheet and what are their names?
+
+
+```{r}
+
+books$n_ws
+
+books$ws$ws_title
+```
+
+
+Read in the worksheet you want to access. You can do this using the worksheet number.
+
+```{r}
+book_sheet1 <- gs_read(books, ws = 1)
+
+```
+
+The last 2 columns don't hold much information. Specify a subset of this sheet. You can do this by selecting the cell columns, or by using the 'excel-like' cell range.
+
+```{r}
+booksfilt <- gs_read(books, ws = 1, range = cell_cols(1:14))
+#or
+booksfilt <- gs_read(books, ws = 1, range = "A1:N1000")
+```
+
+You can also specify the worksheet by name, and sort by rows. Here are the top recommendations for what to read, when you are no longer in academia.
+
+```{r}
+books_alpha <- gs_read(books, ws = "Top titles", range = cell_rows(1:10)) 
+
+```
+
+
+One nice thing about the googlesheets package is that all of the functions begin with gs_ which is great for finding functions and tab completion.
+
+
+You 'download' ie. save this file to your computer.
+```{r}
+gs_download(gs_title("Books Everyone Should Read"), to = "books_alpha.xlsx", overwrite = TRUE)
+```
+
+You can upload sheets you've made to googlesheets. This file is now in your google account online.
+
+```{r}
+books <- gs_upload("books_alpha.xlsx")
+```
+
+
+__Challenge:__     
+
+Read in one of the provided test sheets. Change the column names to something user friendly. How many rows and columns in the dataset? Can you delete the last column? What flavour of variables are there? Write the data to a csv file. 
+
+_Bonus:_ Try reading in one of your own datasets. Write it to a different file format. 
 
 _Basic, basic data cleaning_, to the extent that column names won't mess them up if they are ugly when imported. 
 
@@ -242,25 +571,15 @@ _Basic, basic data cleaning_, to the extent that column names won't mess them up
  - Give the class a function not previously used during the lesson and have them figure out what it does and how to use it.
  - Each lesson will start from an excel spreadsheet with imperfect data.
 
-
-
-
-
-
-    
-
         
-__Challenge:__     
 
-Read in one of the provided test sheets. Change the column names to something user friendly. How many rows and columns in the dataset? What flavour of variables are there? Write the data to a csv file. 
-
-_Bonus:_ Try reading in one of your own datasets. Write it to a different file format. 
   
 __Resources:__  
 https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd     
 http://stat545.com/block002_hello-r-workspace-wd-project.html  
 http://stat545.com/block026_file-out-in.html     
 http://sisbid.github.io/Module1/
+https://github.com/tidyverse/readxl
 
 
 ##Post-Lesson Assessment
