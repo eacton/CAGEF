@@ -1791,7 +1791,7 @@ head(meta)
 ## 6   T_2_6 7.69 28.7 65.52  7.03  1.5   57    3          6 0.8  0.0    14
 ```
 
-These samples are not replibacteriaes. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)
+These samples are not replicates. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)
 
 
 ```r

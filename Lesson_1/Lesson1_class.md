@@ -82,10 +82,7 @@ In this hierarchy we will pretend to be sue, and we are hanging out in our subdi
 To get your working directory in R you would type:
 
 ```
-getwd()
 
-
-[1] "/home/sue/subdirectory1"
 ```
 
 R will tell you your _absolute directory_. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names are in the path.
@@ -96,11 +93,7 @@ To move directories, it is good to know a couple shortcuts. `'.'` is your curren
 To move to the directory 'sue' we us a function that will set the working directory:
 
 ```
-setwd("/home/sue")
-#or 
-setwd("~")
-#or 
-setwd("..")
+
 
 ```
 A _relative directory_ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
@@ -108,15 +101,13 @@ A _relative directory_ is a path starting from whereever your currently are (you
 If I wanted to move back to subdirectory1 using the _absolute path_, I would set a new working directory:
 
 ```
-setwd("/home/sue/subdirectory1")
-#or
-setwd("~/subdirectory1")
+
 ```
 
 And the _relative path_ would be:
 
 ```
-setwd("./subdirectory1")
+
 ```
 
 There is some talk over setting working directories within scripts. Obviously, not everyone has the same absolute path, so if you are setting a directory in your script, _it is best to have a relative path starting from the folder your script is in_. Keep in mind that others you share your script with might not have the same directory structure if you refer to subfolders. 
@@ -285,9 +276,7 @@ Let's make some data!!
 The assignment operator `"<-"` assigns a value to an object. The equals sign `'='` is also an assignment operator. However, since equals signs are used in logical statements (==, >=, <=, !=) with a different meaning, I prefer to use `<-`. You will see both outside this course.
 
 ```
-object_name <- value
-#or equivalently
-object_name = value
+
 ```
 (This is for illustrative purposes only and is not code.)
 
@@ -302,122 +291,61 @@ Let's look up the function `c()`, which combines values into a vector or list. I
 
 Here are what vectors of each 'type' would look like. Note that character items must be in quotations. 
 
-```{r}
-vec_char <- c("bacteria", "virus", "archaea")
-#this is equivalent to
-vec_char <- c('bacteria', 'virus', 'archaea')
-vec_char
 
-vec_num <- c(1:10)
-vec_num
-
-vec_log <- c(TRUE, FALSE, TRUE)
-vec_log
-```
 
 What happens if we try to include more than one type of data?
 
-```{r}
-vec_mixed <- c("bacteria", 1, TRUE)
-vec_mixed
-```
 
 
-R will coerce your vector to be of one data type, in this case the type that is most inclusive is a character vector. 
+
+R will coerce your vector to be of one data type, in this case the type that is most inclusive is a `_______` vector. 
 What do you think will happen if 'bacteria' is removed from the vector? Will it be coerced to the same type?
 
-```{r}
-vec_mixed <- c(1, TRUE)
-vec_mixed
-```
 
-R has forced the vector to be numeric. TRUE and FALSE may be represented by 1 and 0, respectively.
 
-```{r}
-vec_test <- as.numeric(vec_log)
-vec_test
-```
+R has forced the vector to be `______`. TRUE and FALSE may be represented by 1 and 0, respectively.
+
+
 
 
 Does it work to change it back into TRUE and FALSE?
 
-```{r}
-vec_log <- as.logical(vec_test)
-vec_log
-```
+
 
 What about for our mixed vector?
 
-```{r}
-vec_mixed <- as.logical(vec_mixed)
-vec_mixed
-```
+
 
 I am highlighting this for a couple of reasons. Keep your data types in mind. It is good practice to look at your object or the global environment to make sure the object that you just made is what you think it is. Secondly, it can be useful for data analysis to be able to switch from TRUE/FALSE to 1/0, and it is pretty easy, as we have just seen.
 
 You can name the contents of your vectors or specify them upon vector creation.
 
-```{r}
-names(vec_log) <- c("male", "elderly", "heart attack")
-#is equivalent to 
-vec_log <- c("male" = TRUE, "elderly" = FALSE, "heart attack" = TRUE)
-vec_log
-```
+
 
 The number of elements in a vector is its length.
 
-```{r eval = TRUE}
-length(vec_char)
 
-length(vec_num)
-
-length(vec_log)
-```
 
 
 You can grab a specific element by its index, or by its name. 
 
-```{r}
-vec_char[3]
 
-vec_char[2:3] #first and last inclusive (this is not the same for all programming languages)
-
-vec_log["male"]
-```
 
 
 ###Lists
 
 Lists can hold mixed data types of different lengths.
 
-```{r}
-list_mix <- list(character = c('bacteria', 'virus', 'archaea'), 
-                 num = c(1:10), 
-                 log = c(TRUE, FALSE, TRUE))
 
-#formatting - equivalent, but less reader friendly for longer lists
-list_mix = list(character = c('bacteria', 'virus', 'archaea'), num = c(1:10), log = c(TRUE, FALSE, TRUE))
-list_mix
-```
 
 Lists can get complicated. If you forget what is in your list, use the `str()` function to check out its structure. It will tell you the number of items in your list and their data types. You can (and should) call `str()` on any R object. You can also try it on one of our vectors.
 
-```{r}
-str(list_mix)
 
-str(vec_mixed)
-
-```
 
 
 To subset for 'virus', I first have to subset for the character element of the list. Kind of like a Russian nested doll or a present, where you have to open the outer layer to get to the next.
 
-```{r}
-list_mix[[1]]
 
-list_mix[[1]][2]
-
-```
 
 
 
@@ -425,10 +353,7 @@ list_mix[[1]][2]
 
 Create a demo matrix.  
 
-```{r}
-mat <- matrix(c(rep(0, 10), rep(1,10)), nrow = 5, ncol = 5)
-mat
-```
+
 
 ***
 
@@ -460,35 +385,16 @@ Make a 4 x 4 matrix that looks like this, using the seq() function at least once
 
 A matrix is a 2D object. We can now check out a couple more properties - like the number of rows and columns.
 
-```{r}
-str(mat)
 
-nrow(mat)
-ncol(mat)
-
-dim(mat)
-
-length(mat)
-```
 To access a specific row or column we can still use indexing.
 
-```{r}
-mat[3:5,]
 
-mat[, 4]
-```
 Note that when we are subsetting a single row or column, we end up with a vector.
 
-```{r}
-is.vector(mat[,4])
 
-```
 It is common to transform matrices. Note that the set of ones will now be in rows rather than columns.
 
-```{r}
-t(mat)
 
-```
 
 
 ***
@@ -499,14 +405,7 @@ t(mat)
 
 Now that we have had the opportunity to create a few different objects, let's talk about what an object _class_ is. An object class can be thought of as how an object will behave in a function. Because of this data frames, lists and matrices have their own classes, while vectors inherit from their data type (vectors of characters behave like characters, vectors of numbers behave like numbers).
 
-```{r}
-class(vec_char)
-class(vec_num)
 
-class(mat)
-class(list_mix)
-
-```
 Some package creaters will have created their own data classes and will require your data to be in the format required of that class. For example in Bioconducter there is an _ExpressionSet_ class. 
 
 ![](img/expressionset.jpg)
@@ -521,26 +420,13 @@ This class contains your metadata (information about your samples), your assay d
 
 Data frames are lists to the extent that they can hold different types of data. However, they must be of equal length.
 
-```{r error = TRUE}
-dat <- data.frame(character = c('bacteria', 'virus', 'archaea'), 
-                 num = c(1:10), 
-                 log = c(TRUE, FALSE, TRUE))
 
-
-dat <- data.frame(character = c('bacteria', 'virus', 'archaea'), 
-                 num = c(1:3), 
-                 log = c(TRUE, FALSE, TRUE))
-dat
-
-```
 
 Many R packages have been made to work with data in data frames, and this is the class of object where we will spend most of our time. 
 
 Let's use some of the functions we have learned for finding out about the structure of our data frame.
 
-```{r}
-str(dat)
-```
+
 
 ***
 
@@ -553,30 +439,14 @@ What is a _factor_?
 
 A factor is a _class_ of object used to encode a character vector into categories. This will become clear with a bit more data, so lets make our data frame larger by adding rows. We can only do this if the data we want to add has the same number of columns. How many rows and columns does this new data frame have?
 
-```{r}
-dat_large <-  rbind(dat, dat, dat)
 
-nrow(dat_large)
-ncol(dat_large)
-dim(dat_large)
-
-```
 If we look at the structure again, we still have 3 levels. This is because each unique character element has been encoded as a number.
 (Note that a column can be subset by index or by its name using the `'$'` operator.)
 
-```{r}
-dat_large$character
-#equivalent to
-dat_large[ ,1]
 
-levels(dat_large$character)
-```
 Note that the first character object in the data frame is 'bacteria', however, the first factor level is archaea. R by default puts factor levels in alphabetical order. This can cause problems if we aren't aware of it. Always check to make sure your factor levels are what you expect. With factors, we can deal with our character levels directly, or their numeric equivalents. Factors are extremely useful for performing group calculations as we will see later in the course.
 
-```{r}
-as.numeric(dat_large$character)
 
-```
 
 ***
 __Challenge__ 
@@ -594,24 +464,13 @@ Look up the factor function. Use it to make 'bacteria' the first level, 'virus' 
 
 We can also convert between data types if they are similar enough. For example, I can convert my matrix into a data frame. Since a data frame can hold any type of data, it can hold all of the numeric data in a matrix.
 
-```{r}
-new_dat <- as.data.frame(mat)
-new_dat
-```
+
 Note that R just made up column names for us. We can provide our own vector of column names.
 
-```{r}
-colnames(new_dat) <- c("col1", "col2", "col3", "col4", "col5")
-#equivalent to
-colnames(new_dat) <- c(paste0(rep("col",5), 1:5))
-new_dat
-```
+
 In contrast, our data frame with multiple data types can not be converted into a matrix, as a matrix can only hold one data type. We could however, transform our new_dat back into a matrix. The matrix will retain our column heading.
 
-```{r}
-new_mat <- as.matrix(new_dat)
-new_mat
-```
+
 
 
 
@@ -620,29 +479,13 @@ new_mat
 
 Arrays are n dimensional objects that hold numeric data. To create an array, we give a vector of data to fill the array, and then the dimensions of the array. This code will recycle the vector 1:10 and fill 5 arrays that have 2 x 3 dimensions. To visualize the array, we will print it afterwards.
 
-```{r}
-arr <- array(data = 1:10, dim = c(2,3,5))
-arr
-```
+
 This arrangement makes it more clear how we would subset the number 7 out of array 5.
 
-```{r}
-arr[1, 2, 5]
 
-```
 A 2D array is just a matrix. Unless you specify a 3rd dimension.
 
-```{r}
-mat_arr <- array(data = 1:10, dim = c(2,3))
-mat_arr
-#equivalent to
-arr_mat <- array(data = 1:10, dim = c(2,3,1))
-arr_mat
-all.equal(mat_arr, arr_mat)
-class(mat_arr)
-class(arr_mat)
 
-```
 Personally, I don't use arrays in my daily genomics life, so if you find this confusing, I wouldn't worry about it too much.
 
 </br>
@@ -652,132 +495,61 @@ Personally, I don't use arrays in my daily genomics life, so if you find this co
 So you can do math...
 
 Addition
-```{r}
-3 + 4
-```
+
 Subtraction
-```{r}
-3 - 4
-```
+
 
 Multiplication
-```{r}
-3 * 4
-```
+
 
 Division
-```{r}
-3 / 4
-```
+
 
 Exponents
-```{r}
-3^4
-```
+
 
 A logic test ensues.
 
-```{r}
 
-x <- 7
-y <- x +3
-y
-```
 
 If x gets updated, what happens to y? This is something you need to be aware of when running code - variables dependent on other variables and where in your program they are created and updated.
 
-```{r}
-x <- 8
-y 
-y <- x +3
-y
-```
+
 
 
 So you can do math... on a vector.
 
-```{r}
-vec_num * 4
 
-```
 So you can do math... on a vector.
 
-```{r}
-vec_log * 4 #uh oh - that is probably not what you want... 
-```
+
 
 So you can do math... on a list.
 
-```{r error = TRUE}
-list_mix * 4 
 
-list_mix[[2]] * 4
-
-list_mix[[2]][2:4] * 4
-
-```
 
 So you can do math... on a matrix.
 
-```{r}
-mat * 4
 
-```
 
 So you can do math... on a data frame.
 
-```{r}
-dat * 4
 
-dat$num * 4
-
-dat[ , 2] * 4
-```
 
 So you can do math... on an array.
 
-```{r}
-arr * 4
 
-arr[1, 2, 5] * 4 
-```
 These are illustrative examples to see how our different data structures behave. In reality, you will want to do calculations across rows and columns, and not on your entire matrix or data frame. For example, we might have a count table where rows are genes, columns are samples, and we want to know the sum of all the counts for a gene. To do this, we can use the apply function.
 
-```{r}
-counts <- data.frame(Site1 = c(geneA = 2, geneB = 4, geneC = 12, geneD = 8),
-                     Site2 = c(geneA = 15, geneB = 18, geneC = 27, geneD = 28),
-                     Site3 = c(geneA = 10, geneB = 7, geneC = 13, geneD = 15))
-                     
-counts
 
-apply(counts, MARGIN = 1, sum)
-
-```
 The apply function will recognize basic functions.
 
-```{r}
-apply(counts, MARGIN = 1, mean)
 
-apply(counts, MARGIN = 1, sd)
-
-apply(counts, MARGIN = 1, median)
-
-apply(counts, MARGIN = 1, quantile)
-```
 Public service announcement. Know what logarithm you are using. 
 
-```{r}
-apply(counts, MARGIN = 1, log) #this is base exp(1)
-apply(counts, MARGIN = 1, log2)
-apply(counts, MARGIN = 1, log10)
-```
-What if I want to know something else? We can create a function.
-```{r}
-apply(counts, MARGIN = 1, sum)
-#equivalent to
-apply(counts, MARGIN = 1, function(x) sum(x))
 
-```
+What if I want to know something else? We can create a function.
+
 
 ***
 __Challenge__ 
@@ -801,89 +573,33 @@ Create a function to test if ALL of the counts for a gene are greater than 10.
 Sometimes there is missing data in a dataset. For an example, I am going to take the earlier counts table and add a few NAs. If I now try to calculate the mean number of counts, I will get NA as an answer for the rows that had NAs.
 
 
-```{r}
-counts <- data.frame(Site1 = c(geneA = 2, geneB = 4, geneC = 12, geneD = 8),
-                     Site2 = c(geneA = 15, geneB = NA, geneC = 27, geneD = 28),
-                     Site3 = c(geneA = 10, geneB = 7, geneC = 13, geneD = NA))
 
-counts
-
-apply(counts, MARGIN = 1, mean)
-
-```
 How do we find out ahead of time that we are missing data? Knowing is half the battle.
 With a vector we can easily see how some basic functions work.
 
-```{r}
-na_vec <- c(5, 6, NA, 7, 7, NA)
 
-is.na(na_vec)
-
-```
 We are returned a logical vector of whether or not a value was NA. We can get the positional index and remove the NAs.
 
-```{r}
-which(is.na(na_vec))
 
-remove_na_vec <- na_vec[c(-3,-6)]
-#equivalentish to 
-remove_na_vec <- na.omit(na_vec)
-remove_na_vec
-```
 
 With a large data frame, it may be hard to look at every cell to tell if there are NAs. The function complete.cases looks by row to see whether any row contains an NA. You can then subset out the rows with the NAs.
-```{r}
-is.na(counts)
 
-any(is.na(counts))
-
-complete.cases(counts)
-
-counts[complete.cases(counts),]
-```
 If you want to keep all of the observations in your data frame and do your calculations anyways, now that you are aware of what is going on in your dataset, some functions specifically allow for this. Let's look up the documentation for the mean function.
 
-```{r}
-apply(counts, MARGIN = 1, mean, na.rm = TRUE)
 
-```
 
 Most of the functions used above have this parameter. Although some do not.
 
-```{r error = TRUE}
-apply(counts, MARGIN = 1, log, na.rm = TRUE)
 
-```
 In this case na.omit can be useful. 
 
-```{r}
-apply(counts, MARGIN = 1, na.omit(log))
 
-```
 You can similarly deal with NaNs in R. NaNs (not a number) are NAs (not available), but NAs and NaNs. NaNs appear for imaginary or complex numbers or some numeric values for example 0/0. Some packages may output NAs, NaNs, or Inf/-Inf (rare, use is.finite). 
 
-```{r}
-counts <- data.frame(Site1 = c(geneA = 2, geneB = 4, geneC = 12, geneD = 8),
-                     Site2 = c(geneA = 15, geneB = NaN, geneC = 27, geneD = 28),
-                     Site3 = c(geneA = 10, geneB = 7, geneC = 13, geneD = NaN))
 
-counts
-
-nan_vec <- c(5, 6, NaN, 7, 7, NaN)
-
-is.na(na_vec)
-is.na(nan_vec)
-
-is.nan(nan_vec)
-is.nan(na_vec)
-```
 Depending on your purpose, you may replace NAs with a sample average, or the mode of the data, or a value that is below a threshold.
 
-```{r}
-counts[is.na(counts)] <- 0 
 
-counts
-```
 
 </br>
 
@@ -905,66 +621,42 @@ There are a few different places you can install packages from R. Listed in orde
 
 _Readr_ is a package that will help us to read in our files (easily). It is installed from CRAN.
 
-```{r eval=FALSE}
-install.packages('readr') #would be better to have something with dependencies here
 
-```
 
 R may give you package installation warnings. Don't panic. In general, your package will either be installed and R will test if the installed package can be loaded, or R will give you a 'non-zero exit status' - which means your package did not install. If you read the entire error message, it will give you a hint as to why the package did not install.
 
 Some packages depend on previously developed packages and can only be installed after said package is installed in your library. Similarly, the previous package may depend on another package... here is the solution to install the package and all of the prior packages it relies on.
 
-```{r eval = FALSE}
-install.packages('readr', dependencies = TRUE)
 
-```
 
 You can install more than one package at once.
 
-```{r eval = FALSE}
-install.packages(c('dplyr', 'devtools', 'readxl'), dependencies = TRUE)
-```
+
 
 To load a package (ie. to actually use it):
 
-```{r eval = FALSE}
-library(devtools) # or library('devtools')
 
-```
 
 Likewise, you can install many packages at once:
 
-```{r eval = FALSE}
-library(c('dplyr', 'readxl'))
-```
+
 
 To install from Bioconductor you can either always use source to use biocLite...
 
-```{r eval = FALSE}
-source("https://bioconductor.org/biocLite.R")
-biocLite("BiocInstaller")
-```
+
 
 Or you can install the BiocInstaller package. I prefer this as I always forget the url.
 
-```{r eval = FALSE}
-library(BiocInstaller)
-biocLite('limma')
-```
+
 
 
 Devtools is required to install from GitHub. We don't actually need to load the entire library for devtools if we are only going to use one function.
 
-```{r eval = FALSE}
-devtools::install_github("jennybc/googlesheets")
 
-```
 
 Libraries from Bioconductor and GitHub load the same as packages from CRAN.
 
-```{r eval = FALSE}
-library(googlesheets)
-```
+
 
 
 ***
@@ -1005,32 +697,20 @@ Let's read our metadata file into R. While we do these exercises, we are going t
 
 To see the result, we can either click on meta in the global environment to open it in the viewer, or we can write code to view the variable. `head()` will show us the first 10 rows of our data frame. `tail()` would show the last 10 rows.
 
-```{r}
-meta <- read.table(file = "data/ENV_pitlatrine.csv")
-head(meta)
-```
+
 
 This is pretty ugly looking. Why?
-In the help file the default 'sep' or what is separating columns is expected to be a space. We need to use specify a comma instead.  
+In the help file the default `__________________________________________`. We need to use specify a  `___` instead.  
 
-```{r}
-meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",")
-head(meta)
-```
+
 
 Better. Our columns are now separated appropriately, but what about our column titles?
 
-```{r}
-meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = TRUE)
-head(meta)
-```
+
 
 These samples are not replicates. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)
 
-```{r}
-meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = T, stringsAsFactors = F)
-head(meta)
-```
+
 
 ***
 __Challenge__ 
@@ -1063,64 +743,34 @@ Read our data table into R using any function under Usage in the read.table help
 
 Hopefully this exercise forced you to look at the differences in the default values of the parameters in these different functions. I suggest that you keep these in mind as we look at some functions that were aimed to make a few typing shortcuts. Let's load the readr library.
 
-```{r}
-library(readr)
 
-```
 
 Use read_csv() to read in your metadata file. What is different from read.csv?
 
-```{r}
-meta <- read_csv("data/ENV_pitlatrine.csv")
-head(meta)
-```
+
 Note that readr tells you exactly how it parsed your file, and how each column is encoded.   
 
 ***
 
 But what happens if we have a good, old-fashioned excel file? The _readxl_ package will recognize both xls and xlsx files. It expects tabular data.
 
-```{r}
-library(readxl)
 
-head(read_excel("data/books_alpha.xlsx"))
-
-```
 
 This doesn't look like a workbook. Why not? The read_excel function defaults to reading in the first worksheet. You can specify which sheet you want to read in by position or name. Let's see what the name of our sheets are.
 
-```{r}
-excel_sheets("data/books_alpha.xlsx")
 
-```
 
 Note that the argument to both of these functions was the path to our data sheet. We can save this path into a variable. You can also subset using cell numbers or ranges.
 
 
-```{r}
-path <- "data/books_alpha.xlsx"
 
-read_excel(path, sheet = 1, range = "C1:D9")
-
-read_excel(path, sheet = "Top titles", range = cell_rows(1:9))
-
-read_excel(path, sheet = 1, range = cell_cols("B:D"))
-
-```
 
 
 
 You can also use a list version of the apply function to read in all sheets at once. Each sheet will be stored as a data frame inside of a list object. You can subset the sheet you would like to work with (or work with all sheets at once - see the purrr package for working with list objects).
 
 
-```{r}
-ex <- lapply(excel_sheets(path), read_excel, path = path)
 
-str(ex)
-str(ex[[3]])
-
-excel2 <- data.frame(ex[[2]])
-```
 
 At this point, you will be able to use your excel worksheet as a normal data frame in R.
 
@@ -1130,66 +780,40 @@ _Googlesheets_ have a similar structure to excel workbooks, the only tricky thin
 
 If you load googlesheets and ask it to list the googlesheets you have, googlesheets will open a new window and ask if it can have access to your googlesheets. If you say yes, you can return to R and breathe a sigh of relief. Your import of your googlesheets worked.
 
-```{r eval=FALSE}
-library(googlesheets) #hypothetically already loaded from earlier code
 
-gs_ls()
-
-#tail(gs_ls())
-```
 
 Register the sheet you are going to use with the sheet title.
 
-```{r eval=FALSE}
-books <- gs_title('Books Everyone Should Read')
-```
+
 
 How many worksheets are in this spreadsheet and what are their names?
 
 
-```{r eval=FALSE}
-books$n_ws
 
-books$ws$ws_title
-```
 
 
 Read in the worksheet you want to access. You can do this using the worksheet number.
 
-```{r eval=FALSE}
-book_sheet1 <- gs_read(books, ws = 1)
 
-```
 
 The last 2 columns don't hold much information. Specify a subset of this sheet. You can do this by selecting the cell columns, or by using the 'excel-like' cell range.
 
-```{r eval=FALSE}
-booksfilt <- gs_read(books, ws = 1, range = cell_cols(1:14))
-#or
-booksfilt <- gs_read(books, ws = 1, range = "A1:N1000")
-```
+
 
 You can also specify the worksheet by name, and sort by rows. Here are the top recommendations for what to read, when you are no longer in academia.
 
-```{r eval=FALSE}
-books_alpha <- gs_read(books, ws = "Top titles", range = cell_rows(1:10)) 
 
-```
 
 
 One nice thing about the googlesheets package is that all of the functions begin with gs_ which is great for finding functions and tab completion.
 
 
 You 'download' ie. save this file to your computer.
-```{r eval=FALSE}
-gs_download(gs_title("Books Everyone Should Read"), to = "books_alpha.xlsx", overwrite = TRUE)
-```
+
 
 You can upload sheets you've made to googlesheets. This file is now in your google account online.
 
-```{r eval=FALSE}
-books <- gs_upload("books_alpha.xlsx")
-```
+
 
 
 ***

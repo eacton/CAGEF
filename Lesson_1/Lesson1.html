@@ -1058,7 +1058,7 @@ head(meta)</code></pre>
 ## 4   T_2_2 6.49 29.6 13.91 64.93  3.7  389  180         46 6.2 29.3    25
 ## 5   T_2_3 6.46 27.9 29.45 26.85 27.5  161   35         22 2.4 19.4    31
 ## 6   T_2_6 7.69 28.7 65.52  7.03  1.5   57    3          6 0.8  0.0    14</code></pre>
-<p>These samples are not replibacteriaes. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)</p>
+<p>These samples are not replicates. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)</p>
 <pre class="r"><code>meta &lt;- read.table(file = &quot;data/ENV_pitlatrine.csv&quot;, sep = &quot;,&quot;, header = T, stringsAsFactors = F)
 head(meta)</code></pre>
 <pre><code>##   Samples   pH Temp    TS    VS  VFA CODt CODs perCODsbyt NH4 Prot Carbo
