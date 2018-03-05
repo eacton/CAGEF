@@ -302,87 +302,170 @@ Let's look up the function `c()`, which combines values into a vector or list. I
 
 Here are what vectors of each 'type' would look like. Note that character items must be in quotations. 
 
-```{r}
+
+```r
 vec_char <- c("bacteria", "virus", "archaea")
 #this is equivalent to
 vec_char <- c('bacteria', 'virus', 'archaea')
 vec_char
+```
 
+```
+## [1] "bacteria" "virus"    "archaea"
+```
+
+```r
 vec_num <- c(1:10)
 vec_num
+```
 
+```
+##  [1]  1  2  3  4  5  6  7  8  9 10
+```
+
+```r
 vec_log <- c(TRUE, FALSE, TRUE)
 vec_log
 ```
 
+```
+## [1]  TRUE FALSE  TRUE
+```
+
 What happens if we try to include more than one type of data?
 
-```{r}
+
+```r
 vec_mixed <- c("bacteria", 1, TRUE)
 vec_mixed
+```
+
+```
+## [1] "bacteria" "1"        "TRUE"
 ```
 
 
 R will coerce your vector to be of one data type, in this case the type that is most inclusive is a character vector. 
 What do you think will happen if 'bacteria' is removed from the vector? Will it be coerced to the same type?
 
-```{r}
+
+```r
 vec_mixed <- c(1, TRUE)
 vec_mixed
 ```
 
+```
+## [1] 1 1
+```
+
 R has forced the vector to be numeric. TRUE and FALSE may be represented by 1 and 0, respectively.
 
-```{r}
+
+```r
 vec_test <- as.numeric(vec_log)
 vec_test
+```
+
+```
+## [1] 1 0 1
 ```
 
 
 Does it work to change it back into TRUE and FALSE?
 
-```{r}
+
+```r
 vec_log <- as.logical(vec_test)
 vec_log
 ```
 
+```
+## [1]  TRUE FALSE  TRUE
+```
+
 What about for our mixed vector?
 
-```{r}
+
+```r
 vec_mixed <- as.logical(vec_mixed)
 vec_mixed
+```
+
+```
+## [1] TRUE TRUE
 ```
 
 I am highlighting this for a couple of reasons. Keep your data types in mind. It is good practice to look at your object or the global environment to make sure the object that you just made is what you think it is. Secondly, it can be useful for data analysis to be able to switch from TRUE/FALSE to 1/0, and it is pretty easy, as we have just seen.
 
 You can name the contents of your vectors or specify them upon vector creation.
 
-```{r}
+
+```r
 names(vec_log) <- c("male", "elderly", "heart attack")
 #is equivalent to 
 vec_log <- c("male" = TRUE, "elderly" = FALSE, "heart attack" = TRUE)
 vec_log
 ```
 
+```
+##         male      elderly heart attack 
+##         TRUE        FALSE         TRUE
+```
+
 The number of elements in a vector is its length.
 
-```{r eval = TRUE}
+
+```r
 length(vec_char)
+```
 
+```
+## [1] 3
+```
+
+```r
 length(vec_num)
+```
 
+```
+## [1] 10
+```
+
+```r
 length(vec_log)
+```
+
+```
+## [1] 3
 ```
 
 
 You can grab a specific element by its index, or by its name. 
 
-```{r}
+
+```r
 vec_char[3]
+```
 
+```
+## [1] "archaea"
+```
+
+```r
 vec_char[2:3] #first and last inclusive (this is not the same for all programming languages)
+```
 
+```
+## [1] "virus"   "archaea"
+```
+
+```r
 vec_log["male"]
+```
+
+```
+## male 
+## TRUE
 ```
 
 
@@ -390,7 +473,8 @@ vec_log["male"]
 
 Lists can hold mixed data types of different lengths.
 
-```{r}
+
+```r
 list_mix <- list(character = c('bacteria', 'virus', 'archaea'), 
                  num = c(1:10), 
                  log = c(TRUE, FALSE, TRUE))
@@ -400,23 +484,57 @@ list_mix = list(character = c('bacteria', 'virus', 'archaea'), num = c(1:10), lo
 list_mix
 ```
 
+```
+## $character
+## [1] "bacteria" "virus"    "archaea" 
+## 
+## $num
+##  [1]  1  2  3  4  5  6  7  8  9 10
+## 
+## $log
+## [1]  TRUE FALSE  TRUE
+```
+
 Lists can get complicated. If you forget what is in your list, use the `str()` function to check out its structure. It will tell you the number of items in your list and their data types. You can (and should) call `str()` on any R object. You can also try it on one of our vectors.
 
-```{r}
+
+```r
 str(list_mix)
+```
 
+```
+## List of 3
+##  $ character: chr [1:3] "bacteria" "virus" "archaea"
+##  $ num      : int [1:10] 1 2 3 4 5 6 7 8 9 10
+##  $ log      : logi [1:3] TRUE FALSE TRUE
+```
+
+```r
 str(vec_mixed)
+```
 
+```
+##  logi [1:2] TRUE TRUE
 ```
 
 
 To subset for 'virus', I first have to subset for the character element of the list. Kind of like a Russian nested doll or a present, where you have to open the outer layer to get to the next.
 
-```{r}
+
+```r
 list_mix[[1]]
+```
 
+```
+## [1] "bacteria" "virus"    "archaea"
+```
+
+```r
 list_mix[[1]][2]
+```
 
+```
+## [1] "virus"
 ```
 
 
@@ -425,9 +543,19 @@ list_mix[[1]][2]
 
 Create a demo matrix.  
 
-```{r}
+
+```r
 mat <- matrix(c(rep(0, 10), rep(1,10)), nrow = 5, ncol = 5)
 mat
+```
+
+```
+##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    0    0    1    1    0
+## [2,]    0    0    1    1    0
+## [3,]    0    0    1    1    0
+## [4,]    0    0    1    1    0
+## [5,]    0    0    1    1    0
 ```
 
 ***
@@ -460,34 +588,91 @@ Make a 4 x 4 matrix that looks like this, using the seq() function at least once
 
 A matrix is a 2D object. We can now check out a couple more properties - like the number of rows and columns.
 
-```{r}
+
+```r
 str(mat)
+```
 
+```
+##  num [1:5, 1:5] 0 0 0 0 0 0 0 0 0 0 ...
+```
+
+```r
 nrow(mat)
+```
+
+```
+## [1] 5
+```
+
+```r
 ncol(mat)
+```
 
+```
+## [1] 5
+```
+
+```r
 dim(mat)
+```
 
+```
+## [1] 5 5
+```
+
+```r
 length(mat)
+```
+
+```
+## [1] 25
 ```
 To access a specific row or column we can still use indexing.
 
-```{r}
-mat[3:5,]
 
+```r
+mat[3:5,]
+```
+
+```
+##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    0    0    1    1    0
+## [2,]    0    0    1    1    0
+## [3,]    0    0    1    1    0
+```
+
+```r
 mat[, 4]
+```
+
+```
+## [1] 1 1 1 1 1
 ```
 Note that when we are subsetting a single row or column, we end up with a vector.
 
-```{r}
-is.vector(mat[,4])
 
+```r
+is.vector(mat[,4])
+```
+
+```
+## [1] TRUE
 ```
 It is common to transform matrices. Note that the set of ones will now be in rows rather than columns.
 
-```{r}
-t(mat)
 
+```r
+t(mat)
+```
+
+```
+##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    0    0    0    0    0
+## [2,]    0    0    0    0    0
+## [3,]    1    1    1    1    1
+## [4,]    1    1    1    1    1
+## [5,]    0    0    0    0    0
 ```
 
 
@@ -499,13 +684,37 @@ t(mat)
 
 Now that we have had the opportunity to create a few different objects, let's talk about what an object _class_ is. An object class can be thought of as how an object will behave in a function. Because of this data frames, lists and matrices have their own classes, while vectors inherit from their data type (vectors of characters behave like characters, vectors of numbers behave like numbers).
 
-```{r}
+
+```r
 class(vec_char)
+```
+
+```
+## [1] "character"
+```
+
+```r
 class(vec_num)
+```
 
+```
+## [1] "integer"
+```
+
+```r
 class(mat)
-class(list_mix)
+```
 
+```
+## [1] "matrix"
+```
+
+```r
+class(list_mix)
+```
+
+```
+## [1] "list"
 ```
 Some package creaters will have created their own data classes and will require your data to be in the format required of that class. For example in Bioconducter there is an _ExpressionSet_ class. 
 
@@ -521,25 +730,45 @@ This class contains your metadata (information about your samples), your assay d
 
 Data frames are lists to the extent that they can hold different types of data. However, they must be of equal length.
 
-```{r error = TRUE}
+
+```r
 dat <- data.frame(character = c('bacteria', 'virus', 'archaea'), 
                  num = c(1:10), 
                  log = c(TRUE, FALSE, TRUE))
+```
 
+```
+## Error in data.frame(character = c("bacteria", "virus", "archaea"), num = c(1:10), : arguments imply differing number of rows: 3, 10
+```
 
+```r
 dat <- data.frame(character = c('bacteria', 'virus', 'archaea'), 
                  num = c(1:3), 
                  log = c(TRUE, FALSE, TRUE))
 dat
+```
 
+```
+##   character num   log
+## 1  bacteria   1  TRUE
+## 2     virus   2 FALSE
+## 3   archaea   3  TRUE
 ```
 
 Many R packages have been made to work with data in data frames, and this is the class of object where we will spend most of our time. 
 
 Let's use some of the functions we have learned for finding out about the structure of our data frame.
 
-```{r}
+
+```r
 str(dat)
+```
+
+```
+## 'data.frame':	3 obs. of  3 variables:
+##  $ character: Factor w/ 3 levels "archaea","bacteria",..: 2 3 1
+##  $ num      : int  1 2 3
+##  $ log      : logi  TRUE FALSE TRUE
 ```
 
 ***
@@ -553,29 +782,73 @@ What is a _factor_?
 
 A factor is a _class_ of object used to encode a character vector into categories. This will become clear with a bit more data, so lets make our data frame larger by adding rows. We can only do this if the data we want to add has the same number of columns. How many rows and columns does this new data frame have?
 
-```{r}
+
+```r
 dat_large <-  rbind(dat, dat, dat)
 
 nrow(dat_large)
-ncol(dat_large)
-dim(dat_large)
+```
 
+```
+## [1] 9
+```
+
+```r
+ncol(dat_large)
+```
+
+```
+## [1] 3
+```
+
+```r
+dim(dat_large)
+```
+
+```
+## [1] 9 3
 ```
 If we look at the structure again, we still have 3 levels. This is because each unique character element has been encoded as a number.
 (Note that a column can be subset by index or by its name using the `'$'` operator.)
 
-```{r}
+
+```r
 dat_large$character
+```
+
+```
+## [1] bacteria virus    archaea  bacteria virus    archaea  bacteria virus   
+## [9] archaea 
+## Levels: archaea bacteria virus
+```
+
+```r
 #equivalent to
 dat_large[ ,1]
+```
 
+```
+## [1] bacteria virus    archaea  bacteria virus    archaea  bacteria virus   
+## [9] archaea 
+## Levels: archaea bacteria virus
+```
+
+```r
 levels(dat_large$character)
+```
+
+```
+## [1] "archaea"  "bacteria" "virus"
 ```
 Note that the first character object in the data frame is 'bacteria', however, the first factor level is archaea. R by default puts factor levels in alphabetical order. This can cause problems if we aren't aware of it. Always check to make sure your factor levels are what you expect. With factors, we can deal with our character levels directly, or their numeric equivalents. Factors are extremely useful for performing group calculations as we will see later in the course.
 
-```{r}
-as.numeric(dat_large$character)
 
+```r
+as.numeric(dat_large$character)
+```
+
+```
+## [1] 2 3 1 2 3 1 2 3 1
 ```
 
 ***
@@ -594,23 +867,53 @@ Look up the factor function. Use it to make 'bacteria' the first level, 'virus' 
 
 We can also convert between data types if they are similar enough. For example, I can convert my matrix into a data frame. Since a data frame can hold any type of data, it can hold all of the numeric data in a matrix.
 
-```{r}
+
+```r
 new_dat <- as.data.frame(mat)
 new_dat
 ```
+
+```
+##   V1 V2 V3 V4 V5
+## 1  0  0  1  1  0
+## 2  0  0  1  1  0
+## 3  0  0  1  1  0
+## 4  0  0  1  1  0
+## 5  0  0  1  1  0
+```
 Note that R just made up column names for us. We can provide our own vector of column names.
 
-```{r}
+
+```r
 colnames(new_dat) <- c("col1", "col2", "col3", "col4", "col5")
 #equivalent to
 colnames(new_dat) <- c(paste0(rep("col",5), 1:5))
 new_dat
 ```
+
+```
+##   col1 col2 col3 col4 col5
+## 1    0    0    1    1    0
+## 2    0    0    1    1    0
+## 3    0    0    1    1    0
+## 4    0    0    1    1    0
+## 5    0    0    1    1    0
+```
 In contrast, our data frame with multiple data types can not be converted into a matrix, as a matrix can only hold one data type. We could however, transform our new_dat back into a matrix. The matrix will retain our column heading.
 
-```{r}
+
+```r
 new_mat <- as.matrix(new_dat)
 new_mat
+```
+
+```
+##      col1 col2 col3 col4 col5
+## [1,]    0    0    1    1    0
+## [2,]    0    0    1    1    0
+## [3,]    0    0    1    1    0
+## [4,]    0    0    1    1    0
+## [5,]    0    0    1    1    0
 ```
 
 
@@ -620,28 +923,104 @@ new_mat
 
 Arrays are n dimensional objects that hold numeric data. To create an array, we give a vector of data to fill the array, and then the dimensions of the array. This code will recycle the vector 1:10 and fill 5 arrays that have 2 x 3 dimensions. To visualize the array, we will print it afterwards.
 
-```{r}
+
+```r
 arr <- array(data = 1:10, dim = c(2,3,5))
 arr
 ```
+
+```
+## , , 1
+## 
+##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3]
+## [1,]    7    9    1
+## [2,]    8   10    2
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3]
+## [1,]    3    5    7
+## [2,]    4    6    8
+## 
+## , , 4
+## 
+##      [,1] [,2] [,3]
+## [1,]    9    1    3
+## [2,]   10    2    4
+## 
+## , , 5
+## 
+##      [,1] [,2] [,3]
+## [1,]    5    7    9
+## [2,]    6    8   10
+```
 This arrangement makes it more clear how we would subset the number 7 out of array 5.
 
-```{r}
-arr[1, 2, 5]
 
+```r
+arr[1, 2, 5]
+```
+
+```
+## [1] 7
 ```
 A 2D array is just a matrix. Unless you specify a 3rd dimension.
 
-```{r}
+
+```r
 mat_arr <- array(data = 1:10, dim = c(2,3))
 mat_arr
+```
+
+```
+##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6
+```
+
+```r
 #equivalent to
 arr_mat <- array(data = 1:10, dim = c(2,3,1))
 arr_mat
-all.equal(mat_arr, arr_mat)
-class(mat_arr)
-class(arr_mat)
+```
 
+```
+## , , 1
+## 
+##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6
+```
+
+```r
+all.equal(mat_arr, arr_mat)
+```
+
+```
+## [1] "Attributes: < Component \"dim\": Numeric: lengths (2, 3) differ >"
+## [2] "target is matrix, current is array"
+```
+
+```r
+class(mat_arr)
+```
+
+```
+## [1] "matrix"
+```
+
+```r
+class(arr_mat)
+```
+
+```
+## [1] "array"
 ```
 Personally, I don't use arrays in my daily genomics life, so if you find this confusing, I wouldn't worry about it too much.
 
@@ -652,131 +1031,357 @@ Personally, I don't use arrays in my daily genomics life, so if you find this co
 So you can do math...
 
 Addition
-```{r}
+
+```r
 3 + 4
 ```
+
+```
+## [1] 7
+```
 Subtraction
-```{r}
+
+```r
 3 - 4
 ```
 
+```
+## [1] -1
+```
+
 Multiplication
-```{r}
+
+```r
 3 * 4
 ```
 
+```
+## [1] 12
+```
+
 Division
-```{r}
+
+```r
 3 / 4
 ```
 
+```
+## [1] 0.75
+```
+
 Exponents
-```{r}
+
+```r
 3^4
+```
+
+```
+## [1] 81
 ```
 
 A logic test ensues.
 
-```{r}
 
+```r
 x <- 7
 y <- x +3
 y
 ```
 
+```
+## [1] 10
+```
+
 If x gets updated, what happens to y? This is something you need to be aware of when running code - variables dependent on other variables and where in your program they are created and updated.
 
-```{r}
+
+```r
 x <- 8
 y 
+```
+
+```
+## [1] 10
+```
+
+```r
 y <- x +3
 y
 ```
 
+```
+## [1] 11
+```
+
 
 So you can do math... on a vector.
 
-```{r}
-vec_num * 4
 
+```r
+vec_num * 4
+```
+
+```
+##  [1]  4  8 12 16 20 24 28 32 36 40
 ```
 So you can do math... on a vector.
 
-```{r}
+
+```r
 vec_log * 4 #uh oh - that is probably not what you want... 
+```
+
+```
+##         male      elderly heart attack 
+##            4            0            4
 ```
 
 So you can do math... on a list.
 
-```{r error = TRUE}
+
+```r
 list_mix * 4 
+```
 
+```
+## Error in list_mix * 4: non-numeric argument to binary operator
+```
+
+```r
 list_mix[[2]] * 4
+```
 
+```
+##  [1]  4  8 12 16 20 24 28 32 36 40
+```
+
+```r
 list_mix[[2]][2:4] * 4
+```
 
+```
+## [1]  8 12 16
 ```
 
 So you can do math... on a matrix.
 
-```{r}
-mat * 4
 
+```r
+mat * 4
+```
+
+```
+##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    0    0    4    4    0
+## [2,]    0    0    4    4    0
+## [3,]    0    0    4    4    0
+## [4,]    0    0    4    4    0
+## [5,]    0    0    4    4    0
 ```
 
 So you can do math... on a data frame.
 
-```{r}
+
+```r
 dat * 4
+```
 
+```
+## Warning in Ops.factor(left, right): '*' not meaningful for factors
+```
+
+```
+##   character num log
+## 1        NA   4   4
+## 2        NA   8   0
+## 3        NA  12   4
+```
+
+```r
 dat$num * 4
+```
 
+```
+## [1]  4  8 12
+```
+
+```r
 dat[ , 2] * 4
+```
+
+```
+## [1]  4  8 12
 ```
 
 So you can do math... on an array.
 
-```{r}
-arr * 4
 
+```r
+arr * 4
+```
+
+```
+## , , 1
+## 
+##      [,1] [,2] [,3]
+## [1,]    4   12   20
+## [2,]    8   16   24
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3]
+## [1,]   28   36    4
+## [2,]   32   40    8
+## 
+## , , 3
+## 
+##      [,1] [,2] [,3]
+## [1,]   12   20   28
+## [2,]   16   24   32
+## 
+## , , 4
+## 
+##      [,1] [,2] [,3]
+## [1,]   36    4   12
+## [2,]   40    8   16
+## 
+## , , 5
+## 
+##      [,1] [,2] [,3]
+## [1,]   20   28   36
+## [2,]   24   32   40
+```
+
+```r
 arr[1, 2, 5] * 4 
+```
+
+```
+## [1] 28
 ```
 These are illustrative examples to see how our different data structures behave. In reality, you will want to do calculations across rows and columns, and not on your entire matrix or data frame. For example, we might have a count table where rows are genes, columns are samples, and we want to know the sum of all the counts for a gene. To do this, we can use the apply function.
 
-```{r}
+
+```r
 counts <- data.frame(Site1 = c(geneA = 2, geneB = 4, geneC = 12, geneD = 8),
                      Site2 = c(geneA = 15, geneB = 18, geneC = 27, geneD = 28),
                      Site3 = c(geneA = 10, geneB = 7, geneC = 13, geneD = 15))
                      
 counts
+```
 
+```
+##       Site1 Site2 Site3
+## geneA     2    15    10
+## geneB     4    18     7
+## geneC    12    27    13
+## geneD     8    28    15
+```
+
+```r
 apply(counts, MARGIN = 1, sum)
+```
 
+```
+## geneA geneB geneC geneD 
+##    27    29    52    51
 ```
 The apply function will recognize basic functions.
 
-```{r}
+
+```r
 apply(counts, MARGIN = 1, mean)
+```
 
+```
+##     geneA     geneB     geneC     geneD 
+##  9.000000  9.666667 17.333333 17.000000
+```
+
+```r
 apply(counts, MARGIN = 1, sd)
+```
 
+```
+##     geneA     geneB     geneC     geneD 
+##  6.557439  7.371115  8.386497 10.148892
+```
+
+```r
 apply(counts, MARGIN = 1, median)
+```
 
+```
+## geneA geneB geneC geneD 
+##    10     7    13    15
+```
+
+```r
 apply(counts, MARGIN = 1, quantile)
+```
+
+```
+##      geneA geneB geneC geneD
+## 0%     2.0   4.0  12.0   8.0
+## 25%    6.0   5.5  12.5  11.5
+## 50%   10.0   7.0  13.0  15.0
+## 75%   12.5  12.5  20.0  21.5
+## 100%  15.0  18.0  27.0  28.0
 ```
 Public service announcement. Know what logarithm you are using. 
 
-```{r}
+
+```r
 apply(counts, MARGIN = 1, log) #this is base exp(1)
+```
+
+```
+##           geneA    geneB    geneC    geneD
+## Site1 0.6931472 1.386294 2.484907 2.079442
+## Site2 2.7080502 2.890372 3.295837 3.332205
+## Site3 2.3025851 1.945910 2.564949 2.708050
+```
+
+```r
 apply(counts, MARGIN = 1, log2)
+```
+
+```
+##          geneA    geneB    geneC    geneD
+## Site1 1.000000 2.000000 3.584963 3.000000
+## Site2 3.906891 4.169925 4.754888 4.807355
+## Site3 3.321928 2.807355 3.700440 3.906891
+```
+
+```r
 apply(counts, MARGIN = 1, log10)
 ```
+
+```
+##          geneA    geneB    geneC    geneD
+## Site1 0.301030 0.602060 1.079181 0.903090
+## Site2 1.176091 1.255273 1.431364 1.447158
+## Site3 1.000000 0.845098 1.113943 1.176091
+```
 What if I want to know something else? We can create a function.
-```{r}
+
+```r
 apply(counts, MARGIN = 1, sum)
+```
+
+```
+## geneA geneB geneC geneD 
+##    27    29    52    51
+```
+
+```r
 #equivalent to
 apply(counts, MARGIN = 1, function(x) sum(x))
+```
 
+```
+## geneA geneB geneC geneD 
+##    27    29    52    51
 ```
 
 ***
@@ -801,88 +1406,211 @@ Create a function to test if ALL of the counts for a gene are greater than 10.
 Sometimes there is missing data in a dataset. For an example, I am going to take the earlier counts table and add a few NAs. If I now try to calculate the mean number of counts, I will get NA as an answer for the rows that had NAs.
 
 
-```{r}
+
+```r
 counts <- data.frame(Site1 = c(geneA = 2, geneB = 4, geneC = 12, geneD = 8),
                      Site2 = c(geneA = 15, geneB = NA, geneC = 27, geneD = 28),
                      Site3 = c(geneA = 10, geneB = 7, geneC = 13, geneD = NA))
 
 counts
+```
 
+```
+##       Site1 Site2 Site3
+## geneA     2    15    10
+## geneB     4    NA     7
+## geneC    12    27    13
+## geneD     8    28    NA
+```
+
+```r
 apply(counts, MARGIN = 1, mean)
+```
 
+```
+##    geneA    geneB    geneC    geneD 
+##  9.00000       NA 17.33333       NA
 ```
 How do we find out ahead of time that we are missing data? Knowing is half the battle.
 With a vector we can easily see how some basic functions work.
 
-```{r}
+
+```r
 na_vec <- c(5, 6, NA, 7, 7, NA)
 
 is.na(na_vec)
+```
 
+```
+## [1] FALSE FALSE  TRUE FALSE FALSE  TRUE
 ```
 We are returned a logical vector of whether or not a value was NA. We can get the positional index and remove the NAs.
 
-```{r}
-which(is.na(na_vec))
 
+```r
+which(is.na(na_vec))
+```
+
+```
+## [1] 3 6
+```
+
+```r
 remove_na_vec <- na_vec[c(-3,-6)]
 #equivalentish to 
 remove_na_vec <- na.omit(na_vec)
 remove_na_vec
 ```
 
+```
+## [1] 5 6 7 7
+## attr(,"na.action")
+## [1] 3 6
+## attr(,"class")
+## [1] "omit"
+```
+
 With a large data frame, it may be hard to look at every cell to tell if there are NAs. The function complete.cases looks by row to see whether any row contains an NA. You can then subset out the rows with the NAs.
-```{r}
+
+```r
 is.na(counts)
+```
 
+```
+##       Site1 Site2 Site3
+## geneA FALSE FALSE FALSE
+## geneB FALSE  TRUE FALSE
+## geneC FALSE FALSE FALSE
+## geneD FALSE FALSE  TRUE
+```
+
+```r
 any(is.na(counts))
+```
 
+```
+## [1] TRUE
+```
+
+```r
 complete.cases(counts)
+```
 
+```
+## [1]  TRUE FALSE  TRUE FALSE
+```
+
+```r
 counts[complete.cases(counts),]
+```
+
+```
+##       Site1 Site2 Site3
+## geneA     2    15    10
+## geneC    12    27    13
 ```
 If you want to keep all of the observations in your data frame and do your calculations anyways, now that you are aware of what is going on in your dataset, some functions specifically allow for this. Let's look up the documentation for the mean function.
 
-```{r}
-apply(counts, MARGIN = 1, mean, na.rm = TRUE)
 
+```r
+apply(counts, MARGIN = 1, mean, na.rm = TRUE)
+```
+
+```
+##    geneA    geneB    geneC    geneD 
+##  9.00000  5.50000 17.33333 18.00000
 ```
 
 Most of the functions used above have this parameter. Although some do not.
 
-```{r error = TRUE}
-apply(counts, MARGIN = 1, log, na.rm = TRUE)
 
+```r
+apply(counts, MARGIN = 1, log, na.rm = TRUE)
+```
+
+```
+## Error in FUN(newX[, i], ...): unused argument (na.rm = TRUE)
 ```
 In this case na.omit can be useful. 
 
-```{r}
-apply(counts, MARGIN = 1, na.omit(log))
 
+```r
+apply(counts, MARGIN = 1, na.omit(log))
+```
+
+```
+##           geneA    geneB    geneC    geneD
+## Site1 0.6931472 1.386294 2.484907 2.079442
+## Site2 2.7080502       NA 3.295837 3.332205
+## Site3 2.3025851 1.945910 2.564949       NA
 ```
 You can similarly deal with NaNs in R. NaNs (not a number) are NAs (not available), but NAs and NaNs. NaNs appear for imaginary or complex numbers or some numeric values for example 0/0. Some packages may output NAs, NaNs, or Inf/-Inf (rare, use is.finite). 
 
-```{r}
+
+```r
 counts <- data.frame(Site1 = c(geneA = 2, geneB = 4, geneC = 12, geneD = 8),
                      Site2 = c(geneA = 15, geneB = NaN, geneC = 27, geneD = 28),
                      Site3 = c(geneA = 10, geneB = 7, geneC = 13, geneD = NaN))
 
 counts
+```
 
+```
+##       Site1 Site2 Site3
+## geneA     2    15    10
+## geneB     4   NaN     7
+## geneC    12    27    13
+## geneD     8    28   NaN
+```
+
+```r
 nan_vec <- c(5, 6, NaN, 7, 7, NaN)
 
 is.na(na_vec)
-is.na(nan_vec)
+```
 
+```
+## [1] FALSE FALSE  TRUE FALSE FALSE  TRUE
+```
+
+```r
+is.na(nan_vec)
+```
+
+```
+## [1] FALSE FALSE  TRUE FALSE FALSE  TRUE
+```
+
+```r
 is.nan(nan_vec)
+```
+
+```
+## [1] FALSE FALSE  TRUE FALSE FALSE  TRUE
+```
+
+```r
 is.nan(na_vec)
+```
+
+```
+## [1] FALSE FALSE FALSE FALSE FALSE FALSE
 ```
 Depending on your purpose, you may replace NAs with a sample average, or the mode of the data, or a value that is below a threshold.
 
-```{r}
+
+```r
 counts[is.na(counts)] <- 0 
 
 counts
+```
+
+```
+##       Site1 Site2 Site3
+## geneA     2    15    10
+## geneB     4     0     7
+## geneC    12    27    13
+## geneD     8    28     0
 ```
 
 </br>
@@ -905,49 +1633,53 @@ There are a few different places you can install packages from R. Listed in orde
 
 _Readr_ is a package that will help us to read in our files (easily). It is installed from CRAN.
 
-```{r eval=FALSE}
-install.packages('readr') #would be better to have something with dependencies here
 
+```r
+install.packages('readr') #would be better to have something with dependencies here
 ```
 
 R may give you package installation warnings. Don't panic. In general, your package will either be installed and R will test if the installed package can be loaded, or R will give you a 'non-zero exit status' - which means your package did not install. If you read the entire error message, it will give you a hint as to why the package did not install.
 
 Some packages depend on previously developed packages and can only be installed after said package is installed in your library. Similarly, the previous package may depend on another package... here is the solution to install the package and all of the prior packages it relies on.
 
-```{r eval = FALSE}
-install.packages('readr', dependencies = TRUE)
 
+```r
+install.packages('readr', dependencies = TRUE)
 ```
 
 You can install more than one package at once.
 
-```{r eval = FALSE}
+
+```r
 install.packages(c('dplyr', 'devtools', 'readxl'), dependencies = TRUE)
 ```
 
 To load a package (ie. to actually use it):
 
-```{r eval = FALSE}
-library(devtools) # or library('devtools')
 
+```r
+library(devtools) # or library('devtools')
 ```
 
 Likewise, you can install many packages at once:
 
-```{r eval = FALSE}
+
+```r
 library(c('dplyr', 'readxl'))
 ```
 
 To install from Bioconductor you can either always use source to use biocLite...
 
-```{r eval = FALSE}
+
+```r
 source("https://bioconductor.org/biocLite.R")
 biocLite("BiocInstaller")
 ```
 
 Or you can install the BiocInstaller package. I prefer this as I always forget the url.
 
-```{r eval = FALSE}
+
+```r
 library(BiocInstaller)
 biocLite('limma')
 ```
@@ -955,14 +1687,15 @@ biocLite('limma')
 
 Devtools is required to install from GitHub. We don't actually need to load the entire library for devtools if we are only going to use one function.
 
-```{r eval = FALSE}
-devtools::install_github("jennybc/googlesheets")
 
+```r
+devtools::install_github("jennybc/googlesheets")
 ```
 
 Libraries from Bioconductor and GitHub load the same as packages from CRAN.
 
-```{r eval = FALSE}
+
+```r
 library(googlesheets)
 ```
 
@@ -1005,31 +1738,75 @@ Let's read our metadata file into R. While we do these exercises, we are going t
 
 To see the result, we can either click on meta in the global environment to open it in the viewer, or we can write code to view the variable. `head()` will show us the first 10 rows of our data frame. `tail()` would show the last 10 rows.
 
-```{r}
+
+```r
 meta <- read.table(file = "data/ENV_pitlatrine.csv")
 head(meta)
+```
+
+```
+##                                                              V1
+## 1 Samples,pH,Temp,TS,VS,VFA,CODt,CODs,perCODsbyt,NH4,Prot,Carbo
+## 2         T_2_1,7.82,25.1,14.53,71.33,71,874,311,36,3.3,35.4,22
+## 3            T_2_10,9.08,24.2,37.76,31.52,2,102,9,9,1.2,18.4,43
+## 4                T_2_12,8.84,25.1,71.11,5.94,1,35,4,10,0.5,0,17
+## 5        T_2_2,6.49,29.6,13.91,64.93,3.7,389,180,46,6.2,29.3,25
+## 6        T_2_3,6.46,27.9,29.45,26.85,27.5,161,35,22,2.4,19.4,31
 ```
 
 This is pretty ugly looking. Why?
 In the help file the default 'sep' or what is separating columns is expected to be a space. We need to use specify a comma instead.  
 
-```{r}
+
+```r
 meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",")
 head(meta)
 ```
 
+```
+##        V1   V2   V3    V4    V5   V6   V7   V8         V9 V10  V11   V12
+## 1 Samples   pH Temp    TS    VS  VFA CODt CODs perCODsbyt NH4 Prot Carbo
+## 2   T_2_1 7.82 25.1 14.53 71.33   71  874  311         36 3.3 35.4    22
+## 3  T_2_10 9.08 24.2 37.76 31.52    2  102    9          9 1.2 18.4    43
+## 4  T_2_12 8.84 25.1 71.11  5.94    1   35    4         10 0.5    0    17
+## 5   T_2_2 6.49 29.6 13.91 64.93  3.7  389  180         46 6.2 29.3    25
+## 6   T_2_3 6.46 27.9 29.45 26.85 27.5  161   35         22 2.4 19.4    31
+```
+
 Better. Our columns are now separated appropriately, but what about our column titles?
 
-```{r}
+
+```r
 meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = TRUE)
 head(meta)
 ```
 
+```
+##   Samples   pH Temp    TS    VS  VFA CODt CODs perCODsbyt NH4 Prot Carbo
+## 1   T_2_1 7.82 25.1 14.53 71.33 71.0  874  311         36 3.3 35.4    22
+## 2  T_2_10 9.08 24.2 37.76 31.52  2.0  102    9          9 1.2 18.4    43
+## 3  T_2_12 8.84 25.1 71.11  5.94  1.0   35    4         10 0.5  0.0    17
+## 4   T_2_2 6.49 29.6 13.91 64.93  3.7  389  180         46 6.2 29.3    25
+## 5   T_2_3 6.46 27.9 29.45 26.85 27.5  161   35         22 2.4 19.4    31
+## 6   T_2_6 7.69 28.7 65.52  7.03  1.5   57    3          6 0.8  0.0    14
+```
+
 These samples are not replibacteriaes. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)
 
-```{r}
+
+```r
 meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = T, stringsAsFactors = F)
 head(meta)
+```
+
+```
+##   Samples   pH Temp    TS    VS  VFA CODt CODs perCODsbyt NH4 Prot Carbo
+## 1   T_2_1 7.82 25.1 14.53 71.33 71.0  874  311         36 3.3 35.4    22
+## 2  T_2_10 9.08 24.2 37.76 31.52  2.0  102    9          9 1.2 18.4    43
+## 3  T_2_12 8.84 25.1 71.11  5.94  1.0   35    4         10 0.5  0.0    17
+## 4   T_2_2 6.49 29.6 13.91 64.93  3.7  389  180         46 6.2 29.3    25
+## 5   T_2_3 6.46 27.9 29.45 26.85 27.5  161   35         22 2.4 19.4    31
+## 6   T_2_6 7.69 28.7 65.52  7.03  1.5   57    3          6 0.8  0.0    14
 ```
 
 ***
@@ -1063,16 +1840,51 @@ Read our data table into R using any function under Usage in the read.table help
 
 Hopefully this exercise forced you to look at the differences in the default values of the parameters in these different functions. I suggest that you keep these in mind as we look at some functions that were aimed to make a few typing shortcuts. Let's load the readr library.
 
-```{r}
-library(readr)
 
+```r
+library(readr)
 ```
 
 Use read_csv() to read in your metadata file. What is different from read.csv?
 
-```{r}
+
+```r
 meta <- read_csv("data/ENV_pitlatrine.csv")
+```
+
+```
+## Parsed with column specification:
+## cols(
+##   Samples = col_character(),
+##   pH = col_double(),
+##   Temp = col_double(),
+##   TS = col_double(),
+##   VS = col_double(),
+##   VFA = col_double(),
+##   CODt = col_integer(),
+##   CODs = col_integer(),
+##   perCODsbyt = col_integer(),
+##   NH4 = col_double(),
+##   Prot = col_double(),
+##   Carbo = col_double()
+## )
+```
+
+```r
 head(meta)
+```
+
+```
+## # A tibble: 6 x 12
+##   Samples    pH  Temp    TS    VS   VFA  CODt  CODs perCODsbyt   NH4  Prot
+##   <chr>   <dbl> <dbl> <dbl> <dbl> <dbl> <int> <int>      <int> <dbl> <dbl>
+## 1 T_2_1    7.82  25.1  14.5 71.3  71.0    874   311         36 3.30   35.4
+## 2 T_2_10   9.08  24.2  37.8 31.5   2.00   102     9          9 1.20   18.4
+## 3 T_2_12   8.84  25.1  71.1  5.94  1.00    35     4         10 0.500   0  
+## 4 T_2_2    6.49  29.6  13.9 64.9   3.70   389   180         46 6.20   29.3
+## 5 T_2_3    6.46  27.9  29.4 26.8  27.5    161    35         22 2.40   19.4
+## 6 T_2_6    7.69  28.7  65.5  7.03  1.50    57     3          6 0.800   0  
+## # ... with 1 more variable: Carbo <dbl>
 ```
 Note that readr tells you exactly how it parsed your file, and how each column is encoded.   
 
@@ -1080,32 +1892,108 @@ Note that readr tells you exactly how it parsed your file, and how each column i
 
 But what happens if we have a good, old-fashioned excel file? The _readxl_ package will recognize both xls and xlsx files. It expects tabular data.
 
-```{r}
+
+```r
 library(readxl)
 
 head(read_excel("data/books_alpha.xlsx"))
+```
 
+```
+## # A tibble: 6 x 16
+##   `UK's most borro… `Desert Island D… `Pulitzer Prize … `Askmetafilter.co…
+##   <chr>             <chr>             <chr>             <chr>             
+## 1 July 2009-June 2… (Feb 2008-Feb 20… (1918-2010)       http://ask.metafi…
+## 2 206 bones         Anna Karenina     A Bell for Adano  1984.0            
+## 3 7th heaven        Blake             A Confederacy of… Aesop's Fables    
+## 4 7th heaven        Breakfast of Cha… A Death in the F… Against the Grain 
+## 5 8th confession    Decline and Fall  A Fable           Alice's Adventure…
+## 6 A darker domain   His Dark Materia… A Good Scent fro… An Explanation of…
+## # ... with 12 more variables: `LibraryThing.com (top 50)` <chr>, `World
+## #   Book Day Poll (top 100)` <chr>, `Telegraph 100 Novels Everyone Should
+## #   Read` <chr>, `Goodreads.com Books That Everyone Should Read At Least
+## #   Once (top 100)` <chr>, `Bspcn.com 30 Books Everyone Should Read Before
+## #   They're 30` <chr>, `Guardian 1000 Novels Everyone Must Read` <chr>,
+## #   `Bighow.com 100 Greatest Books of All Time Everyone Must Read` <chr>,
+## #   `The Best 100 Lists Top 100 Novels of All Time` <chr>, `Man Booker
+## #   Prize winners` <chr>, `Oprah's Book Club List` <chr>, `1001 Books You
+## #   Should Read Before You Die (Cassell, 2005)` <chr>, `Author's own top
+## #   five...` <lgl>
 ```
 
 This doesn't look like a workbook. Why not? The read_excel function defaults to reading in the first worksheet. You can specify which sheet you want to read in by position or name. Let's see what the name of our sheets are.
 
-```{r}
-excel_sheets("data/books_alpha.xlsx")
 
+```r
+excel_sheets("data/books_alpha.xlsx")
+```
+
+```
+## [1] "Lists"            "All alphabetised" "Top titles"      
+## [4] "dropoff"
 ```
 
 Note that the argument to both of these functions was the path to our data sheet. We can save this path into a variable. You can also subset using cell numbers or ranges.
 
 
-```{r}
+
+```r
 path <- "data/books_alpha.xlsx"
 
 read_excel(path, sheet = 1, range = "C1:D9")
+```
 
+```
+## # A tibble: 8 x 2
+##   `Pulitzer Prize winners (Ficti… `Askmetafilter.com Books Everyone Shoul…
+##   <chr>                           <chr>                                   
+## 1 (1918-2010)                     http://ask.metafilter.com/42616/A-book-…
+## 2 A Bell for Adano                1984.0                                  
+## 3 A Confederacy of Dunces         Aesop's Fables                          
+## 4 A Death in the Family           Against the Grain                       
+## 5 A Fable                         Alice's Adventures in Wonderland        
+## 6 A Good Scent from a Strange Mo… An Explanation of the Birds             
+## 7 A Summons to Memphis            Animal Farm                             
+## 8 A Thousand Acres                Atlas Shrugged
+```
+
+```r
 read_excel(path, sheet = "Top titles", range = cell_rows(1:9))
+```
 
+```
+## # A tibble: 8 x 2
+##   Title                                `No of mentions`
+##   <chr>                                           <dbl>
+## 1 To Kill a Mockingbird                           11.0 
+## 2 1984.0                                           9.00
+## 3 Catch-22                                         9.00
+## 4 Crime and Punishment                             9.00
+## 5 One Hundred Years of Solitude                    9.00
+## 6 The Catcher in the Rye                           9.00
+## 7 The Great Gatsby                                 9.00
+## 8 The Hitchhiker's Guide to the Galaxy             9.00
+```
+
+```r
 read_excel(path, sheet = 1, range = cell_cols("B:D"))
+```
 
+```
+## # A tibble: 113 x 3
+##    `Desert Island Discs book choices` `Pulitzer Prize w… `Askmetafilter.c…
+##    <chr>                              <chr>              <chr>            
+##  1 (Feb 2008-Feb 2011)                (1918-2010)        http://ask.metaf…
+##  2 Anna Karenina                      A Bell for Adano   1984.0           
+##  3 Blake                              A Confederacy of … Aesop's Fables   
+##  4 Breakfast of Champions             A Death in the Fa… Against the Grain
+##  5 Decline and Fall                   A Fable            Alice's Adventur…
+##  6 His Dark Materials                 A Good Scent from… An Explanation o…
+##  7 Jonathan Strange and Mr Norrell    A Summons to Memp… Animal Farm      
+##  8 Legacy                             A Thousand Acres   Atlas Shrugged   
+##  9 Les Misérables                     Advise and Consent Aunt Julia and t…
+## 10 Letters to a Young Poet            Alice Adams        Blindness        
+## # ... with 103 more rows
 ```
 
 
@@ -1113,12 +2001,53 @@ read_excel(path, sheet = 1, range = cell_cols("B:D"))
 You can also use a list version of the apply function to read in all sheets at once. Each sheet will be stored as a data frame inside of a list object. You can subset the sheet you would like to work with (or work with all sheets at once - see the purrr package for working with list objects).
 
 
-```{r}
+
+```r
 ex <- lapply(excel_sheets(path), read_excel, path = path)
 
 str(ex)
-str(ex[[3]])
+```
 
+```
+## List of 4
+##  $ :Classes 'tbl_df', 'tbl' and 'data.frame':	999 obs. of  16 variables:
+##   ..$ UK's most borrowed library books                                     : chr [1:999] "July 2009-June 2010" "206 bones" "7th heaven" "7th heaven" ...
+##   ..$ Desert Island Discs book choices                                     : chr [1:999] "(Feb 2008-Feb 2011)" "Anna Karenina" "Blake" "Breakfast of Champions" ...
+##   ..$ Pulitzer Prize winners (Fiction 1948-, Novel pre-1948)               : chr [1:999] "(1918-2010)" "A Bell for Adano" "A Confederacy of Dunces" "A Death in the Family" ...
+##   ..$ Askmetafilter.com Books Everyone Should Read                         : chr [1:999] "http://ask.metafilter.com/42616/A-book-everyone-should-read [accessed 23 Feb 2011]" "1984.0" "Aesop's Fables" "Against the Grain" ...
+##   ..$ LibraryThing.com (top 50)                                            : chr [1:999] "http://www.librarything.com/z_books.php [accessed 23 Feb 2011]" "1984.0" "American Gods" "Angels and Demons" ...
+##   ..$ World Book Day Poll (top 100)                                        : chr [1:999] "Latest relevant poll year is 2007: http://www.guardian.co.uk/books/2007/mar/01/news (Books you can't live witho"| __truncated__ "1984.0" "A Christmas Carol" "A Confederacy of Dunces" ...
+##   ..$ Telegraph 100 Novels Everyone Should Read                            : chr [1:999] "(2009) http://www.telegraph.co.uk/culture/books/4248401/100-novels-everyone-should-read.html [accessed 24 Feb 2011]" "1984.0" "A Bend in the River" "A Dance to the Music of Time" ...
+##   ..$ Goodreads.com Books That Everyone Should Read At Least Once (top 100): chr [1:999] "(Created July 11, 2008, ongoing) http://www.goodreads.com/list/show/264.Books_that_everyone_should_read_at_leas"| __truncated__ "1984.0" "A Christmas Carol" "A Clockwork Orange" ...
+##   ..$ Bspcn.com 30 Books Everyone Should Read Before They're 30            : chr [1:999] "(2010) http://www.bspcn.com/2010/08/03/30-books-everyone-should-read-before-they’re-thirty/ [accessed 24 Feb 2011]" "1984.0" "A Clockwork Orange" "Catch-22" ...
+##   ..$ Guardian 1000 Novels Everyone Must Read                              : chr [1:999] "(2009) http://www.guardian.co.uk/books/2009/jan/23/bestbooks-fiction [accessed 24 Feb 2011]" "1974.0" "1977.0" "1984.0" ...
+##   ..$ Bighow.com 100 Greatest Books of All Time Everyone Must Read         : chr [1:999] "(2010) http://bighow.com/news/the-100-greatest-books-of-all-time-everyone-must-read [accessed 24 Feb 2011]" "1984.0" "A Clockwork Orange" "A Confederacy of Dunces" ...
+##   ..$ The Best 100 Lists Top 100 Novels of All Time                        : chr [1:999] "http://www.thebest100lists.com/best100novels/ [accessed 24 Feb 2011, last updated 2 Feb 2011]" "1984.0" "A Clockwork Orange" "A Confederacy of Dunces" ...
+##   ..$ Man Booker Prize winners                                             : chr [1:999] "(1969-2010)" "Amsterdam" "Disgrace" "G." ...
+##   ..$ Oprah's Book Club List                                               : chr [1:999] "http://www.oprah.com/oprahsbookclub/Complete-List-of-Oprahs-Book-Club-Books [updated Sept 17 2010, accessed 24 Feb 2011]" "A Million Little Pieces" "A New Earth" "Anna Karenina" ...
+##   ..$ 1001 Books You Should Read Before You Die (Cassell, 2005)            : chr [1:999] "we didn't include this" NA NA NA ...
+##   ..$ Author's own top five...                                             : logi [1:999] NA NA NA NA NA NA ...
+##  $ :Classes 'tbl_df', 'tbl' and 'data.frame':	2003 obs. of  2 variables:
+##   ..$ Title         : chr [1:2003] "1974.0" "1977.0" "1984.0" "1984.0" ...
+##   ..$ No of mentions: num [1:2003] NA NA NA NA NA NA NA NA NA NA ...
+##  $ :Classes 'tbl_df', 'tbl' and 'data.frame':	246 obs. of  2 variables:
+##   ..$ Title         : chr [1:246] "To Kill a Mockingbird" "1984.0" "Catch-22" "Crime and Punishment" ...
+##   ..$ No of mentions: num [1:246] 11 9 9 9 9 9 9 9 8 8 ...
+##  $ :Classes 'tbl_df', 'tbl' and 'data.frame':	0 obs. of  1 variable:
+##   ..$ add to Books Everyone Should Read http://www.brainpickings.org/index.php/2012/01/30/writers-top-ten-favorite-books/?fb_action_ids=10203689181294105&fb_action_types=og.likes: logi(0)
+```
+
+```r
+str(ex[[3]])
+```
+
+```
+## Classes 'tbl_df', 'tbl' and 'data.frame':	246 obs. of  2 variables:
+##  $ Title         : chr  "To Kill a Mockingbird" "1984.0" "Catch-22" "Crime and Punishment" ...
+##  $ No of mentions: num  11 9 9 9 9 9 9 9 8 8 ...
+```
+
+```r
 excel2 <- data.frame(ex[[2]])
 ```
 
@@ -1130,7 +2059,8 @@ _Googlesheets_ have a similar structure to excel workbooks, the only tricky thin
 
 If you load googlesheets and ask it to list the googlesheets you have, googlesheets will open a new window and ask if it can have access to your googlesheets. If you say yes, you can return to R and breathe a sigh of relief. Your import of your googlesheets worked.
 
-```{r eval=FALSE}
+
+```r
 library(googlesheets) #hypothetically already loaded from earlier code
 
 gs_ls()
@@ -1140,14 +2070,16 @@ gs_ls()
 
 Register the sheet you are going to use with the sheet title.
 
-```{r eval=FALSE}
+
+```r
 books <- gs_title('Books Everyone Should Read')
 ```
 
 How many worksheets are in this spreadsheet and what are their names?
 
 
-```{r eval=FALSE}
+
+```r
 books$n_ws
 
 books$ws$ws_title
@@ -1156,14 +2088,15 @@ books$ws$ws_title
 
 Read in the worksheet you want to access. You can do this using the worksheet number.
 
-```{r eval=FALSE}
-book_sheet1 <- gs_read(books, ws = 1)
 
+```r
+book_sheet1 <- gs_read(books, ws = 1)
 ```
 
 The last 2 columns don't hold much information. Specify a subset of this sheet. You can do this by selecting the cell columns, or by using the 'excel-like' cell range.
 
-```{r eval=FALSE}
+
+```r
 booksfilt <- gs_read(books, ws = 1, range = cell_cols(1:14))
 #or
 booksfilt <- gs_read(books, ws = 1, range = "A1:N1000")
@@ -1171,9 +2104,9 @@ booksfilt <- gs_read(books, ws = 1, range = "A1:N1000")
 
 You can also specify the worksheet by name, and sort by rows. Here are the top recommendations for what to read, when you are no longer in academia.
 
-```{r eval=FALSE}
-books_alpha <- gs_read(books, ws = "Top titles", range = cell_rows(1:10)) 
 
+```r
+books_alpha <- gs_read(books, ws = "Top titles", range = cell_rows(1:10)) 
 ```
 
 
@@ -1181,13 +2114,15 @@ One nice thing about the googlesheets package is that all of the functions begin
 
 
 You 'download' ie. save this file to your computer.
-```{r eval=FALSE}
+
+```r
 gs_download(gs_title("Books Everyone Should Read"), to = "books_alpha.xlsx", overwrite = TRUE)
 ```
 
 You can upload sheets you've made to googlesheets. This file is now in your google account online.
 
-```{r eval=FALSE}
+
+```r
 books <- gs_upload("books_alpha.xlsx")
 ```
 
