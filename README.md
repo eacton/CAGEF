@@ -1,16 +1,24 @@
----
-title: "Centre for the Analysis of Genome Evolution & Function (CAGEF)"
-output: 
-  html_document:
-          toc: TRUE
-          toc_depth: 3
----
+Centre for the Analysis of Genome Evolution & Function (CAGEF)
+_______________________________________________________________________________________
+
+
+- [Bioinformatics Training & Outreach Material](#Bioinformatics Training & Outreach Material)
+  * [The Intro to R Lesson Series](#The Intro to R Lesson Series)
+    + [Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R](#Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R)
+    + [Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data](#Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data)
+    + [Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures](#Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures)
+    + [Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions](#Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions)
+    + [Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job](#Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job)
+    + [Lesson 6 - Scaling up your Analyses: Writing Functions in R](#Lesson 6 - Scaling up your Analyses: Writing Functions in R)
+  * [Resources](#Resources)
+    
+
 
 #Bioinformatics Training & Outreach Material
 
-This repository is part of the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. These courses and workshops were developed based on feedback of the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology at the University of Toronto.
+>This repository is part of the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. These courses and workshops were developed based on feedback of the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology at the University of Toronto.
 
-</br>
+<!-- toc -->
 
 ##The Intro to R Lesson Series
 
