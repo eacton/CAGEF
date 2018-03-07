@@ -27,7 +27,30 @@ __Objective:__ At the end of this session you will know the principles of tidy d
 _Why tidy data?_
 
 - Know the principles of tidy data and why it is useful to have your data in this format
+
+Tidy data has:
+
+1. Each variable forms a column.
+2. Each observation forms a row.
+3. Each type of observational unit forms a table.
+
+This seems pretty straight forward, and it is. It is the datasets you get that will not be straight forward.
+
+The 5 most common problems with messy datasets are:
+-common headers are values, not variable names
+-multiple variables in one column
+-variables stored in both rows and columns
+-a single variable stored in multiple tables 
+-multiple types of observational units stored in the same table
+
+Fortunately, Hadley has also given us the tools to solve these problems.
+
 - Intro to the tidyverse
+
+![](img/HadleyObama2.png)
+
+![](img/tidyverse1.png)
+
 
 _Data Manipulation_     
 
@@ -61,7 +84,8 @@ http://seananderson.ca/2013/10/19/reshape.html
 https://github.com/wmhall/tidyr_lesson/blob/master/tidyr_lesson.md     
 http://stat545.com/block009_dplyr-intro.html     
 http://stat545.com/block010_dplyr-end-single-table.html
-
+http://vita.had.co.nz/papers/tidy-data.pdf
+https://thinkr.fr/tidyverse-hadleyverse/
 
 ##Post-Lesson Assessment
 ***
