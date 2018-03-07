@@ -2,29 +2,31 @@ Centre for the Analysis of Genome Evolution & Function (CAGEF)
 _______________________________________________________________________________________
 
 
-- [Bioinformatics Training & Outreach Material](#Bioinformatics Training & Outreach Material)
-  * [The Intro to R Lesson Series](#The Intro to R Lesson Series)
-    + [Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R](#Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R)
-    + [Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data](#Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data)
-    + [Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures](#Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures)
-    + [Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions](#Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions)
-    + [Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job](#Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job)
-    + [Lesson 6 - Scaling up your Analyses: Writing Functions in R](#Lesson 6 - Scaling up your Analyses: Writing Functions in R)
-  * [Resources](#Resources)
+- [Bioinformatics Training & Outreach Material](#heading)
+  * [The Intro to R Lesson Series](#sub-heading)
+    + [Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R](#sub-sub-heading)
+    + [Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data](#sub-sub-heading)
+    + [Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures](#sub-sub-heading)
+    + [Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions](#sub-sub-heading)
+    + [Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job](#sub-sub-heading)
+    + [Lesson 6 - Scaling up your Analyses: Writing Functions in R](#sub-sub-heading)
+  * [Resources](#sub-heading)
     
+#Heading Levels
+    
+<!-- toc -->
 
-
-#Bioinformatics Training & Outreach Material
+##Bioinformatics Training & Outreach Material
 
 >This repository is part of the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. These courses and workshops were developed based on feedback of the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology at the University of Toronto.
 
-<!-- toc -->
 
-##The Intro to R Lesson Series
+
+###The Intro to R Lesson Series
 
 ***
 
-###Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R
+####Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R
 __Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
 
 
@@ -62,7 +64,7 @@ _Reading in data & writing data_
 - corresponding write fxns
 
 ***
-###Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data 
+####Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data 
 
 
 __Objective:__ At the end of this session you will know the principles of tidy data, and be able to subset and transform your data, merge data frames, and perform simple calculations.
@@ -98,7 +100,7 @@ _Simple Statistics_
         
 
 ***
-###Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures
+####Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures
 
 __Objective:__ At the end of this session you will be able to use ggplot2() to make a ton of different types of plots with your data for both for data exploration and for publication-quality figures.   
 
@@ -131,7 +133,7 @@ _Taking it up a notch_ - Maybe preview these, and if time vote on one to look at
 - genomics data - ggbio
    
 ***   
-###Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions
+####Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions
 
 __Objective:__ At the end of this session you will be able to use regular expressions to 'clean' your data. You will also learn R markdown and be able to render your R code into slides, a pdf, html, a word document, or a notebook.
 
@@ -154,7 +156,7 @@ _R markdown and knitr_
 - sharing on Rpubs
 
 ***    
-###Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job
+####Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job
 
 __Objective:__ At the end of this session you will be able to perform simple and multiple linear or non-linear regression on your dataset. You will be able to interpret the statistics that come out of this model, and use these statistics to select the best model for the job. 
 
@@ -189,7 +191,7 @@ _Running the Model_
 - Predictors 
 
 ******    
-###Lesson 6 - Scaling up your Analyses: Writing Functions in R
+####Lesson 6 - Scaling up your Analyses: Writing Functions in R
 
 __Objective:__ At the end of this session you will be able to write functions, making your coding more efficient, understandable, reproducible, and hopefully less frustrating.
 
@@ -212,7 +214,7 @@ _Testing Arguments and Validity of your Function_
 - testthat() for formal unit testing
 
 ***
-##Resources
+###Resources
 
 https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd     
 http://stat545.com/block002_hello-r-workspace-wd-project.html  
