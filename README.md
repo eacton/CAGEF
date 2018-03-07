@@ -5,20 +5,19 @@ ________________________________________________________________________________
 - [Bioinformatics Training & Outreach Material](#heading)
   * [The Intro to R Lesson Series](#sub-heading)
     + [Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R](#sub-sub-heading)
-    + [Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data](#sub-sub-heading)
-    + [Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures](#sub-sub-heading)
-    + [Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions](#sub-sub-heading)
-    + [Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job](#sub-sub-heading)
-    + [Lesson 6 - Scaling up your Analyses: Writing Functions in R](#sub-sub-heading)
-  * [Resources](#sub-heading)
+    + [Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data](#sub-sub-heading-1)
+    + [Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures](#sub-sub-heading-2)
+    + [Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions](#sub-sub-heading-3)
+    + [Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job](#sub-sub-heading-4)
+    + [Lesson 6 - Scaling up your Analyses: Writing Functions in R](#sub-sub-heading-5)
+  * [Resources](#sub-heading-1)
     
-#Heading Levels
-    
+#Contents
 <!-- toc -->
 
 ##Bioinformatics Training & Outreach Material
 
->This repository is part of the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. These courses and workshops were developed based on feedback of the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology at the University of Toronto.
+This repository is part of the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. These courses and workshops were developed based on feedback of the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology at the University of Toronto.    
 
 
 
