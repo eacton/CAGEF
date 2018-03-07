@@ -1,0 +1,79 @@
+---
+title: "Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data"
+output: 
+  html_document:
+          keep_md: yes
+          toc: TRUE
+          toc_depth: 3
+  html_notebook:
+          toc: TRUE
+          toc_depth: 3
+---
+***
+
+Approximate time: 2 hours per lesson
+
+ _Each lesson will have:_
+ 
+ - Comprehension questions as we go along on Socrative.
+ - How to read help pages online.
+ - Give the class a function not previously used during the lesson and have them figure out what it does and how to use it.
+ - Each lesson will start from an excel spreadsheet with imperfect data.
+
+
+***
+__Objective:__ At the end of this session you will know the principles of tidy data, and be able to subset and transform your data, merge data frames, and perform simple calculations.
+
+_Why tidy data?_
+
+- Know the principles of tidy data and why it is useful to have your data in this format
+- Intro to the tidyverse
+
+_Data Manipulation_     
+
+- dplyr() 
+      + how to subset data
+      + how to order data
+      + filter(), select(), arrange(), glance()
+- tidyr() 
+      + transforming data from wide to long and back again (or reshape2())
+      + spread(), gather(), unite(), separate()
+- merging/adding data 
+      + join/merge functions
+      + binding functions with caveats
+      
+_Simple Statistics_
+  
+- how to perform simple calculations and store the results in new columns
+    + using summarize() to get mean, median, modes, quantiles and standard deviations, variance, skew
+    + using mutate() to add columns 
+    + using group_by() to perform calculations on factored data 
+    
+- revisitng the apply() function
+
+- performing t-tests in R
+        
+__Challenge:__     
+Take one of the provided test sets and calculate an average that requires subsetting and grouping. Perhaps make a separate question for say, a choice of 4 datasets (cars, iris, gapminder, lotr). (Add t-test question with the gapminder dataset).
+  
+__Resources:__  
+http://seananderson.ca/2013/10/19/reshape.html     
+https://github.com/wmhall/tidyr_lesson/blob/master/tidyr_lesson.md     
+http://stat545.com/block009_dplyr-intro.html     
+http://stat545.com/block010_dplyr-end-single-table.html
+
+
+##Post-Lesson Assessment
+***
+_Questions_
+
+- Speed: Too slow, too fast, just right
+- Content: Too easy, too hard, just right
+- From the description of the lesson, the content was what I expected to learn. T/F
+- What was the most useful thing you learned?
+- What was the least useful thing?
+- Comments/suggestions for improvement.
+
+
+##Notes
+***

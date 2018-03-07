@@ -1,0 +1,69 @@
+---
+title: "Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions"
+output: 
+  html_document:
+          keep_md: yes
+          toc: TRUE
+          toc_depth: 3
+  html_notebook:
+          toc: TRUE
+          toc_depth: 3
+---
+***
+
+
+Approximate time: 2 hours per lesson
+
+ _Each lesson will have:_
+ 
+ - Comprehension questions as we go along on Socrative.
+ - How to read help pages online.
+ - Give the class a function not previously used during the lesson and have them figure out what it does and how to use it.
+ - Each lesson will start from an excel spreadsheet with imperfect data.
+
+***
+__Objective:__ At the end of this session you will be able to use regular expressions to 'clean' your data. You will also learn R markdown and be able to render your R code into slides, a pdf, html, a word document, or a notebook.
+
+_Intro to regular expressions_
+
+- escape characters, character classes, quantifiers and all that jazz
+
+_Text manipulation with stringr/i_
+
+- searching for a word/patterns, subset using character strings, collapse and expand character vectors, replacement, replacing NAs, splitting/combining at a delimiter
+
+_R markdown and knitr_
+
+- r markdown syntax
+    +  making things pretty: adding table of contents, images, hyperlinks, urls
+- knitr code chunk options
+    + suppressing pkg load warnings, eval = T/F, re-running some chunks while keeping others in memory
+    + tables in knitr
+- rendering to pdf, html, word documents (any interest in slides?)
+- sharing on Rpubs
+
+__Challenge:__      
+
+Take the original gapminder dataset and covert it to the 'clean' dataset found in the gapminder package / find some horrible dataset to clean. Present in a knitr table, explaining some of your data cleaning challenges in rmarkdown. Knit the document to a pdf.
+   
+__Resources:__      
+http://stat545.com/block028_character-data.html     
+http://r4ds.had.co.nz/strings.html
+    
+
+##Post-Lesson Assessment
+***
+_Questions_
+
+- Speed: Too slow, too fast, just right
+- Content: Too easy, too hard, just right
+- From the description of the lesson, the content was what I expected to learn. T/F
+- What was the most useful thing you learned?
+- What was the least useful thing?
+- Comments/suggestions for improvement.
+
+
+##Notes
+***
+- Possibly split lesson 5 into 2 lessons: Basic Statistics and Linear regression
+- Maybe switch Regex and Plotting lesson order
