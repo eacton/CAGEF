@@ -10,7 +10,7 @@ ________________________________________________________________________________
     + [Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions](#sub-sub-heading-3)
     + [Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job](#sub-sub-heading-4)
     + [Lesson 6 - Scaling up your Analyses: Writing Functions in R](#sub-sub-heading-5)
-  * [Resources](#sub-heading-1)
+  * [Resources](#resources)
     
 #Contents
 
@@ -18,7 +18,7 @@ ________________________________________________________________________________
 
 
 
-<!-- tocstop -->
+
 
 ##Bioinformatics Training & Outreach Material
 
