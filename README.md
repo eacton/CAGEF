@@ -13,7 +13,12 @@ ________________________________________________________________________________
   * [Resources](#sub-heading-1)
     
 #Contents
+
 <!-- toc -->
+
+
+
+<!-- tocstop -->
 
 ##Bioinformatics Training & Outreach Material
 
@@ -232,4 +237,4 @@ http://r4ds.had.co.nz/strings.html
 https://github.com/jennybc/ggplot2-tutorial
 http://stat545.com/block011_write-your-own-function-01.html     
 http://stat545.com/block011_write-your-own-function-02.html     
-http://stat545.com/block011_write-your-own-function-03.html     
+http://stat545.com/block011_write-your-own-function-03.html
