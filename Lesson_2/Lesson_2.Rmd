@@ -44,7 +44,7 @@ In this lesson we want to answer 3 simple questions:
 - Which site had the greatest number of bacteria?
 
 
-To help us be able to answer these questions, we are going to learn the main functions in the `dplyr()` and `tidyr()` packages.
+To help us be able to answer these questions, we are going to learn the main functions in the `dplyr()` and `tidyr()` packages. At the same time, I am going to show you how to subset in base R (ie. without a fancy package that makes your life easier). The reason that I am doing this is because while a lot of new packages play nicely with the functions we are going to use today, not all packages or data structures will. However, these functions are so intuitive and save so much time that they are worth learning.
 
 Let's read in our dataset, store it in a variable, and remind ourselves about the structure.
 
@@ -54,31 +54,36 @@ dat <- read.csv("data/SPE_pitlatrine.csv", stringsAsFactors = FALSE)
 str(dat)
 
 ```
-The `dplyr` package, and some other common packages for data frame manipulation allow the use of the pipe function, `%>%`. This is equivalent to `|` for any unix peeps. This allows for a way of 'piping' the output of a function to the next function without making intermediate variables, which can save a ton of typing and environment clutter.
 
-We are going to see how this works in conjunction with our first function, `filter()`. It is often extremely useful to subset your data by some logical condition (`==` (equal to), `|` (or)). In this case, we want to keep all rows that have either Fusobacteria or Methanobacteria.
+##A quick intro to base R subsetting
 
-```{r}
-filter(dat, Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
-#equivalent to
-dat %>% filter(Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
-#equivalent to
-dat %>% filter(., Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
-
-```
-What about this?
+It is often extremely useful to subset your data by some logical condition (`==` (equal to), `|` (or)). In this case, we want to keep all rows that have either Fusobacteria or Methanobacteria.
 
 ```{r}
-dat %>% filter(., Taxa == "Fusobacteria" | "Methanobacteria")
+
+dat[dat$Taxa == "Fusobacteria" | dat$Taxa == "Methanobacteria", ]
+
 ```
-
-
-What about this?
+Will this work?
 
 ```{r}
-dat %>% filter(., Taxa == c("Fusobacteria","Methanobacteria"))
+
+dat[dat$Taxa == "Fusobacteria" | "Methanobacteria", ]
+
 ```
 
+What about this? 
+
+```{r}
+dat[dat$Taxa == c("Fusobacteria", "Methanobacteria"), ]
+```
+
+***
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pause.jpg){width=100px}
+
+</div>
 
 
 A quick reminder/warning about vectors. 
@@ -95,6 +100,57 @@ c(1,2,3,4) + c(10,11)
 ```
 
 In the above example, I am looking for when Taxa is equal to Fusobacteria or Taxa is equal to Methanobacteria. However, with a vector, I am alternately going through all values of Taxa and looking to see does the first value match Fusobacteria? does the second value match Methanobacteria? then the vector recycles to does the third value match Fusobacteria? does the 4th value match Methanobacteria? That is how we end up with a data frame of zero observations when we are expecting a data frame of 2 observations.
+
+</br>
+
+***
+You can also filter to obtain more specific subsets using other logical operators (`&` (and), `!=` (does not equal)).
+
+```{r}
+dat[dat$Taxa == "Bacteroidia" & dat$T_2_1 != 0, ]
+```
+
+You can select columns by name or position, and reorder them as well (you can also do this for rows).
+
+```{r}
+dat[ , c("T_2_1", "Taxa")]
+#equivalent to
+dat[ , 2:1]
+
+dat[ , "Taxa"]
+#equivalent to
+dat[ , -1]
+
+```
+You can arrange your data frame alphabetically or by value using `order()`.
+
+```{r}
+dat[order(dat$Taxa, decreasing = TRUE), ] 
+```
+You can order your data frame by multiple variables.
+
+```{r}
+dat[order(dat$T_2_1, decreasing = TRUE), ] 
+dat[order(dat$T_2_1, dat$T_2_12, decreasing = TRUE), ] 
+dat[order(dat$T_2_1, dat$T_2_12, dat$T_2_9, decreasing = TRUE), ]
+```
+
+
+***
+
+The `dplyr` package, and some other common packages for data frame manipulation allow the use of the pipe function, `%>%`. This is equivalent to `|` for any unix peeps. This allows for a way of 'piping' the output of a function to the next function without making intermediate variables, which can save a ton of typing and environment clutter.
+
+We are going to see how this works in conjunction with our first function, `filter()`. It is often extremely useful to subset your data by some logical condition (`==` (equal to), `|` (or)). In this case, we want to keep all rows that have either Fusobacteria or Methanobacteria.
+
+```{r}
+filter(dat, Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
+#equivalent to
+dat %>% filter(Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
+#equivalent to
+dat %>% filter(., Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
+
+```
+
 
 
 You can also filter to obtain more specific subsets using other logical operators (`&` (and), `!=` (does not equal)).
