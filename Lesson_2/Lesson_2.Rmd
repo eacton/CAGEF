@@ -11,14 +11,33 @@ output:
 ---
 ***
 
-Approximate time: 2 hours per lesson
+![](img/magic.png){width=400px} 
 
- _Each lesson will have:_
- 
- - Comprehension questions as we go along on Socrative.
- - How to read help pages online.
- - Give the class a function not previously used during the lesson and have them figure out what it does and how to use it.
- - Each lesson will start from an excel spreadsheet with imperfect data.
+</br>
+
+##A quick intro to the intro to R Lesson Series
+
+</br>
+
+This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This course was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
+
+
+
+This lesson is the second in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
+
+
+![](img/data-science-explore.png)
+
+</br>
+
+How do we get there? Today we are going to be learning about how to subset and filter our data and perform all of the manipulations one has to do in daily coding life. We will learn about tidy data and how it makes data analysis less of a pain. We will perform some basic statistics on our newly transformed dataset. Next week we will learn how to tidy our data, subset and merge data and generate descriptive statistics. The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. After that, we will make all sorts of plots - from simple data exploration to interactive plots - this is always a fun lesson. And then lastly, we will learn to write some functions, which really can save you time and help scale up your analyses.
+
+
+![](img/spotify-howtobuildmvp.gif)
+
+</br>
+
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/....), it will help me further develop this course and would be greatly appreciated. 
 
 
 ***
@@ -38,13 +57,13 @@ Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
 
 ***
 
-In this lesson we want to answer 3 simple questions: 
-- Which latrine depth has the greatest mean number of OTUs?
-- Is there more Clostridia in Tanzania or Vietnam?
-- Which site had the greatest number of bacteria?
+    In this lesson we want to answer 3 simple questions: 
+    - Which latrine depth has the greatest mean number of OTUs?
+    - Is there more Clostridia in Tanzania or Vietnam?
+    - Which site had the greatest number of bacteria?
 
 
-To help us be able to answer these questions, we are going to learn the main functions in the `dplyr()` and `tidyr()` packages. At the same time, I am going to show you how to subset in base R (ie. without a fancy package that makes your life easier). The reason that I am doing this is because while a lot of new packages play nicely with the functions we are going to use today, not all packages or data structures will. However, these functions are so intuitive and save so much time that they are worth learning.
+To help us be able to answer these questions, we are going to learn the main functions in the `dplyr()` and `tidyr()` packages. First, I am going to show you how to subset in __base R__ (ie. without a fancy package that makes your life easier). The reason that I am doing this is because while a lot of new packages play nicely with the functions we are going to use today, not all packages or data structures will work with these functions. However, the package functions will save so much time and typing that they are definitely worth learning.
 
 Let's read in our dataset, store it in a variable, and remind ourselves about the structure.
 
@@ -57,7 +76,7 @@ str(dat)
 
 ##A quick intro to base R subsetting
 
-It is often extremely useful to subset your data by some logical condition (`==` (equal to), `|` (or)). In this case, we want to keep all rows that have either Fusobacteria or Methanobacteria.
+It is often extremely useful to subset your data by some logical condition (`==` (equal to), `|` (or)). For example, we may want to keep all rows that have either Fusobacteria or Methanobacteria.
 
 ```{r}
 
@@ -66,7 +85,7 @@ dat[dat$Taxa == "Fusobacteria" | dat$Taxa == "Methanobacteria", ]
 ```
 Will this work?
 
-```{r}
+```{r error = TRUE}
 
 dat[dat$Taxa == "Fusobacteria" | "Methanobacteria", ]
 
@@ -86,20 +105,20 @@ dat[dat$Taxa == c("Fusobacteria", "Methanobacteria"), ]
 </div>
 
 
-A quick reminder/warning about vectors. 
+##A quick reminder/warning about vectors. 
 
 ```{r}
 c(1,2,3) + c(10,11)
 c(1,2,3,4) + c(10,11)
 
 ```
-Vectors recycle. In this case, R gave us a warning that our vectors don't match. However, R will assume that you know what you are doing as long as your vector is a multiple of your other vector.
+Vectors recycle. In this case, R gave us a warning that our vectors don't match. However, R will assume that you know what you are doing as long as your one of your vector lengths is a multiple of your other vector length.
 
 ```{r}
 c(1,2,3,4) + c(10,11)
 ```
 
-In the above example, I am looking for when Taxa is equal to Fusobacteria or Taxa is equal to Methanobacteria. However, with a vector, I am alternately going through all values of Taxa and looking to see does the first value match Fusobacteria? does the second value match Methanobacteria? then the vector recycles to does the third value match Fusobacteria? does the 4th value match Methanobacteria? That is how we end up with a data frame of zero observations when we are expecting a data frame of 2 observations.
+In the above example, I am looking through the Taxa column for when Taxa is equal to Fusobacteria or Taxa is equal to Methanobacteria. However, with a vector, I am alternately going through all values of Taxa and asking: does the first value match Fusobacteria? does the second value match Methanobacteria? Then the vector recycles and asks: does the third value match Fusobacteria? does the 4th value match Methanobacteria? We end up with a data frame of zero observations when we are expecting a data frame of 2 observations. Be careful when filtering. You have been warned.
 
 </br>
 
@@ -219,7 +238,7 @@ dat %>% select(-Taxa) %>% transmute(total_OTUs = rowSums(.))
 
 dplyr has one more super-useful function, `summarize()`, but I'm going to wait until the data is in a better format to showcase it. Speaking of which...  
 
-
+##Intro to tidy data
 
 _Why tidy data?_
 
@@ -234,23 +253,37 @@ Tidy data has:
 This seems pretty straight forward, and it is. It is the datasets you get that will not be straight forward.
 
 The 5 most common problems with messy datasets are:
--common headers are values, not variable names
--multiple variables in one column
--variables stored in both rows and columns
--a single variable stored in multiple tables 
--multiple types of observational units stored in the same table
+- common headers are values, not variable names
+- multiple variables in one column
+- variables stored in both rows and columns
+- a single variable stored in multiple tables 
+- multiple types of observational units stored in the same table
 
 Fortunately, Hadley has also given us the tools to solve these problems.
 
-- Intro to the tidyverse
+###Intro to the tidyverse
+
+The tidyverse is the universe of packages created by Hadley Wickham for data analysis. There are packages to help import, tidy, transform, model and visualize data. His packages are pretty popular, so he made a package to load all of his packages at once. This wrapper package is tidyverse. In this lesson series we have used readr and readxl, and we will be using dplyr and tidyr today, and stringr and ggplot2 in future lessons. Install the package now.
+
+```{r eval=FALSE}
+install.packages("tidyverse")
+```
+
+
+![](img/tidyverse1.png)
+
+Hadley has a large fan-base. Someone even made a plot of Hadley using ggplot2.
+
 
 ![](img/HadleyObama2.png)
 
-![](img/tidyverse1.png)
-In this lesson we want to answer 3 simple questions: 
-- Which latrine depth has the greatest mean number of OTUs?
-- Is there more Clostridia in Tanzania or Vietnam?
-- Which site had the greatest number of bacteria?
+
+Back to the normalverse...
+
+    In this lesson we want to answer 3 simple questions: 
+    - Which latrine depth has the greatest mean number of OTUs?
+    - Is there more Clostridia in Tanzania or Vietnam?
+    - Which site had the greatest number of bacteria?
 
 
 
@@ -389,19 +422,30 @@ Use the `spread()` function to turn unite_dat into the wide shape of our origina
 
 ***
 
+##Intro to joins
+
+Often we have more than one data table that shares a common attribute. For example, with our current dataset, we have metadata as well as our OTU table, both of which have site IDs (ie. T_2_9). We want to add our metadata to the table.
+
+There are 2 types of joins:
+- mutating joins - uses a key to match observations and combines variables from 2 tables (adding columns and potentially rows)
+- filtering joins - uses a key to match observations, to subset observations (rows)
+
+Joins can be tricky, so we are going to use a subset of our data such that we can easily observe the output of our join.
 
 
 
 
-_Data Manipulation_     
 
-base r way of...
-      + how to subset data
-      + how to order data
+
 
 
 - merging/adding data 
       + join/merge functions
+      
+http://stat545.com/bit001_dplyr-cheatsheet.html
+http://dplyr.tidyverse.org/articles/two-table.html
+http://r4ds.had.co.nz/relational-data.html#join-problems
+
       + binding functions with caveats
       
 _Simple Statistics_
@@ -417,7 +461,7 @@ _Simple Statistics_
 __Challenge:__     
 Take one of the provided test sets and calculate an average that requires subsetting and grouping. Perhaps make a separate question for say, a choice of 4 datasets (cars, iris, gapminder, lotr). (Add t-test question with the gapminder dataset).
   
-__Resources:__  
+#Resources:  
 http://seananderson.ca/2013/10/19/reshape.html     
 https://github.com/wmhall/tidyr_lesson/blob/master/tidyr_lesson.md     
 http://stat545.com/block009_dplyr-intro.html     
@@ -425,17 +469,21 @@ http://stat545.com/block010_dplyr-end-single-table.html
 http://vita.had.co.nz/papers/tidy-data.pdf
 https://thinkr.fr/tidyverse-hadleyverse/
 
-##Post-Lesson Assessment
+
+#Post-Lesson Assessment
 ***
-_Questions_
 
-- Speed: Too slow, too fast, just right
-- Content: Too easy, too hard, just right
-- From the description of the lesson, the content was what I expected to learn. T/F
-- What was the most useful thing you learned?
-- What was the least useful thing?
-- Comments/suggestions for improvement.
+Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
+https://www.surveymonkey.com/r/GD3KJB9
 
+</br>
 
-##Notes
 ***
+
+</br>
+
+Thanks for coming!!!
+
+![](img/rstudio-bomb.png){width=300px}
+
+
