@@ -46,7 +46,7 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 __Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
 
 
-##A quick intro to the R environment##
+##A quick intro to the R environment
 
 To paraphrase the CRAN gurus:     
 https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf
@@ -157,7 +157,7 @@ How do I start?
 - Break your code into sections to make it readable.
 - Give your objects informative object names __that are not the same as function names__. 
 
-_Key-board shortcuts:_
+_Keyboard shortcuts:_
 
 Comment/Uncomment lines `CTRL + SHIFT + C`     
 Reflow Comment (Wrap comments) `CTRL + SHIFT + /`
@@ -223,7 +223,7 @@ __Beginner Advice__
 ![](img/beginner.png){width=100px}
 </div>
 
-Try to solve a problem yourself, but set a 30 minute cutoff on being stuck. At this level, people have had and solved your problem. Many beginners get frustrated because they get stuck and take hours to solve a problem themselves. Set your limit, stay within it, then go online and get help.
+Try to solve a problem yourself, but set a 30 minute cutoff on being stuck. At this level, many people have had and solved your problem. Beginners get frustrated because they get stuck and take hours to solve a problem themselves. Set your limit, stay within it, then go online and get help.
 </br>
 </br>
 
@@ -932,7 +932,7 @@ library(devtools) # or library('devtools')
 
 ```
 
-Likewise, you can install many packages at once:
+Likewise, you can load many packages at once:
 
 ```{r eval = FALSE}
 library(c('dplyr', 'readxl'))
@@ -945,7 +945,7 @@ source("https://bioconductor.org/biocLite.R")
 biocLite("BiocInstaller")
 ```
 
-Or you can install the BiocInstaller package. I prefer this as I always forget the url.
+Or you can use the BiocInstaller package to install other packages.
 
 ```{r eval = FALSE}
 library(BiocInstaller)
