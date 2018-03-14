@@ -340,7 +340,7 @@ __Challenge__
 
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/turtle_challenge.jpg){width=100px}
+![](img/pug_challenge1.jpeg){width=100px}
 
 </div>
 
@@ -397,7 +397,7 @@ __Challenge__
 
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/turtle_challenge.jpg){width=100px}
+![](img/pug_challenge1.jpeg){width=100px}
 
 </div>
 
@@ -411,7 +411,7 @@ __Challenge__
 
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/turtle_challenge.jpg){width=100px}
+![](img/Pug-vs-Food-1.jpg){width=100px}
 
 </div>
 
@@ -422,23 +422,265 @@ Use the `spread()` function to turn unite_dat into the wide shape of our origina
 
 ***
 
+##Adding rows and columns to data frames
+
+We are going to use a subset of a second data frame from the same study to use in our join lesson. We are going to remove some observations and add an observation so the names of the samples we are working with are not exactly equal.
+
+```{r}
+jdat <- read.csv("data/ENV_pitlatrine.csv", stringsAsFactors = FALSE)
+
+str(jdat)
+```
+
+To remove some observations and variables, we can specify which rows/columns we do/do not want to keep.
+
+```{r}
+jdat <- jdat[-c(4,7,9,12,20,22) , 1:4]
+
+```
+To add an observation, we need to add a row of data. `rbind()` is a base R function that will add a row to the end of a data frame. 
+
+Public Service Announcement: IF YOU ADD A VECTOR TO YOUR DATA FRAME rbind() does not check to make sure your value belongs to a column and will not throw an error if the length of the added row is longer or shorter than your data frame. For example, I want to add an extra row to my data frame which is in the form of a vector which is supposed to be of length 4 (the number of columns in my data frame). Here, I have simply created a vector with a new sample name, and then have used the `rep()` function to repeat the value 5, 3 times. This is added to the data frame jdat.
+
+```{r}
+jdat <- rbind(jdat, c("V_2_10", rep(5, 3)))
+tail(jdat)
+```
+However, if I had created a vector that was too short, the vector would be recycled to match the number of columns in the data frame. We can see that the sample name has been recycled in the TS column.
+
+```{r}
+rbind(jdat, c("V_2_10", rep(5, 2))) %>% tail()
+```
+
+If the vector is too long, it will simply be truncated to the match the number of columns in the data frame.
+```{r}
+rbind(jdat, c("V_2_10", rep(5, 16))) %>% tail()
+```
+
+
+If you give rbind() your column information AS A VECTOR, it ignores it. This is the correct column information.
+
+```{r}
+rbind(jdat, c(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
+```
+
+This is the incorrect column information. Note that the row is added regardless. One other note of importance is that, because vectors must be coerced to one data type, in this case a character vector. We started with both character and numeric data in jdat. In adding a vector, the entire data frame (think of each column as a vector) has been coerced to character data.
+
+```{r}
+rbind(jdat, c(Turtles = "V_2_10", pH = 5, Volatility = 5, TS = 5)) %>% tail()
+```
+This will not happen if you USE A LIST with rbind(), because lists can hold multiple types of data. This is a lesson in using correct data structures. USING A LIST rbind() will warn us appropriately if our row is of an inappropriate length.
+
+```{r error = TRUE}
+rbind(jdat, list("V_2_10", rep(5, 16))) %>% tail()
+```
+And it will warn us when our names do not match.
+
+```{r error = TRUE}
+rbind(jdat, list(Turtles = "V_2_10", pH = 5, Volatility = 5, TS = 5)) %>% tail()
+```
+
+
+There is an equivalent function from dplyr, `bind_rows()', which tries to save you from errors by ensuring that your column identifiers match. If you do not give column identifiers, whether you are trying to add a vector or a list, it will not add your row to the frame.
+
+```{r error = TRUE}
+bind_rows(jdat, c("V_2_10", rep(5, 2))) %>% tail()
+```
+```{r error = TRUE}
+bind_rows(jdat, list("V_2_10", rep(5, 2))) %>% tail()
+```
+If you give bind_rows() the correct column information in vector format, it will not add your row. However, it actually gives you the useful error that your character types are not matching. If you character types do match (ie. if our data frame was all character data), the row would be added.
+
+```{r}
+bind_rows(jdat, c(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
+```
+
+If you give bind_rows() the correct column information in list format, it will add your row.
+
+```{r}
+bind_rows(jdat, list(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
+```
+
+bind_rows() has a different behaviour than rbind() when column names do not match. It will match your columns as much as possible, and then create new columns for the data that does not fit at the end of your data frame. Not that 'NA's will be created for all missing data.
+
+```{r error = TRUE}
+bind_rows(jdat, list(Turtles = "V_2_10", pH = 5, Volatility = 5, TS = 5)) %>% tail()
+```
+Whenever you are adding rows or columns, I strongly advise checking to see that the dimensions of the resulting data frame are what you expect. 
+```{r}
+jdat <- bind_rows(jdat, list(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) 
+dim(jdat)
+```
+
+
+
+#rbind - correct titles but not in order vs bind rows
+#character type the same re:rbind vector
+
+
 ##Intro to joins
 
-Often we have more than one data table that shares a common attribute. For example, with our current dataset, we have metadata as well as our OTU table, both of which have site IDs (ie. T_2_9). We want to add our metadata to the table.
+Often we have more than one data table that shares a common attribute. For example, with our current dataset, we have other variables (such as pH) for a sample, as well as our OTU table, both of which have site IDs (ie. T_2_9). We want to mergee these into one table.
+
+
+Joins can be tricky, so we are going to use a subset of our tidy data such that we can easily observe the output of our join.
+
+```{r}
+str(spread_dat)
+```
+When we look at our data frames we can see that they have matching information in 'Samples'. This is the 'key' that we can match up our data frames by. We are going to reduce our dataset by only keeping non-zero values so we can see how the join functions work a bit more easily. We have already removed some observations from jdat and added a row, just so our key columns don't match perfectly.
+
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=100px}
+
+</div>
+
+Filter spread_dat to remove all non-zero values, and store it in an object ndat. How many rows in spread_dat had the value of zero? Sort ndat to keep the top 20 rows with the highest OTUs.
+
+</br>
+
+</br>
+
+***
 
 There are 2 types of joins:
 - mutating joins - uses a key to match observations and combines variables from 2 tables (adding columns and potentially rows)
 - filtering joins - uses a key to match observations, to subset observations (rows)
 
-Joins can be tricky, so we are going to use a subset of our data such that we can easily observe the output of our join.
+
+Inner join is a mutating join.  Inner join "returns all rows from x where there are matching values in y, and all columns from x and y. If there are multiple matches between x and y, all combination of the matches are returned."
+
+A set of graphics from R for Data Science makes the description clearer:
+![](img/join-inner.png)  
 
 
+```{r}
+
+inner_join(ndat, jdat, by = c("Site" = "Samples"))
+
+```
+
+We can see that there are 18 rows in the resulting data frame. and that columns from jdat have been added. Rows from ndat that did not have a matching site in jdat were removed.
+
+Outer joins are a set of mutating joins. There are 3 outer joins: left, right, and full.
+![](img/join-outer.png)
 
 
+left_join() return all rows from x, and all columns from x and y. Rows in x with no match in y will have NA values in the new columns. If there are multiple matches between x and y, all combinations of the matches are returned.
 
 
+```{r}
+
+left_join(ndat, jdat, by = c("Site" = "Samples"))
+
+```
+That means that we will have our 20 rows from ndat, and any items that weren't found in jdat, in this case T_2_2 and T_4_3 will be filled with NA.
+
+right_join() "returns all rows from y, and all columns from x and y. Rows in y with no match in x will have NA values in the new columns. If there are multiple matches between x and y, all combinations of the matches are returned."
+
+```{r}
+
+right_join(ndat, jdat, by = c("Site" = "Samples"))
+
+```
+
+That means that we will have our 75 rows from jdat, and any items that weren't found in ndat will be filled with NA. Since there are 76 rows in the final data frame, this means there must have been multiple rows matching from ndat. In other words, we had a duplicate key (Site) in ndat.
+
+![](img/join-one-to-many.png)
 
 
+Let's try to find which Site was duplicated. n() is a special dplyr function that counts the number of observations in a group. It can also be used with summarize() and mutate().
+
+```{r}
+right_join(ndat, jdat, by = c("Site" = "Samples")) %>% 
+  group_by(Site) %>% 
+  filter(n()>1)
+
+```
+
+Note that Bacteriodia and Clostridia have different OTUs (from ndat), but the same pH, Temp and TS (from jdat). 
+
+
+***
+__Challenge__
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=100px}
+
+</div>
+
+Use mutate() and summarise() with n() to find the duplicated Site.
+
+</br>
+
+</br>
+
+***
+
+Note that if both of our data frames had duplicated keys, all possible matches would be retruned.
+
+![](img/join-many-to-many.png)
+
+
+full_join "returns all rows and all columns from both x and y. Where there are not matching values, returns NA for the one missing."
+
+
+```{r}
+
+full_join(ndat, jdat, by = c("Site" = "Samples"))
+
+```
+The full join returns all of the rows from both ndat and jdat - we have the 75 rows from jdat, plus the second V_17_1 as seen in the right_join and T_2_2 and T_4_3 that we present in ndat but NA in jdat for a total of 78 rows.
+
+Lastly, we have the 2 filtering joins. These will not add columns, but rather filter the rows based on what is present in the second data frame.
+
+semi_join() "returns all rows from x where there are matching values in y, keeping just columns from x. A semi join differs from an inner join because an inner join will return one row of x for each matching row of y, where a semi join will never duplicate rows of x."
+
+```{r}
+semi_join(ndat, jdat, by = c("Site" = "Samples"))
+
+```
+semi_join() returns the 18 rows of ndat that have a Site match in jdat. Note that the columns from jdat have not been added.
+
+anti_join() "returns all rows from x where there are not matching values in y, keeping just columns from x."
+
+```{r}
+anti_join(ndat, jdat, by = c("Site" = "Samples"))
+
+```
+This returns our 2 rows in ndat that did not have a match in jdat. Note that the columns from jdat have not been added.
+
+***
+__Challenge__
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=100px}
+
+</div>
+
+Given the definitions for the inner_, left_, right_, full_, semi_ and anti_joins, what would you expect the resulting data frame to be if jdat and ndat were reversed? Write down the number of rows and columns you would expect the data frame to have, then run the code. Did you find any surprises?
+
+</br>
+
+</br>
+
+***
+
+__Challenge__
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=100px}
+
+</div>
+
+Base R has a function that does join operations called `merge()`. What would be the code equivalent to the left_join of ndat and jdat? 
+
+</br>
+
+</br>
+
+***
 - merging/adding data 
       + join/merge functions
       
