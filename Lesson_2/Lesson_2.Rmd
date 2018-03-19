@@ -1,5 +1,5 @@
 ---
-title: "Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data"
+title: "Lesson 2 - Intro to Tidy Data: How to Transform and Manipulate your Data Efficiently"
 output: 
   html_document:
           keep_md: yes
@@ -11,7 +11,7 @@ output:
 ---
 ***
 
-![](img/magic.png){width=400px} 
+![](img/Data-Wrangling-Is-The.jpg){width=400px} 
 
 </br>
 
@@ -37,8 +37,9 @@ How do we get there? Today we are going to be learning about how to subset and f
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/....), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/SMGKMCS), it will help me further develop this course and would be greatly appreciated. 
 
+</br>
 
 ***
 __Objective:__ At the end of this session you will know the principles of tidy data, and be able to subset and transform your data, merge data frames, and perform simple calculations.
@@ -57,14 +58,6 @@ Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
 
 ***
 
-    In this lesson we want to answer 3 simple questions: 
-    - Which latrine depth has the greatest mean number of OTUs?
-    - Is there more Clostridia in Tanzania or Vietnam?
-    - Which site had the greatest number of bacteria?
-
-
-To help us be able to answer these questions, we are going to learn the main functions in the `dplyr()` and `tidyr()` packages. First, I am going to show you how to subset in __base R__ (ie. without a fancy package that makes your life easier). The reason that I am doing this is because while a lot of new packages play nicely with the functions we are going to use today, not all packages or data structures will work with these functions. However, the package functions will save so much time and typing that they are definitely worth learning.
-
 Let's read in our dataset, store it in a variable, and remind ourselves about the structure.
 
 ```{r}
@@ -74,9 +67,23 @@ str(dat)
 
 ```
 
+
+    In this lesson we want to answer 3 simple questions: 
+    - Which latrine depth has the greatest mean number of OTUs?
+    - Is there more Clostridia in Tanzania or Vietnam?
+    - Which site had the greatest number of bacteria?
+
+
+To help us be able to answer these questions, we are going to learn how to manipulate our data.
+
+![](img/making_progress.png){width=200px} 
+
+First, I am going to show you how to subset the data and answers these questions in __base R__. Then I will show you how do the same thing with the popular packages `dplyr` and `tidyr`. These packages are great for data wrangling __with data frames__. While a lot of new packages play nicely with the functions we are going to use today, but not all packages or data structures will work with `dplyr` functions. You will see `dplyr` and `tidyr` used for data cleaning and the manipulation of data frames.
+
+
 ##A quick intro to base R subsetting
 
-It is often extremely useful to subset your data by some logical condition (`==` (equal to), `|` (or)). For example, we may want to keep all rows that have either Fusobacteria or Methanobacteria.
+It is often extremely useful to subset your data by some logical condition (`==` (equal to), `!=` (not equal to), `>` (greater than), `>=` (greater than or equal to), `<` (less than), `<=` (less than or equal to), `&` (and), `|` (or)). For example, we may want to keep all rows that have either Fusobacteria or Methanobacteria.
 
 ```{r}
 
@@ -96,6 +103,8 @@ What about this?
 ```{r}
 dat[dat$Taxa == c("Fusobacteria", "Methanobacteria"), ]
 ```
+
+Wait a second - why is this answer different?
 
 ***
 
@@ -118,50 +127,103 @@ Vectors recycle. In this case, R gave us a warning that our vectors don't match.
 c(1,2,3,4) + c(10,11)
 ```
 
-In the above example, I am looking through the Taxa column for when Taxa is equal to Fusobacteria or Taxa is equal to Methanobacteria. However, with a vector, I am alternately going through all values of Taxa and asking: does the first value match Fusobacteria? does the second value match Methanobacteria? Then the vector recycles and asks: does the third value match Fusobacteria? does the 4th value match Methanobacteria? We end up with a data frame of zero observations when we are expecting a data frame of 2 observations. Be careful when filtering. You have been warned.
+Let's go back to our example.
+
+```{r eval = FALSE}
+dat[dat$Taxa == "Fusobacteria" | dat$Taxa == "Methanobacteria", ]
+```
+In this code, I am looking through the Taxa column for when Taxa is equal to Fusobacteria OR Taxa is equal to Methanobacteria.
+
+
+```{r eval = FALSE}
+dat[dat$Taxa == c("Fusobacteria", "Methanobacteria"), ]
+```
+
+However, with a vector, I am alternately going through all values of Taxa and asking: does the first value match Fusobacteria? does the second value match Methanobacteria? Then the vector recycles and asks: does the third value match Fusobacteria? does the 4th value match Methanobacteria? We end up with a data frame of zero observations when we are expecting a data frame of 2 observations. 
+
+
+Be careful when filtering. You have been warned.
 
 </br>
 
 ***
-You can also filter to obtain more specific subsets using other logical operators (`&` (and), `!=` (does not equal)).
+You can also filter to obtain more specific subsets using more than one column. To see if there were any Bacteroidia at site T_2_1, you can use the following filter:
 
 ```{r}
 dat[dat$Taxa == "Bacteroidia" & dat$T_2_1 != 0, ]
 ```
 
-You can select columns by name or position, and reorder them as well (you can also do this for rows).
+You can select columns by name or position, and reorder them as well (you can also do this for rows). I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. To inspect the first 10 rows of an output, you can use the `head()` function. Likewise, to inspect the last 10 rows, you can use the `tail()` function. Try changing the output to show only the first 5 rows of your data frame.
 
 ```{r}
-dat[ , c("T_2_1", "Taxa")]
+head(dat[ , c("T_2_9", "T_2_10", "Taxa")])
 #equivalent to
-dat[ , 2:1]
+head(dat[ , c(9:10,1)])
 
-dat[ , "Taxa"]
+tail(dat[ , "Taxa"])
 #equivalent to
-dat[ , -1]
+tail(dat[ , 1])
 
 ```
 You can arrange your data frame alphabetically or by value using `order()`.
 
 ```{r}
-dat[order(dat$Taxa, decreasing = TRUE), ] 
+head(dat[order(dat$Taxa, decreasing = TRUE), ]) 
 ```
 You can order your data frame by multiple variables.
 
 ```{r}
-dat[order(dat$T_2_1, decreasing = TRUE), ] 
-dat[order(dat$T_2_1, dat$T_2_12, decreasing = TRUE), ] 
-dat[order(dat$T_2_1, dat$T_2_12, dat$T_2_9, decreasing = TRUE), ]
+head(dat[order(dat$T_2_1, decreasing = TRUE), ])
+head(dat[order(dat$T_2_1, dat$T_2_12, decreasing = TRUE), ]) 
+head(dat[order(dat$T_2_1, dat$T_2_12, dat$T_2_9, decreasing = TRUE), ])
 ```
+Now that we have some basic data-wrangling skills:
 
+    - Which latrine depth has the greatest mean number of OTUs?
+    - Is there more Clostridia in Tanzania or Vietnam?
+    - Which site had the greatest number of bacteria?
+
+
+How easy is it to answer these questions with the data in this 'messy' format?
+
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=200px}
+
+</div>
+
+Answer our 3 questions using the base R.
+
+</br>
+</br>
 
 ***
 
-The `dplyr` package, and some other common packages for data frame manipulation allow the use of the pipe function, `%>%`. This is equivalent to `|` for any unix peeps. This allows for a way of 'piping' the output of a function to the next function without making intermediate variables, which can save a ton of typing and environment clutter.
+##A quick intro to the dplyr package
 
-We are going to see how this works in conjunction with our first function, `filter()`. It is often extremely useful to subset your data by some logical condition (`==` (equal to), `|` (or)). In this case, we want to keep all rows that have either Fusobacteria or Methanobacteria.
+The `dplyr` package was made by Hadley Wickham to help make data manipulation with data frames easier. It has 5 major functions:
+  1. `filter()` - subsets your data frame by row
+  2. `select()` - subsets your data frame by columns
+  3. `arrange()` - orders your data frame alphabetically or numerically by ascending or descending variables
+  4. `mutate(), transmute()` - create a new column of data
+  5. `summarize()` - reduces data to summary values (for example using `mean()`, `sd()`, `min()`, `quantile()`, etc)
+  
+  
+The `dplyr` package, and some other common packages for data frame manipulation allow the use of the pipe function, `%>%`. This is equivalent to `|` for any unix peeps. 'Piping' allows the output of a function to be passed to the next function without making intermediate variables. Piping can save typing, make your code more readable, and reduce clutter in your global environment from variables you don't need.
+
+Let's load the library.
 
 ```{r}
+library(dplyr)
+```
+
+We are going to see how pipes work in conjunction with our first function, `filter()`. We are going to use the same subsetting examples so you can see how the syntax differs from base R. In this case, we want to keep all rows that have either Fusobacteria or Methanobacteria. 
+
+```{r}
+
 filter(dat, Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
 #equivalent to
 dat %>% filter(Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
@@ -172,46 +234,62 @@ dat %>% filter(., Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
 
 
 
-You can also filter to obtain more specific subsets using other logical operators (`&` (and), `!=` (does not equal)).
+To see if there were any Bacteroidia at site T_2_1, you can use the following filter:
 
 ```{r}
 dat %>% filter(., Taxa == "Bacteroidia" & T_2_1 != 0)
 ```
 
-You can subset columns by using the `select()` function. You can also reorder columns while using this function. I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column.
+You can subset columns by using the `select()` function. You can also reorder columns while using this function. I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. `head()` and `tail()` can also be used with pipes to look at your output.
 
 ```{r}
 
-dat %>% select(T_2_9, T_2_10, Taxa)
-
+dat %>% select(T_2_9, T_2_10, Taxa) %>% head()
 ```
-If I wanted to perform a calculation, I would want to simply remove Taxa since it is of character type. If your data is unique you may want to retain your character data as rownames.
+If I wanted to perform a calculation, I would want to exclude Taxa since it is of character type and not used in the calculation. If your data is unique you may want to retain your character data as rownames.
 
 ```{r}
 rownames(dat) <- dat$Taxa
-dat %>% select(-Taxa)
+dat %>% select(-Taxa) %>% head()
 
 ```
-You can also select multiple columns at a time. For example, if we only wanted the samples from Vietnam, we could use "starts_with".
+`dplyr` also includes some helper functions that allow you to select variables based on their names. For example, if we only wanted the samples from Vietnam, we could use "starts_with".
 
 ```{r}
-dat %>% select(starts_with("V"))
+dat %>% select(starts_with("V")) %>% head()
 
 ```
 
 Or all latrines with depths of 4 cm.
 
 ```{r}
-dat %>% select(ends_with("4"))
+dat %>% select(ends_with("4")) %>% head()
 
 ```
-You can look up other dplyr 'select_helpers' in the help menu.
 
-The arrange() function helps you to sort your data. The default is ordered from smallest to largest (or a-z for character data). You can switch the order as shown below. 
+You can look up other `dplyr` 'select_helpers' in the help menu.
+
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=200px}
+
+</div>
+
+Check out 'select_helpers' in the help menu. Grab all of the columns that contain depths for Well 2, whether it is from Vietnam or Tanzania.
+
+</br>
+
+</br>
+***
+
+The `arrange()` function helps you to sort your data. The default is ordered from smallest to largest (or a-z for character data). You can switch the order as shown below. 
 
 I have added a few extra lines of code to show you how we can start building code that passes a result to the next function instead of creating a bunch of new variables to store data in between functions being exectuted. However, if you get more than 2 pipes `%>%` it gets hard to follow for a reader (or yourself after 5 minutes). Starting a new line after each pipe, allows a reader to easily see which function is operating and makes it easier to follow your logic.
 
-```{r}
+```{r eval = c(3:8)}
 dat %>% select(Taxa, T_2_1) %>% arrange(desc(T_2_1)) %>% filter(T_2_1 !=0) %>% filter(Taxa != "Unknown") %>% unique()
 #equivalent to
 dat %>% 
@@ -220,29 +298,46 @@ dat %>%
   filter(T_2_1 !=0) %>%
   filter(Taxa != "Unknown") %>%
   unique()
-```
 
-`mutate()` is a function to create new column, most often the product of a calculation. For example, let's calculate the total number of OTUs for each bacteria. You must specify a column name for the column you are creating. `transmute()' will also create a new variable, but it will drop the existing variables.
+```
+`
+`unique()` is a function that removes duplicate rows. How many rows did it remove in this case?
+
+
+`mutate()` is a function to create new column, most often the product of a calculation. For example, let's calculate the total number of OTUs for each bacteria. You must specify a column name for the column you are creating. `transmute()` will also create a new variable, but it will drop the existing variables (it will give you a single column of your new variable).
 
 ```{r}
 
-dat %>% select(-Taxa) %>% mutate(total_OTUs = rowSums(.))
+dat %>% select(-Taxa) %>% mutate(total_OTUs = rowSums(.)) %>% head()
 
 ```
 Versus:
 
 ```{r}
+#maintains answer in data frame
 dat %>% select(-Taxa) %>% transmute(total_OTUs = rowSums(.))
-
+#answer is now a vector
+dat %>% select(-Taxa) %>% rowSums()
 ```
 
-dplyr has one more super-useful function, `summarize()`, but I'm going to wait until the data is in a better format to showcase it. Speaking of which...  
+You may have noticed that I included `.` in the bracket for rowSums. In this case, an error would be generated with empty brackets that argument 'x' is missing with no default. You need to specify your input if you are inside a nested function. Note that if I use `rowSums` outside of another function, I do not need to specify the data frame.
+
+Note: it is up to you whether you want to keep your data in a data frame or switch to a vector if you are dealing with a single variable. Using a `dplyr` function will maintain your data in a data frame. Using non-dplyr functions will switch your data to a vector if you have a single variable.
+
+
+`dplyr` has one more super-useful function, `summarize()` which allows us to get summary statistics on data. I'll give one example and then we'll come back to this function once our data is in 'tidy' format. with `n()` we are simply going to count the instances of a Taxa. We can arrange the results in descending order to see if there is more than one row per Taxa. Can anyone think of another way to see if there is more than one row per Taxa? 
+
+```{r}
+dat %>% group_by(Taxa) %>% summarize(n = n()) %>% arrange(desc(.))
+```
+
+
 
 ##Intro to tidy data
 
 _Why tidy data?_
 
-- Know the principles of tidy data and why it is useful to have your data in this format
+Data cleaning (or dealing with 'messy' data) accounts for a huge chunk of data scientist's time. Ultimately, we want to get our data into a 'tidy' format where it is easy to manipulate, model and visualize. Having a consistent data structure and tools that work with that data structure can help this process along.
 
 Tidy data has:
 
@@ -250,7 +345,7 @@ Tidy data has:
 2. Each observation forms a row.
 3. Each type of observational unit forms a table.
 
-This seems pretty straight forward, and it is. It is the datasets you get that will not be straight forward.
+This seems pretty straight forward, and it is. It is the datasets you get that will not be straight forward. Having a map of where to take your data is helpful to unraveling its structure and getting it into a usable format.
 
 The 5 most common problems with messy datasets are:
 - common headers are values, not variable names
@@ -263,7 +358,7 @@ Fortunately, Hadley has also given us the tools to solve these problems.
 
 ###Intro to the tidyverse
 
-The tidyverse is the universe of packages created by Hadley Wickham for data analysis. There are packages to help import, tidy, transform, model and visualize data. His packages are pretty popular, so he made a package to load all of his packages at once. This wrapper package is tidyverse. In this lesson series we have used readr and readxl, and we will be using dplyr and tidyr today, and stringr and ggplot2 in future lessons. Install the package now.
+The tidyverse is the universe of packages created by Hadley Wickham for data analysis. There are packages to help import, tidy, transform, model and visualize data. His packages are pretty popular, so he made a package to load all of his packages at once. This wrapper package is `tidyverse`. In this lesson series we have used `readr` and `readxl`, and we will be using `dplyr` and `tidyr` today, and `stringr` and `ggplot2` in future lessons. Install the package now.
 
 ```{r eval=FALSE}
 install.packages("tidyverse")
@@ -272,7 +367,7 @@ install.packages("tidyverse")
 
 ![](img/tidyverse1.png)
 
-Hadley has a large fan-base. Someone even made a plot of Hadley using ggplot2.
+Hadley has a large fan-base. Someone even made a plot of Hadley using his own package, `ggplot2`.
 
 
 ![](img/HadleyObama2.png)
@@ -280,14 +375,30 @@ Hadley has a large fan-base. Someone even made a plot of Hadley using ggplot2.
 
 Back to the normalverse...
 
-    In this lesson we want to answer 3 simple questions: 
     - Which latrine depth has the greatest mean number of OTUs?
     - Is there more Clostridia in Tanzania or Vietnam?
     - Which site had the greatest number of bacteria?
 
 
+How easy is it to answer these questions with the data in its 'messy' format?
 
-How easy is it to answer these questions with the data in this format?
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=200px}
+
+</div>
+
+Answer our 3 questions using the `dplyr`.
+
+</br>
+</br>
+
+***
+
+###Assessing our data frame
 
 Which tidy data rules might our data frame break?
 
@@ -299,38 +410,49 @@ Some of the Taxa also appear to have an additional variable of information (ie. 
 
 Each result is the same observational unit (ie. relative abundances of bacteria), so having one table is fine.
 
-We can use the `gather()` function to collect our non-variable columns. This will make our dataset 'long' instead of 'wide'. 
+##Intro to tidyr
 
-First we have to load our libraries. This will include the tidyr package that the gather() function is from.
+`tidyr` is a package with functions that help us turn our 'messy' data into 'tidy' data. It has 2 major workhorse functions and 2 other tidying functions:
+
+1. `gather()` - convert a data frame from wide to long format
+2. `spread()` - convert a data frame from long to wide format
+3. `separate()` - split a column into 2 or more columns based on a string separator
+4. `unite()` - merge 2 or more columns into 1 column using a string separator
+
+`gather()` and `spread()` rely on key-value pairs to collapse or expand columns.
+
+First let's load our library. Loading `tidyverse` will include the `tidyr` package that the `gather()` function is from.
 
 ```{r}
 library(tidyverse)
 ```
+Note that 8 different packages are loaded, and that 2 functions from the `stats` package have been replaced by functions of the same name by `dplyr`. Note that you can still access the `stats` version of the function by calling it directly as `stats::filter()`. 
 
-Gather takes key-value pairing. We need to provide it with our new columns. The first argument is the 'key'. In this case we want the column names that represent our Sites. The next argument is the 'value' the are our relative abundance values or OTUs. The third argument is all of the columns that we need to gather. You can specify the columns by listing their names or positions. In this example '-' means every column except Taxa.
+We can use the `gather()` function to collect our non-variable columns. This will make our dataset 'long' instead of 'wide'. 
+We need to provide `gather()` with our new columns. The first argument is our data frame, the second argument is the 'key'. In this case we want the column names that represent our Sites. The next argument is the 'value', which are our relative abundance values or OTUs. The third argument is all of the columns that we need to gather. You can specify the columns by listing their names or positions. In this example `-` means every column except Taxa.
 
-```{r}
+```{r }
 spread_dat <- gather(dat, Site, OTUs, T_2_1:V_9_4)
 
-dat %>% gather(Site, OTUs, T_2_1:V_9_4)
+dat %>% gather(Site, OTUs, T_2_1:V_9_4) %>% head()
 #equivalent to
-dat %>% gather(Site, OTUs, 2:82)
+dat %>% gather(Site, OTUs, 2:82) %>% head()
 #equivalent to
-dat %>% gather(Site, OTUs, -Taxa)
+dat %>% gather(Site, OTUs, -Taxa) %>% head()
 #equivalent to
-dat %>% gather(Site, OTUs, -1)
+dat %>% gather(Site, OTUs, -1) %>% head()
 ```
 
-Note how the dimensions of your dataframe have changed.
+Note how the dimensions of your dataframe have changed. spread_dat is now in a long format instead of wide.
 
-Next, we can use the `separate()` function to get the Country, Latrine_Number, and Depth information from our Site column. separate() takes in your dataframe, the name of the column to be split, the name of your new columns, and the character that you want to split the columns  by, in this case an underscore. Note that the defalut is to remove your original column - if you want to keep it, you can add the additional argument `remove = FALSE`, keeping in mind that you now have redundant data. We may also want to do this for the 'Group' of Acidobacteria.
+Next, we can use the `separate()` function to get the Country, Latrine_Number, and Depth information from our Site column. `separate()` takes in your dataframe, the name of the column to be split, the name of your new columns, and the character that you want to split the columns by (in this case an underscore). Note that the default is to remove your original column - if you want to keep it, you can add the additional argument `remove = FALSE`, keeping in mind that you now have redundant data. We may also want to do this for the 'Group' of Acidobacteria. Try the code, but do not save the answer in a variable.
 
 ```{r}
 split_dat <- spread_dat %>% separate(Site, c("Country", "Latrine_Number", "Depth"), sep = "_")
 #equivalent to
 split_dat <- spread_dat %>% separate(Site, c("Country", "Latrine_Number", "Depth"), sep = "_", remove = TRUE)
 
-split_dat <- split_dat %>% separate(Taxa, c("Taxa", "Group"), sep = "_Gp")
+split_dat %>% separate(Taxa, c("Taxa", "Group"), sep = "_Gp")
 ```
 We get a warning from R that it has filled in 'NA' for the bacteria that did not have groups. Note that I chose to split Taxa using '_Gp' since I did not need 'Gp'. 
 
@@ -340,7 +462,7 @@ __Challenge__
 
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/pug_challenge1.jpeg){width=100px}
+![](img/pug_challenge1.jpeg){width=200px}
 
 </div>
 
@@ -352,9 +474,27 @@ Use the `glimpse()` function to look  at the type of each variable in our new da
 
 ***
 
-#Or maybe get them to try a calculation with depth and get them to trouble-shoot??
 
-Let's go back to the questions we wanted to ask at the beginning of the lesson:
+
+
+Now that we have tidy data:
+
+    - Which latrine depth has the greatest mean number of OTUs?
+    - Is there more Clostridia in Tanzania or Vietnam?
+    - Which site had the greatest number of bacteria?
+
+
+__Okay, Go!__
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/giphy.gif){width=200px}
+
+</div>
+
+</br>
+</br>
+
+
 
 Which latrine depth has the greatest mean number of OTUs?
 
@@ -381,7 +521,18 @@ split_dat %>% group_by(Country, Latrine_Number, Depth) %>% summarize(sum = sum(O
 
 ```
 
+***
 
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/easy-1.png){width=100px}
+
+</div>
+
+</br>
+
+</br>
+
+***
 
 
 
@@ -393,15 +544,16 @@ __Honest answer:__ Note that our original data frame was 52 rows and expanded to
 
 
 ***
+
 __Challenge__ 
 
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/pug_challenge1.jpeg){width=100px}
+![](img/pug_challenge1.jpeg){width=200px}
 
 </div>
 
-Collapse Country, Latrine_Number and Depth back into one variable, 'Site', using the `unite()' function. Store the output in a data frame called unite_dat.
+Collapse Country, Latrine_Number and Depth back into one variable, 'Site', using the `unite()` function. Store the output in a data frame called unite_dat.
 
 </br>
 </br>
@@ -411,7 +563,7 @@ __Challenge__
 
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/Pug-vs-Food-1.jpg){width=100px}
+![](img/pug_challenge1.jpeg){width=200px}
 
 </div>
 
@@ -443,8 +595,8 @@ To add an observation, we need to add a row of data. `rbind()` is a base R funct
 Public Service Announcement: IF YOU ADD A VECTOR TO YOUR DATA FRAME rbind() does not check to make sure your value belongs to a column and will not throw an error if the length of the added row is longer or shorter than your data frame. For example, I want to add an extra row to my data frame which is in the form of a vector which is supposed to be of length 4 (the number of columns in my data frame). Here, I have simply created a vector with a new sample name, and then have used the `rep()` function to repeat the value 5, 3 times. This is added to the data frame jdat.
 
 ```{r}
-jdat <- rbind(jdat, c("V_2_10", rep(5, 3)))
-tail(jdat)
+rbind(jdat, c("V_2_10", rep(5, 3))) %>% tail()
+
 ```
 However, if I had created a vector that was too short, the vector would be recycled to match the number of columns in the data frame. We can see that the sample name has been recycled in the TS column.
 
@@ -458,10 +610,10 @@ rbind(jdat, c("V_2_10", rep(5, 16))) %>% tail()
 ```
 
 
-If you give rbind() your column information AS A VECTOR, it ignores it. This is the correct column information.
+If you give rbind() your column information AS A VECTOR, it ignores it. This is the correct column information with the order of the columns altered. Note that the number 6 ends up in the Temp column despite being labelled pH.
 
 ```{r}
-rbind(jdat, c(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
+rbind(jdat, c(Samples = "V_2_10", Temp = 5, pH = 6, TS = 5)) %>% tail()
 ```
 
 This is the incorrect column information. Note that the row is added regardless. One other note of importance is that, because vectors must be coerced to one data type, in this case a character vector. We started with both character and numeric data in jdat. In adding a vector, the entire data frame (think of each column as a vector) has been coerced to character data.
@@ -486,19 +638,33 @@ There is an equivalent function from dplyr, `bind_rows()', which tries to save y
 ```{r error = TRUE}
 bind_rows(jdat, c("V_2_10", rep(5, 2))) %>% tail()
 ```
+
+
 ```{r error = TRUE}
 bind_rows(jdat, list("V_2_10", rep(5, 2))) %>% tail()
 ```
-If you give bind_rows() the correct column information in vector format, it will not add your row. However, it actually gives you the useful error that your character types are not matching. If you character types do match (ie. if our data frame was all character data), the row would be added.
+If you give bind_rows() the correct column information in vector format, it will only add a vector as a row IF THE CHARACTER TYPE MATCHES ALL DATA FRAME COLUMN TYPES (ie. if our data frame was all character data). Otherwise, it actually gives you the useful error that your character types are not matching. 
 
-```{r}
+```{r error = TRUE}
 bind_rows(jdat, c(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
 ```
 
-If you give bind_rows() the correct column information in list format, it will add your row.
+_Sanity check:_ A sanity check is a check to make sure things are turning out as you expect them to - it is a way of checking your (or others') assumptions. It is particularly useful in the data exploration stage when you are getting familiar with your data before you try to run any type of model. However, it is also good to make sure a function is behaving as you expect it to, or trouble-shooting odd behaviours.  
+
+If we coerce the entire data frame to character type (using our dangerous rbind + vector syntax), we can now use bind_rows() since our the vector will be coerced to a character type AND the data frame matches this type in every column.
 
 ```{r}
-bind_rows(jdat, list(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
+jdat2 <- rbind(jdat, c("V_2_10", rep(5, 3))) 
+
+bind_rows(jdat2, c(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
+```
+
+
+If you give bind_rows() the correct column information in list format, it will add your row. Here is a sanity check on switching the order of the columns again.
+
+```{r}
+
+bind_rows(jdat, list(Samples = "V_2_10", Temp = 5, pH = 6, TS = 5)) %>% tail()
 ```
 
 bind_rows() has a different behaviour than rbind() when column names do not match. It will match your columns as much as possible, and then create new columns for the data that does not fit at the end of your data frame. Not that 'NA's will be created for all missing data.
@@ -514,10 +680,6 @@ dim(jdat)
 
 
 
-#rbind - correct titles but not in order vs bind rows
-#character type the same re:rbind vector
-
-
 ##Intro to joins
 
 Often we have more than one data table that shares a common attribute. For example, with our current dataset, we have other variables (such as pH) for a sample, as well as our OTU table, both of which have site IDs (ie. T_2_9). We want to mergee these into one table.
@@ -528,7 +690,7 @@ Joins can be tricky, so we are going to use a subset of our tidy data such that 
 ```{r}
 str(spread_dat)
 ```
-When we look at our data frames we can see that they have matching information in 'Samples'. This is the 'key' that we can match up our data frames by. We are going to reduce our dataset by only keeping non-zero values so we can see how the join functions work a bit more easily. We have already removed some observations from jdat and added a row, just so our key columns don't match perfectly.
+Joins use a 'key' by which we can match up our data frames. When we look at our data frames we can see that they have matching information in 'Samples'.  We are going to reduce our dataset by only keeping non-zero values so we can see how the join functions work a bit more easily. We have already removed some observations from jdat and added a row, just so our key columns don't match perfectly.
 
 ***
 __Challenge__ 
@@ -547,9 +709,16 @@ Filter spread_dat to remove all non-zero values, and store it in an object ndat.
 
 ***
 
+```{r include=FALSE, eval=TRUE}
+
+ndat <-  spread_dat %>% filter(OTUs!=0) %>% arrange(desc(OTUs)) %>% .[20, ]
+```
+
+
 There are 2 types of joins:
-- mutating joins - uses a key to match observations and combines variables from 2 tables (adding columns and potentially rows)
-- filtering joins - uses a key to match observations, to subset observations (rows)
+
+1. mutating joins - uses a key to match observations and combines variables from 2 tables (adding columns and potentially rows)
+2. filtering joins - uses a key to match observations, to subset observations (rows)
 
 
 Inner join is a mutating join.  Inner join "returns all rows from x where there are matching values in y, and all columns from x and y. If there are multiple matches between x and y, all combination of the matches are returned."
@@ -608,7 +777,7 @@ Note that Bacteriodia and Clostridia have different OTUs (from ndat), but the sa
 ***
 __Challenge__
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/pug_challenge1.jpeg){width=100px}
+![](img/pug_challenge1.jpeg){width=200px}
 
 </div>
 
@@ -656,7 +825,7 @@ This returns our 2 rows in ndat that did not have a match in jdat. Note that the
 ***
 __Challenge__
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/pug_challenge1.jpeg){width=100px}
+![](img/pug_challenge1.jpeg){width=200px}
 
 </div>
 
@@ -670,7 +839,7 @@ Given the definitions for the inner_, left_, right_, full_, semi_ and anti_joins
 
 __Challenge__
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/pug_challenge1.jpeg){width=100px}
+![](img/pug_challenge1.jpeg){width=200px}
 
 </div>
 
@@ -681,14 +850,9 @@ Base R has a function that does join operations called `merge()`. What would be 
 </br>
 
 ***
-- merging/adding data 
-      + join/merge functions
-      
-http://stat545.com/bit001_dplyr-cheatsheet.html
-http://dplyr.tidyverse.org/articles/two-table.html
-http://r4ds.had.co.nz/relational-data.html#join-problems
 
-      + binding functions with caveats
+      
+
       
 _Simple Statistics_
   
@@ -704,19 +868,21 @@ __Challenge:__
 Take one of the provided test sets and calculate an average that requires subsetting and grouping. Perhaps make a separate question for say, a choice of 4 datasets (cars, iris, gapminder, lotr). (Add t-test question with the gapminder dataset).
   
 #Resources:  
-http://seananderson.ca/2013/10/19/reshape.html     
 https://github.com/wmhall/tidyr_lesson/blob/master/tidyr_lesson.md     
 http://stat545.com/block009_dplyr-intro.html     
 http://stat545.com/block010_dplyr-end-single-table.html
 http://vita.had.co.nz/papers/tidy-data.pdf
 https://thinkr.fr/tidyverse-hadleyverse/
+http://stat545.com/bit001_dplyr-cheatsheet.html
+http://dplyr.tidyverse.org/articles/two-table.html
+http://r4ds.had.co.nz/relational-data.html#join-problems
 
 
 #Post-Lesson Assessment
 ***
 
 Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
-https://www.surveymonkey.com/r/GD3KJB9
+https://www.surveymonkey.com/r/SMGKMCS
 
 </br>
 
