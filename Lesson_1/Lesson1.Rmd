@@ -41,10 +41,13 @@ How do we get there? Today we are going to be learning about the basic data stru
 
 The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/GD3KJB9), it will help me further develop this course and would be greatly appreciated. 
 
+</br>
 
+***
 
 __Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
 
+***
 
 ##A quick intro to the R environment
 
