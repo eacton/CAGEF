@@ -41,12 +41,15 @@ How do we get there? Today we are going to be learning about the basic data stru
 
 The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/GD3KJB9), it will help me further develop this course and would be greatly appreciated. 
 
+</br>
 
+***
 
 __Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
 
+***
 
-##A quick intro to the R environment##
+##A quick intro to the R environment
 
 To paraphrase the CRAN gurus:     
 https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf
@@ -73,11 +76,11 @@ RStudio is an IDE (Integrated Development Environment) for R that provides a mor
 
 This is an image of a possible directory. 
 
-![](img/unix-tree.gif)
+![](img/unix_boys.jpg)
 
 </br>
 
-In this hierarchy we will pretend to be sue, and we are hanging out in our subdirectory1 folder. R looks to read in your files from your _working directory_, which in this case would be subdirectory1, so at this moment, R would have access to file1 and file2. If I tried to open file1 under sue, R would tell me there is no such file in my current working directory.
+In this hierarchy we will pretend to be benedict, and we are hanging out in our Tables folder. R looks to read in your files from your _working directory_, which in this case would be Tables, so at this moment, R would have access to proof.tsv and genes.csv. If I tried to open paper.txt under benedict, R would tell me there is no such file in my current working directory.
 
 To get your working directory in R you would type:
 
@@ -85,18 +88,18 @@ To get your working directory in R you would type:
 getwd()
 
 
-[1] "/home/sue/subdirectory1"
+[1] "/home/benedict/Tables"
 ```
 
 R will tell you your _absolute directory_. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names are in the path.
 
 
-To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"home/sue"`). Therefore, our current location could also be denoted as `"~/subdirectory1"`.
+To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"home/benedict"`). Therefore, our current location could also be denoted as `"~/Tables"`.
 
 To move to the directory 'sue' we us a function that will set the working directory:
 
 ```
-setwd("/home/sue")
+setwd("/home/benedict")
 #or 
 setwd("~")
 #or 
@@ -105,18 +108,18 @@ setwd("..")
 ```
 A _relative directory_ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
 
-If I wanted to move back to subdirectory1 using the _absolute path_, I would set a new working directory:
+If I wanted to move back to Tables using the _absolute path_, I would set a new working directory:
 
 ```
-setwd("/home/sue/subdirectory1")
+setwd("/home/benedict/Tables")
 #or
-setwd("~/subdirectory1")
+setwd("~/Tables")
 ```
 
 And the _relative path_ would be:
 
 ```
-setwd("./subdirectory1")
+setwd("./Tables")
 ```
 
 There is some talk over setting working directories within scripts. Obviously, not everyone has the same absolute path, so if you are setting a directory in your script, _it is best to have a relative path starting from the folder your script is in_. Keep in mind that others you share your script with might not have the same directory structure if you refer to subfolders. 
@@ -157,7 +160,7 @@ How do I start?
 - Break your code into sections to make it readable.
 - Give your objects informative object names __that are not the same as function names__. 
 
-_Key-board shortcuts:_
+_Keyboard shortcuts:_
 
 Comment/Uncomment lines `CTRL + SHIFT + C`     
 Reflow Comment (Wrap comments) `CTRL + SHIFT + /`
@@ -223,7 +226,7 @@ __Beginner Advice__
 ![](img/beginner.png){width=100px}
 </div>
 
-Try to solve a problem yourself, but set a 30 minute cutoff on being stuck. At this level, people have had and solved your problem. Many beginners get frustrated because they get stuck and take hours to solve a problem themselves. Set your limit, stay within it, then go online and get help.
+Try to solve a problem yourself, but set a 30 minute cutoff on being stuck. At this level, many people have had and solved your problem. Beginners get frustrated because they get stuck and take hours to solve a problem themselves. Set your limit, stay within it, then go online and get help.
 </br>
 </br>
 
@@ -452,7 +455,7 @@ vec_char[3]
 ```
 
 ```r
-vec_char[2:3] #first and last inclusive (this is not the same for all programming languages)
+vec_char[2:3] #second and third element in the vector inclusive (this is not the same for all programming languages)
 ```
 
 ```
@@ -1661,7 +1664,7 @@ To load a package (ie. to actually use it):
 library(devtools) # or library('devtools')
 ```
 
-Likewise, you can install many packages at once:
+Likewise, you can load many packages at once:
 
 
 ```r
@@ -1676,7 +1679,7 @@ source("https://bioconductor.org/biocLite.R")
 biocLite("BiocInstaller")
 ```
 
-Or you can install the BiocInstaller package. I prefer this as I always forget the url.
+Or you can use the BiocInstaller package to install other packages.
 
 
 ```r

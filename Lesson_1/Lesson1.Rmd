@@ -49,13 +49,59 @@ __Objective:__ At the end of this session you will be familiar with the R enviro
 
 ***
 
-##A quick intro to the R environment
+##Installing R and RStudio
+
+Installing R: 
+  Windows: 
+    - Go to http://cran.utstat.utoronto.ca/ 
+    - Click on 'Download R for Windows'
+    - Click on 'install R for the first time'
+    - Click on 'Download R 3.4.4 for Windows' (if there is a newer version that is a-okay)
+    - Double-click on the .exe file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
+  
+  (Mac) OS X:
+    - Go to http://cran.utstat.utoronto.ca/ 
+    - Click on 'Download R for (Mac) OS X'
+    - Click on R-3.4.4.pkg (if there is a newer version that is a-okay)
+    - Open the .pkg file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
+  
+  Linux:
+    - sudo apt-get update
+    - sudo apt-get install r-base
+    - sudo apt-get install r-base-dev (so you can compile packages from source)
+
+Installing RStudio: 
+  Windows:
+    - Go to https://www.rstudio.com/products/rstudio/download/#download
+    - Click on 'RStudio 1.1.442 - Windows Vista/7/8/10' to download the installer (if there is a newer version that is a-okay)
+    - Double-click on the .exe file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
+    
+  (Mac) OS X:
+    - Go to https://www.rstudio.com/products/rstudio/download/#download
+    - Click on 'RStudio 1.1.442 - Mac OS X 10.6+ (64-bit)' to download the installer (if there is a newer version that is a-okay)
+    - Double-click on the .dmg file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
+    
+   Linux:
+    - Go to https://www.rstudio.com/products/rstudio/download/#download
+    - Click on the installer that describes your system ie. 'RStudio 1.1.442 - Ubuntu 16.04+/Debian 9+ (64-bit)' (if there is a newer version that is a-okay)
+    - Double-click on the .deb file once it has downloaded and follow the instructions.
+    - If double-clicking on your .deb file did not open the software manager open the terminal (this can be found by searching for Terminal) and type sudo dpkg -i Downloads/rstudio-xenial-1.1.442-amd64.deb 
+     Note: You have 3 things that could change in this command.
+     1. This assumes you have just opened the terminal and are in your home directory. (If not, you have to modify your path. You can get to your home directory by typing cd ~.)
+     2. This assumes you have downloaded the .deb file to Downloads. (If you downloaded the file somewhere else, you have to change the path to the file, or download the .deb file to Downloads). 
+     3. This assumes your filename for .deb is the same as above. (Put the name matching the .deb file you downloaded).
+    
+If you have a problem with installing R or RStudio, please come 15 minutes before the lesson starts and I will help you troubleshoot your installation. You can also try to solve the problem yourself by Googling any error messages you get.    
+    
+##A quick intro to  the R environment
+
+The "Comprehensive R Archive Network" (CRAN) is a collection of sites that have the same R and related R material (ie. new and previous versions of R software, documentation, packages and collections of R packages to download that might be useful in a particular field (CRAN Task Views), links to the R journal and R search sites, bug reports and fixes). Different sites (for example, we used http://cran.utstat.utoronto.ca/), are called a mirrors because they reflect the content from the master site in Austria. There are mirrors worldwide to reduce the burden on the network. CRAN will be referred to here as a main repository for obtaining R packages.
 
 To paraphrase the CRAN gurus:     
 https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf
 
 
-R is an 'environment' because it has the tools and software for the storage, manipulation, statistical analysis, and graphical display for of data.  It comes with about 25 built-in 'packages' and uses a simple programming language ("S"). Users have been encouraged to make there own packages... there are now over 10,000 packages on CRAN and about 1,500 on Bioconductor.
+R is an 'environment' because it has the tools and software for the storage, manipulation, statistical analysis, and graphical display for of data.  It comes with about 25 built-in 'packages' and uses a simple programming language ("S"). Users have been encouraged to make there own packages... there are now over 12,000 packages on CRAN and about 1,500 on Bioconductor.
 
 ![](img/cran_pkg.png){width=600px}
 </br>
@@ -71,35 +117,48 @@ RStudio is an IDE (Integrated Development Environment) for R that provides a mor
 
 (In-class moment for going over these 4 quadrants + Global Options.)
 
+Let me elaborate.
+
+Source is where you are keeping the code and annotation that you want to be saved as your script. The tab at the top of the pane has your script name ('Untitled.R'), and you can switch between scripts by toggling the tabs. All of the panes can be minimized or maximized. You can save, search or publish your source code using the buttons along the pane header. Nothing in the Source pane is 'run' or 'executed' automatically. To run your current line of code or a highlighted segment of code from the Source pane you can a) click the button 'Run' -> 'Run Selected Line(s)', b) click 'Code' -> 'Run Selected Line(s)' from the menu bar, c) use the keyboard shortcut `CTRL + ENTER` (recommended), d) copy and paste your code into the Console and hit Enter.
+
+You can also type and execute (by hitting ENTER) your code in the Console when the '>' prompt is visible. The Console also shows information: upon startup about R, during the installation of packages, when there are warnings, and when there are errors in your code. If you enter code and you see a '+' instead of a prompt, R doesn't think you are finished entering code (you are probably missing a bracket). If this isn't immediately fixable, you can hit Esc twice to get back to your prompt. Beside Console in the top left of that pane is your current working directory. Pressing the arrow next to your working directory will open your current folder in the Files pane. If you find your Console is getting too cluttered, selecting the broom icon in that pane will clear it for you. Using the arrow keys, you can find previous commands in the Console if you want to rerun code or fix an error resulting from a typo.
+
+The Global Environment is super-handy. In the Environment Tab you can see all of the stored objects you have created. You can immediately see the dimension and data type of 2D objects, and click the arrow to see their structure in more detail (ie. the variabless making up the columns and their data types). Clicking on their name will open them in the view. 1D objects data type can be seen immediately as well as their first few values. Custom functions created in session or sourced will also appear in this pane. The Global Environment dropdown displays all of the currently loaded packages. Loaded means that all of the tools/functions in the package are available for use. R comes with a number of packages pre-loaded (ie. base, grDevices). The Environment can become cluttered, so it also has a broom button to clear its workspace. In the History tab are all of the commands you have executed in the Console during your session. You can select a line of code and send it to the Source or Console. The Connections tab is to connect to data sources and will not be used in this lesson.
+
+
 
 ##A quick note on directory structure
 
 This is an image of a possible directory. 
 
-![](img/unix-tree.gif)
+![](img/unix_boys.jpg)
 
 </br>
 
-In this hierarchy we will pretend to be sue, and we are hanging out in our subdirectory1 folder. R looks to read in your files from your _working directory_, which in this case would be subdirectory1, so at this moment, R would have access to file1 and file2. If I tried to open file1 under sue, R would tell me there is no such file in my current working directory.
+In this hierarchy we will pretend to be benedict, and we are hanging out in our Tables folder. R looks to read in your files from your _working directory_, which in this case would be Tables, so at this moment, R would have access to proof.tsv and genes.csv. If I tried to open paper.txt under benedict, R would tell me there is no such file in my current working directory.
 
-To get your working directory in R you would type:
+To get your working directory in R you would type in your source pane: 
 
 ```
 getwd()
+```
+You would then press Enter to execute the code in the Console. Technically, there is no reason to save this code and it could be typed and executed in the Console. However, to save some mental effort choosing which code to save or not (especiallly when starting out), let's type everything in the Source. You can always go back and choose what to delete, and harder to recreate what you didn't save.
 
+The output in your Console would be:
 
-[1] "/home/sue/subdirectory1"
+```
+[1] "/home/benedict/Tables"
 ```
 
 R will tell you your _absolute directory_. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names are in the path.
 
 
-To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"home/sue"`). Therefore, our current location could also be denoted as `"~/subdirectory1"`.
+To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"home/benedict"`). Therefore, our current location could also be denoted as `"~/Tables"`.
 
 To move to the directory 'sue' we us a function that will set the working directory:
 
 ```
-setwd("/home/sue")
+setwd("/home/benedict")
 #or 
 setwd("~")
 #or 
@@ -108,18 +167,18 @@ setwd("..")
 ```
 A _relative directory_ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
 
-If I wanted to move back to subdirectory1 using the _absolute path_, I would set a new working directory:
+If I wanted to move back to Tables using the _absolute path_, I would set a new working directory:
 
 ```
-setwd("/home/sue/subdirectory1")
+setwd("/home/benedict/Tables")
 #or
-setwd("~/subdirectory1")
+setwd("~/Tables")
 ```
 
 And the _relative path_ would be:
 
 ```
-setwd("./subdirectory1")
+setwd("./Tables")
 ```
 
 There is some talk over setting working directories within scripts. Obviously, not everyone has the same absolute path, so if you are setting a directory in your script, _it is best to have a relative path starting from the folder your script is in_. Keep in mind that others you share your script with might not have the same directory structure if you refer to subfolders. 
@@ -383,7 +442,7 @@ You can grab a specific element by its index, or by its name.
 ```{r}
 vec_char[3]
 
-vec_char[2:3] #first and last inclusive (this is not the same for all programming languages)
+vec_char[2:3] #second and third element in the vector inclusive (this is not the same for all programming languages)
 
 vec_log["male"]
 ```
