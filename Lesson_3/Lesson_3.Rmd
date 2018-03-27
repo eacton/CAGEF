@@ -245,6 +245,35 @@ ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) +
   ylim(0,150)
 ```
 
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/Pug-vs-Food-1.jpg){width=150px}
+
+</div>
+
+Using the data filtered for OTUs greater than or equal to two, make a violin plot of the distribution of OTUs for each country. Use a log scale. Colour the violin plots by Country. Draw lines across the violin plot where the quantiles (25th, 50th, 75th) are for each plot. What do the widths of the plots represent?
+
+
+</br>
+</br>
+</br>
+
+***
+
+
+
+```{r include = FALSE, eval = FALSE}
+ggplot(dat[dat$OTU >=2,], aes(x=Country, y = OTUs, fill = Country)) + 
+  scale_y_log10() +
+	geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) 
+
+```
+
+
+
 
 ###Bar plots
 
@@ -312,13 +341,32 @@ ggplot(dat, aes(x="", y=Country, fill = Country)) +
 
 
 ###Lines 
+
+To draw a line graph, we select geom_line(). 
+
 ```{r}
-ggplot(ndat, aes(Temp, pH)) + geom_line()
+ggplot(ndat, aes(x=Temp, y=pH)) + geom_line() 
+```
+
+We can colour the lines for the different countries. Looking at our previous graph, what must have happened when these values were over the same range?
+
+```{r}
+ggplot(ndat, aes(x=Temp, y=pH, colour = Country)) + geom_line() 
+```
+####Error bars
+
+To plot error bars, we need to give the geom, geom_errorbar(), the interval over which we want to draw the bar. This is usually something like one standard deviation or one standard error or a confidence interval. Luckily, we have learned how to calculate the mean and standard deviation with dplyr. Then, all we need to do is add or subtract the standard deviation from our data point to get the bounds of the error bar. geom_errorbar() takes these bounds passed to the parameters ymax and ymin. In this case, since there were no sample replicates, the standard deviation is taken from the mean of all of the soil readings in a given country at a given depth.
+
+```{r}
+errdat <- ndat %>% group_by(Country, Depth) %>% mutate(mean_pH = mean(pH)) %>% mutate(sd_pH= sd(pH))
+
+ggplot(errdat, aes(x=Temp, y=pH, colour = Country)) + 
+  geom_line() + 
+  geom_errorbar(aes(ymin=pH-sd_pH, ymax = pH+sd_pH), width = .2, alpha = 0.4)
 ```
 
 
 
-###Bubble Plots
 
 ###Stripplots
 
@@ -443,7 +491,7 @@ ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs)) +
 For now, let's just keep the Taxa that are common to both countries.
 
 ```{r}
-keep <- mdat %>% 
+keep <- dat %>% 
   ungroup() %>% 
   filter(OTUs>=2) %>% 
   group_by(Country, Taxa) %>% 
@@ -457,6 +505,61 @@ keep <- keep[keep$dup, "Taxa"]
 ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1)) + scale_y_log10() + facet_grid(~Country)
 
 ```
+###Beeswarm Plots
+
+Even though boxplots give us summary statistics on our data, it is useful to be able to see where our data points are. Adding the data using geom_point() adds our data in the form of a stripplot to our boxplots. It would be nice to see how many points we have at each OTU value, but there are a lot of points overlapping here.
+
+```{r}
+ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
+  geom_boxplot() + 
+  geom_point() +
+  theme(axis.text.x = element_text(angle=90, hjust=1)) + 
+  scale_y_log10()
+```
+
+Jittering the points gives a general idea, but is a bit too widely dispursed to give a good sense of the data.
+
+```{r}
+ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
+  geom_boxplot() + 
+  geom_jitter() +
+  theme(axis.text.x = element_text(angle=90, hjust=1)) + 
+  scale_y_log10()
+```
+
+A beeswarm plot places data points that were overlapping instead next to each other, so we can get a better picture of the distribution of points. We simply overlay the points with geom_beeswarm().
+
+```{r}
+library(ggbeeswarm)
+
+ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
+  geom_boxplot() + 
+  geom_beeswarm() +
+  theme(axis.text.x = element_text(angle=90, hjust=1)) + 
+  scale_y_log10()
+```
+Increasing the spacing between data points can make this distribution a bit clearer.
+
+```{r}
+ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
+  geom_boxplot() + 
+  geom_beeswarm(cex = 2.2) +
+  theme(axis.text.x = element_text(angle=90, hjust=1)) + 
+  scale_y_log10()
+```
+
+Using geom_quasirandom() gives the empirical distribution of the stripplot to avoid overplotting.
+
+```{r}
+ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
+  geom_boxplot(alpha=0.8) + 
+  geom_quasirandom(varwidth = TRUE) +
+  theme(axis.text.x = element_text(angle=90, hjust=1)) + 
+  scale_y_log10()
+```
+Other spacing and distribution options are available at https://github.com/eclarke/ggbeeswarm.
+
+
 
 ###Customization of Plot Elements Related to Your Data
 
@@ -628,7 +731,7 @@ The last call to theme will override previous calls. Therefore, if we want to st
 ```{r}
 
 
-ggplot(mdat[mdat$Taxa %in% keep,] , aes(x = Taxa, y = OTUs, fill = Taxa)) + 
+ggplot(dat[dat$Taxa %in% keep,] , aes(x = Taxa, y = OTUs, fill = Taxa)) + 
   geom_boxplot(outlier.colour = "red") + 
   theme_minimal() +
   theme(axis.text.x = element_text(angle =90, hjust=1), 
@@ -663,20 +766,132 @@ Change the colour of the plot background. Add minor gridlines, and make the majo
 
 ***
 
+###Correlation Plots and Heatmaps
 
+One common way to look for outliers or trends in data is to calculate the correlation between samples and make a correlation plot. Since samples are expected to be in columns, this is an example of where you would use 'wide' data. The default correlation coefficient is the Pearson correlation, but others (Kendall, Spearman) can be specified. Note that the entire matrix must be numeric. 
 
-- labels, scaling, ggsave(), regression lines, error bars, changing axis limits, rotating labels, adding text to data points, changing the legend, alpha, colors, shapes
-- forcats pkg: controlling categorical variable order in your legend
-- alternatives to pie charts
-- customize with ggthemes
+A heatmap can be made in ggplot by using the tile geom. The fill is now the correlation coefficient, which is a continuous variable (hence the gradient). I have changed the title of the legend from 'value' to 'Pearson Correlation' by using scale_fill_continuous. The '\n' included in the name is a line break. A fantastic resource for modifying legends is http://www.cookbook-r.com/Graphs/Legends_(ggplot2)/.
 
-_Data Exploration - plot all the things!_
+```{r}
+cdat <- read.csv("data/ENV_pitlatrine.csv", row.names = 1)
 
-- dot plots, line graphs, scatter plots, bar graphs, violin plots, histograms, facetting
-- emphasis on boxplots + explanation, beeswarm plots
-- heatmaps and correlation plots
+cdat <- cor(cdat)
+
+library(reshape2)
+melt <-melt(cdat)
+
+ggplot(melt, aes(Var1, Var2, fill = value)) + 
+  geom_tile() +
+  xlab(NULL) +
+  ylab(NULL) +
+  scale_fill_continuous(name = "Pearson\nCorrelation")
+
+```
+
+```{r}
+cdat <- read.csv("data/SPE_pitlatrine.csv", row.names = 1)
+
+cdat <- cor(cdat)
+
+library(reshape2)
+melt <-melt(cdat)
+
+ggplot(melt, aes(Var1, Var2, fill = value)) + 
+  geom_tile() +
+  xlab(NULL) +
+  ylab(NULL) +
+  scale_fill_continuous(name = "Pearson\nCorrelation") +
+  theme(axis.text.x = element_text(angle =90, hjust=1)) 
   
-##Taking it up a notch_ - Maybe preview these, and if time vote on one to look at in more detail
+```
+If this looks a little jarring to you compared to 'normal' heatmaps, it is probably because the data has not been ordered yet. This can be done by calculating the distance between samples (ie. euclidean) and them clustering them in a hierarchical way (ie. complete linkage).
+
+To have a different colour scheme that for example, goes from red to yellow, you can use scale_fill_gradient and specify what you want the diverging colours to be. Note that your legend title now derives from this gradient. 
+
+
+```{r}
+dd <- dist(cdat)
+hc <- hclust(dd)
+cdat <- cdat[hc$order, hc$order]
+
+melt <-melt(cdat)
+
+ggplot(melt, aes(Var1, Var2, fill = value)) + geom_tile() +
+  scale_fill_gradient(name = "Pearson\nCorrelation", low = "red", high = "yellow") +
+  xlab(NULL) +
+  ylab(NULL)+
+  theme(axis.text.x = element_text(angle =90, hjust=1, size =5), legend.title = element_text(size=10), axis.text.y = element_text(size=5)) 
+
+```
+
+We can now see that there is a patch of dark red samples with low correlation. It is difficult to see which sites these are as the names are a bit small. 
+
+Enter the interactive heatmap! Plotly allows for interactive plots in a variety of languages, and allows the creation of sharable links (if you are interested you have to sign up for a free account to get API credentials https://plot.ly/r/getting-started/). They have created a package, which, luckily for us, interfaces seamlessly with ggplot2. I only need to save my plot and call the function ggplotly to have an interactive graph! 
+
+The response of plotly to manipulations other than hovering can be a bit slow if not using the API and may freeze/crash R, so I recommend saving your code before trying it.  
+
+
+```{r}
+library(plotly)
+p <- ggplot(melt, aes(Var1, Var2, fill = value)) + geom_tile() +
+  scale_fill_gradient(name = "Pearson\nCorrelation", low = "red", high = "yellow") +
+  xlab(NULL) +
+  ylab(NULL)+
+  theme(axis.text.x = element_text(angle =90, hjust=1), legend.title = element_text(size=10)) 
+
+ggplotly(p)
+
+```
+
+Hovering will highlight the variables and values relating to that specific data point, and areas can be zoomed in on. We can now see the names of the low correlation samples. While they are all from Tanzania, they do not appear to all be from the same Latrine_Number or Depth. 
+
+ggvis is a Bioconductor package allowing interactive graphics in R (http://ggvis.rstudio.com/). It is founded on the grammar of graphics and the syntax is similar, but not identical to ggplot. It is good for interactive scatterplots, bar graphs, line graphs and histograms (although not heatmaps at this point in time). The nature of the interactiveness is highly customizable: you can hover, add slider bars, checkboxes or radiobuttons (it uses Shiny's reactive programming).
+
+In this example I have just taken a scatterplot that we made earlier, and made it possible to hover over a point and see its underlying data. Don't worry about the function and syntax too much - those will be introduced in later lessons. I just wanted to show you another option for interactive visualization that hopefully isn't too intimidating. 
+
+```{r}
+library(ggvis)
+
+p <- ggvis(ndat, x= ~TS, y= ~CODt) 
+  
+layer_points(p) %>% add_tooltip(function(x) c(paste0("TS=", x$TS, ", CODT=", x$CODt)))
+
+```
+###Saving in ggplot2
+
+ggplot2 has its own function for saving ggsave(). 
+
+You can send the plot object to the graphics device and then save that image. 
+
+With ggsave you can minimally input the filename you would like to have, and the path to your file (you can instead combine the path and filename in the filename).
+
+```{r}
+ggplot(melt, aes(Var1, Var2, fill = value)) + geom_tile() +
+  scale_fill_gradient(name = "Pearson\nCorrelation", low = "red", high = "yellow") +
+  xlab(NULL) +
+  ylab(NULL)+
+  theme(axis.text.x = element_text(angle =90, hjust=1, size =5), legend.title = element_text(size=10), axis.text.y = element_text(size=5)) 
+
+ggsave("heatmap.png", path = "img")
+```
+However, in some cases you want to tailor your output. You can specify the width, height and units of your image, or you can apply a scaling factor. You can also specify the plot object you want to save instead of whatever was on your graphics device last using the 'plot' parameter. ggsave() can save in a variety of file extensions including pdf, jpeg, tiff, bmp, svg or png.
+
+```{r}
+hmap <- ggplot(melt, aes(Var1, Var2, fill = value)) + geom_tile() +
+  scale_fill_gradient(name = "Pearson\nCorrelation", low = "red", high = "yellow") +
+  xlab(NULL) +
+  ylab(NULL)+
+  theme(axis.text.x = element_text(angle =90, hjust=1, size =5), legend.title = element_text(size=10), axis.text.y = element_text(size=5)) 
+
+ggsave("heatmap.pdf", plot = hmap, path = "img", scale = 2, width = 150, height = 110, units = "mm")
+```
+
+
+- forcats pkg: controlling categorical variable order in your legend
+
+
+  
+##Taking it up a notch_ - Maybe preview these, let's do one heatmap in plotly and one phylogenetic tree
 
 ###Interactive graphics 
 (ggvis, plotly)
@@ -728,6 +943,8 @@ http://joeystanley.com/blog/custom-themes-in-ggplot2
 https://github.com/jrnold/ggthemes
 https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/colorPaletteCheatsheet.pdf
 https://cran.r-project.org/web/packages/ggrepel/vignettes/ggrepel.html
+http://www.cookbook-r.com/Graphs/Legends_(ggplot2)/
+https://github.com/eclarke/ggbeeswarm
 
 #Post-Lesson Assessment
 ***
