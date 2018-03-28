@@ -86,12 +86,12 @@ Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
 I have saved a version of the OTU table in tidy format (which we created in Lesson 2 - split_dat). As well as a modified version of the metadata table.
 
 ```{r include = FALSE}
-ndat <- read.csv("data/ENV_pitlatrine.csv", stringsAsFactors = F)
-ndat <- ndat %>% separate(Samples, c("Country", "Latrine_Number", "Depth"), sep = "_")
-ndat$Country <- gsub("T", "Tanzania", ndat$Country)
-ndat$Country <- gsub("V", "Vietnam", ndat$Country)
+#ndat <- read.csv("data/ENV_pitlatrine.csv", stringsAsFactors = F)
+#ndat <- ndat %>% separate(Samples, c("Country", "Latrine_Number", "Depth"), sep = "_")
+#ndat$Country <- gsub("T", "Tanzania", ndat$Country)
+#ndat$Country <- gsub("V", "Vietnam", ndat$Country)
 
-write.csv(ndat, "data/split_ENV_pitlatrine.csv", row.names=FALSE)
+#write.csv(ndat, "data/split_ENV_pitlatrine.csv", row.names=FALSE)
 
 ndat <- read.csv("data/split_ENV_pitlatrine.csv")
 ```
@@ -289,10 +289,27 @@ ggplot(dat, aes(x=Country, y=OTUs, fill=Taxa)) +
 This is a common error because the default for geom_bar is to use the y-axis for a count. To use it for a variable instead, we have to specify stat="identity".
 
 ```{r}
-ggplot(dat, aes(x=Country, y=OTUs, fill=Taxa)) + 
+ggplot(dat[dat$OTU >=2,], aes(x=Country, y=OTUs, fill=Taxa)) + 
 	geom_bar(stat = "identity") 
 ```
-But let's take a second to look at the alternative.
+####Controlling the order of your categorical variables in your legend
+
+In the legend for the diagram above our factor levels for Taxa are in alphabetical order. However, an ordering that might be more useful would be the order that matches our data, for example, Taxa in descending order of OTUs. To do this, we can use the `forcats` package. `fct_reorder2()` takes the factor we want to order by (Taxa) and orders it by the values given (Country, OTUs). We will talk about customizing plots later in this lesson, but the last line of code is one way to remove the legend title (by making the legend title 'blank').
+
+```{r}
+library(forcats)
+
+ggplot(dat[dat$OTU >=2,], aes(x=Country, y=OTUs, fill=fct_reorder2(Taxa, Country, OTUs))) + 
+	geom_bar(stat = "identity") +
+  theme(legend.title = element_blank())
+ 
+```
+Now our highest abundance Taxa is the first value in our legend, and this matches the order of the Taxa in our bar graph. The legend order now has meaning. The white line in the Vietnam bar graph is a Taxa for which there was an OTU value in Tanzania but no data in Vietnam (since anything <=2 was filtered out of the data set). 
+
+
+
+
+Let's take a second to look at what happens when stat does not equal 'identity'.
 
 ```{r}
 ggplot(dat, aes(x=Country, fill=Taxa)) + 
@@ -420,7 +437,7 @@ ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
   guides(fill=FALSE)
 ```
 
-ggplot provides 2 methods of labelling. Let's look at the help menu to find out what the difference between the 2 of them is. We have to specify in with aesthetics, that we are plotting our label. 
+`ggplot2` provides 2 methods of labelling. Let's look at the help menu to find out what the difference between the 2 of them is. We have to specify in with aesthetics, that we are plotting our label. 
 
 ```{r}
 ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
@@ -443,7 +460,7 @@ ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
 ```
 What happened here? Why don't we have as many labels? Look in the help menu to explain this behaviour.
 
-I don't like futzing with label positions, so I went looking for a package that would do this for me. ggrepel() will 'repel' your labels away from each other without getting rid of them. Let's check it out with our bubble plot labels. Install and load ggrepel. The equivalent function we can use is geom_label_repel(). The force parameter allow you to modify how far you want your labels pushed away from each other. Here, colour is being used to map to our data points but ggrepel can ditch the box and connect a line to data points instead. Variations on use can be found here: https://cran.r-project.org/web/packages/ggrepel/vignettes/ggrepel.html.
+I don't like futzing with label positions, so I went looking for a package that would do this for me. `ggrepel()` will 'repel' your labels away from each other without getting rid of them. Let's check it out with our bubble plot labels. Install and load ggrepel. The equivalent function we can use is `geom_label_repel()`. The force parameter allow you to modify how far you want your labels pushed away from each other. Here, colour is being used to map to our data points but ggrepel can ditch the box and connect a line to data points instead. Variations on use can be found here: https://cran.r-project.org/web/packages/ggrepel/vignettes/ggrepel.html.
 
 ```{r}
 library(ggrepel)
@@ -507,7 +524,7 @@ ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs)) + geom_boxplot()
 ```
 ###Beeswarm Plots
 
-Even though boxplots give us summary statistics on our data, it is useful to be able to see where our data points are. Adding the data using geom_point() adds our data in the form of a stripplot to our boxplots. It would be nice to see how many points we have at each OTU value, but there are a lot of points overlapping here.
+Even though boxplots give us summary statistics on our data, it is useful to be able to see where our data points are. Adding the data using `geom_point()` adds our data in the form of a stripplot to our boxplots. It would be nice to see how many points we have at each OTU value, but there are a lot of points overlapping here.
 
 ```{r}
 ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
@@ -527,7 +544,7 @@ ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Tax
   scale_y_log10()
 ```
 
-A beeswarm plot places data points that were overlapping instead next to each other, so we can get a better picture of the distribution of points. We simply overlay the points with geom_beeswarm().
+A beeswarm plot places data points that were overlapping instead next to each other, so we can get a better picture of the distribution of points. We simply overlay the points with `geom_beeswarm()`.
 
 ```{r}
 library(ggbeeswarm)
@@ -548,7 +565,7 @@ ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Tax
   scale_y_log10()
 ```
 
-Using geom_quasirandom() gives the empirical distribution of the stripplot to avoid overplotting.
+Using `geom_quasirandom()` gives the empirical distribution of the stripplot to avoid overplotting.
 
 ```{r}
 ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
@@ -581,7 +598,7 @@ Titles and axis labels can be added using:
 
 In this case, I want to add a title, modify the y-axis label to say that the data is log, and remove the x-axis label because I think it is self-explanatory and I will mention Taxa in my title. Note that I remove the x-axis label by using 'NULL'.
 
-I also want to change my Country labels from a single letter to the country name. This can be done in a couple of ways. One way would be to change the values in the dataset. Since we haven't learned string manipulation yet, I will show you a second way, which is to use the labeller function. I can make a vector of the names that I want to replace. The data is split by Country in the facet_grid() and this is where we pass our labels to the labeller function, which will output the names on the strip label.
+I also want to change my Country labels from a single letter to the country name. This can be done in a couple of ways. One way would be to change the values in the dataset. Since we haven't learned string manipulation yet, I will show you a second way, which is to use the labeller function. I can make a vector of the names that I want to replace. The data is split by Country in the `facet_grid()` and this is where we pass our labels to the labeller function, which will output the names on the strip label.
 
 
 ```{r}
@@ -598,7 +615,7 @@ p <- ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs, fill = Taxa)
 
 p
 ```
-A common thing to want to do is to change colours from ggplot's rainbow color scheme. Let's create our own colour palette for Taxa.
+A common thing to want to do is to change colours from `ggplot2`'s rainbow color scheme. Let's create our own colour palette for Taxa.
 
 ###A Note on Colour Palettes
 
@@ -607,14 +624,14 @@ There are 3 main types of colour palettes.
 2. Diverging - low and high values are extremes, and the middle values are important still goes from light to dark, but 3 colour mainly used.
 3. Qualitative - there is no quantitative relationship between colours. This is usually used for categorical data.
 
-Which of these is ggplot's default color palette?
+Which of these is `ggplot2`'s default color palette?
 
-Many colour palettes now exist. I showcase a couple that work nicely with ggplot2. These packages also have colorblind friendly options. RColorBrew has options for these 3 types of palettes, which you can see with display.brewer.all(). With a smaller dataset, we could make a call to 'scale_fill_brewer', which just requires a choice of one of RColorBrewer's palettes, such as "Spectral". However, we have 24 Taxa and these palettes have 8-12 colours, so we have to get creative. I have simply taken the 2 qualitative palettes that each have a length of 12, put them into one palette, and made sure my values were unique. This can then be passed to ggplot via scale_fill_manual. You can always choose a vector of your own colors using this 'R color cheatsheet'(https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/colorPaletteCheatsheet.pdf).
+Many colour palettes now exist. I showcase a couple that work nicely with `ggplot2`. These packages also have colorblind friendly options. RColorBrew has options for these 3 types of palettes, which you can see with `display.brewer.all()`. With a smaller dataset, we could make a call to `scale_fill_brewer()`, which just requires a choice of one of RColorBrewer's palettes, such as "Spectral". However, we have 24 Taxa and these palettes have 8-12 colours, so we have to get creative. I have simply taken the 2 qualitative palettes that each have a length of 12, put them into one palette, and made sure my values were unique. This can then be passed to ggplot via `scale_fill_manual()`. You can always choose a vector of your own colors using this 'R color cheatsheet'(https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/colorPaletteCheatsheet.pdf).
 
 
 ```{r}
 library(RColorBrewer)
-
+library(viridis)
 
 display.brewer.all()
 
@@ -635,7 +652,7 @@ p + scale_fill_viridis(discrete = TRUE)
 p + scale_fill_viridis(discrete = TRUE, option = "plasma")
 
 ```
-The viridis package also has some nice color palettes (https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html). I think they might all be diverging palettes (qualitative is best for our Taxa), but I will showcase a couple here.
+The `viridis` package also has some nice color palettes (https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html). I think they might all be diverging palettes (qualitative is best for our Taxa), but I will showcase a couple here.
 
 ```{r}
 library(viridis)
@@ -643,7 +660,7 @@ library(viridis)
 p + scale_fill_viridis(discrete = TRUE)
 p + scale_fill_viridis(discrete = TRUE, option = "plasma")
 ```
-RSkittleBrewer is another option for funky colour palettes.
+`RSkittleBrewer` is another option for funky colour palettes.
 
 
 ###Customization of Theme
@@ -677,7 +694,7 @@ You can look at the default for each theme simply by typing it into the console.
 theme_bw
 ```
 
-And this is what theme_bw looks like:
+And this is what `theme_bw()` looks like:
 
 ```{r}
 
@@ -726,12 +743,12 @@ Things I don't like about this plot and their solutions:
 
 It isn't necessary to remember all of this syntax, I frequently find myself back at the help page at http://ggplot2.tidyverse.org/reference/theme.html.
 
-The last call to theme will override previous calls. Therefore, if we want to start with theme_minimal() as our base, it has to be in our code BEFORE the other modifications. 
+The last call to theme will override previous calls. Therefore, if we want to start with `theme_minimal()` as our base, it has to be in our code BEFORE the other modifications. 
 
 ```{r}
 
 
-ggplot(dat[dat$Taxa %in% keep,] , aes(x = Taxa, y = OTUs, fill = Taxa)) + 
+ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs, fill = Taxa)) + 
   geom_boxplot(outlier.colour = "red") + 
   theme_minimal() +
   theme(axis.text.x = element_text(angle =90, hjust=1), 
@@ -770,7 +787,7 @@ Change the colour of the plot background. Add minor gridlines, and make the majo
 
 One common way to look for outliers or trends in data is to calculate the correlation between samples and make a correlation plot. Since samples are expected to be in columns, this is an example of where you would use 'wide' data. The default correlation coefficient is the Pearson correlation, but others (Kendall, Spearman) can be specified. Note that the entire matrix must be numeric. 
 
-A heatmap can be made in ggplot by using the tile geom. The fill is now the correlation coefficient, which is a continuous variable (hence the gradient). I have changed the title of the legend from 'value' to 'Pearson Correlation' by using scale_fill_continuous. The '\n' included in the name is a line break. A fantastic resource for modifying legends is http://www.cookbook-r.com/Graphs/Legends_(ggplot2)/.
+A heatmap can be made in ggplot by using the tile geom. The fill is now the correlation coefficient, which is a continuous variable (hence the gradient). I have changed the title of the legend from 'value' to 'Pearson Correlation' by using `scale_fill_continuous()`. The '\n' included in the name is a line break. A fantastic resource for modifying legends is http://www.cookbook-r.com/Graphs/Legends_(ggplot2)/.
 
 ```{r}
 cdat <- read.csv("data/ENV_pitlatrine.csv", row.names = 1)
@@ -806,7 +823,7 @@ ggplot(melt, aes(Var1, Var2, fill = value)) +
 ```
 If this looks a little jarring to you compared to 'normal' heatmaps, it is probably because the data has not been ordered yet. This can be done by calculating the distance between samples (ie. euclidean) and them clustering them in a hierarchical way (ie. complete linkage).
 
-To have a different colour scheme that for example, goes from red to yellow, you can use scale_fill_gradient and specify what you want the diverging colours to be. Note that your legend title now derives from this gradient. 
+To have a different colour scheme that for example, goes from red to yellow, you can use `scale_fill_gradient()` and specify what you want the diverging colours to be. Note that your legend title now derives from this gradient. 
 
 
 ```{r}
@@ -826,7 +843,7 @@ ggplot(melt, aes(Var1, Var2, fill = value)) + geom_tile() +
 
 We can now see that there is a patch of dark red samples with low correlation. It is difficult to see which sites these are as the names are a bit small. 
 
-Enter the interactive heatmap! Plotly allows for interactive plots in a variety of languages, and allows the creation of sharable links (if you are interested you have to sign up for a free account to get API credentials https://plot.ly/r/getting-started/). They have created a package, which, luckily for us, interfaces seamlessly with ggplot2. I only need to save my plot and call the function ggplotly to have an interactive graph! 
+Enter the interactive heatmap! `Plotly` allows for interactive plots in a variety of languages, and allows the creation of sharable links (if you are interested you have to sign up for a free account to get API credentials https://plot.ly/r/getting-started/). They have created a package, which, luckily for us, interfaces seamlessly with `ggplot2`. I only need to save my plot and call the function `ggplotly()` to have an interactive graph! 
 
 The response of plotly to manipulations other than hovering can be a bit slow if not using the API and may freeze/crash R, so I recommend saving your code before trying it.  
 
@@ -845,7 +862,7 @@ ggplotly(p)
 
 Hovering will highlight the variables and values relating to that specific data point, and areas can be zoomed in on. We can now see the names of the low correlation samples. While they are all from Tanzania, they do not appear to all be from the same Latrine_Number or Depth. 
 
-ggvis is a Bioconductor package allowing interactive graphics in R (http://ggvis.rstudio.com/). It is founded on the grammar of graphics and the syntax is similar, but not identical to ggplot. It is good for interactive scatterplots, bar graphs, line graphs and histograms (although not heatmaps at this point in time). The nature of the interactiveness is highly customizable: you can hover, add slider bars, checkboxes or radiobuttons (it uses Shiny's reactive programming).
+`ggvis` is a Bioconductor package allowing interactive graphics in R (http://ggvis.rstudio.com/). It is founded on the grammar of graphics and the syntax is similar, but not identical to `ggplot2`. It is good for interactive scatterplots, bar graphs, line graphs and histograms (although not heatmaps at this point in time). The nature of the interactiveness is highly customizable: you can hover, add slider bars, checkboxes or radiobuttons (it uses Shiny's reactive programming).
 
 In this example I have just taken a scatterplot that we made earlier, and made it possible to hover over a point and see its underlying data. Don't worry about the function and syntax too much - those will be introduced in later lessons. I just wanted to show you another option for interactive visualization that hopefully isn't too intimidating. 
 
@@ -886,12 +903,14 @@ hmap <- ggplot(melt, aes(Var1, Var2, fill = value)) + geom_tile() +
 ggsave("heatmap.pdf", plot = hmap, path = "img", scale = 2, width = 150, height = 110, units = "mm")
 ```
 
-
-- forcats pkg: controlling categorical variable order in your legend
-
-
+- phylogenetic tree
   
-##Taking it up a notch_ - Maybe preview these, let's do one heatmap in plotly and one phylogenetic tree
+##Taking it up a notch
+
+There are many fantastic R packages to analyze and visualize _your_ data. As a group, we are likely working on a variety of specialized areas. The plots we have made so far today should be useful for data exploration for many different kinds of data. In the next section we are going to preview some more complex visualization types, but since these take more time to go through and not everyone may be interested in network diagrams, time-series analysis, or geospatial data, we will not be plotting all of these ourselves. If you are interested in a tutorial on one of these visualization types, please indicate that in the comments area of the lesson survey (https://www.surveymonkey.com/r/VNQZ3KS). 
+
+We will, however do a phylogenetic tree since there are likely some evolutionary biologists here, and we will do an Upset Plot as my personal crusade to have something better than venn diagrams in publications.
+
 
 ###Interactive graphics 
 (ggvis, plotly)
@@ -909,6 +928,34 @@ Migest
 
 ###Upset Plots
 - UpSetR https://github.com/hms-dbmi/UpSetR
+
+Upset plots are an alternative to venn diagrams that show the intersection of sets, as well as the size of the sets. Additionally, venn diagrams can be difficult to interpret for greater than 2 or 3 sets.
+
+Let's see how this works practically. The question that we are asking is how many sites are each Taxa represented at and what is the overlap with other Taxa? The data that we have is an OTU table. For this purpose we simply want to know whether a given Taxa was present or absent in the sample, and then we can form intersections based on this information. So, for each OTU value that is not 0, we replace it with a 1 instead. Then all we have to do is to enter our data set, the number of sets we are inputting, if we want to order the results (in this case by frequency), and how many intersections we want to show. I have picked 8 different Taxa, which would make a crazy venn diagram with a lot of zeros in it since a couple of these Taxa are rare. Here, I will show 15 intersections - we know the remaining intersections would be zero since this is ordered by frequency.
+
+```{r}
+library(UpSetR)
+
+subdat <- read.csv("data/SPE_pitlatrine.csv", stringsAsFactors = FALSE)
+
+test <- subdat %>% 
+   rownames_to_column %>% 
+   gather(var, value, -rowname) %>% 
+   spread(rowname, value) 
+
+
+colnames(test) <- test[30,]
+test <- test[-30,]
+
+test[,-1] <- apply(test[,-1], 2, function(x) ifelse(as.numeric(x)!=0, 1, 0))
+test <- test[, c(1,4,9,17,22,19,20,33,35)]
+
+
+upset(test, nsets = 8, empty.intersections = TRUE, order.by = "freq", nintersects = 15, main.bar.color = "black", sets.bar.color = "#56B4E9" )
+
+```
+Let's look at our greatest Intersection Size (equal to 28). This means that 28 of our 81 samples have Clostridia, Alphaproteobacteria, and Deinococci present in the same sample WITHOUT Chloroflexi, both Acidobacteria, Cyanobacteria or Lentisphaeria also being present. We can see from the Set Size that Clostridia and Alphaproteobacteria are present in almost all samples, and Deinococci is present in greater than 3/4 of the samples. You might expect this overlap to be higher, but remember that this is without the other Taxa and moving along our interesection sizes and dot matrix, we can see that other intersections include these bacteria. Some quick mental math shows that 63 samples have these 3 bacteria present.  
+
 ###Geospatial Data
 Static Maps:
   https://bhaskarvk.github.io/user2017.geodataviz/notebooks/02-Static-Maps.nb.html
@@ -918,6 +965,57 @@ Interactive Maps:
 - ggtree http://www.bioconductor.org/packages/3.7/bioc/vignettes/ggtree/inst/doc/treeAnnotation.html#annotate-clades
 - treeman https://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-016-2340-8
 - metacoder https://github.com/grunwaldlab/metacoder
+
+Using metacoder because their documentation was easiest to go from an OTU table to a phylogenetic tree.
+
+```{r}
+library(metacoder) #install.packages but has a dependency from bioconductor biomformat
+
+obj <- parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+                      class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+                      class_regex = "^(.+)__(.+)$")
+
+str(obj) #weird object class
+print(obj) #to take a look at it
+#filtering low abundance counts
+obj$data$tax_data <- zero_low_counts(obj, "tax_data", min_count = 5)
+
+#OTUs with no 'real' reads
+no_reads <- rowSums(obj$data$tax_data[, hmp_samples$sample_id]) == 0
+sum(no_reads)
+
+#filter them out
+obj <- filter_obs(obj, "tax_data", ! no_reads, drop_taxa = TRUE)
+#account for uneven sampling
+obj$data$tax_data <- calc_obs_props(obj, "tax_data")
+
+#getting per taxon info
+obj$data$tax_abund <- calc_taxon_abund(obj, "tax_data",
+                                       cols = hmp_samples$sample_id)
+
+#now an additional table with one row per taxon
+#can calculate the number of samples that have reads for each taxon
+obj$data$tax_occ <- calc_n_samples(obj, "tax_abund", groups = hmp_samples$body_site)
+
+#plot using heat trees, The code below plots the number of "Nose" samples that have reads for each taxon. It also plots the number of OTUs assigned to each taxon in the overall dataset.
+
+
+heat_tree(obj, 
+          node_label = taxon_names,
+          node_size = n_obs,
+          node_color = Nose, 
+          node_size_axis_label = "OTU count",
+          node_color_axis_label = "Samples with reads")
+#equivalent to
+heat_tree(obj, 
+          node_label = obj$taxon_names(),
+          node_size = obj$n_obs(),
+          node_color = obj$data$tax_occ$Nose, 
+          node_size_axis_label = "OTU count",
+          node_color_axis_label = "Samples with reads")
+```
+
+
 ###Genomics Data 
 - ggbio http://www.bioconductor.org/packages/2.11/bioc/vignettes/ggbio/inst/doc/ggbio.pdf
    
