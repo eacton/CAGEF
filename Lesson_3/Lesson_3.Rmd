@@ -4,10 +4,10 @@ output:
   html_document:
           keep_md: yes
           toc: TRUE
-          toc_depth: 3
+          toc_depth: 4
   html_notebook:
           toc: TRUE
-          toc_depth: 3
+          toc_depth: 4
 ---
 ***
 </br>
@@ -113,6 +113,7 @@ Let's build a plot by adding components one by one to see how the grammar of gra
 ```{r}
 ggplot(ndat)
 ```
+
 We have, however, created a ggplot object. This is a list of 9 parameters: data, layers, scales, mapping, theme, coordinates, facet, plot environment, and labels. Luckily there are some defaults, so we don't have to specify everything, but you can start to see how ggplot objects are highly customizable. 
 
 ```{r}
@@ -130,11 +131,13 @@ We now have chosen the geometric object (geom) with which to plot our data, in t
 ```{r}
 ggplot(ndat, aes(x=TS, y=CODt)) + geom_point() 
 ```
+
 The data looks like there are two groupings. My guess would be that this is for the 2 different countries. We can easily test this by colouring our points by Country. A legend will be automatically created for you. I have also changed the shape and size of the geom. A quick reference key for shapes can be found in the 'Cookbook for R' (http://www.cookbook-r.com/Graphs/Shapes_and_line_types/).
 
 ```{r}
 ggplot(ndat, aes(x=TS, y=CODt, colour = Country)) + geom_point(shape = 18, size = 5) 
 ```
+
 Some of our data points seem to be crushed near the x-axis. We can scale the y-axis to fix this. When we start customizing our plot, it easier to read our code if we have each specification on a new line. 
 
 
@@ -143,6 +146,9 @@ ggplot(ndat, aes(x=TS, y=CODt, colour = Country)) +
   geom_point(alpha = 0.3) + 
   scale_y_log10()
 ```
+
+####Faceting
+
 Faceting allows us to split our data into groups. Note that I have removed the colour. It is good data visualization practice to only have one attribute (colour, shading, faceting, symbols) per grouping.
 
 ```{r}
@@ -151,6 +157,7 @@ ggplot(ndat, aes(x=TS, y=CODt)) +
   scale_y_log10() +
   facet_grid(~Country)
 ```
+
 I could now add information from another variable as a colour in this plot. Note that if a variable is continuous instead of discrete, the colour will be a gradient.
 
 ```{r}
@@ -159,6 +166,7 @@ ggplot(ndat, aes(x=TS, y=CODt, colour = Temp)) +
   scale_y_log10() +
   facet_grid(~Country)
 ```
+
 If we really wanted to we could add another variable to the plot by changing the shape attribute. Note that shape can only be used for discrete values. Let's change Country to having 2 shapes and facet by the Depth of the latrine instead.
 
 ```{r}
@@ -168,6 +176,7 @@ ggplot(ndat, aes(x=TS, y=CODt, colour = Temp, shape = Country)) +
   facet_wrap(~Depth, scales = "free_y")
 
 ```
+
 We can now note that only Tanzania had sampling greater than 4cm of depth. There are single latrines for 4 samples. There was no latrine at a depth of 11cm. Lack of replication and a bias towards Tanzania for the higher depths is something we should keep in mind while looking at this data. Depending on the question we are trying to answer, we may want to remove some of this data. We can also note that our numbers are being ordered as if they were characters. If you recall we created Depth by splitting a sample name. We can change Depth to numeric type, and the numbers will be ordered properly.
 
 ```{r}
@@ -189,6 +198,7 @@ ggplot(ndat, aes(x=TS, y=CODt, colour = Temp, shape = Country)) +
 
 ```
 
+####Adding Regression Lines
 You can also add statistical transformations to your plots. Again, take a look at stat_ then Tab to see the list of options. In this case let's separately fit a linear regression line to CODt vs TS for each country. The grey area around the line is the confidence interval (default=0.95) and can be removed with the additional call to stat_smooth of 'se = FALSE'.
 
 ```{r}
@@ -198,6 +208,7 @@ ggplot(ndat, aes(x=TS, y=CODt)) +
   facet_grid(~Country) +
   stat_smooth(method = lm)
 ```
+
 A linear model is not necessarily the best fit. The method of calculating the smoothing function can be changed to other provided functions or can be a custom formula. Note that I changed the confidence interval by modifying 'level=0.8'. geoms can be made more transparent with the alpha parameter, which is set to 0.3 in the following code so that the emphasis is on the regression line rather than the points.
 
 ```{r}
@@ -207,6 +218,7 @@ ggplot(ndat, aes(x=TS, y=CODt)) +
   facet_grid(~Country) +
   stat_smooth(method = loess, level = 0.8)
 ```
+
 ##Exploring different types of plots
 
 ###Density Plots
@@ -218,11 +230,12 @@ ggplot(dat, aes(x=OTUs, fill=Country, alpha=0.3)) +
 	geom_density() 
 ```
 
-The first thing to notice is that everything is clumped at 0. This is because we have not filtered our data frame to remove all observations where OTUs are zero. Here we filter to have at least 2 OTUs. The other thing to notice is that there is a long tail where there will only be a few observations. It will be necessary to change the x-axis to see our data. Note that R gives us a warning that we are not viewing 158 of our 4212 rows.
+The first thing to notice is that everything is clumped at 0. This is because we have not filtered our data frame to remove all observations where OTUs are zero. Here we filter to have at least 2 OTUs. The other thing to notice is that there is a long tail where there will only be a few observations. It will be necessary to change the x-axis to see our data. Note that R gives us a warning that we are not viewing 158 of our 4212 rows. We can add a rug geom to see each value.
 
-```{r}
+```{r }
 ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) + 
 	geom_density() +
+  geom_rug() +
   xlim(0, 1000)
 
 ```
@@ -236,13 +249,15 @@ ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) +
 	geom_histogram() +
   xlim(0,1000)
 ```
-Instead of having the countries information stacked, we may want to see the data side by side. This can be done with the parameter 'position' set to "dodge".
 
-```{r}
+Instead of having the countries information stacked, we may want to see the data side by side. This can be done with the parameter 'position' set to "dodge". A rug geom can also be added to a histogram.
+
+```{r warning = FALSE}
 ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) + 
 	geom_histogram(binwidth = 50, position = "dodge") +
   xlim(0,1000) +
-  ylim(0,150)
+  ylim(0,150) +
+  geom_rug()
 ```
 
 ***
@@ -292,6 +307,7 @@ This is a common error because the default for geom_bar is to use the y-axis for
 ggplot(dat[dat$OTU >=2,], aes(x=Country, y=OTUs, fill=Taxa)) + 
 	geom_bar(stat = "identity") 
 ```
+
 ####Controlling the order of your categorical variables in your legend
 
 In the legend for the diagram above our factor levels for Taxa are in alphabetical order. However, an ordering that might be more useful would be the order that matches our data, for example, Taxa in descending order of OTUs. To do this, we can use the `forcats` package. `fct_reorder2()` takes the factor we want to order by (Taxa) and orders it by the values given (Country, OTUs). We will talk about customizing plots later in this lesson, but the last line of code is one way to remove the legend title (by making the legend title 'blank').
@@ -304,6 +320,7 @@ ggplot(dat[dat$OTU >=2,], aes(x=Country, y=OTUs, fill=fct_reorder2(Taxa, Country
   theme(legend.title = element_blank())
  
 ```
+
 Now our highest abundance Taxa is the first value in our legend, and this matches the order of the Taxa in our bar graph. The legend order now has meaning. The white line in the Vietnam bar graph is a Taxa for which there was an OTU value in Tanzania but no data in Vietnam (since anything <=2 was filtered out of the data set). 
 
 
@@ -370,6 +387,7 @@ We can colour the lines for the different countries. Looking at our previous gra
 ```{r}
 ggplot(ndat, aes(x=Temp, y=pH, colour = Country)) + geom_line() 
 ```
+
 ####Error bars
 
 To plot error bars, we need to give the geom, geom_errorbar(), the interval over which we want to draw the bar. This is usually something like one standard deviation or one standard error or a confidence interval. Luckily, we have learned how to calculate the mean and standard deviation with dplyr. Then, all we need to do is add or subtract the standard deviation from our data point to get the bounds of the error bar. geom_errorbar() takes these bounds passed to the parameters ymax and ymin. In this case, since there were no sample replicates, the standard deviation is taken from the mean of all of the soil readings in a given country at a given depth.
@@ -393,21 +411,24 @@ The first plots we made we scatterplots with 2 continuous variables. With one di
 ```{r}
 ggplot(dat, aes(x = Depth, y = OTUs)) + geom_point() 
 ```
+
 Again, we have a lot of values crushed near the x-axis. It we add log scaling to the y-axis, we get an error that this transformation created infinite values. This is because we have zeros in our data set. Knowing this, we could ignore the warning, or add +1 to each OTU.
 
 ```{r}
 ggplot(dat, aes(x = Depth, y = OTUs)) + geom_point() + scale_y_log10() 
 ```
+
 ```{r}
 ggplot(dat, aes(x = Depth, y = (OTUs+1))) + geom_point() + scale_y_log10() 
 ```
+
 In order to see the points a little better, we can 'jitter' them.
 
 ```{r}
 ggplot(dat, aes(x = Depth, y = (OTUs+1))) + geom_point(position = "jitter") + scale_y_log10() + facet_wrap(~Country)
 ```
 
-`
+
 ###Bubble Plots + Labels
 
 Let's group our OTUs by Country and Taxa and look at the Taxa for the top 30 OTUs.
@@ -458,6 +479,7 @@ ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
   scale_size_continuous(range=c(1,30)) +
   geom_text(aes(label = Taxa), check_overlap = TRUE, show.legend = FALSE)
 ```
+
 What happened here? Why don't we have as many labels? Look in the help menu to explain this behaviour.
 
 I don't like futzing with label positions, so I went looking for a package that would do this for me. `ggrepel()` will 'repel' your labels away from each other without getting rid of them. Let's check it out with our bubble plot labels. Install and load ggrepel. The equivalent function we can use is `geom_label_repel()`. The force parameter allow you to modify how far you want your labels pushed away from each other. Here, colour is being used to map to our data points but ggrepel can ditch the box and connect a line to data points instead. Variations on use can be found here: https://cran.r-project.org/web/packages/ggrepel/vignettes/ggrepel.html.
@@ -481,6 +503,7 @@ We are going to see boxplots for the distribution of OTUs per Taxa across all sa
 ```{r}
 ggplot(dat, aes(x = Taxa, y = OTUs)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1))
 ```
+
 While it is clear that Clostridia is the most represented taxa, it is difficult to tell whether some other taxa have no representation, or if they are lowly represented. Transforming to a log scale on the y-axis will sort this out for us.
 
 ```{r}
@@ -499,15 +522,16 @@ ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs)) + geom_boxplot()
 
 If we facet by country we can see that Acidobacteria_Gp1, for example, was only found in Vietnam and not Tanzania.
 
-```{r}
+```{r warning = FALSE}
 ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs)) + 
   geom_boxplot() + 
   theme(axis.text.x = element_text(angle=90, hjust=1)) + 
   scale_y_log10() + facet_grid(~Country)
 ```
+
 For now, let's just keep the Taxa that are common to both countries.
 
-```{r}
+```{r warning = FALSE}
 keep <- dat %>% 
   ungroup() %>% 
   filter(OTUs>=2) %>% 
@@ -522,11 +546,12 @@ keep <- keep[keep$dup, "Taxa"]
 ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs)) + geom_boxplot() + theme(axis.text.x = element_text(angle=90, hjust=1)) + scale_y_log10() + facet_grid(~Country)
 
 ```
+
 ###Beeswarm Plots
 
 Even though boxplots give us summary statistics on our data, it is useful to be able to see where our data points are. Adding the data using `geom_point()` adds our data in the form of a stripplot to our boxplots. It would be nice to see how many points we have at each OTU value, but there are a lot of points overlapping here.
 
-```{r}
+```{r warning = FALSE}
 ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
   geom_boxplot() + 
   geom_point() +
@@ -536,7 +561,7 @@ ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Tax
 
 Jittering the points gives a general idea, but is a bit too widely dispursed to give a good sense of the data.
 
-```{r}
+```{r warning = FALSE}
 ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
   geom_boxplot() + 
   geom_jitter() +
@@ -546,7 +571,7 @@ ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Tax
 
 A beeswarm plot places data points that were overlapping instead next to each other, so we can get a better picture of the distribution of points. We simply overlay the points with `geom_beeswarm()`.
 
-```{r}
+```{r warning = FALSE}
 library(ggbeeswarm)
 
 ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
@@ -555,9 +580,11 @@ ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Tax
   theme(axis.text.x = element_text(angle=90, hjust=1)) + 
   scale_y_log10()
 ```
+
+
 Increasing the spacing between data points can make this distribution a bit clearer.
 
-```{r}
+```{r warning = FALSE}
 ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
   geom_boxplot() + 
   geom_beeswarm(cex = 2.2) +
@@ -567,18 +594,20 @@ ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Tax
 
 Using `geom_quasirandom()` gives the empirical distribution of the stripplot to avoid overplotting.
 
-```{r}
+```{r warning = FALSE}
 ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
   geom_boxplot(alpha=0.8) + 
   geom_quasirandom(varwidth = TRUE) +
   theme(axis.text.x = element_text(angle=90, hjust=1)) + 
   scale_y_log10()
 ```
+
+
 Other spacing and distribution options are available at https://github.com/eclarke/ggbeeswarm.
 
 
 
-###Customization of Plot Elements Related to Your Data
+##Customization of Plot Elements Related to Your Data
 
 Plot elements relating to my data include things like axis labels, titles, colour or shapes that represent subsets of your data, scaling that is data-dependent, legends, and other data-driven parameters. 
 
@@ -601,7 +630,7 @@ In this case, I want to add a title, modify the y-axis label to say that the dat
 I also want to change my Country labels from a single letter to the country name. This can be done in a couple of ways. One way would be to change the values in the dataset. Since we haven't learned string manipulation yet, I will show you a second way, which is to use the labeller function. I can make a vector of the names that I want to replace. The data is split by Country in the `facet_grid()` and this is where we pass our labels to the labeller function, which will output the names on the strip label.
 
 
-```{r}
+```{r warning = FALSE}
 labels <- c(T = "Tanzania", V = "Vietnam")
 
 p <- ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs, fill = Taxa)) + 
@@ -615,9 +644,11 @@ p <- ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs, fill = Taxa)
 
 p
 ```
+
+
 A common thing to want to do is to change colours from `ggplot2`'s rainbow color scheme. Let's create our own colour palette for Taxa.
 
-###A Note on Colour Palettes
+##A Note on Colour Palettes
 
 There are 3 main types of colour palettes.
 1. Sequential - implies an order to your data ie. light to dark implies low values to high values.
@@ -629,7 +660,7 @@ Which of these is `ggplot2`'s default color palette?
 Many colour palettes now exist. I showcase a couple that work nicely with `ggplot2`. These packages also have colorblind friendly options. RColorBrew has options for these 3 types of palettes, which you can see with `display.brewer.all()`. With a smaller dataset, we could make a call to `scale_fill_brewer()`, which just requires a choice of one of RColorBrewer's palettes, such as "Spectral". However, we have 24 Taxa and these palettes have 8-12 colours, so we have to get creative. I have simply taken the 2 qualitative palettes that each have a length of 12, put them into one palette, and made sure my values were unique. This can then be passed to ggplot via `scale_fill_manual()`. You can always choose a vector of your own colors using this 'R color cheatsheet'(https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/colorPaletteCheatsheet.pdf).
 
 
-```{r}
+```{r warning = FALSE}
 library(RColorBrewer)
 library(viridis)
 
@@ -652,6 +683,8 @@ p + scale_fill_viridis(discrete = TRUE)
 p + scale_fill_viridis(discrete = TRUE, option = "plasma")
 
 ```
+
+
 The `viridis` package also has some nice color palettes (https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html). I think they might all be diverging palettes (qualitative is best for our Taxa), but I will showcase a couple here.
 
 ```{r}
@@ -660,10 +693,13 @@ library(viridis)
 p + scale_fill_viridis(discrete = TRUE)
 p + scale_fill_viridis(discrete = TRUE, option = "plasma")
 ```
+
+
 `RSkittleBrewer` is another option for funky colour palettes.
+`ggsci` has a variety of color palettes inspired by different scientific journals as well as television shows (https://cran.r-project.org/web/packages/ggsci/vignettes/ggsci.html).
 
 
-###Customization of Theme
+##Customization of Theme
 
 As mentioned earlier, it is possible to customize every single aspect of a ggplot. Most of this occurs with a call to __theme__, which you can think of as modifying everything BUT your data. For example, my axis labels can be modified, but they (hopefully) have something to do with my data. However, changing the size of the text or the font of the labels is unrelated to my data, and that same structure could be carried over to other plots if I saved my own theme.
 
@@ -696,7 +732,7 @@ theme_bw
 
 And this is what `theme_bw()` looks like:
 
-```{r}
+```{r warning = FALSE}
 
 p + theme_bw()
 
@@ -705,18 +741,18 @@ p + theme_bw()
 
 Here is an example of theme_dark.
 
-```{r}
+```{r warning = FALSE}
 
 p + theme_dark()
 ```
 There are also themes that have been created and put into a package, ggthemes. Some of these themes are based off of graphs seen in print or on websites (the economist, wall street journal, fivethirtyeight) or to match standard tools (excel, google docs). Information about the themes can be found at https://github.com/jrnold/ggthemes.
 
 
-```{r}
+```{r warning = FALSE}
 library(ggthemes)
 p + theme_economist()
 ```
-```{r}
+```{r warning = FALSE}
 p + theme_stata()
 ```
 
@@ -726,10 +762,12 @@ You can also make your own custom theme as demoed here: http://joeystanley.com/b
 I am going to show you how to modify a plot, starting from theme_minimal() because I don't like the grey backgrounds or harsh axis lines.
 
 
-```{r}
+```{r warning = FALSE}
 p + theme_minimal()
 
 ```
+
+
 Things I don't like about this plot and their solutions:
 
 |Problem                                                   | Solution                                                                   |
@@ -745,9 +783,7 @@ It isn't necessary to remember all of this syntax, I frequently find myself back
 
 The last call to theme will override previous calls. Therefore, if we want to start with `theme_minimal()` as our base, it has to be in our code BEFORE the other modifications. 
 
-```{r}
-
-
+```{r warning = FALSE}
 ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs, fill = Taxa)) + 
   geom_boxplot(outlier.colour = "red") + 
   theme_minimal() +
@@ -789,7 +825,7 @@ One common way to look for outliers or trends in data is to calculate the correl
 
 A heatmap can be made in ggplot by using the tile geom. The fill is now the correlation coefficient, which is a continuous variable (hence the gradient). I have changed the title of the legend from 'value' to 'Pearson Correlation' by using `scale_fill_continuous()`. The '\n' included in the name is a line break. A fantastic resource for modifying legends is http://www.cookbook-r.com/Graphs/Legends_(ggplot2)/.
 
-```{r}
+```{r warning = FALSE}
 cdat <- read.csv("data/ENV_pitlatrine.csv", row.names = 1)
 
 cdat <- cor(cdat)
@@ -805,7 +841,7 @@ ggplot(melt, aes(Var1, Var2, fill = value)) +
 
 ```
 
-```{r}
+```{r warning = FALSE}
 cdat <- read.csv("data/SPE_pitlatrine.csv", row.names = 1)
 
 cdat <- cor(cdat)
@@ -821,6 +857,8 @@ ggplot(melt, aes(Var1, Var2, fill = value)) +
   theme(axis.text.x = element_text(angle =90, hjust=1)) 
   
 ```
+
+
 If this looks a little jarring to you compared to 'normal' heatmaps, it is probably because the data has not been ordered yet. This can be done by calculating the distance between samples (ie. euclidean) and them clustering them in a hierarchical way (ie. complete linkage).
 
 To have a different colour scheme that for example, goes from red to yellow, you can use `scale_fill_gradient()` and specify what you want the diverging colours to be. Note that your legend title now derives from this gradient. 
@@ -848,7 +886,7 @@ Enter the interactive heatmap! `Plotly` allows for interactive plots in a variet
 The response of plotly to manipulations other than hovering can be a bit slow if not using the API and may freeze/crash R, so I recommend saving your code before trying it.  
 
 
-```{r}
+```{r warning = FALSE}
 library(plotly)
 p <- ggplot(melt, aes(Var1, Var2, fill = value)) + geom_tile() +
   scale_fill_gradient(name = "Pearson\nCorrelation", low = "red", high = "yellow") +
@@ -866,7 +904,7 @@ Hovering will highlight the variables and values relating to that specific data 
 
 In this example I have just taken a scatterplot that we made earlier, and made it possible to hover over a point and see its underlying data. Don't worry about the function and syntax too much - those will be introduced in later lessons. I just wanted to show you another option for interactive visualization that hopefully isn't too intimidating. 
 
-```{r}
+```{r warning = FALSE}
 library(ggvis)
 
 p <- ggvis(ndat, x= ~TS, y= ~CODt) 
@@ -903,24 +941,151 @@ hmap <- ggplot(melt, aes(Var1, Var2, fill = value)) + geom_tile() +
 ggsave("heatmap.pdf", plot = hmap, path = "img", scale = 2, width = 150, height = 110, units = "mm")
 ```
 
-- phylogenetic tree
   
 ##Taking it up a notch
 
+
+###Multiple plots on one page (ie. for publication images)
+
+There are a variety of methods to mix multiple graphs on the same page, however `ggplot` does not work well with all of them. I am going to work with a package based that uses `gridExtra`(which allows us to arrange plots) but works well with `ggplot` called `ggpubr` (which allows us to align the axes of our plots). For a demonstration, we are going to take 3 plots that we made earlier (a boxplot, a histogram, and a bubble plot), save them as objects, and then arrange and align them in the same figure. (http://www.sthda.com/english/rpkgs/ggpubr/)
+
+There is a function `ggarrange()` which takes your plots, their labels, and how they are arranged in rows and columns. To start, if we just have our boxplot and bubble plot, and we wanted them to be side by side, if you picture each plot as a square in a grid, we would have two columns `ncol = 2` and 1 row 
+
+```{r warning = FALSE}
+library(ggpubr)
+
+hist <- ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) + 
+	geom_histogram(binwidth = 50, position = "dodge") +
+  xlim(0,1000) +
+  ylim(0,150) +
+  geom_rug() 
+
+bub <- ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
+  scale_y_log10() +
+  geom_jitter(aes(size = sqrt(OTUs_per_Taxa/pi)), pch = 21, show.legend = FALSE) + 
+  scale_size_continuous(range=c(1,30)) +
+  geom_text(aes(label = Taxa), check_overlap = TRUE, show.legend = FALSE)
+
+ggarrange(bub, hist, 
+          labels = c("A", "B"),
+          ncol = 2, nrow = 1)
+
+
+```
+While our grid areas are the same size, our plot backgrounds are not. Let's adjust the legend so that it is in the top right corner of the plot, and get remove the white background. We do not need the alpha legend. Do you remember how to get rid of it?
+
+
+```{r warning = FALSE}
+hist <- ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) + 
+	geom_histogram(binwidth = 50, position = "dodge") +
+  xlim(0,1000) +
+  ylim(0,150) +
+  geom_rug() +
+  guides(alpha = FALSE) +
+  theme(legend.justification=c(1,1), legend.position=c(1,1), legend.background = element_blank())
+
+ggarrange(bub, hist, 
+          labels = c("A", "B"),
+          ncol = 2, nrow = 1)
+```
+Imagine a square with 4 boxes. We are going to put our boxplot in the left top and bottom boxes, the histogram in the top right box, and the bubble plot in the bottom right box.  To do this, we are arranging 2 columns (one with the boxplot and one with the histogram + boxplot) and we are arranging 2 rows (one with the histogram and one with the boxplot).
+
+```{r warning = FALSE}
+box <- ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
+  geom_boxplot() + 
+  geom_point() +
+  theme(axis.text.x = element_text(angle=90, hjust=1)) + 
+  scale_y_log10()
+
+ggarrange(box, ggarrange(hist, bub, 
+          labels = c("B", "C"),
+          nrow = 2),
+           ncol = 2, labels = "A")
+
+```
+The y-axis lines for the histogram and boxplot are not aligned, but this can be fixed with a call to `align="v"`.
+
+
+```{r warning = FALSE}
+ggarrange(box, ggarrange(hist, bub, 
+          labels = c("B", "C"),
+          nrow = 2, align = "v"),
+           ncol = 2, labels = "A")
+
+```
+To make sure all axis titles are the same size (B and C look a little off to me), we can specify the font we want changed and the size we want to change it to. I am also going to make the legend title size the same. I want to make the bubble plot font a little smaller as well. Let's look at the font function. Can I do that? What might be another option?
+```{r warning = FALSE}
+bub <- ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
+  scale_y_log10() +
+  geom_jitter(aes(size = sqrt(OTUs_per_Taxa/pi)), pch = 21, show.legend = FALSE) + 
+  scale_size_continuous(range=c(1,30)) +
+  geom_text(aes(label = Taxa, size=16), check_overlap = TRUE, show.legend = FALSE)
+
+
+ggarrange(box + font("axis.title", size=9), ggarrange(hist + font("axis.title", size=9) + font("legend.title", size=9), bub + font("axis.title", size=9), 
+          labels = c("B", "C"),
+          nrow = 2, align = "v"),
+           ncol = 2, labels = "A")
+```
+
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/Pug-vs-Food-1.jpg){width=150px}
+
+</div>
+
+Using the code available here for a line graph we made earlier in the lesson, make a combined figure. Imagine a square with 4 boxes. We are going to put our line graph in the top right and left boxes, the histogram in the bottom left box, and the bubble plot in the bottom right box. Make sure the legend and axis titles are the same size. Change the legend text for the line graph to be smaller than the legend title. 
+
+```
+lin <- ggplot(errdat, aes(x=Temp, y=pH, colour = Country)) + 
+  geom_line() + 
+  geom_errorbar(aes(ymin=pH-sd_pH, ymax = pH+sd_pH), width = .2, alpha = 0.4)
+```
+
+</br>
+</br>
+</br>
+
+***
+
+```{r include = FALSE, warning = FALSE, eval = FALSE}
+lin <- ggplot(errdat, aes(x=Temp, y=pH, colour = Country)) + 
+  geom_line() + 
+  geom_errorbar(aes(ymin=pH-sd_pH, ymax = pH+sd_pH), width = .2, alpha = 0.4)
+
+
+ggarrange(lin+ font("axis.title", size=9) + font("legend.title", size=9) + font("legend.text", size = 8), ggarrange(hist + font("axis.title", size=9) + font("legend.title", size=9), bub + font("axis.title", size=9), 
+          labels = c("B", "C"),
+          ncol = 2, align = "h"),
+           nrow = 2, labels = "A")
+```
+
+
+
 There are many fantastic R packages to analyze and visualize _your_ data. As a group, we are likely working on a variety of specialized areas. The plots we have made so far today should be useful for data exploration for many different kinds of data. In the next section we are going to preview some more complex visualization types, but since these take more time to go through and not everyone may be interested in network diagrams, time-series analysis, or geospatial data, we will not be plotting all of these ourselves. If you are interested in a tutorial on one of these visualization types, please indicate that in the comments area of the lesson survey (https://www.surveymonkey.com/r/VNQZ3KS). 
 
-We will, however do a phylogenetic tree since there are likely some evolutionary biologists here, and we will do an Upset Plot as my personal crusade to have something better than venn diagrams in publications.
+We will, however do an Upset Plot as my personal crusade to have something better than venn diagrams in publications.
 
 
 ###Interactive graphics 
-(ggvis, plotly)
+
+Plotly:
+- https://plot.ly/r/
+
+ggvis:
+- http://ggvis.rstudio.com/interactivity.html
+
 Heatmaps:
 - https://github.com/talgalili/heatmaply
 
 Interactive time-series data:
 - https://rstudio.github.io/dygraphs/
 ###Network diagrams 
-  -(DiagrammR, igraph)
+visNetwork (based on igraph)
+  https://datastorm-open.github.io/visNetwork/edges.html
 
 ###Circos Plots
 Migest
@@ -958,75 +1123,56 @@ Let's look at our greatest Intersection Size (equal to 28). This means that 28 o
 
 ###Geospatial Data
 Static Maps:
-  https://bhaskarvk.github.io/user2017.geodataviz/notebooks/02-Static-Maps.nb.html
+- https://bhaskarvk.github.io/user2017.geodataviz/notebooks/02-Static-Maps.nb.html
+
 Interactive Maps:
-  https://bhaskarvk.github.io/user2017.geodataviz/notebooks/03-Interactive-Maps.nb.html
+- https://bhaskarvk.github.io/user2017.geodataviz/notebooks/03-Interactive-Maps.nb.html
+  
 ###Phylogenetics Data 
-- ggtree http://www.bioconductor.org/packages/3.7/bioc/vignettes/ggtree/inst/doc/treeAnnotation.html#annotate-clades
-- treeman https://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-016-2340-8
-- metacoder https://github.com/grunwaldlab/metacoder
+ggtree: 
+- http://www.bioconductor.org/packages/3.7/bioc/vignettes/ggtree/inst/doc/treeAnnotation.html#annotate-clades
 
-Using metacoder because their documentation was easiest to go from an OTU table to a phylogenetic tree.
+treeman: 
+- https://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-016-2340-8
 
-```{r}
-library(metacoder) #install.packages but has a dependency from bioconductor biomformat
+metacoder: 
+- https://github.com/grunwaldlab/metacoder
 
-obj <- parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-                      class_key = c(tax_rank = "info", tax_name = "taxon_name"),
-                      class_regex = "^(.+)__(.+)$")
-
-str(obj) #weird object class
-print(obj) #to take a look at it
-#filtering low abundance counts
-obj$data$tax_data <- zero_low_counts(obj, "tax_data", min_count = 5)
-
-#OTUs with no 'real' reads
-no_reads <- rowSums(obj$data$tax_data[, hmp_samples$sample_id]) == 0
-sum(no_reads)
-
-#filter them out
-obj <- filter_obs(obj, "tax_data", ! no_reads, drop_taxa = TRUE)
-#account for uneven sampling
-obj$data$tax_data <- calc_obs_props(obj, "tax_data")
-
-#getting per taxon info
-obj$data$tax_abund <- calc_taxon_abund(obj, "tax_data",
-                                       cols = hmp_samples$sample_id)
-
-#now an additional table with one row per taxon
-#can calculate the number of samples that have reads for each taxon
-obj$data$tax_occ <- calc_n_samples(obj, "tax_abund", groups = hmp_samples$body_site)
-
-#plot using heat trees, The code below plots the number of "Nose" samples that have reads for each taxon. It also plots the number of OTUs assigned to each taxon in the overall dataset.
-
-
-heat_tree(obj, 
-          node_label = taxon_names,
-          node_size = n_obs,
-          node_color = Nose, 
-          node_size_axis_label = "OTU count",
-          node_color_axis_label = "Samples with reads")
-#equivalent to
-heat_tree(obj, 
-          node_label = obj$taxon_names(),
-          node_size = obj$n_obs(),
-          node_color = obj$data$tax_occ$Nose, 
-          node_size_axis_label = "OTU count",
-          node_color_axis_label = "Samples with reads")
-```
-
+phyloseq:
+- https://joey711.github.io/phyloseq/index.html
 
 ###Genomics Data 
-- ggbio http://www.bioconductor.org/packages/2.11/bioc/vignettes/ggbio/inst/doc/ggbio.pdf
-   
-__Challenge:__ 
+ggbio: 
+- http://www.bioconductor.org/packages/2.11/bioc/vignettes/ggbio/inst/doc/ggbio.pdf
 
-Take one of the provided test sets (cars, iris, gapminder, lotr, game of thrones, air quality) and plot: 
+GenVisR:
+- https://bioconductor.org/packages/release/bioc/vignettes/GenVisR/inst/doc/GenVisR_intro.html
+
+GenomeGraphs:
+- https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-10-2
+   
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/Pug-vs-Food-1.jpg){width=150px}
+
+</div>
+
+Install and load the gapminder package. Save the gapminder data into an object using `dat <- gapminder`. Plot the following:
 
   1. a qualitative variable with a quantitative variable (at least 2 ways). 
     + Facet your plot by the qualitative variable.
   2. two quantitative variables (at least 2 ways). 
     + Add a regression line to your plot.
+
+</br>
+</br>
+</br>
+
+***
+
 
 __Resources:__     
 
@@ -1043,6 +1189,12 @@ https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/colorPaletteCheatsheet.pdf
 https://cran.r-project.org/web/packages/ggrepel/vignettes/ggrepel.html
 http://www.cookbook-r.com/Graphs/Legends_(ggplot2)/
 https://github.com/eclarke/ggbeeswarm
+https://cran.r-project.org/web/packages/ggsci/vignettes/ggsci.html
+http://www.sthda.com/english/rpkgs/ggpubr/
+https://rpubs.com/drsong/9575
+http://elpub.bib.uni-wuppertal.de/edocs/dokumente/fbb/wirtschaftswissenschaft/sdp/sdp15/sdp15006.pdf
+http://www.sthda.com/english/articles/24-ggpubr-publication-ready-plots/81-ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page/
+
 
 #Post-Lesson Assessment
 ***
