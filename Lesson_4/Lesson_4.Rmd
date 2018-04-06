@@ -10,7 +10,603 @@ output:
           toc_depth: 3
 ---
 ***
+![](img/big-data-borat.png){width=400px} 
 
+</br>
+
+##A quick intro to the intro to R Lesson Series
+
+</br>
+
+This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This course was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
+
+
+
+This lesson is the third in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
+
+
+![](img/data-science-explore.png)
+
+</br>
+
+How do we get there? Today we are going to be learning how to make all sorts of plots - from simple data exploration to interactive plots.The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. Then we will learn how to do t-tests and perform regression and modeling in R. And lastly, we will learn to write some functions, which really can save you time and help scale up your analyses.
+
+
+![](img/spotify-howtobuildmvp.gif)
+
+</br>
+
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/VNQZ3KS), it will help me further develop this course and would be greatly appreciated. 
+
+***
+
+####Packages Used in This Lesson
+
+The following packages are used in this lesson:
+
+`tidyverse` (`ggplot2`, `tidyr`, `dplyr`)     
+(`twitteR`)*
+`tidytext`     
+`viridis`     
+
+*Used to generate the tweet tables used in this lesson. It is not necessary for you to install this - you can work from the tables. If you want to create these files - the code is here ................(insert link).    
+
+Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
+
+***
+####Highlighting
+
+`grey background` - a package or function or code      
+*italics* - an important term or concept     
+**bold** - heading or 'grammar of graphics' term      
+
+***
+__Objective:__ At the end of this session you will be able to use regular expressions to 'clean' your data. You will also learn R markdown and be able to render your R code into slides, a pdf, html, a word document, or a notebook.
+
+***
+
+##Data Cleaning or Data Munging or Data Wrangling
+
+Why do we need to do this?
+
+'Raw' data is seldom (never) in a useable format. Data in tutorials or demos has already been meticulously filtered, transformed and readied for that specific analysis. How many people have done a tutorial only to find they can't get their own data in the @*%($! format to use the tool they have just spend an hour learning about???
+
+Data cleaning requires us to:
+
+- get rid of inconsistencies in our data. 
+- have labels that make sense. 
+- check for invalid character/numeric values.
+- check for incomplete data.
+- remove data we do not need.
+- get our data in a proper format to be analyzed by the tools we are using. 
+- flag/remove data that does not make sense.
+
+Some definitions might take this a bit farther and include normalizing data and removing outliers, but I consider data cleaning at least, getting data into a format where we can start actively doing 'the maths or the graphs' whether it be statistical calculations, normalization or exploratory plots. We have learned how to transform data into a tidy format in Lesson 2, but the prelude to transforming data is doing the grunt work mentioned above. So let's get to it!
+
+![](img/cleaning.gif)
+</br>
+
+
+
+
+##Intro to regular expressions
+
+
+**Regular expressions**
+
+"A God-awful and powerful language for expressing patterns to match in text or for search-and-replace. Frequently described as 'write only', because regular expressions are easier to write than to read/understand. And they are not particularly easy to write."
+                                                                                          - Jenny Bryan
+
+![](img/xkcd-1171-perl_problems.png)
+
+</br>
+
+So why does regex get so much flak?
+
+Scary example: how to get an email in different programming languages (http://emailregex.com/). Whatever. 
+
+
+![](img/80170c11996bd58e422dbb6631b73c4b.jpg) 
+
+![](img/regexbytrialanderror-big-smaller.png)
+
+</br>
+
+What does the language look like?
+
+
+_Matching by position_
+```{r}
+
+```
+
+
+_Quantifiers_
+
+```{r}
+
+```
+
+
+_Character classes_
+
+```{r}
+
+```
+
+
+_Operators_
+```{r}
+
+```
+
+_Escape characters_
+```{r}
+
+```
+
+##Data Cleaning with Base R (AKA What is Elon Musk up to anyways?)
+
+Let's perform some basic data cleaning tasks with an actual (fun?) messy data set. I have scraped Elon Musk's latest tweets from Twitter. The code to do this is in the Lesson 4 markdown file if you are curious and/or want to creep someone on Twitter.
+
+```{r echo = FALSE }
+library(twitteR)
+library(httr)
+#This is from the code demo for httr::oauth1-twitter
+# 1. Find OAuth settings for twitter:
+oauth_endpoints("twitter")
+
+# 2. Register an application at https://apps.twitter.com/
+#    Make sure to set callback url to "http://127.0.0.1:1410/"
+#
+#    Replace key and secret below
+myapp <- oauth_app("twitter",
+  key = "TYrWFPkFAkn4G5BbkWINYw",
+  secret = "qjOkmKYU9kWfUFWmekJuu5tztE9aEfLbt26WlhZL8"
+)
+
+# 3. Get OAuth credentials
+twitter_token <- oauth1.0_token(oauth_endpoints("twitter"), myapp)
+
+# 4. Use API - now the code diverges from the demo
+setup_twitter_oauth(consumer_key = twitter_token[["app"]][["key"]] , consumer_secret = twitter_token[["app"]][["secret"]], access_token = twitter_token[["credentials"]][["oauth_token"]], access_secret = twitter_token[["credentials"]][["oauth_token_secret"]] )
+
+#3200 is the max number of tweets requestable
+elon_tweets <- userTimeline("elonmusk", n = 3200)
+elon_tweets_df <- tbl_df(map_df(elon_tweets, as.data.frame))
+
+write.table(elon_tweets_df, "data/elon_tweets_df.txt", sep = "\t")
+
+#used the following handles c(elon = "elonmusk", nye = "BillNye", jt = "JustinTrudeau", colbert = "StephenAtHome", jengardy = "JenniferGardy", jenny = "JennyBryan", katy = "KatyPerry", daily = "TheDailyShow", jimmy = "JimmyFallon", trump = "realDonaldTrump")
+```
+
+Let's read in the set of tweets, take a look at the structure of the data, and use 'tidyverse' to order the data by the most popular (favorited) tweets. Let's check out the top 5 favorite tweets.
+
+```{r}
+library(tidyverse)
+
+elon_tweets_df <- read.delim("data/elon_tweets_df.txt", sep = "\t")
+str(elon_tweets_df)
+
+elon_tweets_df <- elon_tweets_df %>% arrange(desc(favoriteCount))
+elon_tweets_df$text[1:5]
+
+
+```
+Our end goal is going to be to look at the top 50 words in Elon Musk's tweets. I emphasize words, because I don't want urls, or hastags, or other tags. I also don't want punctuation or spaces. I want to extract just the words from tweets. First, I want to get remove the tags from the beginning of words. Because regex expressions can get 'ugly', I am going to save my regex expression into an object - that way I am typing something like `tags` repeatedly instead of `#|@\\w+` repeatedly. 
+
+What this expression says is that I want to find matches for a hastag OR an asperand followed by at least one word character.
+
+```{r}
+tags <- "#|@\\w+"
+
+#elon apparently doesn't use hashtags
+
+grep(tags, elon_tweets_df$text)
+
+```
+Okay. `grep` returns the index of the match. We have a number of entries that include tags. However, we are immediately getting an error for lines 10, 118, 156, 219 and 224 being 'invalid'. This is a good opportunity for trouble-shooting. What would you do next? Let's check out those lines.
+
+```{r}
+
+elon_tweets_df[c(10,188,156,219,224), "text"]
+
+```
+I think these are emojis. What would you do next? Since these are not words, they should be removed. 
+Since we are getting an invalid locale call, let's check out our locale.
+
+```{r}
+Sys.getlocale()
+```
+Looks like we are set in Canada. Let's turn off locale-specific settings.
+
+```{r}
+Sys.setlocale('LC_ALL','C')
+```
+If we run our tags code again, we now don't get an error and line 188, which we can see has a tag, is included. 
+
+```{r}
+grep(tags, elon_tweets_df$text)
+```
+In order to really check that each line indeed has a tag, we can set `value = TRUE` in grep, and instead we will be returned the text that is at that position. Visually inspecting, it looks like each tweet has a tag.
+
+```{r}
+grep(tags, elon_tweets_df$text, value = TRUE)
+```
+
+
+This reminds me that we should also remove emojis.
+
+#########################left off here
+```{r}
+emojis <- "\\\\w{3}"
+emojis <- "\\xed"
+
+grep(tags, nye_tweets_df$text, value = TRUE)
+
+grepl(tags, nye_tweets_df$text)
+
+
+#to return the data frame 
+nye_tags <- nye_tweets_df %>% filter(grepl(tags, nye_tweets_df$text))
+jt_tags <- jt_tweets_df %>% filter(grepl(tags, jt_tweets_df$text))
+```
+
+
+##Data Cleaning with stringr/stringi (AKA What is Trump up to anyways?)
+
+- searching for a word/patterns, subset using character strings, collapse and expand character vectors, replacement, replacing NAs, splitting/combining at a delimiter
+
+```{r}
+library(tidyverse)
+
+elon_tweets_df <- read.delim("data/elon_tweets_df.txt", sep = "\t")
+str(elon_tweets_df)
+
+
+elon_tweets_df <- elon_tweets_df %>% arrange(desc(as.numeric(retweetCount)))
+elon_tweets_df <- elon_tweets_df %>% arrange(desc(favoriteCount))
+elon_tweets_df$text[1:5]
+
+nye_tweets <- userTimeline("BillNye", n = 3200)
+nye_tweets_df <- tbl_df(map_df(nye_tweets, as.data.frame))
+
+write.table(nye_tweets_df, "data/nye_tweets_df.txt", sep = "\t")
+nye_tweets_df <- read.delim("data/nye_tweets_df.txt", sep = "\t")
+
+nye_tweets_df <- nye_tweets_df %>% arrange(desc(as.numeric(retweetCount)))
+nye_tweets_df <- nye_tweets_df %>% arrange(desc(favoriteCount))
+nye_tweets_df$text[1:5]
+
+jt_tweets <- userTimeline("JustinTrudeau", n = 3200)
+jt_tweets_df <- tbl_df(map_df(jt_tweets, as.data.frame))
+
+write.table(jt_tweets_df, "data/jt_tweets_df.txt", sep = "\t")
+jt_tweets_df <- read.delim("data/jt_tweets_df.txt", sep = "\t")
+
+jt_tweets_df <- jt_tweets_df %>% arrange(desc(as.numeric(retweetCount)))
+jt_tweets_df <- jt_tweets_df %>% arrange(desc(favoriteCount))
+jt_tweets_df$text[1:5]
+
+colbert_tweets <- userTimeline("StephenAtHome", n = 3200)
+colbert_tweets_df <- tbl_df(map_df(colbert_tweets, as.data.frame))
+
+write.table(colbert_tweets_df, "data/colbert_tweets_df.txt", sep = "\t")
+colbert_tweets_df <- read.delim("data/colbert_tweets_df.txt", sep = "\t")
+
+colbert_tweets_df <- colbert_tweets_df %>% arrange(desc(as.numeric(retweetCount)))
+colbert_tweets_df <- colbert_tweets_df %>% arrange(desc(favoriteCount))
+colbert_tweets_df$text[1:5]
+colbert_tweets_df$text[5:10]
+
+daily_tweets <- userTimeline("TheDailyShow", n = 3200)
+daily_tweets_df <- tbl_df(map_df(daily_tweets, as.data.frame))
+
+write.table(daily_tweets_df, "data/daily_tweets_df.txt", sep = "\t")
+daily_tweets_df <- read.delim("data/daily_tweets_df.txt", sep = "\t")
+
+daily_tweets_df <- daily_tweets_df %>% mutate(retweetCount = as.numeric(retweetCount)) %>% arrange(desc(retweetCount))
+daily_tweets_df <- daily_tweets_df %>% arrange(desc(favoriteCount))
+daily_tweets_df$text[1:5]
+daily_tweets_df$text[8:12]
+
+trump_tweets <- userTimeline("realDonaldTrump", n = 3200)
+trump_tweets_df <- tbl_df(map_df(trump_tweets, as.data.frame))
+
+write.table(trump_tweets_df, "data/trump_tweets_df.txt", sep = "\t")
+trump_tweets_df <- read.delim("data/trump_tweets_df.txt", sep = "\t")
+
+trump_tweets_df <- trump_tweets_df %>% mutate(retweetCount = as.numeric(retweetCount)) %>% arrange(desc(retweetCount))
+trump_tweets_df <- trump_tweets_df %>% arrange(desc(favoriteCount))
+trump_tweets_df$text[1:5]
+trump_tweets_df$text[8:12]
+```
+
+
+
+-rounding data - we don't need it to the umpteenth decimal
+-look for lowest and highest values - do these make sense? (standard deviation?)
+-called a range check, spell check, regex
+-document what you are doing
+-no all data sets are 100% clean
+-also the paste functions
+
+-the basics running through a fun example
+- do a chosen one, see what other problems come up
+-rmarkdown, syntax, etc
+-make a pdf of cleaning the WellcomeTrust dataset (give a brief outline of what needs to be done)
+
+
+
+
+
+kieran had a really good lesson using twitter
+http://stat545.com/block027_regular-expressions.html
+
+jenny's lesson good content but kind of boring
+http://stat545.com/block028_character-data.html
+
+
+--good content but sick of trump
+
+getting tweets and basic stats
+http://varianceexplained.org/r/trump-tweets/
+
+
+remember regex testers
+https://regex101.com/
+https://regexr.com/
+
+
+
+
+
+
+
+
+Something normal to do in twitter would be to find hashtags.
+
+
+```{r}
+tags <- "#\\w+"
+
+#elon apparently doesn't use hashtags
+
+#let me guess that it's going to be '#sciencerules'
+grep(tags, nye_tweets_df$text)
+
+grep(tags, nye_tweets_df$text, value = TRUE)
+
+grepl(tags, nye_tweets_df$text)
+
+
+#to return the data frame 
+nye_tags <- nye_tweets_df %>% filter(grepl(tags, nye_tweets_df$text))
+jt_tags <- jt_tweets_df %>% filter(grepl(tags, jt_tweets_df$text))
+```
+
+Get rid of urls.
+
+```{r}
+url <- "http[s]?://[[:alnum:].\\/]+"
+
+#replace with nothing
+
+nye_tweets_df$text <- gsub(pattern = "http[s]?://[[:alnum:].\\/]+", replacement = "", nye_tweets_df$text)
+
+```
+
+Get rid of trailing spaces.
+
+```{r}
+trail <- "[ ]+$"
+
+nye_tweets_df$text <- gsub(pattern = "[ ]+$", replacement = "", nye_tweets_df$text)
+```
+
+
+Let's break the texts down into individual words, so we can see what the most common words used are. 
+
+
+```{r}
+library(stringr)
+
+str_split(nye_tweets_df$text, "\\s", simplify = TRUE)[1,]
+
+#anything followed by anything and word boundary
+str_extract_all(nye_tweets_df$text, "(@|#|\\b|[[:alnum:]]+['])[[:alnum:]]+")
+#cool
+save <- str_extract_all(nye_tweets_df$text, "[#|@|[:alnum:]]+([^\\s][[:alnum:]]+)?", simplify = TRUE)
+#gather, get rid of empty strings
+test <- gather(as.data.frame(save)) %>% filter(value != "")
+
+test$value <- tolower(test$value)
+
+test <- test %>% select(value) %>% count(factor(value)) %>% arrange(desc(n))
+```
+
+Wow. We have discovered people use prepositions and conjunctions. There is a list of 'stop words' that can be used to get rid of words that are unlikely to contain information for us as part of the tidytext package.
+
+```{r}
+library(tidytext)
+nope <- stop_words
+
+nye_words <- anti_join(test, nope, by=c("factor(value)" = "word"))
+```
+
+This looks much better. An 'amp' is an ampersand (&). But otherwise we get 'science', 'world', 'space', 'change', 'join', 'climate', 'launch', vote', 'earth' and other things we might expect from the science guy. I guess Jack and the Geniuses is a book series by Bill Nye.
+
+(it, its and it is were all in the stop list - it's should probably be in there). And it's interesting to note these little variations because no matter how much you try to automate your analysis there is always going to be something from your new dataset that didn't fit with your old dataset. This is why we need these data wrangling skills. Even though some packages may have been created to help us on our way, they can't possibly cover every case.
+
+What will we get from the Elon Musk?
+
+```{r}
+elon_tweets_df$text <- gsub(pattern = "http[s]?://[[:alnum:].\\/]+", replacement = "", elon_tweets_df$text)
+
+elon_tweets_df$text <- gsub(pattern = "[ ]+$", replacement = "", elon_tweets_df$text)
+
+
+save <- str_extract_all(elon_tweets_df$text, "[#|@|[:alnum:]]+([^\\s][[:alnum:]]+)?", simplify = TRUE)
+#gather, get rid of empty strings
+test <- gather(as.data.frame(save)) %>% filter(value != "")
+
+test$value <- tolower(test$value)
+
+test <- test %>% select(value) %>% count(factor(value)) %>% arrange(desc(n))
+
+elon_words <- anti_join(test, nope, by=c("factor(value)" = "word"))
+anti_join(test, nope, by=c("factor(value)" = "word"))
+```
+'boring', 'falcon', 'tesla', 'rocket', '@spacex', 'company', 'love', 'launch', 'ai', 'cars'. 'flamethrower' and 'mars' are a bit further down.
+
+```{r}
+nrc <- sentiments %>%
+  filter(lexicon == "nrc") %>%
+  dplyr::select(word, sentiment)
+
+nrc
+#abacus associated with trust...weird
+
+by_source_sentiment <- trump_words %>%
+  inner_join(nrc, by =c("factor(value)" = "word")) %>%
+  count(sentiment) %>% 
+  arrange(desc(nn))
+  
+
+head(by_source_sentiment)
+```
+
+```{r}
+daily_tweets_df$text <- gsub(pattern = "http[s]?://[[:alnum:].\\/]+", replacement = "", daily_tweets_df$text)
+
+daily_tweets_df$text <- gsub(pattern = "[ ]+$", replacement = "", daily_tweets_df$text)
+
+
+save <- str_extract_all(daily_tweets_df$text, "[#|@|[:alnum:]]+([^\\s][[:alnum:]]+)?", simplify = TRUE)
+#gather, get rid of empty strings
+test <- gather(as.data.frame(save)) %>% filter(value != "")
+
+test$value <- tolower(test$value)
+
+test <- test %>% select(value) %>% count(factor(value)) %>% arrange(desc(n))
+
+daily_words <- anti_join(test, nope, by=c("factor(value)" = "word"))
+daily_words <- anti_join(test, nope, by=c("factor(value)" = "word"))
+```
+
+
+
+
+```{r}
+trump_tweets_df$text <- gsub(pattern = "http[s]?://[[:alnum:].\\/]+", replacement = "", trump_tweets_df$text)
+
+trump_tweets_df$text <- gsub(pattern = "[ ]+$", replacement = "", trump_tweets_df$text)
+
+
+save <- str_extract_all(trump_tweets_df$text, "[#|@|[:alnum:]]+([^\\s][[:alnum:]]+)?", simplify = TRUE)
+#gather, get rid of empty strings
+test <- gather(as.data.frame(save), value = "word") %>% filter(word != "")
+
+test$word <- tolower(test$word)
+
+test <- test %>% select(word) %>% count(word) %>% arrange(desc(n))
+
+trump_words <- anti_join(nope, nope, by= "word")
+
+```
+
+It looks like we need some more data cleaning. First, let's get rid of everything with numbers.
+
+```{r}
+trump_words %>% select(word) %>% str_remove("[0-9]+", simplify)
+
+#removes numbers
+str_remove_all(trump_words$word, "[0-9]*")
+#still have punctuation before numbers
+str_remove_all(trump_words$word, "[0-9].*")
+
+
+```
+It's looking better. We have a single hashtag. "'s" endings should be removed - could match other words, or if a contraction will be removed via stopwords list. There is also a 'u.s' where we can get rid of the period. If anyone can find out how to remove the apostrophe and not the period, let me know.
+
+```{r}
+str_remove_all(trump_words$word, "#$")
+
+
+gsub("[[:punct:]]s$", "", trump_words$word)
+#let's check to see what this will remove.
+grep("[[:punct:]]s$", trump_words$word, value=TRUE)
+#the only thing that isn't an 's is u.s, we don't want this removed and truncated to 'u', but we also don't want to just remove the period first because we want to retain that it means united states and not us. So, I actually couldn't find a regex punctuation solution to this. BONUS points if you do. Instead, we are going to REPLACE "u.s" with "usa"
+
+trump_words$word <- str_replace(trump_words$word, "u.s", "usa")
+
+#check
+grep("[[:punct:]]s$", trump_words$word, value=TRUE)
+
+trump_words$word <- str_remove_all(trump_words$word, "[[:punct:]]s$")
+trump_words$word <- str_remove_all(trump_words$word, "#$")
+
+#check
+grep("[[:punct:]]s$", trump_words$word, value=TRUE)
+
+
+#once we know we've got it right we can filter the data frame
+trump_words <- trump_words %>% mutate(word = str_remove_all(trump_words$word, "[0-9].*")) %>% filter(word != "")
+```
+
+We need to add to our 'nope' list words unrelated to content but html jargon, or things like 'na' and 'false'.
+
+```{r}
+add_stop <- data.frame(word = c("na", "false", "href", "rel", "nofollow", "true", "amp", "twitter", "iphone"), 
+                       lexicon = "custom")
+#I just should point out that true or false 'could' be a word rather than a logical, I could filter out FALSE and TRUE before changing everything to lowercase and this would reduce the likelyhood of missing 'words'
+nope <- bind_rows(nope, add_stop)
+```
+
+```{r}
+trump_words <- anti_join(test, nope, by= "word")
+```
+
+
+
+Both Nye and Musk positive. Article does p-value and such. Probably just should do more regex.
+http://varianceexplained.org/r/trump-tweets/
+
+favourited probably better than retweeted if using one
+
+
+Challenge question: Pick one of the other tweet data sets. Clean it. Remove all of the stop words. Make a bar plot of the top 20 words and their counts.
+
+
+
+```{r}
+library("wordcloud")
+library("viridis")
+
+trump_words %>%
+    top_n(50) %>%
+    with(wordcloud(word, n, ordered.colors = TRUE, colors = viridis(61), use.r.layout = TRUE))
+```
+
+
+I looked for a dataset for data cleaning and found it in a blog titled "Biologists: this is why bioinformaticians hate you...". The main and common issue with this dataset is that when data entry was done there was no structured vocabulary - meaning that people could type in whatever they wanted instead of using dropdown menus with limited options, or giving an error if something is formatted incorrectly, or stipulating some rules (ie. must be all lowercase, uppercase, no numbers, spacing, etc.). I must admit I have been guilty of messing with people who have made databases without rules. For example, in giving the emergency contact there was a line to input 'Relationship', which could easily have been a dropdown menu 'parent, partner, friend, other', but instead I was allowed to write in a free text line 'lifelong kindred spirit, soulmate and doggy-daddy'. I don't think anyone here was trying to be a nuisance, this is just a consequence of poor data collection. There is a README file to go with this spreadsheet if you have questions about the data fields.  
+
+http://www.opiniomics.org/biologists-this-is-why-bioinformaticians-hate-you/     
+https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054
+
+What I want to know is: 
+1. List 5 problems with this data set.
+1. Which publisher is the most expensive to publish with?
+1. Which journal is the most expensive to publish with? Is this by the same publisher?                  
+1. Convert sterling to CAD. What is the median cost of publishing with Elsevier in CAD?
+
+The blogger's opinion of cleaning this dataset:
+
+'I now have no hair left; I’ve torn it all out.  My teeth are just stumps from excessive gnashing.  My faith in humanity has been destroyed!'
+
+Don't get to this point. The dataset doesn't need to be perfect. Just do what you gotta do to answer these questions.  
+
+Note to self: This may be too tough - see how long it takes to do.
 
 Approximate time: 2 hours per lesson
 
@@ -22,15 +618,6 @@ Approximate time: 2 hours per lesson
  - Each lesson will start from an excel spreadsheet with imperfect data.
 
 ***
-__Objective:__ At the end of this session you will be able to use regular expressions to 'clean' your data. You will also learn R markdown and be able to render your R code into slides, a pdf, html, a word document, or a notebook.
-
-_Intro to regular expressions_
-
-- escape characters, character classes, quantifiers and all that jazz
-
-_Text manipulation with stringr/i_
-
-- searching for a word/patterns, subset using character strings, collapse and expand character vectors, replacement, replacing NAs, splitting/combining at a delimiter
 
 _R markdown and knitr_
 
@@ -46,10 +633,13 @@ __Challenge:__
 
 Take the original gapminder dataset and covert it to the 'clean' dataset found in the gapminder package / find some horrible dataset to clean. Present in a knitr table, explaining some of your data cleaning challenges in rmarkdown. Knit the document to a pdf.
    
-__Resources:__      
+__Resources:__     
+http://stat545.com/block022_regular-expression.html
+http://stat545.com/block027_regular-expressions.html
 http://stat545.com/block028_character-data.html     
 http://r4ds.had.co.nz/strings.html
-    
+http://www.gastonsanchez.com/Handling_and_Processing_Strings_in_R.pdf     
+http://varianceexplained.org/r/trump-tweets/     
 
 ##Post-Lesson Assessment
 ***
