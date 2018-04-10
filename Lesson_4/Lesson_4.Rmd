@@ -116,40 +116,103 @@ What does the language look like?
 
 
 _Matching by position_
-```{r}
 
+Where is the character in the string?
+
+```{r echo = FALSE, eval = TRUE, warning = FALSE}
+library(knitr)
+library(kableExtra)
+
+text_table <- data.frame(
+  Expression = c("^", "$", "\\b", "\\B"),
+  Meaning = c("start of string", "end of string", "empty string at either edge of a word", "empty string that is NOT at the edge of a word")
+)
+
+kable(text_table, "html") %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, italic = T, border_right = T) %>%
+  column_spec(2, width = "40em")
 ```
+
 
 
 _Quantifiers_
 
-```{r}
+How many times will a character appear?
 
+```{r echo = FALSE, eval = TRUE, warning = FALSE}
+text_table <- data.frame(
+  Expression = c("?", "*","+", "{n}", "{n,}", "{,n}", "{n,m}"),
+  Meaning = c("0 or 1", "0 or more", "1 or more", "exactly n", "at least n", "at most n", "between n and m (inclusive)")
+)
+
+kable(text_table, "html") %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, italic = T, border_right = T) %>%
+  column_spec(2, width = "40em")
 ```
 
 
-_Character classes_
+_Classes_
 
-```{r}
+What kind of character is it?
 
+```{r echo = FALSE, eval = TRUE, warning = FALSE}
+text_table <- data.frame(
+  Expression = c("\\w, [A-z0-9], [[:alnum:]]", "\\d, [0-9], [[:digit:]]", "[A-z], [:alpha:]", "\\s, [[:space:]]", "[[:punct:]]", "[[:lower:]]", "[[:upper:]]", "\\W, [^A-z0-9]", "\\S", "\\D, [^0-9]"),
+  Meaning = c("word characters (letters + digits)", "digits", "alphabetical characters", "space", "punctuation", "lowercase", "uppercase", "not word characters", "not space", "not digits")
+)
+
+kable(text_table, "html") %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, italic = T, border_right = T) %>%
+  column_spec(2, width = "40em")
 ```
 
 
 _Operators_
-```{r}
 
+Helper actions to match your characters.
+
+```{r echo = FALSE, eval = TRUE, warning = FALSE}
+text_table <- data.frame(
+  Expression = c("|", ".", "[  ]", "[ - ]", "[^ ]", "( )"),
+  Meaning = c("or", "matches any single character", "matches ANY of the characters inside the brackets", "matches a RANGE of characters inside the brackets", "matches any character EXCEPT those inside the bracket", "grouping - used for _backreferencing_")
+)
+
+kable(text_table, "html") %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, italic = T, border_right = T) %>%
+  column_spec(2, width = "40em")
 ```
 
 _Escape characters_
-```{r}
 
+Sometimes a character is just a character... allows you to use a character 'as is' rather than its special function. In R, regex gets evaluated as a string before a regular expression, and a backslash is used to escape there as well - so you really need 2 backslashes to escape, say, a $ sign (`"\\\$"`). 
+
+```{r echo = FALSE, eval = TRUE, warning = FALSE}
+text_table <- data.frame(
+  Expression = c("\\"),
+  Meaning = c("escape! necessary to use special meta-characters (*, $, ^, ., ?, |, \\, [, ], {, }, (, )) [Note that the backslash is a meta-character as well]")
+)
+
+kable(text_table, "html") %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, italic = T, border_right = T) %>%
+  column_spec(2, width = "40em")
 ```
+
+Trouble-shooting with escaping meta-characters means adding backslashes until something works. (Joking/not joking)
+
+![Joking/Not Joking](img/backslashes.png)
+
+</br>
 
 ##Data Cleaning with Base R (AKA What is Elon Musk up to anyways?)
 
-Let's perform some basic data cleaning tasks with an actual (fun?) messy data set. I have scraped Elon Musk's latest tweets from Twitter. The code to do this is in the Lesson 4 markdown file if you are curious and/or want to creep someone on Twitter.
+Let's take this cacaphony of characters we've just learned about and perform some basic data cleaning tasks with an actual (fun?) messy data set. I have scraped Elon Musk's latest tweets from Twitter. The code to do this is in the Lesson 4 markdown file if you are curious and/or want to creep someone on Twitter.
 
-```{r echo = FALSE }
+```{r echo = FALSE, include = FALSE, eval = FALSE }
 library(twitteR)
 library(httr)
 #This is from the code demo for httr::oauth1-twitter
@@ -185,144 +248,309 @@ Let's read in the set of tweets, take a look at the structure of the data, and u
 ```{r}
 library(tidyverse)
 
-elon_tweets_df <- read.delim("data/elon_tweets_df.txt", sep = "\t")
+elon_tweets_df <- read.delim("data/elon_tweets_df.txt", sep = "\t", stringsAsFactors = F)
 str(elon_tweets_df)
 
 elon_tweets_df <- elon_tweets_df %>% arrange(desc(favoriteCount))
+
 elon_tweets_df$text[1:5]
 
 
 ```
-Our end goal is going to be to look at the top 50 words in Elon Musk's tweets. I emphasize words, because I don't want urls, or hastags, or other tags. I also don't want punctuation or spaces. I want to extract just the words from tweets. First, I want to get remove the tags from the beginning of words. Because regex expressions can get 'ugly', I am going to save my regex expression into an object - that way I am typing something like `tags` repeatedly instead of `#|@\\w+` repeatedly. 
+Our end goal is going to be to look at the top 50 words in Elon Musk's tweets. I emphasize words, because I don't want urls, or hastags, or other tags. I also don't want punctuation or spaces. I want to extract just the words from tweets. First, I want to get remove the tags from the beginning of words. I am going to save my regex expression into an object - so we can use them again later.
 
-What this expression says is that I want to find matches for a hastag OR an asperand followed by at least one word character.
+What this expression says is that I want to find matches for a hastag OR an asperand followed by at least one word character. `grep` is a function that allows us to match our pattern (our expression) to a character vector.
 
 ```{r}
 tags <- "#|@\\w+"
 
-#elon apparently doesn't use hashtags
-
-grep(tags, elon_tweets_df$text)
+grep(pattern = tags, x = elon_tweets_df$text)
 
 ```
-Okay. `grep` returns the index of the match. We have a number of entries that include tags. However, we are immediately getting an error for lines 10, 118, 156, 219 and 224 being 'invalid'. This is a good opportunity for trouble-shooting. What would you do next? Let's check out those lines.
+We can see that `grep` returns the index of the match. We have a number of entries that include tags. However, if we want to return the tweet itself instead of the index, we can use the argument `value = TRUE`. It is a good idea to do a visual inspection of your result to make sure your matches or substitutions are working the way you expected. In this case, it looks like each tweet does have a tag. We can then use `gsub` to replace that pattern (our tags) with nothing (an empty string).
 
 ```{r}
 
-elon_tweets_df[c(10,188,156,219,224), "text"]
+grep(tags, elon_tweets_df$text, value = TRUE) %>% head()
+
+elon_tweets_df$text <- gsub(pattern = tags, replacement = "", elon_tweets_df$text)
 
 ```
-I think these are emojis. What would you do next? Since these are not words, they should be removed. 
-Since we are getting an invalid locale call, let's check out our locale.
+It also looks like anything that was an apostrophe has been replaced with a string of numbers and backslashes. This is due to the fact that tweets are _encoded_ in UTF-16 and converted to UTF-8. Other things that have character codes, like emojis, will also be encoded differently. Here is an example of emoji encoding: https://raw.githubusercontent.com/today-is-a-good-day/Emoticons/master/emDict.csv. Since we are going to remove punctuation, we are going to 'convert' the encoding by substituting it with nothing (again, an empty character string). This is not something you will have to deal with on a daily basis, but character encoding is something to be aware of, especially when scraping data from the web.  
 
 ```{r}
-Sys.getlocale()
+iconv(elon_tweets_df$text, "UTF-8", "ASCII", sub="") %>% head()
+
+elon_tweets_df$text <- iconv(elon_tweets_df$text, "UTF-8", "ASCII", sub = "")
 ```
-Looks like we are set in Canada. Let's turn off locale-specific settings.
+
+Our next step would be to remove urls. This is a bit tricky. We could be looking for http:// or https:// followed by we don't know what (some combination of letters, numbers and forward slashes). 
+
+We can check out which tweets have urls using `grep` as we did previously. We can also use `grepl` to get a logical reponse for if a tweet has a url or not. That way, if you wanted to grab all of the urls that Elon Musk suggests to visit, you can filter with `grepl`, to select all of the tweets where it is TRUE that a url is present.
+
+However, we are going to continue our pattern of substituting what we don't want with an empty character string.
 
 ```{r}
-Sys.setlocale('LC_ALL','C')
+url <- "http[s]?://[[:alnum:].\\/]+"
+
+
+grep(url, elon_tweets_df$text, value = TRUE) %>% head()
+grepl(url, elon_tweets_df$text) %>% head()
+
+elon_urls <- elon_tweets_df %>% filter(grepl(url, elon_tweets_df$text))
+
+elon_tweets_df$text <- gsub(pattern = "http[s]?://[[:alnum:].\\/]+", replacement = "", elon_tweets_df$text)
+
 ```
-If we run our tags code again, we now don't get an error and line 188, which we can see has a tag, is included. 
+
+Lastly, we are going to get rid of trailing spaces, numbers, and punctuation all at the same time. You can find trailing at the very end of our tweet string.
 
 ```{r}
-grep(tags, elon_tweets_df$text)
+trail <- "[ ]+$|[0-9]*|[[:punct:]]"
+
+grep(trail, elon_tweets_df$text, value = TRUE) %>% head()
+
+elon_tweets_df$text <- gsub(pattern = trail, replacement = "", elon_tweets_df$text)
+
+elon_tweets_df$text[1:5]
 ```
-In order to really check that each line indeed has a tag, we can set `value = TRUE` in grep, and instead we will be returned the text that is at that position. Visually inspecting, it looks like each tweet has a tag.
+It looks like everything worked except that a spacing issue was created by removing all of the numbers. Let's take all of the places where there are 2 or more spaces created and substitute them with just one space. 
 
 ```{r}
-grep(tags, elon_tweets_df$text, value = TRUE)
+space <- "\\s{2,}"
+
+grep(space, elon_tweets_df$text, value = TRUE) %>% head()
+
+elon_tweets_df$text <- gsub(pattern = space, replacement = " ", elon_tweets_df$text)
+
+elon_tweets_df$text[1:5]
+```
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/maxresdefault.jpg){width=150px}
+
+</div>
+
+We also have a leading whitespace where we removed a number. How would we remove that whitespace?
+
+
+</br>
+</br>
+</br>
+
+***
+
+```{r include = FALSE}
+extra <- "^[ ]"
+
+grep(extra, elon_tweets_df$text, value = TRUE) %>% head()
+
+elon_tweets_df$text <- gsub(pattern = extra, replacement = "", elon_tweets_df$text)
+
+elon_tweets_df$text[1:5]
 ```
 
+Onwards!! Let's break the texts down into individual words, so we can see what the most common words used are. We can use the base R function `strsplit` to do this, in this case we want to split our tweets into words by splitting on spaces. 
 
-This reminds me that we should also remove emojis.
 
-#########################left off here
 ```{r}
-emojis <- "\\\\w{3}"
-emojis <- "\\xed"
+strsplit(elon_tweets_df$text, split = " ")
 
-grep(tags, nye_tweets_df$text, value = TRUE)
-
-grepl(tags, nye_tweets_df$text)
-
-
-#to return the data frame 
-nye_tags <- nye_tweets_df %>% filter(grepl(tags, nye_tweets_df$text))
-jt_tags <- jt_tweets_df %>% filter(grepl(tags, jt_tweets_df$text))
 ```
+Note that the output of this function is some horrible list object. 
+
+```{r}
+str(strsplit(elon_tweets_df$text, split = " "))
+```
+
+Luckily there is an `unlist` function which recursively will go through lists to simplify their elements into a vector. Let's try it and check the structure of our output. We will save this to an object called 'words'.
+
+```{r}
+unlist(strsplit(elon_tweets_df$text, split = " "))
+
+words <- unlist(strsplit(elon_tweets_df$text, split = " "))
+
+str(unlist(strsplit(elon_tweets_df$text, split = " ")))
+
+tail(words)
+```
+Great! But... I noticed that we missed some `\n` (newline) and `\t` (tab) characters.
+
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/maxresdefault.jpg){width=150px}
+
+</div>
+
+Newline and tab characters are separating 2 words. Split these words apart and get rid of the newline character. Convert all of our character strings to lowercase (I haven't shown you how to do this, but I believe in your google-fu). Check the first and last 50 words to see if anything else is amiss.
+
+
+</br>
+</br>
+</br>
+
+***
+
+```{r include = FALSE}
+words <- tolower(unlist(strsplit(words, "\\n|\\t")))
+
+words <- casefold(unlist(strsplit(words, "\\n|\\t")), upper = FALSE)
+
+words[1:50]
+tail(words, 50)
+```
+
+There are still a few problems with words cutoff like 'solv', or 'flamethrower' and 'flamethrowers' being the same word, or 'north' and 'korea' belonging together for context. If we were serious about this dataset we would need to resolve these issues. We also have some html and twitter-specific tags that we will deal with shortly. However, we are going to move ahead and count the number of occurences of each word and order them by frequency.
+
+```{r}
+data.frame(words) %>% count(factor(words)) %>% arrange(desc(n))
+```
+
+
+
+
+Wow. We have discovered people use prepositions and conjunctions, and words unrelated to content but html jargon, or things like 'na' and 'false'. There is a list of 'stop words' that can be used to get rid of words that are unlikely to contain information for us as part of the `tidytext` package. However, we will have to add to this list.
+
+The premade dataframe is called `stop_words`. We can save it as an object and add to it by making a dataframe of the words we want to add. We can call our lexicon 'custom'.
+
+```{r}
+library(tidytext)
+stop <- stop_words
+str(stop)
+
+add_stop <- data.frame(word = c("na", "false", "href", "rel", "nofollow", "true", "amp", "twitter", "iphonea", "relnofollowtwitter", "relnofollowinstagrama"), 
+                       lexicon = "custom", stringsAsFactors = FALSE)
+#I just should point out that true or false 'could' be a word rather than a logical, I could filter out FALSE and TRUE before changing everything to lowercase and this would reduce the likelyhood of missing 'words'
+#also note that 'custom' recycles as a character vector of length 1
+
+stop <- bind_rows(stop, add_stop)
+```
+
+To remove these stop words from our list, we perform an anti-join (from Lesson 3).
+
+```{r}
+words <- anti_join(data.frame(words), stop, by=c("words" = "word"))
+
+```
+```{r}
+words %>% count(words) %>% arrange(desc(n))
+
+words <- words %>% count(words) %>% arrange(desc(n))
+```
+
+'boring', 'falcon', 'tesla', 'rocket', 'launch','flamethrower', 'cars', 'spacex', 'tunnels', and 'mars' and 'ai' are a bit further down. There are a few words that look like they should be added to the 'stop words' list (dont, doesnt, didnt, im), but we'll work with this for now.
+
+We can make a word cloud out of the top 50 words, which will be sized according to their frequency. I am starting with the first word after Elon Musk's twitter handle. The default color is black, but we can use our viridis package (Lesson 3) to have a pleasing color palette.
+
+```{r}
+library("wordcloud")
+library("viridis")
+
+words[2:51,] %>%
+    with(wordcloud(words, n, ordered.colors = TRUE, colors = viridis(50), use.r.layout = TRUE))
+```
+
+
+
+```{r include = FALSE}
+nrc <- sentiments %>%
+  filter(lexicon == "nrc") %>%
+  dplyr::select(word, sentiment)
+
+nrc
+#abacus associated with trust...weird
+
+by_source_sentiment <- words %>%
+  inner_join(nrc, by =c("words" = "word")) %>%
+  count(sentiment) %>% 
+  arrange(desc(n))
+  
+
+head(by_source_sentiment)
+```
+
 
 
 ##Data Cleaning with stringr/stringi (AKA What is Trump up to anyways?)
 
-- searching for a word/patterns, subset using character strings, collapse and expand character vectors, replacement, replacing NAs, splitting/combining at a delimiter
+We are going to do the exact same data cleaning with the `stringr` package using Trump's tweets. The syntax is a little different, but it is pretty intuitive once you get started. All `stringr` functions can be found using `str_` + `Tab`. Again, we will start by loading the dataset and looking at the top 5 favorite tweets.
 
 ```{r}
-library(tidyverse)
-
-elon_tweets_df <- read.delim("data/elon_tweets_df.txt", sep = "\t")
-str(elon_tweets_df)
-
-
-elon_tweets_df <- elon_tweets_df %>% arrange(desc(as.numeric(retweetCount)))
-elon_tweets_df <- elon_tweets_df %>% arrange(desc(favoriteCount))
-elon_tweets_df$text[1:5]
-
-nye_tweets <- userTimeline("BillNye", n = 3200)
-nye_tweets_df <- tbl_df(map_df(nye_tweets, as.data.frame))
-
-write.table(nye_tweets_df, "data/nye_tweets_df.txt", sep = "\t")
-nye_tweets_df <- read.delim("data/nye_tweets_df.txt", sep = "\t")
-
-nye_tweets_df <- nye_tweets_df %>% arrange(desc(as.numeric(retweetCount)))
-nye_tweets_df <- nye_tweets_df %>% arrange(desc(favoriteCount))
-nye_tweets_df$text[1:5]
-
-jt_tweets <- userTimeline("JustinTrudeau", n = 3200)
-jt_tweets_df <- tbl_df(map_df(jt_tweets, as.data.frame))
-
-write.table(jt_tweets_df, "data/jt_tweets_df.txt", sep = "\t")
-jt_tweets_df <- read.delim("data/jt_tweets_df.txt", sep = "\t")
-
-jt_tweets_df <- jt_tweets_df %>% arrange(desc(as.numeric(retweetCount)))
-jt_tweets_df <- jt_tweets_df %>% arrange(desc(favoriteCount))
-jt_tweets_df$text[1:5]
-
-colbert_tweets <- userTimeline("StephenAtHome", n = 3200)
-colbert_tweets_df <- tbl_df(map_df(colbert_tweets, as.data.frame))
-
-write.table(colbert_tweets_df, "data/colbert_tweets_df.txt", sep = "\t")
-colbert_tweets_df <- read.delim("data/colbert_tweets_df.txt", sep = "\t")
-
-colbert_tweets_df <- colbert_tweets_df %>% arrange(desc(as.numeric(retweetCount)))
-colbert_tweets_df <- colbert_tweets_df %>% arrange(desc(favoriteCount))
-colbert_tweets_df$text[1:5]
-colbert_tweets_df$text[5:10]
-
-daily_tweets <- userTimeline("TheDailyShow", n = 3200)
-daily_tweets_df <- tbl_df(map_df(daily_tweets, as.data.frame))
-
-write.table(daily_tweets_df, "data/daily_tweets_df.txt", sep = "\t")
-daily_tweets_df <- read.delim("data/daily_tweets_df.txt", sep = "\t")
-
-daily_tweets_df <- daily_tweets_df %>% mutate(retweetCount = as.numeric(retweetCount)) %>% arrange(desc(retweetCount))
-daily_tweets_df <- daily_tweets_df %>% arrange(desc(favoriteCount))
-daily_tweets_df$text[1:5]
-daily_tweets_df$text[8:12]
-
-trump_tweets <- userTimeline("realDonaldTrump", n = 3200)
-trump_tweets_df <- tbl_df(map_df(trump_tweets, as.data.frame))
-
-write.table(trump_tweets_df, "data/trump_tweets_df.txt", sep = "\t")
 trump_tweets_df <- read.delim("data/trump_tweets_df.txt", sep = "\t")
 
-trump_tweets_df <- trump_tweets_df %>% mutate(retweetCount = as.numeric(retweetCount)) %>% arrange(desc(retweetCount))
+
 trump_tweets_df <- trump_tweets_df %>% arrange(desc(favoriteCount))
 trump_tweets_df$text[1:5]
-trump_tweets_df$text[8:12]
+
+iconv(trump_tweets_df$text, "UTF-8", "ASCII", sub="") %>% head()
+
+trump_tweets_df$text <- iconv(trump_tweets_df$text, "UTF-8", "ASCII", sub = "")
+```
+
+The first thing that we did was look for tags. The arguments are switched in `stringr` relative to the base functions. The first argument will be the character string we are searching, and the second argument will be the pattern we are matching. `str_extract` will return the index of the match, as well as the match. This is similar to `grep` when `value = TRUE`.
+
+```{r}
+str_extract(string = trump_tweets_df$text, pattern = tags)
+
+```
+
+`str_detect` is similar to `grepl` returning TRUE or FALSE if a match is or isn't found, respectively.
+
+```{r}
+str_detect(trump_tweets_df$text, tags)
+```
+
+Let's be ambitious and try to remove tags, urls, newline and tab characters and numbers all in one go. `str_remove` automatically replaces the match with an empty character string.
+
+```{r}
+clean <- "http[s]?://[[:alnum:].\\/]+"
+
+#clean2 <- "#|@[a-zA-Z]+"
+
+clean2 <- "#|@\\w+"
+
+clean3 <- "\\$?[0-9]*%?"
+
+clean4 <- "\\.?:?,?-?!?"
+
+
+
+trump_tweets_df$text <- str_remove(trump_tweets_df$text, pattern = clean)
+
+str_extract_all(trump_tweets_df$text[1:20], pattern = clean3, simplify = TRUE)
+
+
+trump_tweets_df$text <- str_remove_all(trump_tweets_df$text, pattern = clean2)
+
+
+str_remove_all(trump_tweets_df$text[1:20], pattern = clean4)
+
+
 ```
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(it, its and it is were all in the stop list - it's should probably be in there). And it's interesting to note these little variations because no matter how much you try to automate your analysis there is always going to be something from your new dataset that didn't fit with your old dataset. This is why we need these data wrangling skills. Even though some packages may have been created to help us on our way, they can't possibly cover every case.
 
 -rounding data - we don't need it to the umpteenth decimal
 -look for lowest and highest values - do these make sense? (standard deviation?)
@@ -359,140 +587,9 @@ https://regexr.com/
 
 
 
+- searching for a word/patterns, subset using character strings, collapse and expand character vectors, replacement, replacing NAs, splitting/combining at a delimiter
 
-
-
-
-
-Something normal to do in twitter would be to find hashtags.
-
-
-```{r}
-tags <- "#\\w+"
-
-#elon apparently doesn't use hashtags
-
-#let me guess that it's going to be '#sciencerules'
-grep(tags, nye_tweets_df$text)
-
-grep(tags, nye_tweets_df$text, value = TRUE)
-
-grepl(tags, nye_tweets_df$text)
-
-
-#to return the data frame 
-nye_tags <- nye_tweets_df %>% filter(grepl(tags, nye_tweets_df$text))
-jt_tags <- jt_tweets_df %>% filter(grepl(tags, jt_tweets_df$text))
-```
-
-Get rid of urls.
-
-```{r}
-url <- "http[s]?://[[:alnum:].\\/]+"
-
-#replace with nothing
-
-nye_tweets_df$text <- gsub(pattern = "http[s]?://[[:alnum:].\\/]+", replacement = "", nye_tweets_df$text)
-
-```
-
-Get rid of trailing spaces.
-
-```{r}
-trail <- "[ ]+$"
-
-nye_tweets_df$text <- gsub(pattern = "[ ]+$", replacement = "", nye_tweets_df$text)
-```
-
-
-Let's break the texts down into individual words, so we can see what the most common words used are. 
-
-
-```{r}
-library(stringr)
-
-str_split(nye_tweets_df$text, "\\s", simplify = TRUE)[1,]
-
-#anything followed by anything and word boundary
-str_extract_all(nye_tweets_df$text, "(@|#|\\b|[[:alnum:]]+['])[[:alnum:]]+")
-#cool
-save <- str_extract_all(nye_tweets_df$text, "[#|@|[:alnum:]]+([^\\s][[:alnum:]]+)?", simplify = TRUE)
-#gather, get rid of empty strings
-test <- gather(as.data.frame(save)) %>% filter(value != "")
-
-test$value <- tolower(test$value)
-
-test <- test %>% select(value) %>% count(factor(value)) %>% arrange(desc(n))
-```
-
-Wow. We have discovered people use prepositions and conjunctions. There is a list of 'stop words' that can be used to get rid of words that are unlikely to contain information for us as part of the tidytext package.
-
-```{r}
-library(tidytext)
-nope <- stop_words
-
-nye_words <- anti_join(test, nope, by=c("factor(value)" = "word"))
-```
-
-This looks much better. An 'amp' is an ampersand (&). But otherwise we get 'science', 'world', 'space', 'change', 'join', 'climate', 'launch', vote', 'earth' and other things we might expect from the science guy. I guess Jack and the Geniuses is a book series by Bill Nye.
-
-(it, its and it is were all in the stop list - it's should probably be in there). And it's interesting to note these little variations because no matter how much you try to automate your analysis there is always going to be something from your new dataset that didn't fit with your old dataset. This is why we need these data wrangling skills. Even though some packages may have been created to help us on our way, they can't possibly cover every case.
-
-What will we get from the Elon Musk?
-
-```{r}
-elon_tweets_df$text <- gsub(pattern = "http[s]?://[[:alnum:].\\/]+", replacement = "", elon_tweets_df$text)
-
-elon_tweets_df$text <- gsub(pattern = "[ ]+$", replacement = "", elon_tweets_df$text)
-
-
-save <- str_extract_all(elon_tweets_df$text, "[#|@|[:alnum:]]+([^\\s][[:alnum:]]+)?", simplify = TRUE)
-#gather, get rid of empty strings
-test <- gather(as.data.frame(save)) %>% filter(value != "")
-
-test$value <- tolower(test$value)
-
-test <- test %>% select(value) %>% count(factor(value)) %>% arrange(desc(n))
-
-elon_words <- anti_join(test, nope, by=c("factor(value)" = "word"))
-anti_join(test, nope, by=c("factor(value)" = "word"))
-```
-'boring', 'falcon', 'tesla', 'rocket', '@spacex', 'company', 'love', 'launch', 'ai', 'cars'. 'flamethrower' and 'mars' are a bit further down.
-
-```{r}
-nrc <- sentiments %>%
-  filter(lexicon == "nrc") %>%
-  dplyr::select(word, sentiment)
-
-nrc
-#abacus associated with trust...weird
-
-by_source_sentiment <- trump_words %>%
-  inner_join(nrc, by =c("factor(value)" = "word")) %>%
-  count(sentiment) %>% 
-  arrange(desc(nn))
-  
-
-head(by_source_sentiment)
-```
-
-```{r}
-daily_tweets_df$text <- gsub(pattern = "http[s]?://[[:alnum:].\\/]+", replacement = "", daily_tweets_df$text)
-
-daily_tweets_df$text <- gsub(pattern = "[ ]+$", replacement = "", daily_tweets_df$text)
-
-
-save <- str_extract_all(daily_tweets_df$text, "[#|@|[:alnum:]]+([^\\s][[:alnum:]]+)?", simplify = TRUE)
-#gather, get rid of empty strings
-test <- gather(as.data.frame(save)) %>% filter(value != "")
-
-test$value <- tolower(test$value)
-
-test <- test %>% select(value) %>% count(factor(value)) %>% arrange(desc(n))
-
-daily_words <- anti_join(test, nope, by=c("factor(value)" = "word"))
-daily_words <- anti_join(test, nope, by=c("factor(value)" = "word"))
-```
+-regexpr, str_locate
 
 
 
@@ -579,14 +676,6 @@ Challenge question: Pick one of the other tweet data sets. Clean it. Remove all 
 
 
 
-```{r}
-library("wordcloud")
-library("viridis")
-
-trump_words %>%
-    top_n(50) %>%
-    with(wordcloud(word, n, ordered.colors = TRUE, colors = viridis(61), use.r.layout = TRUE))
-```
 
 
 I looked for a dataset for data cleaning and found it in a blog titled "Biologists: this is why bioinformaticians hate you...". The main and common issue with this dataset is that when data entry was done there was no structured vocabulary - meaning that people could type in whatever they wanted instead of using dropdown menus with limited options, or giving an error if something is formatted incorrectly, or stipulating some rules (ie. must be all lowercase, uppercase, no numbers, spacing, etc.). I must admit I have been guilty of messing with people who have made databases without rules. For example, in giving the emergency contact there was a line to input 'Relationship', which could easily have been a dropdown menu 'parent, partner, friend, other', but instead I was allowed to write in a free text line 'lifelong kindred spirit, soulmate and doggy-daddy'. I don't think anyone here was trying to be a nuisance, this is just a consequence of poor data collection. There is a README file to go with this spreadsheet if you have questions about the data fields.  
