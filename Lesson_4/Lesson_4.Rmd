@@ -1,5 +1,5 @@
 ---
-title: "Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions"
+title: "Lesson 4 - Of Data Cleaning and Documentation - Conquer Regular Expressions, Use R markdown and knitr to make PDFs, and Challenge yourself with a 'Real' Dataset"
 output: 
   html_document:
           keep_md: yes
@@ -36,7 +36,7 @@ How do we get there? Today we are going to be learning how to make all sorts of 
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/VNQZ3KS), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/PVHDKDB), it will help me further develop this course and would be greatly appreciated. 
 
 ***
 
@@ -46,12 +46,17 @@ The following packages are used in this lesson:
 
 `tidyverse` (`ggplot2`, `tidyr`, `dplyr`)     
 (`twitteR`)*
+(`httr`)*
 `tidytext`     
 `viridis`     
+`knitr`
+`kableExtra`
+`wordcloud`
 
 *Used to generate the tweet tables used in this lesson. It is not necessary for you to install this - you can work from the tables. If you want to create these files - the code is here ................(insert link).    
 
 Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
+
 
 ***
 ####Highlighting
@@ -62,6 +67,22 @@ Please install and load these packages for the lesson. In this document I will l
 
 ***
 __Objective:__ At the end of this session you will be able to use regular expressions to 'clean' your data. You will also learn R markdown and be able to render your R code into slides, a pdf, html, a word document, or a notebook.
+
+***
+
+####Load libraries
+
+Since we are moving along in the world, we are now going to start loading our libraries at the start of our script. This is a 'best practice' and makes it much easier for someone to reproduce your work efficiently by knowing exactly what packages they need to run your code. We will learn how to do this with a function in Lesson 6!
+
+```{r message = FALSE}
+library("tidyverse")
+library("tidytext")
+library("viridis")
+library("knitr")
+library("kableExtra")
+library("wordcloud")
+
+```
 
 ***
 
@@ -120,15 +141,13 @@ _Matching by position_
 Where is the character in the string?
 
 ```{r echo = FALSE, eval = TRUE, warning = FALSE}
-library(knitr)
-library(kableExtra)
 
 text_table <- data.frame(
   Expression = c("^", "$", "\\b", "\\B"),
   Meaning = c("start of string", "end of string", "empty string at either edge of a word", "empty string that is NOT at the edge of a word")
 )
 
-kable(text_table, "html") %>%
+kable(text_table, "html", caption = "Matching by Position") %>%
   kable_styling(full_width = F) %>%
   column_spec(1, italic = T, border_right = T) %>%
   column_spec(2, width = "40em")
@@ -146,7 +165,7 @@ text_table <- data.frame(
   Meaning = c("0 or 1", "0 or more", "1 or more", "exactly n", "at least n", "at most n", "between n and m (inclusive)")
 )
 
-kable(text_table, "html") %>%
+kable(text_table, "html", caption = "Quantifiers") %>%
   kable_styling(full_width = F) %>%
   column_spec(1, italic = T, border_right = T) %>%
   column_spec(2, width = "40em")
@@ -163,7 +182,7 @@ text_table <- data.frame(
   Meaning = c("word characters (letters + digits)", "digits", "alphabetical characters", "space", "punctuation", "lowercase", "uppercase", "not word characters", "not space", "not digits")
 )
 
-kable(text_table, "html") %>%
+kable(text_table, "html", caption = "Classes") %>%
   kable_styling(full_width = F) %>%
   column_spec(1, italic = T, border_right = T) %>%
   column_spec(2, width = "40em")
@@ -177,10 +196,10 @@ Helper actions to match your characters.
 ```{r echo = FALSE, eval = TRUE, warning = FALSE}
 text_table <- data.frame(
   Expression = c("|", ".", "[  ]", "[ - ]", "[^ ]", "( )"),
-  Meaning = c("or", "matches any single character", "matches ANY of the characters inside the brackets", "matches a RANGE of characters inside the brackets", "matches any character EXCEPT those inside the bracket", "grouping - used for _backreferencing_")
+  Meaning = c("or", "matches any single character", "matches ANY of the characters inside the brackets", "matches a RANGE of characters inside the brackets", "matches any character EXCEPT those inside the bracket", "grouping - used for backreferencing")
 )
 
-kable(text_table, "html") %>%
+kable(text_table, "html", caption = "Operators") %>%
   kable_styling(full_width = F) %>%
   column_spec(1, italic = T, border_right = T) %>%
   column_spec(2, width = "40em")
@@ -193,10 +212,11 @@ Sometimes a character is just a character... allows you to use a character 'as i
 ```{r echo = FALSE, eval = TRUE, warning = FALSE}
 text_table <- data.frame(
   Expression = c("\\"),
-  Meaning = c("escape! necessary to use special meta-characters (*, $, ^, ., ?, |, \\, [, ], {, }, (, )) [Note that the backslash is a meta-character as well]")
+  Meaning = c("escape! necessary to use special meta-characters (*, $, ^, ., ?, |, \\, [, ], {, }, (, )) 
+              The backslash is also a meta-character.")
 )
 
-kable(text_table, "html") %>%
+kable(text_table, "html", caption = "Escape Characters") %>%
   kable_styling(full_width = F) %>%
   column_spec(1, italic = T, border_right = T) %>%
   column_spec(2, width = "40em")
@@ -210,51 +230,17 @@ Trouble-shooting with escaping meta-characters means adding backslashes until so
 
 ##Data Cleaning with Base R (AKA What is Elon Musk up to anyways?)
 
-Let's take this cacaphony of characters we've just learned about and perform some basic data cleaning tasks with an actual (fun?) messy data set. I have scraped Elon Musk's latest tweets from Twitter. The code to do this is in the Lesson 4 markdown file if you are curious and/or want to creep someone on Twitter.
+Let's take this cacaphony of characters we've just learned about and perform some basic data cleaning tasks with an actual (fun?) messy data set. I have scraped Elon Musk's latest tweets from Twitter. The code to do this is in the Lesson 4 file twitter_scrape.R if you are curious and/or want to creep someone on Twitter.
 
-```{r echo = FALSE, include = FALSE, eval = FALSE }
-library(twitteR)
-library(httr)
-#This is from the code demo for httr::oauth1-twitter
-# 1. Find OAuth settings for twitter:
-oauth_endpoints("twitter")
-
-# 2. Register an application at https://apps.twitter.com/
-#    Make sure to set callback url to "http://127.0.0.1:1410/"
-#
-#    Replace key and secret below
-myapp <- oauth_app("twitter",
-  key = "TYrWFPkFAkn4G5BbkWINYw",
-  secret = "qjOkmKYU9kWfUFWmekJuu5tztE9aEfLbt26WlhZL8"
-)
-
-# 3. Get OAuth credentials
-twitter_token <- oauth1.0_token(oauth_endpoints("twitter"), myapp)
-
-# 4. Use API - now the code diverges from the demo
-setup_twitter_oauth(consumer_key = twitter_token[["app"]][["key"]] , consumer_secret = twitter_token[["app"]][["secret"]], access_token = twitter_token[["credentials"]][["oauth_token"]], access_secret = twitter_token[["credentials"]][["oauth_token_secret"]] )
-
-#3200 is the max number of tweets requestable
-elon_tweets <- userTimeline("elonmusk", n = 3200)
-elon_tweets_df <- tbl_df(map_df(elon_tweets, as.data.frame))
-
-write.table(elon_tweets_df, "data/elon_tweets_df.txt", sep = "\t")
-
-#used the following handles c(elon = "elonmusk", nye = "BillNye", jt = "JustinTrudeau", colbert = "StephenAtHome", jengardy = "JenniferGardy", jenny = "JennyBryan", katy = "KatyPerry", daily = "TheDailyShow", jimmy = "JimmyFallon", trump = "realDonaldTrump")
-```
-
-Let's read in the set of tweets, take a look at the structure of the data, and use 'tidyverse' to order the data by the most popular (favorited) tweets. Let's check out the top 5 favorite tweets.
+Let's read in the set of tweets, take a look at the structure of the data, and use `tidyverse` to order the data by the most popular (favorited) tweets. Let's check out the top 5 favorite tweets.
 
 ```{r}
-library(tidyverse)
-
 elon_tweets_df <- read.delim("data/elon_tweets_df.txt", sep = "\t", stringsAsFactors = F)
 str(elon_tweets_df)
 
-elon_tweets_df <- elon_tweets_df %>% arrange(desc(favoriteCount))
+elon_tweets_df <- elon_tweets_df %>% select(text, favoriteCount) %>% arrange(desc(favoriteCount))
 
 elon_tweets_df$text[1:5]
-
 
 ```
 Our end goal is going to be to look at the top 50 words in Elon Musk's tweets. I emphasize words, because I don't want urls, or hastags, or other tags. I also don't want punctuation or spaces. I want to extract just the words from tweets. First, I want to get remove the tags from the beginning of words. I am going to save my regex expression into an object - so we can use them again later.
@@ -399,7 +385,7 @@ Newline and tab characters are separating 2 words. Split these words apart and g
 
 ```{r include = FALSE}
 words <- tolower(unlist(strsplit(words, "\\n|\\t")))
-
+#equivalent to
 words <- casefold(unlist(strsplit(words, "\\n|\\t")), upper = FALSE)
 
 words[1:50]
@@ -420,7 +406,6 @@ Wow. We have discovered people use prepositions and conjunctions, and words unre
 The premade dataframe is called `stop_words`. We can save it as an object and add to it by making a dataframe of the words we want to add. We can call our lexicon 'custom'.
 
 ```{r}
-library(tidytext)
 stop <- stop_words
 str(stop)
 
@@ -438,6 +423,8 @@ To remove these stop words from our list, we perform an anti-join (from Lesson 3
 words <- anti_join(data.frame(words), stop, by=c("words" = "word"))
 
 ```
+
+
 ```{r}
 words %>% count(words) %>% arrange(desc(n))
 
@@ -449,9 +436,6 @@ words <- words %>% count(words) %>% arrange(desc(n))
 We can make a word cloud out of the top 50 words, which will be sized according to their frequency. I am starting with the first word after Elon Musk's twitter handle. The default color is black, but we can use our viridis package (Lesson 3) to have a pleasing color palette.
 
 ```{r}
-library("wordcloud")
-library("viridis")
-
 words[2:51,] %>%
     with(wordcloud(words, n, ordered.colors = TRUE, colors = viridis(50), use.r.layout = TRUE))
 ```
@@ -466,7 +450,7 @@ We are going to do the exact same data cleaning with the `stringr` package using
 trump_tweets_df <- read.delim("data/trump_tweets_df.txt", sep = "\t")
 
 
-trump_tweets_df <- trump_tweets_df %>% arrange(desc(favoriteCount))
+trump_tweets_df <- trump_tweets_df %>% select(text, favoriteCount) %>% arrange(desc(favoriteCount)) 
 trump_tweets_df$text[1:5]
 
 iconv(trump_tweets_df$text, "UTF-8", "ASCII", sub="") %>% head()
@@ -502,13 +486,13 @@ clean4 <- "\\.?:?,?-?!?\\(?\\)?\\??"
 
 clean5 <- "[[:punct:]]"
 
-str_replace_all(trump_tweets_df$text, clean5)
+str_replace_all(trump_tweets_df$text[1:20], clean5, replacement = "")
 
 trump_tweets_df$text <- str_remove_all(trump_tweets_df$text, pattern = clean)
 trump_tweets_df$text <- str_remove_all(trump_tweets_df$text, pattern = clean2)
 trump_tweets_df$text <- str_remove_all(trump_tweets_df$text, pattern = clean3)
 trump_tweets_df$text <- str_remove_all(trump_tweets_df$text, pattern = clean4)
-trump_tweets_df$text <- str_remove_all(trump_tweets_df$text, pattern = clean4)
+trump_tweets_df$text <- str_remove_all(trump_tweets_df$text, pattern = clean5)
 
 
 trump_tweets_df$text[1:10]
@@ -537,7 +521,6 @@ trump_tweets_df$text[1:10]
 All that's left is to convert all characters to lowercase, and then we can see the top Trump words!
 
 ```{r}
-
 trump_tweets_df$text <- tolower(trump_tweets_df$text)
 
 trump_tweets_df$text[1:10]
@@ -590,9 +573,6 @@ words <- words %>% count(words) %>% arrange(desc(n))
 
 Trump's wordcloud minus his twitter handle.
 ```{r}
-library("wordcloud")
-library("viridis")
-
 words[2:51,] %>%
     with(wordcloud(words, n, ordered.colors = TRUE, c(3,.5),colors = viridis(50), use.r.layout = TRUE))
 ```
@@ -616,48 +596,7 @@ Pick one of the other tweet data sets [__insert possibilities__]. Clean it. Remo
 ***
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
--rounding data - we don't need it to the umpteenth decimal
--look for lowest and highest values - do these make sense? (standard deviation?)
--called a range check, spell check, regex
--document what you are doing
--no all data sets are 100% clean
--also the paste functions
-
--the basics running through a fun example
-- do a chosen one, see what other problems come up
--rmarkdown, syntax, etc
--make a pdf of cleaning the WellcomeTrust dataset (give a brief outline of what needs to be done)
-
-
-remember regex testers
-https://regex101.com/
-https://regexr.com/
-
-
-
-- searching for a word/patterns, subset using character strings, collapse and expand character vectors, replacement, replacing NAs, splitting/combining at a delimiter
-
--regexpr, str_locate
-
-
-
-
 ```{r}
-
-
 save <- str_extract_all(trump_tweets_df$text, "[#|@|[:alnum:]]+([^\\s][[:alnum:]]+)?", simplify = TRUE)
 #gather, get rid of empty strings
 test <- gather(as.data.frame(save), value = "word") %>% filter(word != "")
@@ -705,55 +644,347 @@ trump_words <- trump_words %>% mutate(word = str_remove_all(trump_words$word, "[
 ```
 
 
+##Rmarkdown and knitr
+
+Markdown is a plain text formatting syntax. It allows us to easily add headings, lists, links, highlighting, bullets, images, equations and text styling. R has a modified version of markdown (R markdown) where you can embed code _chunks_ into a document. Combined with the `knitr` package, this allows us to make reproducible research documents. The awesomeness of this combination allows us to work and annotate our code in a format that is immediately presentable. With the click of a button our script (or notebook) can be converted into a word document, a pdf, or a shareable html hyperlink. Other formats such as slides are also possible. This means that you only have to do your work once - you don't have to have your code, generate images, paste them into powerpoint or word - get asked to change something, rerun the code, get the figure, change your powerpoint... everything is all in one place - you make your change, knit your document and you are done - you don't have to leave RStudio.
+
+Markdown and knitr can also save us time scrolling through our code - a table of contents can be added, code chunks can be named - both of which allow us to jump around and navigate our script easily. It takes a bit of discipline to get started, but I believe that you will see the benefits pretty quickly. There are even markdown templates for submitting to different journals.
+
+For this lesson I suggest going to Tools -> Global Options -> R Markdown -> Show output preview in: and change from 'Window' to 'Viewer Pane', then click 'Apply' and 'OK'. This will allow us to see our new document in the same window instead of switching back and forth between our code and the document. 
+
+###R markdown syntax
+
+Let's start by creating a new R markdown document by going to File -> New File -> R Markdown. R will ask you for the Title of your Document and the Author and whether you want to _render_ your markdown as html, pdf, or as a word document. There is also the option to instead make slides (under Presentation), a Shiny app, or use Templates for package documentation or GitHub (there is a git version of markdown that differs slightly from r markdown).  html renders faster than the other formats, so we will stick with that for right now and click OK. R immediately puts a yaml (yet another markup language, yaml ain't markup language) header which tells you how the file is configured. As you can see, the date has been added (this is the date of script creation and does not update when the script is rendered), and the output is going to be html. Note also that your document is Untitled. We can go ahead and save that as 'Rmarkdown_Lesson' and see that the file is save as a `.Rmd` file.
+
+>
+---
+title: "R markdown Lesson"
+author: "EA"
+date: "April 11, 2018"
+output: html_document
+---
+
+We can see that R has a little demo set up already. The new element are these code _chunks_ denoted by a set of 3 backticks, followed by `{r}`, some code and a closing set of 3 backticks. The keyboard shortcut for generating a code chunk is `CTRL + ALT + I`.
+
+````{r}
+
+````
+
+These code chunks have been named 'setup', 'cars', and 'pressure', and at the bottom left of the window (or if you go to Code -> Jump To... it will pop up) you can navigate between these code chunks. This is a helpful feature as your code gets a bit longer. 
+
+You have probably also noticed that in this navigation bar the bolded items correspond to the title of the document and the text with a leading `##`. Hashtags (when outside code chunks, ie. in markdown language) denote headers. The number of hashtags denotes the level of the header as well as the size. For example, the title is a first level header, and 'R Markdown' and 'Including Plots' are second level headers, and will also be smaller than the title. Let's go ahead and 'knit' our document by clicking the knit button. Note that you can change from your default output choice (html) to Word or pdf in the dropdown menu.
+
+Let's look at some of the markdown and how it is rendered in our html file. We can see that to **bold** text you can have __two asteriks (`**`) or two underscores (`\\_\\_`)__ on either side of the text. 
+
+You can insert a url by <http://rmarkdown.rstudio.com> or if you want the link to be named instead you can format it like this [rmarkdown](http://rmarkdown.rstudio.com). Replace the url with the named version and click knit to see the difference in the output.
+
+The other emphasized text in this document has a grey background. This is achieved by flanking the text with \``backticks`\` and is describing a parameter in the code. The code in the 'cars' code chunk has a grey background and the evaluated output is in white. Inline code can be written by using \`{r 2+2}\` and it will also have a grey background. So having a grey background usually has something to do with code or its parameters.  
 
 
 
+###knitr Chunk Options
+
+You might notice that while there are 3 code chunks in this example, there is one line of code visible in the rendered version, and 2 outputs (summary statistics and a plot). Why don't we see the code used to make the plot? Code chunks have options that can be entered to modify their output. In this case the inclusion of `echo = FALSE` prevents the code from being included, but the code is still run and so the plot is still produced. Try changing the code chunk option for the plot to `eval = FALSE'. What happened?
+
+```{r pressure, eval = FALSE}
+plot(pressure)
+```
+
+The first code chunk in this script is setting default options for all code chunks to be used in this script.  In this case `echo = TRUE` was set as a default chunk option. The option `include = FALSE` for this chunk means that the code will not be included, but the code will still be run. The difference between this command and `echo = FALSE` is that the output of the code is NOT shown. Let's look at what the default chunk options are - this way we will be able to see all of the options available to change.
+
+```{r setup }
+str(knitr::opts_chunk$get())
+```
+There are a ton of options here. You can guess that some of them have to do with default figure sizes and labels, and there a bunch of options that are not specified (NULL). 
+
+As far as setting chunk options at the beginning of a script goes, consider the following:
+
+```{r}
+library(tidyverse)
+
+```
+
+If we are creating a document, we may want to show what package we used, but we don't want all of the package startup messages. With `message = FALSE` the code will run and be shown but any messages generated will be suppressed.
 
 
+```{r message = FALSE}
+library(tidyverse)
+
+```
+I could use `include = FALSE, message = FALSE' if I wanted the library loaded but didn't want the code or its message to be seen.
+
+
+If I wanted to so something silly like thinking I could add 6 to every summary value (in truth each of these summary values is a character) it would generate an error. A document will not be rendered if it has an error in it. Try to knit the document with this code.
+
+```{r error = TRUE}
+summary(cars) + 6
+
+```
+Adding the option `error = TRUE` allows the document to be rendered despite the error. The error message will still be shown.
+
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/maxresdefault.jpg){width=150px}
+
+</div>
+
+
+For the code chunk containing `plot(pressure)`: How would you show just the code and not run the code?  How would you show just the code and have the output run but not show it? How would you change the background color to something other than gray? You can the help pages or the knitr documentation found here: <https://yihui.name/knitr/options/#chunk_options> if you need to.
+
+</br>
+</br>
+</br>
+
+***
+
+###Caching
+
+
+In the 'Run' dropdown menu, there are various options for running your current chunk `CTRL+SHIFT+ENTER`, the next chunk `CTRL+ALT+N`, all chunks above `CTRL+ALT+P`, all chunks below, and another few options. This allows changes to be made to your script and to assess the upstream and downstream consequences of the change. knitr also has the option to _cache_ the output of code chunks by setting the option `cache = TRUE`. A folder will be created that saves your chunk in a data file that can then be loaded when the chunk is run. This can be very useful if the code in a particular chunk takes awhile to run and you are assessing changes unrelated to that code. Knitr simply loads the result from the last time it was run. If your document isn't knitting because of an error at line 200 and your time intensive code runs at line 100, you can cache the earlier chunk and troubleshoot the later lines without having to wait for this earlier code to run again. The warning associated with caching is that changing anything in earlier code (at line 50 in this example) that your cached chunk depends on would not be appropriately updated as the code at line 100 would still not change. Therefore it is important to be conscious of what you are caching and where changes are occurring in your script. You should uncache your code chunk for the final rendering to make sure there haven't been any unforseen changes to your document. 
+
+With our current .Rmd file, let's say the 'summary' chunk took awhile to run. Let's add `cache = TRUE` to its chunk options. Knit the document and take a look. We are now going to change the plot chunk to depend on the cars dataset.
+
+
+`{r cars}`
+```{r }
+plot(cars$speed, cars$dist)
+```
+
+We can knit the document again, and assume that we save ourselves the time cost of running the second chunk. Let's put a chunk before our cached chunk adding a point to 'cars' using `dplyr`'s `bind_rows`. Note that I haven't loaded the entire `dplyr` package, but rather have just made a call to one specific function. Knit the document again.  
+
+`{r new row}`
+```{r }
+cars <- dplyr::bind_rows(cars, c(speed = 50, dist = 200))
+```
+
+Notice that this point is a huge outlier, and has changed the output of our plot. However, our summary also depends on the cars dataset and has not been updated (ie. the maximum distance is not 200).
+
+If I change the cached chunk, say, by adding another outlier data point - what do you think will happen?
+
+`{r cars, message = FALSE, cache = TRUE}`
+```{r message = FALSE, cache = TRUE}
+cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
+summary(cars)
+```
+
+Changes in the cache are still evaluated and passed on to the next code block. They are still being stored. The plot does now has a point at dist = 300, the the max distance in the summary has changed.
+
+If I change cars2 back to cars (without the outlier point) and knit the document, what do you expect to happen?
+
+
+`{r new row}`
+```{r new row}
+cars2 <- cars
+```
+
+What if we comment cars2 in the cached chunk? What do you expect to happen if we restart the R session and knit the document? What is the max dist value in the summary table? What about the plot - does it contain the outlier?
+
+`{r cars, message = FALSE, cache = TRUE}`
+```{r message = FALSE, cache = TRUE}
+#cars2 <- dplyr::bind_rows(cars2, c(speed = 100, dist = 300))
+summary(cars2)
+```
+
+What if we remove cache=TRUE from our code chunk?
+
+`{r cars, message = FALSE}`
+```{r message = FALSE}
+#cars2 <- dplyr::bind_rows(cars2, c(speed = 100, dist = 300))
+summary(cars2)
+```
+
+What if we restart R and add `cache=TRUE` to our code chunk again?
+
+`{r cars, message = FALSE, cache = TRUE}`
+```{r message = FALSE, cache = TRUE}
+#cars2 <- dplyr::bind_rows(cars2, c(speed = 100, dist = 300))
+summary(cars2)
+```
+
+###Tables
+
+You can make table in markdown, but it is kind of annoying compared to the kable tables available in knitr. (explain formatting a tad) Here is an example of a markdown table. Here is an example of how to format markdown tables: <https://help.github.com/articles/organizing-information-with-tables/>. Go nuts. 
+
+>
++--------------+--------------------------+
+|Summary         Values|
++==============+=============+
+| correlation    `r cor(cars$speed, cars$dist)`|
++--------------+----------------+
+| mean km/h       `r mean(cars$speed)`|
++--------------+----------------+
+| mean km         `r mean(cars$dist)`|
++--------------+----------------+
+
+
+In this lesson we are going to focus on `kable` tables. The summary stats from cars is a table. However, it doesn't look very good. knitr as the capability to make nice looking tables that are customizable with `kable`. <https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#getting_started>
+
+__I think knitr loaded at the beginning can work here__
+
+```{r}
+knitr::kable(summary(cars))
+```
+
+
+
+```{r}
+dat <- data.frame(speed = summary(cars)[,1], distance = summary(cars)[,2])
+
+knitr::kable(summary(cars), "html")  %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
+```
+
+
+You can also have the table move to the left or right side of your document so that text or a figure could be included beside it. For example, we could change the figure size as well and have a figure and table side-by-side in our document.
+
+`{r cars, message = FALSE, cache = TRUE}`
+```{r  message = FALSE, cache = TRUE}
+
+knitr::kable(summary(cars), "html")  %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "float_right")
+```
+
+`{r pressure,  echo = FALSE, fig.width=5, fig.height = 5}`
+```{r echo = FALSE, fig.width=5, fig.height = 5}
+plot(cars2$speed, cars2$dist)
+```
+
+Add highlighting, play with borders.  
+
+
+`{r cars, message = FALSE, cache = TRUE}`
+```{r eval = FALSE}
+knitr::kable(dat, "html", escape = F) %>%
+       kable_styling("striped", full_width = F) %>%
+       column_spec(1:2, border_right = TRUE, border_left = TRUE) %>%
+       row_spec(3, bold = T, color = "black", background = "yellow") 
+```
+
+Add footnotes. __Maybe we don't want eval = F here __
+
+`{r cars, message = FALSE, cache = TRUE}`
+```{r eval = FALSE}
+
+names(dat)[1] <- paste0(names(dat)[1], footnote_marker_symbol(1))
+names(dat)[2] <- paste0(names(dat)[2], footnote_marker_alphabet(1))
+
+knitr::kable(dat, "html", escape = F) %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(1:2, border_right = TRUE, border_left = TRUE) %>%
+  row_spec(3, bold = T, color = "black", background = "yellow") %>%
+  footnote(symbol = "km/h", alphabet = "km;") 
+```
+
+Add images.
+
+To add pictures to your document:
+
+'![knitr - get it?](img/kitten-with-string.jpg){width=400px}'
+
+
+![knitr - get it?](img/kitten-with-string.jpg){width=400px}
+
+###Table of contents
+
+This is the table of contents (toc) for the lessson. It is as simple as writing 'toc = TRUE' and then specifying what level of headers you would like to include in the toc. I am keeping 1st, 2nd, and 3rd level headers in this example. If I had a 4th level header, it would not show up in my table of contents. The toc creates a hyperlink to each section for the user to navigate the document. `CTRL+SHIFT+O` opens the document outline which allows navigation to these sections while coding.  
+
+>
+---
+title: "Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions"
+output: 
+  html_document:
+          keep_md: yes
+          toc: TRUE
+          toc_depth: 3
+  html_notebook:
+          toc: TRUE
+          toc_depth: 3
+---
+
+
+You may have noticed the blue button in the top right corner of the screen with a dropdown that says 'Publish'. This is if you are super-proud of your work and want to post your rendered document at Rpubs (free, online for the world to see). <https://rpubs.com/> It can be interesting to see what other people have been working on as well.
+
+##Slides
+
+Slideshows can also be made fairly simply in R markdown. If you go to File -> New File -> R Presentation you will have a new .RPres file. Slides are separated by a series of equals lines and the title of the slide is just above these lines.
+
+>
+First Slide
+========================================================
+
+For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+Slide With Code
+========================================================
+
+```{r}
+summary(cars)
+```
+
+Slide With Plot
+========================================================
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+If you click on Preview in the Source Pane, a Presentation Tab will open in the Environment Pane with a a slideshow that you can toggle through. In that Pane under 'More' you can also View in Browser or Save As Webpage, which is the common way these slides get presented.
+
+I really just wanted to show you that these slides exist. Depending on what you are presenting, this could be a quick alternative to Powerpoint if you are need to present some code. Again, these are customizable <https://rmarkdown.rstudio.com/ioslides_presentation_format.html>.
+
+If you are interested in a separate tutorial on making and customizing ioslides or the fancier Slidify slides (<https://www.jvcasillas.com/slidify_tutorial/#46>), please leave a comment in the Lesson 4 survey (https://www.surveymonkey.com/r/PVHDKDB).
+
+
+***
+
+##A Real Messy Dataset
 
 I looked for a dataset for data cleaning and found it in a blog titled "Biologists: this is why bioinformaticians hate you...". The main and common issue with this dataset is that when data entry was done there was no structured vocabulary - meaning that people could type in whatever they wanted instead of using dropdown menus with limited options, or giving an error if something is formatted incorrectly, or stipulating some rules (ie. must be all lowercase, uppercase, no numbers, spacing, etc.). I must admit I have been guilty of messing with people who have made databases without rules. For example, in giving the emergency contact there was a line to input 'Relationship', which could easily have been a dropdown menu 'parent, partner, friend, other', but instead I was allowed to write in a free text line 'lifelong kindred spirit, soulmate and doggy-daddy'. I don't think anyone here was trying to be a nuisance, this is just a consequence of poor data collection. There is a README file to go with this spreadsheet if you have questions about the data fields.  
 
 http://www.opiniomics.org/biologists-this-is-why-bioinformaticians-hate-you/     
 https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054
 
+__Challenge:__      
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/1467481_240434926124232_550310772_n.jpg)
+</div>
+
+
+Present in a knitr table, explaining some of your data cleaning challenges in rmarkdown. Knit the document to a pdf.
+
 What I want to know is: 
-1. List 5 problems with this data set.
+1. List 3 problems with this data set.
 1. Which publisher is the most expensive to publish with?
 1. Which journal is the most expensive to publish with? Is this by the same publisher?                  
 1. Convert sterling to CAD. What is the median cost of publishing with Elsevier in CAD?
 
 The blogger's opinion of cleaning this dataset:
 
-'I now have no hair left; I’ve torn it all out.  My teeth are just stumps from excessive gnashing.  My faith in humanity has been destroyed!'
+_'I now have no hair left; I’ve torn it all out.  My teeth are just stumps from excessive gnashing.  My faith in humanity has been destroyed!'_
 
 Don't get to this point. The dataset doesn't need to be perfect. Just do what you gotta do to answer these questions.  
 
+
+![](img/yougotthis.jpg)
+
+
+
 Note to self: This may be too tough - see how long it takes to do.
 
-Approximate time: 2 hours per lesson
 
- _Each lesson will have:_
- 
- - Comprehension questions as we go along on Socrative.
- - How to read help pages online.
- - Give the class a function not previously used during the lesson and have them figure out what it does and how to use it.
- - Each lesson will start from an excel spreadsheet with imperfect data.
 
 ***
 
-_R markdown and knitr_
 
-- r markdown syntax
-    +  making things pretty: adding table of contents, images, hyperlinks, urls
-- knitr code chunk options
-    + suppressing pkg load warnings, eval = T/F, re-running some chunks while keeping others in memory
-    + tables in knitr
-- rendering to pdf, html, word documents (any interest in slides?)
-- sharing on Rpubs
 
-__Challenge:__      
-
-Take the original gapminder dataset and covert it to the 'clean' dataset found in the gapminder package / find some horrible dataset to clean. Present in a knitr table, explaining some of your data cleaning challenges in rmarkdown. Knit the document to a pdf.
    
 __Resources:__     
 http://stat545.com/block022_regular-expression.html
@@ -763,18 +994,52 @@ http://r4ds.had.co.nz/strings.html
 http://www.gastonsanchez.com/Handling_and_Processing_Strings_in_R.pdf     
 http://varianceexplained.org/r/trump-tweets/     
 http://www.opiniomics.org/biologists-this-is-why-bioinformaticians-hate-you/     
-https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054
+https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054     
+http://www.datacommunitydc.org/blog/2013/08/fantastic-presentations-from-r-using-slidify-and-rcharts/
 
-##Post-Lesson Assessment
+#Post-Lesson Assessment
 ***
-_Questions_
 
-- Speed: Too slow, too fast, just right
-- Content: Too easy, too hard, just right
-- From the description of the lesson, the content was what I expected to learn. T/F
-- What was the most useful thing you learned?
-- What was the least useful thing?
-- Comments/suggestions for improvement.
+Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
+https://www.surveymonkey.com/r/PVHDKDB
 
+</br>
+
+***
+
+</br>
+
+Thanks for coming!!!
+
+![](img/rstudio-bomb.png){width=300px}
 
 ##Notes
+Do users need instructions on how to install pandoc or Rccp for this lesson? Find a virgin computer...
+classy llama
+eval(1,3)
+bullets
+list
+change color of code chunk background
+dirty/clean consequences img
+-rounding data - we don't need it to the umpteenth decimal
+-look for lowest and highest values - do these make sense? (standard deviation?)
+-called a range check, spell check, regex
+-document what you are doing
+-no all data sets are 100% clean
+-also the paste functions
+
+
+-make a pdf of cleaning the WellcomeTrust dataset (give a brief outline of what needs to be done)
+
+
+remember regex testers
+https://regex101.com/
+https://regexr.com/
+
+
+
+- searching for a word/patterns, subset using character strings, collapse and expand character vectors, replacement, replacing NAs, splitting/combining at a delimiter
+
+-regexpr, str_locate
+
+
