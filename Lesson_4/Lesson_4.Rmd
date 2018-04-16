@@ -22,14 +22,14 @@ This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis
 
 
 
-This lesson is the third in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
+This lesson is the fourth in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
 
 
 ![](img/data-science-explore.png)
 
 </br>
 
-How do we get there? Today we are going to be learning how to make all sorts of plots - from simple data exploration to interactive plots.The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. Then we will learn how to do t-tests and perform regression and modeling in R. And lastly, we will learn to write some functions, which really can save you time and help scale up your analyses.
+How do we get there? Today we are going to be learning data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. We will also be learning r markdown so that we can easily annotate our code and share it with others in reproducible documents. In the next lesson we will learn how to do t-tests and perform regression and modeling in R. And lastly, we will learn to write some functions, which really can save you time and help scale up your analyses.
 
 
 ![](img/spotify-howtobuildmvp.gif)
@@ -53,7 +53,7 @@ The following packages are used in this lesson:
 `kableExtra`     
 `wordcloud`     
 
-*Used to generate the tweet tables used in this lesson. It is not necessary for you to install this - you can work from the tables. If you want to create these files - the code is here ................(insert link).    
+*Used to generate the tweet tables used in this lesson. It is not necessary for you to install this - you can work from the tables. If you want to create these files - the code is here  - [twitter scrape](https://github.com/eacton/CAGEF/blob/master/Lesson_4/twitter_scrape.R).    
 
 Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
 
@@ -90,7 +90,7 @@ library("wordcloud")
 
 Why do we need to do this?
 
-'Raw' data is seldom (never) in a useable format. Data in tutorials or demos has already been meticulously filtered, transformed and readied for that specific analysis. How many people have done a tutorial only to find they can't get their own data in the @*%($! format to use the tool they have just spend an hour learning about???
+'Raw' data is seldom (never) in a useable format. Data in tutorials or demos has already been meticulously filtered, transformed and readied to showcase that specific analysis. How many people have done a tutorial only to find they can't get their own data in the format to use the tool they have just spend an hour learning about???
 
 Data cleaning requires us to:
 
@@ -102,7 +102,7 @@ Data cleaning requires us to:
 - get our data in a proper format to be analyzed by the tools we are using. 
 - flag/remove data that does not make sense.
 
-Some definitions might take this a bit farther and include normalizing data and removing outliers, but I consider data cleaning at least, getting data into a format where we can start actively doing 'the maths or the graphs' whether it be statistical calculations, normalization or exploratory plots. We have learned how to transform data into a tidy format in Lesson 2, but the prelude to transforming data is doing the grunt work mentioned above. So let's get to it!
+Some definitions might take this a bit farther and include normalizing data and removing outliers, but I consider data cleaning as getting data into a format where we can start actively doing 'the maths or the graphs' - whether it be statistical calculations, normalization or exploratory plots. We have learned how to transform data into a tidy format in Lesson 2, but the prelude to transforming data is doing the grunt work of data cleaning. So let's get to it!
 
 <div style="float:center;margin: 10px 0 10px 0" markdown="1">
 ![](img/cleaning.gif){width=300px}
@@ -126,9 +126,25 @@ Some definitions might take this a bit farther and include normalizing data and 
 
 </br>
 
-So why does regex get so much flak?
+So why do regular expressions or 'regex' get so much flak if it is so powerful for text matching?
 
-Scary example: how to get an email in different programming languages (http://emailregex.com/). Whatever. 
+Scary example: how to get an email in different programming languages <http://emailregex.com/>. 
+
+Regex is definitely one of those times when it is important to annotate your code. There are many jokes related to people coming back to their code the next day and having no idea what their code means.
+
+<div style="left;margin:0 20px 20px 0" markdown="1">
+![](img/yesterdays-regex.png){width=400px} 
+</div>
+
+There are sites available to help you make up your regular expressions and validate them against text. These are usually not R specific, but they will get you close and the expression will only need a slight modification for R (like an extra backslash - described below).
+
+Regex testers:
+
+<https://regex101.com/>     
+<https://regexr.com/>
+
+What I would like to get across it that it is okay to google and use resources early on for regex, and that even experts still use these resources.  
+
 
 </br>
 
@@ -144,7 +160,14 @@ Scary example: how to get an email in different programming languages (http://em
 
 </br>
 
-What does the language look like?
+</br>
+
+</br>
+</br>
+
+__What does the language look like?__ 
+
+The language is based on _meta-characters_ which have a special meaning rather than their literal meaning. For example, '$' is used to match the end of a string, and this use supercedes its use as a character in a string (ie 'Joe paid \$2.99 for chips.'). 
 
 
 ###Matching by position
@@ -207,7 +230,7 @@ Helper actions to match your characters.
 ```{r echo = FALSE, eval = TRUE, warning = FALSE}
 text_table <- data.frame(
   Expression = c("|", ".", "[  ]", "[ - ]", "[^ ]", "( )"),
-  Meaning = c("or", "matches any single character", "matches ANY of the characters inside the brackets", "matches a RANGE of characters inside the brackets", "matches any character EXCEPT those inside the bracket", "grouping - used for backreferencing")
+  Meaning = c("or", "matches any single character", "matches ANY of the characters inside the brackets", "matches a RANGE of characters inside the brackets", "matches any character EXCEPT those inside the bracket", "grouping - used for [backreferencing](https://www.regular-expressions.info/backref.html)")
 )
 
 kable(text_table, "html") %>%
@@ -218,13 +241,13 @@ kable(text_table, "html") %>%
 
 ###Escape characters
 
-Sometimes a character is just a character... allows you to use a character 'as is' rather than its special function. In R, regex gets evaluated as a string before a regular expression, and a backslash is used to escape there as well - so you really need 2 backslashes to escape, say, a $ sign (`"\\\$"`). 
+Sometimes a meta-character is just a character. _Escaping_ allows you to use a character 'as is' rather than its special function. In R, regex gets evaluated as a string before a regular expression, and a backslash is used to escape the string - so you really need 2 backslashes to escape, say, a '$' sign (`"\\\$"`). 
 
 ```{r echo = FALSE, eval = TRUE, warning = FALSE}
 text_table <- data.frame(
   Expression = c("\\\\"),
-  Meaning = c("escape! necessary to use special meta-characters (*, $, ^, ., ?, |, \\\\, [, ], {, }, (, )). 
-              The backslash is also a meta-character.")
+  Meaning = c("escape for meta-characters to be used as characters (*, $, ^, ., ?, |, \\\\, [, ], {, }, (, )). 
+              Note: the backslash is also a meta-character.")
 )
 
 kable(text_table, "html") %>%
@@ -235,15 +258,18 @@ kable(text_table, "html") %>%
 
 Trouble-shooting with escaping meta-characters means adding backslashes until something works. 
 
-![Joking/Not Joking](img/backslashes.png)
+![Joking/Not Joking (xkcd)](img/backslashes.png)
+
+While you can always refer back to this lesson for making your regular expressions, you can also use this [regex cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf).
 
 </br>
 
+
 ##Data Cleaning with Base R (AKA What is Elon Musk up to anyways?)
 
-Let's take this cacaphony of characters we've just learned about and perform some basic data cleaning tasks with an actual (fun?) messy data set. I have scraped Elon Musk's latest tweets from Twitter. The code to do this is in the Lesson 4 file twitter_scrape.R if you are curious and/or want to creep someone on Twitter.
+Let's take this cacaphony of characters we've just learned about and perform some basic data cleaning tasks with an actual messy data set. I have scraped Elon Musk's latest tweets from Twitter. The code to do this is in the Lesson 4 file [twitter_scrape.R](https://github.com/eacton/CAGEF/blob/master/Lesson_4/twitter_scrape.R) if you are curious or want to creep someone on Twitter.
 
-Let's read in the set of tweets, take a look at the structure of the data, and use `tidyverse` to order the data by the most popular (favorited) tweets. Let's check out the top 5 favorite tweets.
+Let's read in the set of tweets, take a look at the structure of the data.
 
 ```{r }
 elon_tweets_df <- read.delim("data/elon_tweets_df.txt", sep = "\t", stringsAsFactors = F)
@@ -256,16 +282,18 @@ str(elon_tweets_df)
 
 ```
 
-Our end goal is going to be to look at the top 50 words in Elon Musk's tweets and make a wordcloud. I emphasize words, because I don't want urls, or hastags, or other tags. I also don't want punctuation or spaces. I want to extract just the words from tweets. It might be fun to look at the top favorite tweets while we are data cleaning, so let's keep the tweets and order them by the favorited counts.
+Our end goal is going to be to look at the top 50 words in Elon Musk's tweets and make a wordcloud. I don't want urls, hastags, or other tags. I also don't want punctuation or spaces. I just want to extract the words from tweets. It might be fun to look at the top favorite tweets while we are data cleaning, so let's use `tidyverse` functions to keep the text tweets and order them by the favorited counts.
 ```{r}
-elon_tweets_df <- elon_tweets_df %>% select(text, favoriteCount) %>% arrange(desc(favoriteCount))
+elon_tweets_df <- elon_tweets_df %>% 
+  select(text, favoriteCount) %>%
+  arrange(desc(favoriteCount))
 
 elon_tweets_df$text[1:5]
 ```
 
-First, I want to get remove the tags from the beginning of words. I am going to save my regex expression into an object - so we can use them again later.
+First, I want to remove the tags from the beginning of words. I am going to save my regex expression into an object - so we can use them again later.
 
-What this expression says is that I want to find matches for a hastag OR an asperand followed by at least one word character. `grep` is a function that allows us to match our pattern (our expression) to a character vector.
+What this expression says is that I want to find matches for a hastag OR an asperand ('at' symbol) followed by at least one word character. `grep` is a function that allows us to match our pattern (our expression) to a character vector. It is a good idea to do a visual inspection of your result to make sure your matches or substitutions are working the way you expected.
 
 ```{r}
 tags <- "#|@\\w+"
@@ -273,64 +301,96 @@ tags <- "#|@\\w+"
 grep(pattern = tags, x = elon_tweets_df$text)
 
 ```
-We can see that `grep` returns the index of the match. We have a number of entries that include tags. However, if we want to return the tweet itself instead of the index, we can use the argument `value = TRUE`. It is a good idea to do a visual inspection of your result to make sure your matches or substitutions are working the way you expected. In this case, it looks like each tweet does have a tag. We can then use `gsub` to replace that pattern (our tags) with nothing (an empty string).
+We can see that `grep` returns the index of the match. We have a number of entries that include tags. We also have a number of warnings that we will return to. 
 
-```{r}
+If we want to return the tweet itself instead of the index, we can use the argument `value = TRUE`.  In this case, it looks like each tweet matched does have a tag. (You will have a warning here too, I didn't print it here.)
 
+```{r warning = FALSE}
 grep(tags, elon_tweets_df$text, value = TRUE) %>% head()
 
-elon_tweets_df$text <- gsub(pattern = tags, replacement = "", elon_tweets_df$text)
-
 ```
-It also looks like anything that was an apostrophe has been replaced with a string of numbers and backslashes. This is due to the fact that tweets are _encoded_ in UTF-16 and converted to UTF-8. Other things that have character codes, like emojis, will also be encoded differently. Here is an example of emoji encoding: https://raw.githubusercontent.com/today-is-a-good-day/Emoticons/master/emDict.csv. Since we are going to remove punctuation, we are going to 'convert' the encoding by substituting it with nothing (again, an empty character string). This is not something you will have to deal with on a daily basis, but character encoding is something to be aware of, especially when scraping data from the web.  
+We can then use `gsub` to replace that pattern (our tags) with nothing (an empty string).
+```{r}
+elon_tweets_df$text <- gsub(pattern = tags, replacement = "", elon_tweets_df$text)
+```
+
+Back to the warnings about strings being 'invalid in this locale'. Let's take a look at these strings by subsetting for the indices given.
 
 ```{r}
-iconv(elon_tweets_df$text, "UTF-8", "ASCII", sub="") %>% head()
+elon_tweets_df$text[c(10,118, 156, 219, 224)]
 
-elon_tweets_df$text <- iconv(elon_tweets_df$text, "UTF-8", "ASCII", sub = "")
 ```
+
+From context, it looks like these character strings have emojis in them, which have their own character codes. Why would this give us an error? Tweets are _encoded_ in UTF-16 and converted to UTF-8 when read into R. Things that have character codes get encoded differently. Here is an example of [emoji encoding](https://raw.githubusercontent.com/today-is-a-good-day/Emoticons/master/emDict.csv). Since we are going to remove anything with special character codes (ie. an apostrophe or emoji), we are going to use the `iconv` function to substitute encoded character codes that need converting with nothing (again, an empty character string). This is not something you will have to deal with on a daily basis, but character encoding is something to be aware of, especially when scraping data from the web.  
+
+```{r}
+elon_tweets_df$text <- iconv(elon_tweets_df$text, "UTF-8", "ASCII", sub = "")
+
+elon_tweets_df$text[c(10,118, 156, 219, 224)]
+```
+
+Looking back at our problematic strings, you can see that the emojis have been removed as well as quotation marks. Our hastag and asperand would also have been encoded characters had we not already removed them.
+
 
 Our next step would be to remove urls. This is a bit tricky. We could be looking for http:// or https:// followed by we don't know what (some combination of letters, numbers and forward slashes). 
 
-We can check out which tweets have urls using `grep` as we did previously. We can also use `grepl` to get a logical reponse for if a tweet has a url or not. That way, if you wanted to grab all of the urls that Elon Musk suggests to visit, you can filter with `grepl`, to select all of the tweets where it is TRUE that a url is present.
+We can check out which tweets have urls using `grep` as we did previously to see if we managed to match urls.
 
-However, we are going to continue our pattern of substituting what we don't want with an empty character string.
+We are going to continue our pattern of using `gsub` to substitute what we don't want with an empty character string.
 
 ```{r}
 url <- "http[s]?://[[:alnum:].\\/]+"
 
-
 grep(url, elon_tweets_df$text, value = TRUE) %>% head()
-grepl(url, elon_tweets_df$text) %>% head()
-
-elon_urls <- elon_tweets_df %>% filter(grepl(url, elon_tweets_df$text))
 
 elon_tweets_df$text <- gsub(pattern = "http[s]?://[[:alnum:].\\/]+", replacement = "", elon_tweets_df$text)
 
 ```
 
-Lastly, we are going to get rid of trailing spaces, numbers, and punctuation all at the same time. You can find trailing at the very end of our tweet string.
+We can also use `grepl` to get a logical reponse for whether a tweet has a url or not. That way, if you wanted to grab all of the urls that Elon Musk suggests to visit, you can filter with `grepl` to select all of the tweets where it is TRUE that a url is present.
+
+```{r}
+grepl(url, elon_tweets_df$text) %>% head()
+
+elon_urls <- elon_tweets_df %>% filter(grepl(url, elon_tweets_df$text))
+```
+
+
+Lastly, we are going to get rid of trailing spaces, numbers, and punctuation all at the same time. You can find trailing spaces at the very end of our tweet string from removing the urls.
 
 ```{r}
 trail <- "[ ]+$|[0-9]*|[[:punct:]]"
 
 grep(trail, elon_tweets_df$text, value = TRUE) %>% head()
 
+```
+We can check to see that we are picking up strings with punctutation, numbers and trailing spaces, and then we can remove them and compare our output.
+
+```{r}
 elon_tweets_df$text <- gsub(pattern = trail, replacement = "", elon_tweets_df$text)
 
 elon_tweets_df$text[1:5]
 ```
-It looks like everything worked except that a spacing issue was created by removing all of the numbers. Let's take all of the places where there are 2 or more spaces created and substitute them with just one space. 
+
+It looks like everything worked except there are extra spaces from whenever a number was removed. Let's take all of the places where there are 2 or more spaces created and substitute them with just one space. 
 
 ```{r}
 space <- "\\s{2,}"
 
 grep(space, elon_tweets_df$text, value = TRUE) %>% head()
 
+```
+Again, we can check to see that we are picking up strings with extra spaces, and then replace those spaces with a single space.
+
+
+```{r}
 elon_tweets_df$text <- gsub(pattern = space, replacement = " ", elon_tweets_df$text)
 
 elon_tweets_df$text[1:5]
 ```
+
+It worked! 
+
 ***
 __Challenge__ 
 
@@ -340,9 +400,10 @@ __Challenge__
 
 </div>
 
-We also have a leading whitespace where we removed a number. How would we remove that whitespace?
+We also have a leading whitespace where we removed a number. How would we remove that whitespace? Can you think of more than one way to do this?
 
 
+</br>
 </br>
 </br>
 </br>
@@ -359,7 +420,7 @@ elon_tweets_df$text <- gsub(pattern = extra, replacement = "", elon_tweets_df$te
 elon_tweets_df$text[1:5]
 ```
 
-Onwards!! Let's break the texts down into individual words, so we can see what the most common words used are. We can use the base R function `strsplit` to do this, in this case we want to split our tweets into words by splitting on spaces. 
+Onwards!! Let's break the tweets down into individual words, so we can see what the most common words used are. We can use the base R function `strsplit` to do this; in this case we want to split our tweets into words using spaces. 
 
 
 ```{r}
@@ -368,10 +429,6 @@ strsplit(elon_tweets_df$text, split = " ") %>% head()
 ```
 Note that the output of this function is some horrible nested list object. 
 
-```{r}
-str(strsplit(elon_tweets_df$text, split = " "))
-```
-
 Luckily there is an `unlist` function which recursively will go through lists to simplify their elements into a vector. Let's try it and check the structure of our output. We will save this to an object called 'words'.
 
 ```{r}
@@ -379,11 +436,25 @@ unlist(strsplit(elon_tweets_df$text, split = " ")) %>% head(20)
 
 words <- unlist(strsplit(elon_tweets_df$text, split = " "))
 
-str(unlist(strsplit(elon_tweets_df$text, split = " ")))
+```
 
+Our output is now a long character vector. This will make it much easier to count words. 
+
+```{r}
+str(unlist(strsplit(elon_tweets_df$text, split = " ")))
+```
+
+Let's take a peak at the words.
+```{r}
+head(words)
 tail(words)
 ```
-Great! But... I noticed that we missed some `\n` (newline) and `\t` (tab) characters.
+
+
+
+Great! But... we missed some `\n` (newline) and `\t` (tab) characters. These are not punctuation characters.
+
+
 
 ***
 __Challenge__ 
@@ -412,38 +483,43 @@ words[1:50]
 tail(words, 50)
 ```
 
-There are still a few problems with words cutoff like 'solv', or 'flamethrower' and 'flamethrowers' being the same word, or 'north' and 'korea' belonging together for context. If we were serious about this dataset we would need to resolve these issues. We also have some html and twitter-specific tags that we will deal with shortly. However, we are going to move ahead and count the number of occurences of each word and order them by frequency.
+There are still a few problems with words cutoff like 'solv', or 'flamethrower' and 'flamethrowers' being the same word, or 'north' and 'korea' belonging together for context. If we were serious about this dataset we would need to resolve these issues. We also have some html and twitter-specific tags that we will deal with shortly. 
+
+Let's move ahead and count the number of occurences of each word and order them by frequency. We do this using our `dplyr` functions (Lesson 2).
 
 ```{r}
 data.frame(words) %>% count(factor(words)) %>% arrange(desc(n))
 ```
 
 
+Wow. We have discovered people use prepositions and conjunctions. There are also words unrelated to content but that are html jargon, or things like 'na' and 'false'. 
 
+Luckily text mining is an area of data analytics in full force and there is a list of 'stop words' that can be used to get rid of words that are unlikely to contain useful information as part of the `tidytext` package. However, we will have to add to this list.
 
-Wow. We have discovered people use prepositions and conjunctions, and words unrelated to content but html jargon, or things like 'na' and 'false'. There is a list of 'stop words' that can be used to get rid of words that are unlikely to contain information for us as part of the `tidytext` package. However, we will have to add to this list.
+The data that comes with the package is called `stop_words`. We can save it as an object and take a look at its structure.
+```{r}
+stop_words <- stop_words
+str(stop_words)
+```
 
-The premade dataframe is called `stop_words`. We can save it as an object and add to it by making a dataframe of the words we want to add. We can call our lexicon 'custom'.
+We can then add rows to this data frame with words our own stop words.  Remember that to `bind_rows` data frames together, the column names have to match. We can make a small data frame and call our lexicon 'custom'. Note that I have written 'custom' once - it will recycle as a character vector of length 1 to the length of the data frame.
 
 ```{r}
-stop <- stop_words
-str(stop)
-
 add_stop <- data.frame(word = c("na", "false", "href", "rel", "nofollow", "true", "amp", "twitter", "iphonea", "relnofollowtwitter", "relnofollowinstagrama"), 
                        lexicon = "custom", stringsAsFactors = FALSE)
-#I just should point out that true or false 'could' be a word rather than a logical, I could filter out FALSE and TRUE before changing everything to lowercase and this would reduce the likelyhood of missing 'words'
-#also note that 'custom' recycles as a character vector of length 1
 
-stop <- bind_rows(stop, add_stop)
+stop_words <- bind_rows(stop_words, add_stop)
 ```
 
-To remove these stop words from our list, we perform an anti-join (from Lesson 3).
 
-```{r}
-words <- anti_join(data.frame(words), stop, by=c("words" = "word"))
+To remove these stop words from our list of words from tweets, we perform an anti-join (from Lesson 3).
+
+```{r warning = FALSE}
+words <- anti_join(data.frame(words), stop_words, by=c("words" = "word"))
 
 ```
 
+Let's look at our top words by count now, and save this order.
 
 ```{r}
 words %>% count(words) %>% arrange(desc(n))
@@ -451,11 +527,11 @@ words %>% count(words) %>% arrange(desc(n))
 words <- words %>% count(words) %>% arrange(desc(n))
 ```
 
-'boring', 'falcon', 'tesla', 'rocket', 'launch','flamethrower', 'cars', 'spacex', 'tunnels', and 'mars' and 'ai' are a bit further down. There are a few words that look like they should be added to the 'stop words' list (dont, doesnt, didnt, im), but we'll work with this for now.
+'boring', 'falcon', 'tesla', 'rocket', 'launch','flamethrower', 'cars', 'spacex', 'tunnels', and 'mars' and 'ai' are a bit further down the list. There are a few words that look like they should be added to the 'stop words' list (dont, doesnt, didnt, im), but we'll work with this for now.
 
-We can make a word cloud out of the top 50 words, which will be sized according to their frequency. I am starting with the first word after Elon Musk's twitter handle. The default color is black, but we can use our viridis package (Lesson 3) to have a pleasing color palette. It is okay if this code gives you a warning that not all words can be fit on the page, this can be changed by adjusting the `scale` argument.
+We can make a word cloud out of the top 50 words, which will be sized according to their frequency. I am starting with the first word after Elon Musk's twitter handle. The default color is black, but we can use our `viridis` package (Lesson 3) to have a pleasing color palette. It is okay if this code gives you a warning that not all words can be fit on the page, this can be changed by adjusting the `scale` argument.
 
-```{r message = FALSE}
+```{r warning = FALSE}
 words[2:51,] %>%
     with(wordcloud(words, n, ordered.colors = TRUE, colors = viridis(50), use.r.layout = TRUE))
 ```
@@ -464,20 +540,17 @@ words[2:51,] %>%
 
 ##Data Cleaning with stringr/stringi (AKA What is Trump up to anyways?)
 
-We are going to do the exact same data cleaning with the `stringr` package using Trump's tweets. The syntax is a little different, but it is pretty intuitive once you get started. All `stringr` functions can be found using `str_` + `Tab`. Again, we will start by loading the dataset and looking at the top 5 favorite tweets.
+We are going to go through the same data cleaning process with the `stringr` package using Trump's tweets. The syntax is a little different, but it is pretty intuitive once you get started. All `stringr` functions can be found using `str_` + `Tab`. Again, we will start by loading the dataset and looking at the top 5 favorite tweets. We will remove all encoded character codes right away.
 
 ```{r}
 trump_tweets_df <- read.delim("data/trump_tweets_df.txt", sep = "\t", stringsAsFactors = FALSE)
-
+trump_tweets_df$text <- iconv(trump_tweets_df$text, "UTF-8", "ASCII", sub = "")
 
 trump_tweets_df <- trump_tweets_df %>% select(text, favoriteCount) %>% arrange(desc(favoriteCount)) 
 trump_tweets_df$text[1:5]
-
-
-trump_tweets_df$text <- iconv(trump_tweets_df$text, "UTF-8", "ASCII", sub = "")
 ```
 
-The first thing that we did was look for tags. The arguments are switched in `stringr` relative to the base functions. The first argument will be the character string we are searching, and the second argument will be the pattern we are matching. `str_extract` will return the index of the match, as well as the match. This is similar to `grep` when `value = TRUE`.
+The first thing that we did was look for tags. The order of arguments are switched in `stringr` relative to the base functions. The first argument will be the character string we are searching, and the second argument will be the pattern we are matching. `str_extract` will return the index of the match, as well as the match. This is similar to `grep` when `value = TRUE`. Note that the match is extracted rather than the entire string.
 
 ```{r}
 str_extract(string = trump_tweets_df$text, pattern = tags) %>% head(100)
@@ -490,28 +563,24 @@ str_extract(string = trump_tweets_df$text, pattern = tags) %>% head(100)
 str_detect(trump_tweets_df$text, tags)
 
 ```
-Let's remove our urls as before. With the `str_replace` function we can specify our pattern and replacement, in this case an empty character string.
+Let's remove our urls as before. With the `str_replace` function we can specify our pattern and replacement, in this case an empty character string. We can see in the result that the urls have been replaced.
 
 ```{r}
-str_replace_all(trump_tweets_df$text[1:20], pattern = url, replacement = "")
-
+str_replace_all(trump_tweets_df$text[1:10], pattern = url, replacement = "")
 trump_tweets_df$text <- str_replace_all(trump_tweets_df$text, pattern = url, replacement = "")
 ```
 
-
-
-Let's be ambitious and try to remove tags, numbers and punctuation characters and numbers all in one go. `str_remove` automatically replaces the match with an empty character string. It turns out the `@` and `#` are punctuation characters, so removing them is taken care of using `[[:punct:]]`. We are not sure if there will be a number or punctuation in a tweet, and so use the `?` to indicate that it may occur 0 or 1 times.
+Let's be ambitious and try to remove tags, numbers and punctuation characters and numbers all in one go. `str_remove` automatically replaces the match with an empty character string. It turns out the `@` and `#` are punctuation characters, so removing them is taken care of using `[[:punct:]]`. We are not sure if there will be a number or punctuation in a tweet, and so use the `?` to indicate that it may occur 0 or 1 times. Looking at the output, we can see that the numbers and punctuation are indeed removed.
 
 ```{r}
-
 clean_all <- "[0-9]?[[:punct:]]?"
 
 trump_tweets_df$text <- str_remove_all(trump_tweets_df$text, pattern = clean_all)
 
-trump_tweets_df$text[1:20]
+trump_tweets_df$text[1:10]
 
 ```
-`stringr` has its own function for trimming whitespace, `str_trim`, which you can use to specify whether you want leading or trailing whitespace trimmed, or both.
+As expected, we still have trailing spaces. Whitespace characters are not visible, but take up space. Newline characters, tabs and spaces are a form of whitespace. `stringr` has its own function for trimming whitespace, `str_trim`, which you can use to specify whether you want leading or trailing whitespace trimmed, or both.
 
 ```{r}
 trump_tweets_df$text <- str_trim(trump_tweets_df$text, side = "both")
@@ -535,30 +604,27 @@ trump_tweets_df$text <- tolower(trump_tweets_df$text)
 trump_tweets_df$text[1:10]
 ```
 
-To get our tweets into a word list we use the similar function to `strsplit`, `str_split`, still splitting by the spaces betweenn words. The argument `simplify = FALSE` returns a list of character vectors which we then unlist.
+To get our tweets into a word list we use `str_split`, a similar function to `strsplit`, still splitting by the spaces between words. The argument `simplify = FALSE` returns a list of character vectors which we then unlist.
 
 
 ```{r}
 words <- unlist(str_split(trump_tweets_df$text, pattern = " ", simplify = FALSE))
+str(words)
 ```
 
-We can now do our anti_join to remove 'stop words', and tally our remaining words and order them as before.
+We can now do our `anti_join` to remove 'stop words', and tally our remaining words and order them by descending counts.
 
 
-```{r}
-words <- anti_join(data.frame(words), stop, by=c("words" = "word"))
+```{r warning = FALSE}
+words <- anti_join(data.frame(words), stop_words, by=c("words" = "word"))
 
-```
-
-```{r}
-words %>% count(words) %>% arrange(desc(n))
+words %>% count(words) %>% arrange(desc(n)) 
 
 words <- words %>% count(words) %>% arrange(desc(n))
 
-words
 ```
 
-Hmmm... it looks like we have those html tags in a different format. It's interesting to note these little variations because no matter how much you try to automate your analysis there is always going to be something from your new dataset that didn't fit with your old dataset. This is why we need these data wrangling skills. Even though some packages may have been created to help us on our way, they can't possibly cover every case. And they all work slighly differently.
+Hmmm... it looks like we have those html tags in a different format. It's interesting to note these little variations because no matter how much you try to automate your analysis there is always going to be something from your new dataset that didn't fit with your old dataset. This is why we need these data wrangling skills. Even though some packages may have been created to help us on our way, they can't possibly cover every case. 
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
 ![](img/1467481_240434926124232_550310772_n.jpg){width=500px}
@@ -585,21 +651,24 @@ Hmmm... it looks like we have those html tags in a different format. It's intere
 
 
 
-We could go back and get rid of some of characters such as "<", however we don't want to lose sight that these are html tags and not words (the tweet was from an ipad or iphone, the 'word' isn't being mentioned). We will instead add these to our stop words list.
+We could go back and get rid of some of characters such as `<`, however we don't want to lose sight that these are html tags and not words (the tweet was from an ipad or iphone, the 'word' isn't being mentioned). We will instead add these to our stop words list.
 
 ```{r}
 add_stop <- data.frame(word = c("rel=nofollow>twitter", "href=", "iphone<a>", "<a","dont", "$", "href=downloadipad", "ipad<a>" ), 
                        lexicon = "custom", stringsAsFactors = FALSE)
 
 
-stop <- bind_rows(stop, add_stop)
+stop_words <- bind_rows(stop_words, add_stop)
 
 ```
 
-```{r}
-words <- anti_join(data.frame(words), stop, by=c("words" = "word"))
+We then perform an `anti_join` with our new list and view the updated version. (`words` was already sorted and so we do not need to do that again.)
+
+```{r warning = FALSE}
+words <- anti_join(data.frame(words), stop_words, by=c("words" = "word"))
+words[1:50,]
 ```
-'president', 'people', 'fake', 'news', 'daca', democrats', 'jobs', 'obama', 'border', 'fbi', 'collusion', 'russia', 'wall', 'mexico' and further down is 'bad', 'crooked' and 'hillary'. 
+'president', 'people', 'fake', 'news', 'daca', democrats', 'jobs', 'obama', 'border', 'fbi', 'collusion', 'russia', 'wall', 'mexico' and further down is 'crooked' and 'hillary'. 
 
 Trump's wordcloud minus his twitter handle.
 ```{r}
@@ -618,20 +687,12 @@ __Challenge__
 
 Pick one of the other tweet data sets: 
 
-Bill Nye (nye_tweets_df.txt)
-Justin Trudeau (jt_tweets_df.txt)
-The Daily Show (daily_tweets_df.txt)
-Katy Perry (katy_tweets_df.txt)
-Jimmy Fallon (jimmy_tweets_df.txt)
-Stephen Colbert (colbert_tweets_df.txt)
-Jenny Bryan (jenny_tweets_df.txt)
-Jennifer Gardy (jengardy_tweets_df.txt)
+  [Bill Nye](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/nye_tweets_df.txt), [Justin Trudeau](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/jt_tweets_df.txt), [The Daily Show](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/daily_tweets_df.txt), [Katy Perry](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/katy_tweets_df.txt), [Jimmy Fallon](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/jimmy_tweets_df.txt), [Stephen Colbert](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/colbert_tweets_df.txt).      
+
 
 Clean it. Remove all of the stop words. Were there any other challenges compared to the previous datasets? Did you have to create new stop words or do extra regex? Make a wordcloud of the top 50 words.
 
 
-</br>
-</br>
 </br>
 
 ***
@@ -639,15 +700,15 @@ Clean it. Remove all of the stop words. Were there any other challenges compared
 
 ##Rmarkdown and knitr
 
-Markdown is a plain text formatting syntax. It allows us to easily add headings, lists, links, highlighting, bullets, images, equations and text styling. R has a modified version of markdown (R markdown) where you can embed code _chunks_ into a document. Combined with the `knitr` package, this allows us to make reproducible research documents. The awesomeness of this combination allows us to work and annotate our code in a format that is immediately presentable. With the click of a button our script (or notebook) can be converted into a word document, a pdf, or a shareable html hyperlink. Other formats such as slides are also possible. This means that you only have to do your work once - you don't have to have your code, generate images, paste them into powerpoint or word - get asked to change something, rerun the code, get the figure, change your powerpoint... everything is all in one place - you make your change, knit your document and you are done - you don't have to leave RStudio.
+Markdown is a plain text formatting syntax. It allows one to easily add headings, lists, links, highlighting, bullets, images, equations, tables and text styling. R has a modified version of markdown (R markdown) where you can embed code _chunks_ into a document. Combined with the `knitr` package, this allows us to make reproducible documents. The awesomeness of this combination allows us to annotate our code while we work in a format that is immediately presentable. With the click of a button our script (or notebook) can be converted into a word document, a pdf, or a shareable html hyperlink. Other formats such as slides are also possible. This means that you only have to do your work once - you don't have to have your code, generate images, paste them into powerpoint or word - get asked to change something, rerun the code, get the figure, change your powerpoint... everything is all in one place - you make your change, knit your document and you are done - you don't have to leave RStudio.
 
-Markdown and knitr can also save us time scrolling through our code - a table of contents can be added, code chunks can be named - both of which allow us to jump around and navigate our script easily. It takes a bit of discipline to get started, but I believe that you will see the benefits pretty quickly. There are even markdown templates for submitting to different journals.
+Markdown and `knitr` can also save us time scrolling through our code - a table of contents can be added, code chunks can be named - both of which allow us to jump around and navigate our script easily. It takes a bit of discipline to get started, but I believe that you will see the benefits pretty quickly. There are even markdown templates for submitting to different journals or writing a thesis.
 
-For this lesson I suggest going to Tools -> Global Options -> R Markdown -> Show output preview in: and change from 'Window' to 'Viewer Pane', then click 'Apply' and 'OK'. This will allow us to see our new document in the same window instead of switching back and forth between our code and the document. 
+For this lesson I suggest going to `Tools -> Global Options -> R Markdown -> Show output preview in`: and change from 'Window' to 'Viewer Pane', then click 'Apply' and 'OK'. This will allow us to see our new document in the same window (in the Viewer) instead of switching back and forth between our code and the document in a separate window. 
 
 ###R markdown syntax
 
-Let's start by creating a new R markdown document by going to File -> New File -> R Markdown. R will ask you for the Title of your Document and the Author and whether you want to _render_ your markdown as html, pdf, or as a word document. There is also the option to instead make slides (under Presentation), a Shiny app, or use Templates for package documentation or GitHub (there is a git version of markdown that differs slightly from r markdown).  html renders faster than the other formats, so we will stick with that for right now and click OK. R immediately puts a yaml (yet another markup language, yaml ain't markup language) header which tells you how the file is configured. As you can see, the date has been added (this is the date of script creation and does not update when the script is rendered), and the output is going to be html. Note also that your document is Untitled. We can go ahead and save that as 'Rmarkdown_Lesson' and see that the file is save as a `.Rmd` file.
+Let's start by creating a new R markdown document by going to `File -> New File -> R Markdown`. R will ask you for the Title of your document, the Author and whether you want to _render_ your markdown as html, pdf, or as a word document. There is also the option to make slides (under Presentation), a Shiny app, or use Templates for package documentation or GitHub (there is a git version of markdown that differs slightly from R markdown).  html renders faster than the other formats, so we will stick with that and click OK. R immediately puts a yaml (yet another markup language, yaml ain't markup language) header which tells you how the file is configured. 
 
     ---
     title: "R markdown Lesson"
@@ -656,22 +717,25 @@ Let's start by creating a new R markdown document by going to File -> New File -
     output: html_document
     ---
 
-We can see that R has a little demo set up already. The new element are these code _chunks_ denoted by a set of 3 backticks, followed by `{r}`, some code and a closing set of 3 backticks. The keyboard shortcut for generating a code chunk is `CTRL + ALT + I`.
+As you can see, the date has been added (this is the date of script creation and does not update when the script is rendered), and the output is going to be html. Note also that your document is Untitled. We can go ahead and save that as 'Rmarkdown_Lesson' and see that the file is saved as a `.Rmd` file.
 
-````{r}
+We can see that R has a little demo set up already which we are going to work with. The new element in .Rmd files are these code _chunks_ denoted by a set of 3 backticks, followed by `{r}`, some code and a closing set of 3 backticks. The keyboard shortcut for generating a code chunk is `CTRL + ALT + I`.
 
-````
+\`\`\`\{ r name_of_chunk,    code_options\}     
 
-These code chunks have been named 'setup', 'cars', and 'pressure', and at the bottom left of the window (or if you go to Code -> Jump To... it will pop up) you can navigate between these code chunks. This is a helpful feature as your code gets a bit longer. 
+type code here
 
-You have probably also noticed that in this navigation bar the bolded items correspond to the title of the document and the text with a leading `##`. Hashtags (when outside code chunks, ie. in markdown language) denote headers. The number of hashtags denotes the level of the header as well as the size. For example, the title is a first level header, and 'R Markdown' and 'Including Plots' are second level headers, and will also be smaller than the title. Let's go ahead and 'knit' our document by clicking the knit button. Note that you can change from your default output choice (html) to Word or pdf in the dropdown menu.
+\`\`\`
 
-Let's look at some of the markdown and how it is rendered in our html file. We can see that to **bold** text you can have __two asteriks (`**`) or two underscores (`\\_\\_`)__ on either side of the text. 
+These code chunks have been named 'setup', 'cars', and 'pressure', and at the bottom left the source pane (or if you go to `Code -> Jump To...` it will pop up) you can navigate between these code chunks. This is a helpful feature as your code gets a bit longer. 
 
-You can insert a url by <http://rmarkdown.rstudio.com> or if you want the link to be named instead you can format it like this [rmarkdown](http://rmarkdown.rstudio.com). Replace the url with the named version and click knit to see the difference in the output.
+You have probably also noticed that in this navigation bar the bolded items correspond to the title of the document and the text with a leading `##`. Hashtags (when outside code chunks, ie. in markdown language) denote headers. The number of hashtags denotes the level of the header as well as the size. For example, the title is a first level header, and 'R Markdown' and 'Including Plots' are second level headers, and will also be smaller than the title. Let's go ahead and _knit_ our document by clicking the Knit button. Note that you can change from your default output choice (html) to Word or pdf in the dropdown menu.
 
-The other emphasized text in this document has a grey background. This is achieved by flanking the text with \``backticks`\` and is describing a parameter in the code. The code in the 'cars' code chunk has a grey background and the evaluated output is in white. Inline code can be written by using \`{r 2+2}\` and it will also have a grey background. So having a grey background usually has something to do with code or its parameters.  
+Let's look at how markdown is rendered in our html file. We can see that to **bold** text you can have two asteriks (**) or two underscores (__) on either side of the text. 
 
+You can insert a url by typing the url inside of arrow brackets <<http://rmarkdown.rstudio.com>>. If you want the link to be named 'rmarkdown' can format it like this [rmarkdown] (http://rmarkdown.rstudio.com) without the space inbetween the name and the url. Replace the url with the named version and click knit to see the difference in the output.
+
+The other emphasized text in this document has a grey background. This is achieved by flanking the text with \``backticks`\`. The code in the 'cars' chunk has a grey background and the evaluated output is in white. This is standard in the R community for the code to be grey and the output to be white and commented. Inline code can be written by using `{r 2+2}` and it will also have a grey background. 
 
 
 ###Knitr Chunk Options
@@ -683,7 +747,11 @@ You might notice that while there are 3 code chunks in this example, there is on
 plot(pressure)
 ```
 
-The first code chunk in this script is setting default options for all code chunks to be used in this script.  In this case `echo = TRUE` was set as a default chunk option. The option `include = FALSE` for this chunk means that the code will not be included, but the code will still be run. The difference between this command and `echo = FALSE` is that the output of the code is NOT shown. Let's look at what the default chunk options are - this way we will be able to see all of the options available to change.
+`eval = FALSE` means the code is shown, but not evaluated. 
+
+The first code chunk in this script is setting default options for all code chunks to be used in this script.  In this case `echo = TRUE` was set as a default chunk option. The option `include = FALSE` for this chunk means that the code will not be included, but the code will still be run. The difference between this command and `echo = FALSE` is that the output of the code is NOT shown. 
+
+Let's look at what the default chunk options are - this way we will be able to see all of the options available to change.
 
 `{r setup, echo = TRUE }`
 ```{r setup, echo = TRUE }
@@ -706,10 +774,11 @@ If we are creating a document, we may want to show what package we used, but we 
 library(tidyverse)
 
 ```
+
 I could use `include = FALSE, message = FALSE` if I wanted the library loaded but didn't want the code or its message to be seen.
 
 
-If I wanted to so something silly like thinking I could add 6 to every summary value (in truth each of these summary values is a character) it would generate an error. A document will not be rendered if it has an error in it. Try to knit the document with this code.
+If I wanted to do something silly like add 6 to every summary value (in truth each of these summary values is a character) it would generate an error. A document will not be rendered if it has an error in it. Try to knit the document with this code.
 
 `{r error = TRUE}`
 ```{r error = TRUE}
@@ -728,7 +797,7 @@ __Challenge__
 </div>
 
 
-For the code chunk containing `plot(pressure)`: How would you show just the code and not run the code?  How would you show just the code and have the output run but not show it? How would you change the background color to something other than gray? You can use help pages, Google, or the knitr documentation found here: <https://yihui.name/knitr/options/#chunk_options>
+For the code chunk containing `plot(pressure)`: How would you show just the code (not the plot) and not run the code?  How would you show just the code and have the output run but not show it? How would you change the background color to something other than gray? You can use help pages, Google, or the knitr documentation found here: <https://yihui.name/knitr/options/#chunk_options>
 
 </br>
 </br>
@@ -739,9 +808,9 @@ For the code chunk containing `plot(pressure)`: How would you show just the code
 ###Caching
 
 
-In the 'Run' dropdown menu, there are various options for running your current chunk `CTRL+SHIFT+ENTER`, the next chunk `CTRL+ALT+N`, all chunks above `CTRL+ALT+P`, all chunks below, and another few options. This allows changes to be made to your script and to assess the upstream and downstream consequences of the change. knitr also has the option to _cache_ the output of code chunks by setting the option `cache = TRUE`. A folder will be created that saves your chunk in a data file that can then be loaded when the chunk is run. This can be very useful if the code in a particular chunk takes awhile to run and you are assessing changes unrelated to that code. Knitr simply loads the result from the last time it was run. If your document isn't knitting because of an error at line 200 and your time intensive code runs at line 100, you can cache the earlier chunk and troubleshoot the later lines without having to wait for this earlier code to run again. The warning associated with caching is that changing anything in earlier code (at line 50 in this example) that your cached chunk depends on would not be appropriately updated as the code at line 100 would still not change. Therefore it is important to be conscious of what you are caching and where changes are occurring in your script. You should uncache your code chunk for the final rendering to make sure there haven't been any unforseen changes to your document. 
+In the 'Run' dropdown menu, there are various options for running your current chunk - `CTRL+SHIFT+ENTER`, the next chunk - `CTRL+ALT+N`, all chunks above - `CTRL+ALT+P`, all chunks below, and another few options. This allows you to assess the upstream and downstream consequences of a change in your code. `knitr` also has the option to _cache_ the output of code chunks by setting the option `cache = TRUE`. A folder will be created that saves the output of your chunk in a data file that can then be loaded when the chunk is run. This can be very useful if the code in a particular chunk takes awhile to run and you are assessing changes unrelated to that code. `knitr` simply loads the result from the last time it was run. If your document isn't knitting because of an error at line 200 and your time intensive code runs at line 100, you can cache the earlier chunk and troubleshoot the later lines without having to wait for this earlier code to run again. The caching caveat is that changing anything in earlier code (at line 50 in this example) that your cached chunk depends on would not be appropriately updated (ie. the code at line 100 would still not change). Therefore it is important to be conscious of what you are caching and where changes are occurring in your script. You should uncache your code chunk for the final rendering to make sure there haven't been any unforseen changes to your document. 
 
-With our current .Rmd file, let's say the 'summary' chunk took awhile to run. Let's add `cache = TRUE` to its chunk options. Knit the document and take a look. We are now going to change the plot chunk to depend on the cars dataset.
+With our current .Rmd file, let's say the 'summary' chunk took awhile to run. Let's add `cache = TRUE` to its chunk options. Make sure `eval = FALSE` has been removed from the options in your 'plot' chunk. Knit the document and take a look. We are now going to change the plot chunk to depend on the cars dataset.
 
 
 `{r cars}`
@@ -753,10 +822,11 @@ We can knit the document again, and assume that we save ourselves the time cost 
 
 `{r new row}`
 ```{r }
+cars <- cars
 cars <- dplyr::bind_rows(cars, c(speed = 50, dist = 200))
 ```
 
-Notice that this point is a huge outlier, and has changed the output of our plot. However, our summary also depends on the cars dataset and has not been updated (ie. the maximum distance is not 200).
+Notice that this point is a huge outlier, and has changed the output of our plot. However, our summary also depends on the cars dataset and has not been updated (ie. the maximum distance is still 120 km). The code of the cached chunk did not change and was not recalculated.
 
 If I change the cached chunk, say, by adding another outlier data point - what do you think will happen?
 
@@ -766,39 +836,73 @@ cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
 summary(cars)
 ```
 
-Changes in the cache are still evaluated and passed on to the next code block. They are still being stored. The plot does now has a point at dist = 300, the the max distance in the summary has changed.
+Since the code in the cache changed, its values were recalculated. Changes in the cache are still evaluated and passed on to the next code block. They are still being stored. The plot does now has a point at dist = 300, the the max distance in the summary has changed.
 
-If I change cars2 back to cars (without the outlier point) and knit the document, what do you expect to happen?
+If I change cars (with the outlier point) back to cars (without the outlier point) and knit the document, what do you expect to happen?
 
 
 `{r new row}`
 ```{r new row}
-cars2 <- cars
+cars <- cars
 ```
 
-What if we comment cars2 in the cached chunk? What do you expect to happen if we restart the R session and knit the document? What is the max dist value in the summary table? What about the plot - does it contain the outlier?
+Since the code for our cached chunk doesn't change, it does not update and the plot, downstream of our cache does not reflect the above change.
+
+What if we comment the outlier point in the cached chunk instead? 
+
+`{r new row}`
+```{r }
+cars <- cars
+cars <- dplyr::bind_rows(cars, c(speed = 50, dist = 200))
+```
+
 
 `{r cars, message = FALSE, cache = TRUE}`
 ```{r message = FALSE, cache = TRUE}
 #cars2 <- dplyr::bind_rows(cars2, c(speed = 100, dist = 300))
-summary(cars2)
+summary(cars)
 ```
+
+The code in the cache changed and so the summary was recalcuated using earlier chunks. Both the summary and the plot show the 200 km distance value.
+
+
+What do you expect to happen if both outlier points are commented out and we restart the R session and knit the document? What is the max dist value in the summary table? What about the plot - does it contain the outlier?
+
+`{r new row}`
+```{r }
+cars <- cars
+#cars <- dplyr::bind_rows(cars, c(speed = 50, dist = 200))
+```
+
+`{r cars, message = FALSE, cache = TRUE}`
+```{r message = FALSE, cache = TRUE}
+#cars2 <- dplyr::bind_rows(cars2, c(speed = 100, dist = 300))
+summary(cars)
+```
+
+Since the code in the cached chunk did not changed, it accesses the cached data files and the summary will have 200 km as max. However, the plot needs to be created from scratch and uses cars from the first chunk so has a max of 120 km.
+
 
 What if we remove `cache=TRUE` from our code chunk?
 
 `{r cars, message = FALSE}`
 ```{r message = FALSE}
 #cars2 <- dplyr::bind_rows(cars2, c(speed = 100, dist = 300))
-summary(cars2)
+summary(cars)
 ```
+
+The cache is no longer accessed. The summary table and the plot reflect the original cars dataset with a max of 120 km.
+
 
 What if we restart R and add `cache=TRUE` to our code chunk again?
 
 `{r cars, message = FALSE, cache = TRUE}`
 ```{r message = FALSE, cache = TRUE}
 #cars2 <- dplyr::bind_rows(cars2, c(speed = 100, dist = 300))
-summary(cars2)
+summary(cars)
 ```
+
+The cache files are kept on the computer. The summary table reflects the prevously cached value of 200 km, the plot is calculated from the first chunk and has a max of 120 km. 
 
 ###Tables
 
@@ -847,7 +951,7 @@ kable(dat, "html", escape = F)  %>%
 
 ```{r echo = FALSE, fig.width=6, fig.height = 5, out.width='50%', out.height='50%'}
 par(mar = c(4,4,1,0))
-plot(cars2$speed, cars2$dist)
+plot(cars$speed, cars$dist)
 ```
 </br>
 
@@ -1044,10 +1148,6 @@ dirty/clean consequences img
 
 -make a pdf of cleaning the WellcomeTrust dataset (give a brief outline of what needs to be done)
 
-
-remember regex testers
-https://regex101.com/
-https://regexr.com/
 
 
 
