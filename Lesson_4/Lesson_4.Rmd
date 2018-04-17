@@ -801,54 +801,74 @@ For the code chunk containing `plot(pressure)`: How would you show just the code
 
 </br>
 </br>
-</br>
 
 ***
 
 ###Caching
 
 
-In the 'Run' dropdown menu, there are various options for running your current chunk - `CTRL+SHIFT+ENTER`, the next chunk - `CTRL+ALT+N`, all chunks above - `CTRL+ALT+P`, all chunks below, and another few options. This allows you to assess the upstream and downstream consequences of a change in your code. `knitr` also has the option to _cache_ the output of code chunks by setting the option `cache = TRUE`. A folder will be created that saves the output of your chunk in a data file that can then be loaded when the chunk is run. This can be very useful if the code in a particular chunk takes awhile to run and you are assessing changes unrelated to that code. `knitr` simply loads the result from the last time it was run. If your document isn't knitting because of an error at line 200 and your time intensive code runs at line 100, you can cache the earlier chunk and troubleshoot the later lines without having to wait for this earlier code to run again. The caching caveat is that changing anything in earlier code (at line 50 in this example) that your cached chunk depends on would not be appropriately updated (ie. the code at line 100 would still not change). Therefore it is important to be conscious of what you are caching and where changes are occurring in your script. You should uncache your code chunk for the final rendering to make sure there haven't been any unforseen changes to your document. 
+In the 'Run' dropdown menu (found in the top right of the source pane), there are various options for running your current chunk - `CTRL+SHIFT+ENTER`, the next chunk - `CTRL+ALT+N`, all chunks above - `CTRL+ALT+P`, all chunks below, and another few options. This allows you to assess the upstream and downstream consequences of a change in your code. `knitr` also has the option to _cache_ the output of code chunks by setting the option `cache = TRUE`. A folder will be created that saves the output of your chunk in a data file. `knitr` accesses the cache and loads the result from the last time the chunk was run without recalculating values.   This can be very useful if the code in a particular chunk takes awhile to run and you are assessing changes unrelated to that code,  or changes after that code. 
 
-With our current .Rmd file, let's say the 'summary' chunk took awhile to run. Let's add `cache = TRUE` to its chunk options. Make sure `eval = FALSE` has been removed from the options in your 'plot' chunk. Knit the document and take a look. We are now going to change the plot chunk to depend on the cars dataset.
+For example, if your document isn't knitting because of an error at line 200 and your time intensive code runs at line 100, you can cache the line 100 chunk and troubleshoot the line 200 code without having to wait for this earlier chunk to run again. The caching caveat is that changing anything in earlier code (at line 50 in this example) that your cached chunk depends on would not be appropriately updated (ie. the code at line 100 would still not change). Therefore it is important to be conscious of what you are caching and where changes are occurring in your script. You should uncache your code chunk for the final rendering to make sure there haven't been any unforseen changes to your document. 
+
+This is a simplified explanation of caching and more details can be found in the [knitr manual](https://www.cs.bham.ac.uk/~axj/pub/teaching/2016-7/stats/knitr-manual.pdf) and its [cache demo](https://yihui.name/knitr/demo/cache/).
+
+__Playing with Caching__
+
+__Note to David: These caching scenarios will partly be on Socrative. There will be multiple choice answers about the output and students vote on which is correct. This will allow me to track comprehension across the series. Therefore this text will be in the online version of the notes.__
+
+__Scenario 1__
+
+With our current .Rmd file, let's say the 'summary' chunk took awhile to run. Let's add `cache = TRUE` to its chunk options. Make sure `eval = FALSE` has been removed from the options in your 'plot' chunk. Knit the document and take a look. 
+
+We are now going to change the plot chunk to depend on the cars dataset.
 
 
 `{r cars}`
-```{r }
+```{r eval = FALSE}
 plot(cars$speed, cars$dist)
 ```
 
-We can knit the document again, and assume that we save ourselves the time cost of running the second chunk. Let's put a chunk before our cached chunk adding a point to 'cars' using `dplyr`'s `bind_rows`. Note that I haven't loaded the entire `dplyr` package, but rather have just made a call to one specific function. Knit the document again.  
+We can knit the document again, and assume that we saved ourselves the time cost of running the second chunk when we are just updating a plot. 
+
+Now let's put a chunk _before_ our cached chunk called 'new row'.  Add a point to the cars dataset using `dplyr`'s `bind_rows`. Note that I haven't loaded the entire `dplyr` package, but rather have just made a call to one specific function. Knit the document again.  
 
 `{r new row}`
-```{r }
-cars <- cars
+```{r eval = FALSE}
 cars <- dplyr::bind_rows(cars, c(speed = 50, dist = 200))
 ```
 
-Notice that this point is a huge outlier, and has changed the output of our plot. However, our summary also depends on the cars dataset and has not been updated (ie. the maximum distance is still 120 km). The code of the cached chunk did not change and was not recalculated.
+This point is an outlier, and the change can be seen on the output of our plot. However, our summary also depends on the cars dataset and has not been updated (ie. the maximum distance is still 120 km). If the code of the cached chunk does not change, the chunk is not rerun.
 
-If I change the cached chunk, say, by adding another outlier data point - what do you think will happen?
+__Scenario 2__
+
+If I change the cached chunk, say, by adding another outlier data point - what do you think will happen? Add this point and knit again.
 
 `{r cars, message = FALSE, cache = TRUE}`
-```{r message = FALSE, cache = TRUE}
+```{r message = FALSE, cache = TRUE, eval = FALSE}
 cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
 summary(cars)
 ```
 
-Since the code in the cache changed, its values were recalculated. Changes in the cache are still evaluated and passed on to the next code block. They are still being stored. The plot does now has a point at dist = 300, the the max distance in the summary has changed.
+Since the code in the cache changed, its values were recalculated and the max distance in the summary has changed to 300 km. Changes in the the cached chunk are evaluated and passed on to the next code block. The previous cache values are deleted and replaced with the current values. The plot, which depends on the cars dataset, now has a point at dist = 300 km AND dist = 200 km.
 
-If I change cars (with the outlier point) back to cars (without the outlier point) and knit the document, what do you expect to happen?
 
+__Scenario 3__
+
+
+If I change cars (with the outlier point) in the 'new row' chunk back to cars (without the outlier point) and knit the document, what do you expect to happen?
 
 `{r new row}`
 ```{r new row}
 cars <- cars
 ```
 
-Since the code for our cached chunk doesn't change, it does not update and the plot, downstream of our cache does not reflect the above change.
+Since the code for our cached chunk doesn't change its values are loaded from the cache. This includes the cars dataset, and so the plot, downstream of our cache, does not reflect the change to the 'new row' chunk.
 
-What if we comment the outlier point in the cached chunk instead? 
+
+__Scenario 4__
+
+What if we instead comment the outlier point in the cached chunk and keep the extra point from the first chunk? 
 
 `{r new row}`
 ```{r }
@@ -858,13 +878,14 @@ cars <- dplyr::bind_rows(cars, c(speed = 50, dist = 200))
 
 
 `{r cars, message = FALSE, cache = TRUE}`
-```{r message = FALSE, cache = TRUE}
-#cars2 <- dplyr::bind_rows(cars2, c(speed = 100, dist = 300))
+```{r message = FALSE, cache = TRUE, eval = FALSE}
+#cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
 summary(cars)
 ```
 
-The code in the cache changed and so the summary was recalcuated using earlier chunks. Both the summary and the plot show the 200 km distance value.
+The code in the cache changed and so the summary was recalcuated using the earlier chunk. Both the summary and the plot show the 200 km distance value.
 
+__Scenario 5__
 
 What do you expect to happen if both outlier points are commented out and we restart the R session and knit the document? What is the max dist value in the summary table? What about the plot - does it contain the outlier?
 
@@ -876,60 +897,82 @@ cars <- cars
 
 `{r cars, message = FALSE, cache = TRUE}`
 ```{r message = FALSE, cache = TRUE}
-#cars2 <- dplyr::bind_rows(cars2, c(speed = 100, dist = 300))
+#cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
 summary(cars)
 ```
 
-Since the code in the cached chunk did not changed, it accesses the cached data files and the summary will have 200 km as max. However, the plot needs to be created from scratch and uses cars from the first chunk so has a max of 120 km.
+Since the code in the cached chunk did not changed, it accesses the summary from the cached data, which has 200 km as the maximum value. However, the plot needs to be created from scratch and uses cars from the first chunk so has a max of 120 km.
 
+__Scenario 6__
 
 What if we remove `cache=TRUE` from our code chunk?
 
 `{r cars, message = FALSE}`
-```{r message = FALSE}
-#cars2 <- dplyr::bind_rows(cars2, c(speed = 100, dist = 300))
+```{r message = FALSE, eval = FALSE}
+#cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
 summary(cars)
 ```
 
 The cache is no longer accessed. The summary table and the plot reflect the original cars dataset with a max of 120 km.
 
+__Scenario 7__
 
-What if we restart R and add `cache=TRUE` to our code chunk again?
+What if we add `cache=TRUE` to our code chunk again?
 
 `{r cars, message = FALSE, cache = TRUE}`
-```{r message = FALSE, cache = TRUE}
-#cars2 <- dplyr::bind_rows(cars2, c(speed = 100, dist = 300))
+```{r message = FALSE, cache = TRUE, eval = FALSE}
+#cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
 summary(cars)
 ```
 
-The cache files are kept on the computer. The summary table reflects the prevously cached value of 200 km, the plot is calculated from the first chunk and has a max of 120 km. 
+The cache files are kept on the computer. The summary table reflects the previously cached value of 200 km, the plot is calculated from the first chunk and has a max of 120 km. The cache will stay this value until it is updated. To start with a fresh cache in the same directory you need to delete your cached files. 
 
 ###Tables
 
-You can make table in markdown, but it is kind of annoying compared to the kable tables available in knitr. (explain formatting a tad) Here is an example of a markdown table. Here is an example of how to format markdown tables: <https://help.github.com/articles/organizing-information-with-tables/>. Go nuts. 
+You can make table in markdown, but it is kind of annoying compared to using the `kable` package to make tables in `knitr`. Making tables in markdown involves using a series of pipes (|) to make columns and hypens (-) to make column headers. Here is an example of a markdown table. Here is an example of how to format markdown tables: <https://help.github.com/articles/organizing-information-with-tables/>. Go nuts. 
 
->
-+--------------+--------------------------+
-|Summary         Values|
-+==============+=============+
-| correlation    `r cor(cars$speed, cars$dist)`|
-+--------------+----------------+
-| mean km/h       `r mean(cars$speed)`|
-+--------------+----------------+
-| mean km         `r mean(cars$dist)`|
-+--------------+----------------+
+      
+      |Summary      | Values|
+      |-------------|-------|
+      | correlation |   `r cor(cars$speed, cars$dist)`|
+      | mean km/h   |    `r mean(cars$speed)`|
+      | mean km     |    `r mean(cars$dist)`|
+     
 
 
-In this lesson we are going to focus on `kable` tables. The summary stats from cars is a table. However, it doesn't look very good. knitr as the capability to make nice looking tables that are customizable with `kable`. <https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#getting_started>
 
+|Summary      | Values|     
+|-------------|--------|     
+| correlation |   `r cor(cars$speed, cars$dist)`|     
+| mean km/h   |    `r mean(cars$speed)`|     
+| mean km     |    `r mean(cars$dist)`|     
+      
+####Rounding Values
+
+The value for 'correlation' in this table was really the output of 'r cor(cars\$speed, cars\$dist)' which gives the value of `r cor(cars$speed, cars$dist)`. To round values is as easy as selecting the number of significant digits using the `round` function: 'r round(cor(cars\$speed, cars\$dist), 2)' would then give `r round(cor(cars$speed, cars$dist), 2)` two significant digits. The `kable` tables were are going to work with have a digits argument which gets passed to the `round`  function (usage: `digits = 2`).
+
+####Kable tables in knitr
+
+In this lesson we are going to focus on nice looking `kable` tables, which are easily customizable throught the [kableExtra](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#getting_started) package. The summary stats from cars is a table. However, it doesn't look very good. Here is a reminder of the default output. 
+
+```{r}
+summary(cars)
+```
+
+This summary is an odd table object. If we turn it into a data frame it will be easier to work with.
 
 ```{r}
 dat <- data.frame(speed = summary(cars)[,1], distance = summary(cars)[,2])
 
+```
+
+Here, a simple call to `kable` creates a table styled similar to the above markdown. 
+
+```{r}
 kable(dat)
 ```
 
-`kable` offers a variety of styles with simple syntax.
+A variety of styles are offered with simple syntax. Here we have striped rows which highlight when you hover over them, the table width iis the length of the longest text and not across the whole page, and the table is left-aligned.
 
 ```{r}
 kable(dat, "html")  %>%
@@ -937,9 +980,8 @@ kable(dat, "html")  %>%
 ```
 
 
-You can also have the table move to the left or right side of your document so that text or a figure could be included beside it. For example, we could change the figure size as well and have a figure and table side-by-side in our document.
+You can also have the table move to the left or right side of your document so that text or a figure could be included beside it. In this case, having the table _float_ right allows for text or images to be formatted on the left side of the page. For example, we could change the figure size as well and have a figure and table side-by-side in our document.
 
-`{r cars, message = FALSE, cache = TRUE}`
 
 ```{r  message = FALSE, cache = TRUE}
 
@@ -948,59 +990,79 @@ kable(dat, "html", escape = F)  %>%
 ```
 
 
-
 ```{r echo = FALSE, fig.width=6, fig.height = 5, out.width='50%', out.height='50%'}
 par(mar = c(4,4,1,0))
 plot(cars$speed, cars$dist)
 ```
-</br>
+
 
 In this case, I shrank the plot using `out.width` and `out.height` so that it would fit beside our table.
 
 `{r pressure,  echo = FALSE, fig.width=6, fig.height = 5, out.width='50%', out.height='50%'}`
 
+```{r eval = FALSE}
+par(mar = c(4,4,1,0)) #adjusting figure margins
+plot(cars$speed, cars$dist)
+```
 
 
 </br>
 
-#####Add highlighting, play with borders.  
 
 
-`{r cars, message = FALSE, cache = TRUE}`
+
+
+</br>
+
+#####Customize with highlighting and borders. 
+
+For this table black lines have been specified as column borders. A row was specified to be highlighted by a yellow background as well as to have the text emphasized in bold. `escape = FALSE` escapes specical characters. In this case it interferes with our column titles.
+
 ```{r}
-kable(dat, "html", escape = F) %>%
-       kable_styling("striped", full_width = F) %>%
+kable(dat, "html") %>%
+       kable_styling("striped", full_width = FALSE) %>%
        column_spec(1:2, border_right = TRUE, border_left = TRUE) %>%
        row_spec(3, bold = T, color = "black", background = "yellow") 
 ```
 
-####Add footnotes.
+#####Add footnotes.
 
-`{r cars, message = FALSE, cache = TRUE}`
+Footnotes can be added to a table using symbols or alphabet markers for flags. 
+
+This is a good time to learn more useful data cleaning functions `paste` and `paste0`. These are made to join or 'paste' string characters together. In this case we want to take a character string (the title of each column of our data frame) and add a footnote symbol to it to denote units. Can you tell what the difference is between the 2 functions by the output?
 ```{r message = FALSE}
+colnames(dat)[1] <- paste("car_", colnames(dat)[1], footnote_marker_symbol(1))
+colnames(dat)[2] <- paste0("car_", colnames(dat)[2], footnote_marker_alphabet(1))
 
-names(dat)[1] <- paste0(names(dat)[1], footnote_marker_symbol(1))
-names(dat)[2] <- paste0(names(dat)[2], footnote_marker_alphabet(1))
-
-kable(dat, "html", escape = F) %>%
+```
+Escape has been changed to FALSE so that the html encoding of our superscript is not escaped. The legend for the footnote symbol or character below the table is also added in out `kable` call.
+```{r}
+kable(dat, "html", escape = FALSE) %>%
   kable_styling("striped", full_width = F) %>%
   column_spec(1:2, border_right = TRUE, border_left = TRUE) %>%
   row_spec(3, bold = T, color = "black", background = "yellow") %>%
-  footnote(symbol = "km/h", alphabet = "km;") 
+  footnote(symbol = "kilometers per hour", alphabet = "kilometers;") 
 ```
 
-####Add images.
+
+
+###Add images.
 
 To add pictures to your document:
 
-`![knitr - get it?](img/kitten-with-string.jpg){width=400px}`
+   
+    ! [#caption (optional)]   (#directory/file)     {#size (optional)}     
+`![knitr - get it?](img/kitten-with-string.pjg){width=400px}`     
 
 
 ![knitr - get it?](img/kitten-with-string.jpg){width=400px}
 
+Minimum syntax to add an image (no caption, default image size):     
+`![](img/kitten-with-string.jpg)`
+
 ###Table of contents
 
-This is the table of contents (toc) for the lessson. It is as simple as writing `toc = TRUE` and then specifying what level of headers you would like to include in the toc. I am keeping 1st, 2nd, and 3rd level headers in this example. If I had a 4th level header, it would not show up in my table of contents. The toc creates a hyperlink to each section for the user to navigate the document. `CTRL+SHIFT+O` opens the document outline which allows navigation to these sections while coding.  
+This is the yaml header including the table of contents (toc) for the lessson. It is as simple as writing `toc = TRUE` under the output for the document type you are using and then specifying what level of headers (remember our hashtags) you would like to include in the toc. I am keeping 1st, 2nd, and 3rd level headers in this example. If I had a 4th level header, it would still be larger than my text, but it will not show up in my table of contents. The toc creates a hyperlink to each section for the user to navigate the document. `CTRL+SHIFT+O` opens the document outline which allows navigation to these sections while coding.  
 
 
     ---
@@ -1016,11 +1078,11 @@ This is the table of contents (toc) for the lessson. It is as simple as writing 
     ---
 
 
-You may have noticed the blue button in the top right corner of the screen with a dropdown that says 'Publish'. This is if you are super-proud of your work and want to post your rendered document at Rpubs (free, online for the world to see). <https://rpubs.com/> It can be interesting to see what other people have been working on as well.
+You may have noticed the blue button that kind of looks like an eyeball in the top right corner of the Viewer Pane as well as the Source Pane with a dropdown that says 'Publish'. If you are super-proud of your work, you can post your rendered document for free, for the world to see at [Rpubs](https://rpubs.com/). It can be interesting to see what other people in the R community have been working on as well.
 
 ###Slides
 
-Slideshows can also be made fairly simply in R markdown. If you go to File -> New File -> R Presentation you will have a new .RPres file. Slides are separated by a series of equals lines and the title of the slide is just above these lines.
+Slideshows can also be made fairly simply in R markdown. Go to `File -> New File -> R Presentation` and create an .RPres file. Slides are separated by a series of equals lines (===) and the title of the slide is just above these lines.
 
 
       First Slide
@@ -1042,60 +1104,62 @@ Slideshows can also be made fairly simply in R markdown. If you go to File -> Ne
     Slide With Plot
     ========================================================
 
-    ```{r, echo=FALSE}
+    ```{r eval = FALSE}
     plot(cars)
     ```
 
-__slide with plot not working__
 
-If you click on Preview in the Source Pane, a Presentation Tab will open in the Environment Pane with a a slideshow that you can toggle through. In that Pane under 'More' you can also View in Browser or Save As Webpage, which is the common way these slides get presented.
+If you click on 'Preview' in the Source Pane, a Presentation Tab will open in the Environment Pane with a a slideshow that you can toggle through. In that Pane under 'More' you can also 'View in Browser' or 'Save As Webpage', which is the common way these slides get presented.
 
 I really just wanted to show you that these slides exist. Depending on what you are presenting, this could be a quick alternative to Powerpoint if you are need to present some code. Again, these are customizable <https://rmarkdown.rstudio.com/ioslides_presentation_format.html>.
 
-If you are interested in a separate tutorial on making and customizing ioslides or the fancier Slidify slides (<https://www.jvcasillas.com/slidify_tutorial/#46>), please leave a comment in the Lesson 4 survey (https://www.surveymonkey.com/r/PVHDKDB).
+If you are interested in a separate tutorial on making and customizing ioslides or the fancier [Slidify](https://www.jvcasillas.com/slidify_tutorial) slides, please leave a comment in the Lesson 4 survey (https://www.surveymonkey.com/r/PVHDKDB).
 
 
 ***
 
 ##A Real Messy Dataset
 
-I looked for a dataset for data cleaning and found it in a blog titled _"Biologists: this is why bioinformaticians hate you..."_. The main and common issue with this dataset is that when data entry was done there was no structured vocabulary - meaning that people could type in whatever they wanted instead of using dropdown menus with limited options, or giving an error if something is formatted incorrectly, or stipulating some rules (ie. must be all lowercase, uppercase, no numbers, spacing, etc.). I must admit I have been guilty of messing with people who have made databases without rules. For example, in giving the emergency contact there was a line to input 'Relationship', which could easily have been a dropdown menu 'parent, partner, friend, other', but instead I was allowed to write in a free text line 'lifelong kindred spirit, soulmate and doggy-daddy'. I don't think anyone here was trying to be a nuisance, this is just a consequence of poor data collection. There is a README file to go with this spreadsheet if you have questions about the data fields.  
+I looked for a messy dataset for data cleaning and found it in a blog titled:     
+["Biologists: this is why bioinformaticians hate you..."](http://www.opiniomics.org/biologists-this-is-why-bioinformaticians-hate-you/) 
+     
+The main and common issue with this dataset is that when data entry was done there was no _structured vocabulary_; people could type whatever they wanted into free text answer boxes instead of using dropdown menus with limited options, giving an error if something is formatted incorrectly, or stipulating some rules (ie. must be all lowercase, uppercase, no numbers, spacing, etc). 
 
-http://www.opiniomics.org/biologists-this-is-why-bioinformaticians-hate-you/     
-https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054
+I must admit I have been guilty of messing with people who have made databases without rules. For example, giving an emergency contact, there was a line to input 'Relationship', which could easily have been a dropdown menu: 'parent, partner, friend, other'. Instead I was allowed to write in a free text box 'lifelong kindred spirit, soulmate and doggy-daddy'. I don't think anyone here was trying to be a nuisance, this messy data is just a consequence of poor data collection. 
+
+    
+
 
 __Challenge:__      
 
-Present in a knitr table, explaining some of your data cleaning challenges in rmarkdown. Knit the document to a pdf.
+This is [Wellcome Trust dataset](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/University%20returns_for_figshare_FINAL.xlsx) on the costs of open access publishing. 
+
+https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054
 
 <div style="float:right;margin:0 10px 10px 0" markdown="1">
-![](img/luckypants.jpg){width=200px}
+![](img/yougotthis.jpg){width=200px}
 </div>
 
 
 What I want to know is: 
 
-  1. List 3 problems with this data set.
+  1. List 3 problems with this dataset that require data cleaning.
   1. Which publisher is the most expensive to publish with?
   1. Which journal is the most expensive to publish with? Is this by the same publisher?                  
   1. Convert sterling to CAD. What is the median cost of publishing with Elsevier in CAD?
+  1. Annotate your data cleaning efforts and answers to these questions in an .Rmd file. Knit your final answers to pdf.
+
+
+There is a [README](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/Readme_file.docx) file to go with this spreadsheet if you have questions about the data fields.  
 
 </br>
-</br>
+
 
 The blogger's opinion of cleaning this dataset:
 
 _'I now have no hair left; I’ve torn it all out.  My teeth are just stumps from excessive gnashing.  My faith in humanity has been destroyed!'_
 
-Don't get to this point. The dataset doesn't need to be perfect. Just do what you gotta do to answer these questions.  
-
-
-![](img/yougotthis.jpg)
-
-
-
-Note to self: This may be too tough - see how long it takes to do.
-
+Don't get to this point. The dataset doesn't need to be perfect. No datasets are 100% clean. Just do what you gotta do to answer these questions.  
 
 
 ***
@@ -1112,7 +1176,8 @@ http://www.gastonsanchez.com/Handling_and_Processing_Strings_in_R.pdf
 http://varianceexplained.org/r/trump-tweets/     
 http://www.opiniomics.org/biologists-this-is-why-bioinformaticians-hate-you/     
 https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054     
-http://www.datacommunitydc.org/blog/2013/08/fantastic-presentations-from-r-using-slidify-and-rcharts/
+http://www.datacommunitydc.org/blog/2013/08/fantastic-presentations-from-r-using-slidify-and-rcharts/     
+https://github.com/rdpeng/cachesweave/blob/master/inst/doc/cacheSweave.Rnw
 
 #Post-Lesson Assessment
 ***
@@ -1132,7 +1197,6 @@ Thanks for coming!!!
 
 ##Notes
 Do users need instructions on how to install pandoc or Rccp for this lesson? Find a virgin computer...
-classy llama
 eval(1,3)
 bullets
 list
@@ -1141,18 +1205,5 @@ dirty/clean consequences img
 -rounding data - we don't need it to the umpteenth decimal
 -look for lowest and highest values - do these make sense? (standard deviation?)
 -called a range check, spell check, regex
--document what you are doing
--no all data sets are 100% clean
--also the paste functions
-
-
--make a pdf of cleaning the WellcomeTrust dataset (give a brief outline of what needs to be done)
-
-
-
-
 - searching for a word/patterns, subset using character strings, collapse and expand character vectors, replacement, replacing NAs, splitting/combining at a delimiter
-
 -regexpr, str_locate
-
-
