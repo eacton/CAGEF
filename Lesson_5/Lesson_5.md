@@ -25,7 +25,8 @@ Approximate time: 2 hours per lesson
 __Objective:__ At the end of this session you will be able to perform simple and multiple linear or non-linear regression on your dataset. You will be able to interpret the statistics that come out of this model, and use these statistics to select the best model for the job. 
 
 
-```{r message = FALSE}
+
+```r
 library(tidyverse)
 library(knitr)
 library(kableExtra)
@@ -39,7 +40,8 @@ _Discussion: Lesson 4 Challenge question_
 
 The dataset we will use for this lesson is from the Summer Institute in Statistical Genetics course in Regression from 2016. I like this dataset because it has a number of categorical and continuous variables, which allows us to use the same dataset for all kinds of models. Also, everyone will be familiar with the variables, which makes data interpretation easier while we are in the learning stage. 
 
-```{r}
+
+```r
 cholesterol <- read.delim("data/SISG-Data-cholesterol.txt", sep = " ", header = TRUE)
 ```
 
@@ -62,7 +64,8 @@ ie. is serum cholesterol associated with age?
 
 
 We can plot this association and it looks like the mean increases with age, how do we test this?
-```{r}
+
+```r
 cholesterol <- cholesterol %>% mutate(age_group = ifelse(cholesterol$age >55, 1, 0))
 
 
@@ -70,30 +73,42 @@ ggplot(cholesterol, aes(factor(age_group),chol)) + geom_boxplot() +
   scale_x_discrete(labels = c("30-55", "56-80")) +
   xlab("age") +
   ylab("cholestorol (mg/dl)")
-  
 ```
 
-A simple Welch Two Sample t-test tells us that our alternative hypothesis, that the true difference in means is not equal to 0 is true. It tells us the mean for those aged 30-55 is 180 mg/dl and the mean for those aged 56-80 is 188 mg/dl and that this significant at a p-value of 0.0003125. Remember that the null hypothesis is that there is no difference between the means. 
-```{r}
-t.test(cholesterol$chol ~ cholesterol$age_group)
+![](Lesson_5_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
+A simple Welch Two Sample t-test tells us that our alternative hypothesis, that the true difference in means is not equal to 0 is true. It tells us the mean for those aged 30-55 is 180 mg/dl and the mean for those aged 56-80 is 188 mg/dl and that this significant at a p-value of 0.0003125. Remember that the null hypothesis is that there is no difference between the means. 
+
+```r
+t.test(cholesterol$chol ~ cholesterol$age_group)
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  cholesterol$chol by cholesterol$age_group
+## t = -3.637, df = 393.48, p-value = 0.0003125
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -12.200209  -3.638487
+## sample estimates:
+## mean in group 0 mean in group 1 
+##        179.9751        187.8945
 ```
 
 So we now know there is a positive relationship between cholesterol and age. However the t-test has limitations. What is the magnitude of this relationship during aging? Can we see how much cholesterol might change by in a continuous manner (ie. how much does cholesterol change per year?)? What if we don't want to break our data into groups? 
 
 What I am looking for then, is the slope of the line relating cholesterol to age, which will tell me the magnitude and direction of the relationship between these variables.
 
-```{r}
+
+```r
 ggplot(cholesterol, aes(age, chol)) + geom_point() + stat_smooth(method = "lm")
 ```
 
-Just to make sure everyone is comfortable, we will briefly review the equation for a straight line. y is our dependent variable that we are attempting to model and x is our independent variable. Here a is the intercept, which is the value of x where y = 0 (where x crosses the y-axis), and b is the slope of the line, which is the change in y corresponding to a unit increase in x. A flat line would mean that there is no association between x and y. The above example has a positive association with a positive slope, meaning that y increases as values of x increase. With a negative association and negative slope, y decreases as values of x decrease. The interpretation in our example is that the slope is the difference in mean serum cholesterol associated with a one year increase in age.
+![](Lesson_5_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
-With a straight line we are not, of course, plotting through all of our points, but rather the mean of an outcome in y as a function of x. For example, there are values of cholestorol for about six 50 year-olds, and our line will fall somewhere close to the mean of these values. Likewise, there is a distribution for values of y at a given x, and the assumption is that this distribution is normally distributed.
-
-![]()
-
-In this equation we also have some normally distributed variance - sampling error exists in our estimates, because different estimates give different means. 
+Just to make sure everyone is comfortable, we will briefly review the equation for a straight line. y is our dependent variable that we are attempting to model and x is our independent variable. Here a is the intercept, which is the value of x where y = 0 (where x crosses the y-axis), and b is the slope of the line, which is the change in y corresponding to a unit increase in x. In this equation we also have some normally distributed variance. A flat line would mean that there is no association between x and y. The above example has a positive association with a positive slope, meaning that y increases as values of x increase. With a negative association and negative slope, y decreases as values of x decrease. With a straight line we are not, of course, plotting through all of our points, but rather the mean of an outcome in y as a function of x. For example, there are values of cholestorol for about six 50 year-olds, and our line will fall somewhere close to the mean of these values.
 
 _Expression:_ 
 
@@ -114,61 +129,7 @@ _R code:_
 lm(y \verb|~| x)
 \end{equation*}
 
-Okay, but how do we actually find the best fitting line? We are using least squares estimation; we are minimizing the sum of squares of the vertical distances from the observed points to the least squares regression line.
 
-![]()
- 
- 
-Let's actually run this simple linear regression, and save it into a variable called 'fit'. We can look at our summary statistics.
-
-```{r}
-lm(chol~age, data = cholesterol)
-
-fit <- lm(chol~age, data = cholesterol)
-
-summary(fit)
-```
-
-Let's look for the intercept and slope here. The Intercept is 166.9 and the slope is 0.31.. What does that actually mean? It means a baby (age 0) would be expected to have 167 mg/dl average serum cholesterol. For every yearly increase in age, mean serum cholesterol is expected to increase by 0.31 mg/dl. These results are significant with a p-value < 0.001. We can say that the mean serum cholesterol is significantly higher in older individuals.
-
-Confidence intervals - will cover the true parameter x% of the time.
-
-```{r}
-confint(fit)
-```
-
-We are 95% confident that the difference in mean cholesterol associated with a one year increase in age is between 0.16 and 0.46 mg/dl.
-
-
-Predicting values assumes that your model is true. This might be fair within the range of your data. This is to be interpreted with caution outside the range of your data.
-
-![]()
-
-![xkcd]()
-
-If you want to predict the mean at a particular point, for example, at age 47. 
-```{r}
-predict.lm(fit, newdata = data.frame(age=47), interval = "confidence")
-```
-
-
-If you want to predict where a new observation at age 47 might be.
-
-```{r}
-predict.lm(fit, newdata = data.frame(age=47), interval = "prediction")
-```
-
-Notice the difference in the upper and lower boundaries in these predictions. The first is the prediction for the mean serum cholestorol for individuals age 47 and the second is for a single new individual of age 47. The second prediction has to account for random variability around the mean, rather than just the precision of the estimate of the mean.
-
-
-R^2 - correlation coefficient squared - ours (multiple R-squared) is 0.04. What does this tell us? 4% of the variability in cholestorol is explained by age.
-
-Degrees of Freedom
-Decomposition of sum of squares
-mean squares = SS/df
-F-Statistic = MSR/MSE
-
-in simple linear regression F-stat = (t-stat for slope)^2 for the hypothesis that the slope is not zero (ie. 2-sided)
 
 - correlations     
 - explain parametric vs non-parametric data     
@@ -179,21 +140,87 @@ https://ms.mcmaster.ca/~bolker/emdbook/book.pdf
 
 Before we get too scared about anything, I have put together a table of data types and assumptions and what model should be used for each permutation. I hope to show that this means model selection is basically going through a mental checklist for your data, and that all of these models are related. 
 
-```{r include = FALSE, message = FALSE}
-library(knitr)
-library(kableExtra)
-library(dplyr)
-
-```
 
 
-```{r echo = FALSE}
-dat <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)", "nonlinear least squares", "nonlinear analysis of covariance (ANCOVA)", "generalized linear models"), categorical = c("X", "X", "$\\checkmark$", "$\\checkmark$ $\\checkmark$", "$\\checkmark$", "X", "$\\checkmark$", "$\\checkmark$"), continuous = c("$\\checkmark$", "$\\checkmark$ $\\checkmark$", "X", "X", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$"), linear = c("$\\checkmark$","$\\checkmark$","$\\checkmark$","$\\checkmark$", "$\\checkmark$", "X", "X", "X"), normal_errors = c("$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "X"), independent = rep("$\\checkmark$", 8))
 
-kable(dat, "html") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
-
-```
+<table class="table table-striped table-hover" style="width: auto !important; ">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> model </th>
+   <th style="text-align:left;"> categorical </th>
+   <th style="text-align:left;"> continuous </th>
+   <th style="text-align:left;"> linear </th>
+   <th style="text-align:left;"> normal_errors </th>
+   <th style="text-align:left;"> independent </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> simple linear regression </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> multiple linear regression </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> $\checkmark$ $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> one-way analysis of variance (ANOVA) </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> multi-way analysis of variance (ANOVA) </td>
+   <td style="text-align:left;"> $\checkmark$ $\checkmark$ </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> analysis of covariance (ANCOVA) </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> nonlinear least squares </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> nonlinear analysis of covariance (ANCOVA) </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> generalized linear models </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+  </tr>
+</tbody>
+</table>
 
 _Models we will Consider Today_
 
@@ -210,26 +237,94 @@ For _multi-way ANOVA_ we are modelling cholesterol by more than one categorical 
 Lastly, for _ANCOVA_ we are modelling cholesterol by a combination of categorical AND continuous variables, the genetic variants of APOE and BMI. 
 
 
-```{r echo = FALSE}
-dat2 <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)"), categorical = c("X", "X", "$\\checkmark$", "$\\checkmark$ $\\checkmark$", "$\\checkmark$"), continuous = c("$\\checkmark$", "$\\checkmark$ $\\checkmark$", "X", "X", "$\\checkmark$"),R_code = c("lm(chol ~ BMI)", "lm(chol ~ BMI + age)", "lm(chol ~ factor(sex))", "lm(chol ~ factor(sex)*factor(APOE))", "lm(chol~factor(APOE)*BMI) "))
-
-
-kable(dat2, "html") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
-
-```
+<table class="table table-striped table-hover" style="width: auto !important; ">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> model </th>
+   <th style="text-align:left;"> categorical </th>
+   <th style="text-align:left;"> continuous </th>
+   <th style="text-align:left;"> R_code </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> simple linear regression </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> lm(chol ~ BMI) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> multiple linear regression </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> $\checkmark$ $\checkmark$ </td>
+   <td style="text-align:left;"> lm(chol ~ BMI + age) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> one-way analysis of variance (ANOVA) </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> lm(chol ~ factor(sex)) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> multi-way analysis of variance (ANOVA) </td>
+   <td style="text-align:left;"> $\checkmark$ $\checkmark$ </td>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;"> lm(chol ~ factor(sex)*factor(APOE)) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> analysis of covariance (ANCOVA) </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> lm(chol~factor(APOE)*BMI) </td>
+  </tr>
+</tbody>
+</table>
 
 In the table below, our R code for each of the models has been generalized. y is our predictor variable, x is a continuous variable, and f is a categorical variable (aka factor). a and b are coefficients which are implicit in the lm formulas but specified in the nls formulas.
 
 
-```{r echo = FALSE}
-dat2 <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)", "nonlinear least squares", "nonlinear analysis of covariance (ANCOVA)", "generalized linear models"), R_code = c("lm(y ~ x)", "lm(y ~ x + I(x^2))", "lm(y ~ f)", "lm(y ~ f~1~*f~2~)", "lm(y~f*x) ", "nls(y~a*x^b, start = list(a=1, b=1))", "nlsList(y ~ a*x^b|x~2~, data, start = list(a=1, b=1))","glm(cbind(y, N-y)~x, family = 'binomial')"))
-
-
-kable(dat2, "html") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
-
-```
+<table class="table table-striped table-hover" style="width: auto !important; ">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> model </th>
+   <th style="text-align:left;"> R_code </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> simple linear regression </td>
+   <td style="text-align:left;"> lm(y ~ x) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> multiple linear regression </td>
+   <td style="text-align:left;"> lm(y ~ x + I(x^2)) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> one-way analysis of variance (ANOVA) </td>
+   <td style="text-align:left;"> lm(y ~ f) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> multi-way analysis of variance (ANOVA) </td>
+   <td style="text-align:left;"> lm(y ~ f~1~*f~2~) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> analysis of covariance (ANCOVA) </td>
+   <td style="text-align:left;"> lm(y~f*x) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> nonlinear least squares </td>
+   <td style="text-align:left;"> nls(y~a*x^b, start = list(a=1, b=1)) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> nonlinear analysis of covariance (ANCOVA) </td>
+   <td style="text-align:left;"> nlsList(y ~ a*x^b|x~2~, data, start = list(a=1, b=1)) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> generalized linear models </td>
+   <td style="text-align:left;"> glm(cbind(y, N-y)~x, family = 'binomial') </td>
+  </tr>
+</tbody>
+</table>
 
 
 
@@ -303,8 +398,6 @@ _Expression:_
 Y \verb|~| Normal(a + b_1x + b_2x_2 + b_3x_3, {\sigma^2})
 \end{equation*}
 
-Interpretation of b2 is the expected mean change in unit per change in x2 if x1 is held constant (controlling for x1). Is there a statistically significant relationship between mean serum cholestorl and BMI after adjusting for other predictors (ie. age) in the model? The null hypothesis is that all b1, b2, etc =0. Test that at least one is not null. Or could ask can we improve the model by incorporating more factors, such as BMI into the model.
-
 _R code:_ 
 \begin{equation*}
 lm(y \verb|~| x_1 +x_2 + x_3)
@@ -312,55 +405,7 @@ lm(y \verb|~| x_1 +x_2 + x_3)
 
 Again intercept and coefficients are implicit in the code.
 
-```{r}
-
-ggplot(cholesterol, aes(BMI, chol)) + geom_point() + stat_smooth(method = "lm")
-
-
-```
-
-```{r}
-
-ggplot(cholesterol, aes(age, BMI)) + geom_point() + stat_smooth(method = "lm")
-
-
-```
-
-Cholesterol increases with BMI. BMI increases with age. We may want to look at the association of age while holding BMI constant.
-
-```{r}
-mfit <- lm(chol ~ age + BMI, data = cholesterol)
-
-summary(mfit)
-```
-So our equation would now look like y = 137 + 0.2age + 1.43BMI. Interpreting the 0.2 slope would be the estimated increase in mean serum cholestorol over after one year holding BMI constant (for 2 subjects with the same BMI). This is less than our previous value of 0.31. Why do the estimates differ?
-
-Before, we were not controlling for BMI. Our estimates of the age association for the mean increase in cholestorol is now for subjects with the same BMI and not for subjects with all BMIs.
-
-Here it looks like both age and BMI are significant. But we might want to verify - did adding BMI actually make our model better?
-
-We can compare these models with ANOVA.
-
-```{r}
-anova(fit, mfit)
-```
-Our second model is a signifcant improvement.
-
-
-
-
-Interaction terms. What is meant by an interaction? The slope wrt one covariate changes linearly as a function of another covariate. 
-The association between the response and the predictor changes across the range of the new variable. This is different than a confounding factor, which is associated with the predictor and response, however the associatrion between the response and predictor is constant across the range of the new variable.
-
-The difference in means changes additionally by b3 for each unit difference in x2. b3 is the difference of differences. The slope of x1 changes with x2, because b3 is changing.
-
-_Expression:_ 
-
-\begin{equation*}
-Y  \verb|~|  Normal(a + b_1x_1 + b_2x_2 + b_3x_1x_2, {\sigma^2})   
-\end{equation*}
-
-
+Interaction terms. What is meant by an interaction? The slope wrt one covariate changes linearly as a function of another covariate.
 
 _Expression:_ 
 
@@ -373,38 +418,6 @@ _R code:_
 \begin{equation*}
 lm(y \verb|~| x_1*x^2)
 \end{equation*}
-
-Now we are going to throw in a categorical variable and ask if the relationship between age and cholestorol is affected by gender.
-
-```{r}
-mfit2 <- lm(chol ~ age + sex, data = cholesterol)
-
-summary(mfit2)
-```
-Okay, so our model would look like 162 + 0.3age + 10.5sex. Controlling for sex, mean average cholestorol increases by 0.3 for an additional year of age. This is close to the slope for our model of just cholesterol, 0.31. This does not necessarily mean that the age/cholesterol relationship is the same in males and females. We need to look at the interaction term.
-
-
-```{r}
-intfit <- lm(chol ~ age * sex, data = cholesterol)
-
-summary(intfit)
-```
-How do we interpret this? Males are coded as 0 and females are coded as 1 in this model. The intercept term is the mean serum cholestorol for MALES at age 0. The slope term for age is the difference in mean cholestorl associated with one year change in age for MALES. The slope for sex is the difference in mean cholestorol between males and females at age 0. The interaction term is the difference in the change in mean cholesterol associated with each one year change in age for females compared to males. Sex exerts a mall and not statistically significant effect on the age/cholestorol relationship.
-
-Let's check this with anova (an F-test).
-
-```{r}
-anova(mfit2, intfit)
-```
-Adding the interaction term did not improve the model significantly.
-
-```{r}
-anova(fit, mfit2)
-```
-```{r}
-ggplot(cholesterol, aes(age, chol, color = factor(sex))) + geom_point() + stat_smooth(method = "lm")
-```
-So gender doesn't change the relationship between age and cholesterol, these lines are almost parallel (another way to put it is whether you are male or female you cholestorl will on average be increasing by 0.3 mg/dl a year), but there is a different mean serum cholestorol estimate for males vs females that differs by 14.6 dg/ml.
 
 
 
@@ -468,8 +481,6 @@ R code: lm(y~f*x) for non-parallel slopes, lm(y~f + x) for parallel slopes, lm(y
 
 output: summary - range and quartile of the residuals, standard errors, p-values for coefficients, R^2 and F stats for the full model, 
 coef - coefficients alson, coef(summary()) table of estimates, standard errors, t-statistics and pvalues, confint confidencce intervals, plot - diagnostics on assumptions of  model fit, anova anova table 
-
-
 
 Take home - R will interpret what your are doing based on whether your variables are factors or numeric.
 
@@ -558,134 +569,6 @@ _How we Evaluate which Model to Use_
 - Interpreting the output of our model
 - Assessing the performance of the model (feedback)
     + Diagnostic plots (ie. residuals, Q-Q plots)
-
-simple linear regression assumptions
-1. E[Y|x] is related linearly to x (linearity)
-1. Y's are independent of each other (independence)
-1. distribution of [Y|x] is normal (normality)
-1. Var[Y|x] does not depend on x (equal variance)
-
-Residuals - the difference between the observed response and the predicted response, can be used to identify poorly fit data points, unequal variance (heteroscedasticity), nonlinear relationships, identify additional variables, and examine the normality assumption.
-
-_Checking the Model_
-
-Look at the residuals vs x, residuals vs y, residual histogram or qqplot - are there any patterns? The residuals are taken from fit.
-
-
-```{r}
-str(fit)
-```
-For example, plotting residuals against x (age), should be unstructured and centered at 0.
-
-```{r}
-ggplot(cholesterol, aes(x=age, y=fit$residuals)) + geom_point() + geom_hline(yintercept=0, color="black")
-
-```
-
-If the residuals look like they are grouped in one section of the plot, or follow a pattern (ie. looks quadratic - you would have a nonlinear association), then the model is not a good fit. If it looks like a sideways tornado, then errors are increasing with x, and this is non-constant variance.
-
-_Check the (Non-)Normality of Errors_
-
-
-The structure of the lm output is a list of 12, which is possible, though annoying to grab data from. Use the broom() package to get info out of linear models in a glorious dataframe format that we know and love. 
-
-```{r}
-library(broom)
-
-datfit <- augment(fit)
-```
-
-
-
-
-```{r}
-ggplot(datfit, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
-
-```
-
-qqplots
-
-Does our data follow the (normal) distribution? The data is plotted against a theoretical distribution. Points should fall on the straight line. Anything not fitting are moving away from the distribution. 
-
-```{r}
-qqnorm(fit$residuals)
-```
-
-This looks pretty straight. We have normality of errors.
-
-Let's try a less perfect example and look at the relationship between age and triglycerides.
-
-```{r}
-ggplot(cholesterol, aes(age, TG)) + geom_point() + stat_smooth(method = "lm")
-```
-
-
-
-```{r}
-fitTG <- lm(TG ~ age, data = cholesterol)
-
-datfitTG <- augment(fitTG)
-```
-
-
-
-
-```{r}
-ggplot(datfitTG, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
-
-```
-
-Our residuals are now increasing with increasing values of y. 
-
-```{r}
-qqnorm(datfitTG$.resid)
-```
-
-Our qqplot points are deviating from the line suggesting a poor fit for our model.
-
-We have a case of non-constant variance (heteroscedasticity). This means that there is a mean-variance relationship. We now need some different tools.
-
-To account for this we can use:
-
-1. Robust standard errors
-1. Data transformation
-1. Use a different model that does not assume constant variance (glm)
-
-Robust standard errors correctly estimate variability of parameter estimates even under non-constant variance. This does not affect point estimates, but corrects confidence intervals and p-values.
-
-To do this, we use a package called 'gee'.
-
-```{r}
-library(gee)
-library(BCgee)
-geefit <- gee(TG ~ age, data = cholesterol, id = seq(1, length(age)))
-
-summary(geefit)
-```
-
-We have the same point estimates, but our error estimates have now changed.
-(Note: residuals in geefit are the originals)
-
-
-Data transformation can solve some nonlinearity, unequal variance and non-normality problems when applied to the dependent variable, the independent variable, or both. However, interpreting the results of these transformations can be tricky.
-
-
-```{r}
-logfit <- lm(log(TG) ~ age, data = cholesterol)
-
-logdat <- augment(logfit)
-summary(logfit)
-```
-
-```{r}
-ggplot(logdat, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
-```
-
-We corrected the non-constant variance issue, but it is harder to interpret our model. 
-
-
-
-#Slide 97 from SISG_5_2 is impact of violations to model assumptions - think about whether something like this should be included.
 
 
 _Running the Model_
