@@ -1,5 +1,5 @@
 ---
-title: "Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job"
+title: "Lesson 5 - Linear Regression, Multiple Linear Regression, ANOVA, ANCOVA: Choosing the Best Model for the Job"
 output: 
   html_document:
           keep_md: yes
@@ -10,34 +10,87 @@ output:
           toc_depth: 3
 ---
 ***
+![] 
 
-Approximate time: 2 hours per lesson
+</br>
 
- _Each lesson will have:_
- 
- - Comprehension questions as we go along on Socrative.
- - How to read help pages online.
- - Give the class a function not previously used during the lesson and have them figure out what it does and how to use it.
- - Each lesson will start from an excel spreadsheet with imperfect data.
+##A quick intro to the intro to R Lesson Series
+
+</br>
+
+This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This course was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
+
+
+This lesson is the fifth in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
+
+
+![](img/data-science-explore.png)
+
+</br>
+
+How do we get there? Today we are going to be testing and interpreting the output of different regression models. We are also going to learn how to compare models and choose the best model that fits our data. For the last lesson, we will learn to write some functions, which really can save you time and help scale up your analyses.
+
+
+![](img/spotify-howtobuildmvp.gif)
+
+</br>
+
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/PVHDKDB), it will help me further develop this course and would be greatly appreciated. 
+
+***
+
+####Packages Used in This Lesson
+
+The following packages are used in this lesson:
+
+`tidyverse` (`ggplot2`, `tidyr`, `dplyr`)     
+`limma`
+`gee`  
+`knitr`     
+`kableExtra`     
+
+Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
 
 
 ***
-__Objective:__ At the end of this session you will be able to perform simple and multiple linear or non-linear regression on your dataset. You will be able to interpret the statistics that come out of this model, and use these statistics to select the best model for the job. 
+####Highlighting
+
+`grey background` - a package, function, code or command      
+*italics* - an important term or concept     
+**bold** - heading or 'grammar of graphics' term      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink     
+
+***
+
+###Homework
+
+_Discussion: Taking up the Lesson 4 Challenge question_
+
+
+***
+__Objective:__ At the end of this session you will be able to perform simple and multiple linear regression, one- and multiway analysis of variance (ANOVA) and analysis of covariance (ANCOVA). You will be able to interpret the statistics that come out of this model, be cognizant of the assumptions the model makes, and use F-tests to select the best model for the job. 
 
 
 ```{r message = FALSE}
 library(tidyverse)
 library(knitr)
 library(kableExtra)
+library(gee)
+library(multcomp)
+library(broom)
 ```
 
 
-_Discussion: Lesson 4 Challenge question_
+##Answering questions with data
+
+
+How do we describe our data? How do we test our assumptions about the data? How do we test our hypotheses? How do we compare models? How do we make a prediction with new values?
 
 
 
+###Our Dataset
 
-The dataset we will use for this lesson is from the Summer Institute in Statistical Genetics course in Regression from 2016. I like this dataset because it has a number of categorical and continuous variables, which allows us to use the same dataset for all kinds of models. Also, everyone will be familiar with the variables, which makes data interpretation easier while we are in the learning stage. 
+The dataset we will use for this lesson is from the Summer Institute in Statistical Genetics at the University of Washington's course in Regression and Analysis of Variance from 2016. I like this dataset because it has a number of categorical and continuous variables, which allows us to use the same dataset for all kinds of models. Also, everyone will be familiar with the variables, which makes data interpretation easier while we are in the learning stage. 
 
 ```{r}
 cholesterol <- read.delim("data/SISG-Data-cholesterol.txt", sep = " ", header = TRUE)
@@ -45,25 +98,30 @@ cholesterol <- read.delim("data/SISG-Data-cholesterol.txt", sep = " ", header = 
 
 
 
+We are interested in the relationship between most of the data we have collected (age, BMI, genetic variants of rs174548 and APOE), and cholestorol. Let's start with the question: is there an association between mean serum cholestorol and age?
 
-How do we describe our data? How do we test our assumptions about the data? How do we test our hypotheses? How do we make a prediction with new values?
+It is always, always, always, a good idea to plot your data and get an idea of what its distribution looks like. We can start with a simple scatterplot.
 
-
-Our hypotheses are that there are associations between our variables.
-
-_Commonly used statistics_
-
-- quick review: mean, median, mode, quantiles, sd, variance   
-
-- t-tests     
--comparing the means between groups
-ie. is serum cholesterol associated with age?
--you could split age into 2 groups and compare the mean cholestorol b/w the groups
-
-
-We can plot this association and it looks like the mean increases with age, how do we test this?
 ```{r}
-cholesterol <- cholesterol %>% mutate(age_group = ifelse(cholesterol$age >55, 1, 0))
+ggplot(cholesterol, aes(age, chol)) + geom_point()
+```
+
+
+Let's add the mean to our plot for reference.
+
+```{r}
+
+ggplot(cholesterol, aes(age, chol)) + geom_point() + geom_hline(yintercept = mean(cholesterol$chol), color = "red")
+```
+We can plot this association and it looks like the mean might increase with age, how do we test this?
+
+
+##T-tests
+    
+T-tests allow us to compare the means between groups. In that case, we need to split age into 2 groups to be able to compare the mean cholestorol between the groups. One way to do this is to use our `dplyr` skills to create a new column 'age_group'. We can use an if/else statement to ask the question: is age greater than 55 (the midpoint of age in our data)? If the answer is 'yes' the value is 1 and if it is 'no' (less than 55) the value is 0. We can now use a boxplot to look at the distribution of cholestorol for our 2 groups. How do we tell if these means are truely different?
+
+```{r}
+cholesterol <- cholesterol %>% mutate(age_group = ifelse(test = cholesterol$age > 55, yes = 1, no = 0))
 
 
 ggplot(cholesterol, aes(factor(age_group),chol)) + geom_boxplot() +
@@ -73,27 +131,91 @@ ggplot(cholesterol, aes(factor(age_group),chol)) + geom_boxplot() +
   
 ```
 
-A simple Welch Two Sample t-test tells us that our alternative hypothesis, that the true difference in means is not equal to 0 is true. It tells us the mean for those aged 30-55 is 180 mg/dl and the mean for those aged 56-80 is 188 mg/dl and that this significant at a p-value of 0.0003125. Remember that the null hypothesis is that there is no difference between the means. 
-```{r}
-t.test(cholesterol$chol ~ cholesterol$age_group)
 
+    Boxplots are a great way to visualize summary statistics for your data. As a reminder, the thick line in the center of the box is the median. The upper and lower ends of the box are the first and third quartiles (or 25th and 75th percentiles) of your data. The whiskers extend to the largest value no further than 1.5*IQR (inter-quartile range - the distance between the first and third quartiles). Data beyond these whiskers are considered outliers and plotted as individual points. This is a quick way to see how comparable your samples or variables are.
+
+
+
+The _null hypothesis_ is always that there is no difference in the sample means between our groups. 
+
+An _alternative hypothesis_ could be that there is a difference between the means (2-sided). Or that the difference in means is positive or negative (1-sided). 
+
+We will use a simple student's t-test to test for the alternative hypothesis that the true difference in means is not equal to 0. (You can run a 1-sided t-test by specifiying `alternative = 'greater'` or `alternative = 'less'`.
+
+```{r}
+t.test(formula = cholesterol$chol ~ cholesterol$age_group, alternative  = "two.sided", conf.level = 0.95)
+#is equivalent to
+t.test(x= cholesterol$age_group, y = cholesterol$chol)
 ```
+
+Our output tells us the mean for those aged 30-55 is 180 mg/dl and the mean for those aged 56-80 is 188 mg/dl and that this significant at a p-value of 0.0003125.
 
 So we now know there is a positive relationship between cholesterol and age. However the t-test has limitations. What is the magnitude of this relationship during aging? Can we see how much cholesterol might change by in a continuous manner (ie. how much does cholesterol change per year?)? What if we don't want to break our data into groups? 
 
-What I am looking for then, is the slope of the line relating cholesterol to age, which will tell me the magnitude and direction of the relationship between these variables.
+
+##How we Evaluate which Model to Use
+
+Before we get too far, I have put together a table of data types and assumptions and what model should be used for each permutation. I hope to show that this means model selection is basically going through a mental checklist for your data, and that all of these models are related. 
+
+Models have assumptions that, if violated, will be giving incorrect predictions.
+
+###Assumptions of general linear models
+1. observed values are independent of each other(independence)
+1. values are normally distributed (normality)
+1. constant variance, homoscedastic (equal variance)
+1. observed values are related linearly to x (linearity)
+
+
+For _simple linear regression_ we are modelling a continuous outcome by a single continuous variable. In our example we might be modelling cholesterol using BMI.
+
+For _multiple linear regression_ we are modelling a continuous outcome by more than one continuous variable. This could be modelling cholestorol using BMI AND age. In this case, we must consider whether there is an _interaction_ between age and BMI on cholesterol. 
+
+For _one-way ANOVA_ we are modelling a continuous outcome by a single categorical variable. This could be modelling cholesterol by sex. It is important that categorical variables are explicitly inputted as factors to be interpreted properly in the model. For example, since we have encoded sex as 0 and 1 (instead of 'M' and 'F'), we need to specify that sex is to be treated as a categorical variable and not a number. Therefore we turn sex into a factor of 2 levels, 0 and 1.
+
+For _multi-way ANOVA_ we are modelling a continous outcome by more than one categorical variable. This could be modelling sex and APOE genetic variants. Again, we need to consider any interaction between our categorical variables, and we need to specify that our numeric values are encoded and to be treated as a categorical variable and not a number. APOE will be a factor of 6 levels, one for each genetic variant.
+
+Lastly, for _ANCOVA_ we are modelling a continuous variable by a combination of categorical AND continuous variables. This could be modelling cholesterol using the genetic variants of APOE and BMI. Again, our categorical variable must be input as a factor.
+...............allows for separate slopes.....................
+
+
+This is a summary table you might find helpful choosing a model based on the data types you have and the asssumptions you are making.
+
+```{r echo = FALSE}
+dat <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)", "nonlinear least squares", "nonlinear analysis of covariance (ANCOVA)", "generalized linear models"), categorical = c("X", "X", "$\\checkmark$", "$\\checkmark$ $\\checkmark$", "$\\checkmark$", "X", "$\\checkmark$", "$\\checkmark$"), continuous = c("$\\checkmark$", "$\\checkmark$ $\\checkmark$", "X", "X", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$"), linear = c("$\\checkmark$","$\\checkmark$","$\\checkmark$","$\\checkmark$", "$\\checkmark$", "X", "X", "X"), normal_errors = c("$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "X"), independent = rep("$\\checkmark$", 8))
+
+kable(dat, "html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
+
+```
+
+
+###Interpreting the output of our model
+You don't have to know all of the assumptions are true before selecting a model. The output of our model can tell us that our assumptions are not correct. 
+
+###Assessing the performance of the model (feedback)
++ Diagnostic plots (ie. residuals, Q-Q plots)
++ model comparisons (anova)
+
+
+Take a moment to think about the question we are asking...
+    What is the relationship between cholestorol and age?
+    Looking at the chart we can at least say that we are dealing with continuous variables, not categorical (ie. sex or APOE). From the plot above it looks like if there is a relationship between age and cholestorol it would be linear, and points looked like they had equal-ish variance around the mean. Are values of y normally distributed? We can take a quick look by making a histogram for values of y.  
+
+```{r}
+ggplot(cholesterol, aes(x=chol)) + geom_histogram(binwidth = 10)
+```
+Mean serum cholesterol looks normally distributed, and values are independent. So we will be using a simple linear regression to test the association of mean serum cholesterol with age.
+
+
+##Simple linear regression
+
+What I am looking for then, is the slope of the line relating cholesterol to age, which will tell me the magnitude and direction of the relationship between these variables. We can look at the slope for linear model that `ggplot` would fit for us.
 
 ```{r}
 ggplot(cholesterol, aes(age, chol)) + geom_point() + stat_smooth(method = "lm")
 ```
 
-Just to make sure everyone is comfortable, we will briefly review the equation for a straight line. y is our dependent variable that we are attempting to model and x is our independent variable. Here a is the intercept, which is the value of x where y = 0 (where x crosses the y-axis), and b is the slope of the line, which is the change in y corresponding to a unit increase in x. A flat line would mean that there is no association between x and y. The above example has a positive association with a positive slope, meaning that y increases as values of x increase. With a negative association and negative slope, y decreases as values of x decrease. The interpretation in our example is that the slope is the difference in mean serum cholesterol associated with a one year increase in age.
-
-With a straight line we are not, of course, plotting through all of our points, but rather the mean of an outcome in y as a function of x. For example, there are values of cholestorol for about six 50 year-olds, and our line will fall somewhere close to the mean of these values. Likewise, there is a distribution for values of y at a given x, and the assumption is that this distribution is normally distributed.
-
-![]()
-
-In this equation we also have some normally distributed variance - sampling error exists in our estimates, because different estimates give different means. 
+Just to make sure everyone is comfortable, we will briefly review the equation for a straight line.
 
 _Expression:_ 
 
@@ -107,6 +229,23 @@ y = a + bx + \epsilon, \epsilon \verb|~| N\{0, \sigma^2\}
 \end{equation*}
 
 
+y is our dependent variable that we are attempting to model and x is our independent variable. Here a is the intercept, which is the value of x where y = 0 (where x crosses the y-axis), and b is the slope of the line, which is the change in y corresponding to a unit increase in x. A flat line would mean that there is no association between x and y. The above example has a positive association with a positive slope, meaning that y increases as values of x increase. With a negative association and negative slope, y decreases as values of x decrease. The interpretation in our example is that the slope is the difference in mean serum cholesterol associated with a one year increase in age.
+
+With a straight line we are not, of course, plotting through all of our points, but rather the mean of an outcome in y as a function of x. For example, there are values of cholestorol for about six 50 year-olds, and our line will fall somewhere close to the mean of these values. Likewise, there is a distribution for values of y at a given x, and the assumption is that this distribution is normally distributed.
+
+![SISG_2016_2](img/y_dist.png)
+
+In this equation we also have some normally distributed variance - sampling error exists in our estimates, because different estimates give different means. 
+
+
+Okay, but how do we actually find the best fitting line? We are using _least squares estimation_; we are minimizing the sum of squares of the vertical distances from the observed points to the least squares regression line.
+
+![](img/least_squares.png)
+ 
+ 
+ 
+Let's actually run this simple linear regression, and save it into a variable called 'fit'. We can look at our summary statistics.
+
 When we use code for this in R, the intercept and slope terms are implicit.
 
 _R code:_ 
@@ -114,12 +253,13 @@ _R code:_
 lm(y \verb|~| x)
 \end{equation*}
 
-Okay, but how do we actually find the best fitting line? We are using least squares estimation; we are minimizing the sum of squares of the vertical distances from the observed points to the least squares regression line.
+To force the intercept to zero: Y~ Normal(bx, sigma^2)
 
-![]()
- 
- 
-Let's actually run this simple linear regression, and save it into a variable called 'fit'. We can look at our summary statistics.
+_R code:_ 
+\begin{equation*}
+lm(y \verb|~| x-1)
+\end{equation*}
+
 
 ```{r}
 lm(chol~age, data = cholesterol)
@@ -129,9 +269,12 @@ fit <- lm(chol~age, data = cholesterol)
 summary(fit)
 ```
 
+
+__Interpretation__ 
+
 Let's look for the intercept and slope here. The Intercept is 166.9 and the slope is 0.31.. What does that actually mean? It means a baby (age 0) would be expected to have 167 mg/dl average serum cholesterol. For every yearly increase in age, mean serum cholesterol is expected to increase by 0.31 mg/dl. These results are significant with a p-value < 0.001. We can say that the mean serum cholesterol is significantly higher in older individuals.
 
-Confidence intervals - will cover the true parameter x% of the time.
+_Confidence intervals_ will cover the true parameter x% of the time.
 
 ```{r}
 confint(fit)
@@ -142,9 +285,9 @@ We are 95% confident that the difference in mean cholesterol associated with a o
 
 Predicting values assumes that your model is true. This might be fair within the range of your data. This is to be interpreted with caution outside the range of your data.
 
-![]()
+![](img/extrapolate.png)
 
-![xkcd]()
+![xkcd](img/extrapolating.png)
 
 If you want to predict the mean at a particular point, for example, at age 47. 
 ```{r}
@@ -170,119 +313,17 @@ F-Statistic = MSR/MSE
 
 in simple linear regression F-stat = (t-stat for slope)^2 for the hypothesis that the slope is not zero (ie. 2-sided)
 
-- correlations     
-- explain parametric vs non-parametric data     
-
-_Models we will Consider_
-
-https://ms.mcmaster.ca/~bolker/emdbook/book.pdf
-
-Before we get too scared about anything, I have put together a table of data types and assumptions and what model should be used for each permutation. I hope to show that this means model selection is basically going through a mental checklist for your data, and that all of these models are related. 
-
-```{r include = FALSE, message = FALSE}
-library(knitr)
-library(kableExtra)
-library(dplyr)
-
-```
-
-
-```{r echo = FALSE}
-dat <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)", "nonlinear least squares", "nonlinear analysis of covariance (ANCOVA)", "generalized linear models"), categorical = c("X", "X", "$\\checkmark$", "$\\checkmark$ $\\checkmark$", "$\\checkmark$", "X", "$\\checkmark$", "$\\checkmark$"), continuous = c("$\\checkmark$", "$\\checkmark$ $\\checkmark$", "X", "X", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$"), linear = c("$\\checkmark$","$\\checkmark$","$\\checkmark$","$\\checkmark$", "$\\checkmark$", "X", "X", "X"), normal_errors = c("$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "$\\checkmark$", "X"), independent = rep("$\\checkmark$", 8))
-
-kable(dat, "html") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
-
-```
-
-_Models we will Consider Today_
-
-We are going to go through the code for this example dataset and then generalize to mathematical notation. We are going to start with models assuming normally distributed errors and come back to models with non-normal errors in the next lesson. For all of these models we are trying to determine the effect of different variables on cholesterol. 
-
-For _simple linear regression_ we are modelling cholesterol by a single continuous variable, BMI.
-
-For _multiple linear regression_ we are modelling cholesterol by more than one continuous variable, BMI AND age. This equation does not take into account any __interaction__ BMI might have with age on cholesterol levels. To denote the interaction term we use `*`. For example, lm(chol~ BMI + age + BMI\*age) or for the term alone lm(chol~BMI*age).
-
-For _one-way ANOVA_ we are modelling cholesterol by a single categorical variable, sex. Since we have encoded sex as 0 and 1 (instead of 'M' and 'F', for example), we need to specify that sex is to be treated as a categorical variable and not a number. Therefore we turn sex into a factor of 2 levels, 0 and 1.
-
-For _multi-way ANOVA_ we are modelling cholesterol by more than one categorical variable, sex and APOE variant. Again, we need to specify that our numeric values are encoded and to be treated as a categorical variable and not a number. APOE will be a factor of 6 levels, one for each genetic variant.
-
-Lastly, for _ANCOVA_ we are modelling cholesterol by a combination of categorical AND continuous variables, the genetic variants of APOE and BMI. 
-
-
-```{r echo = FALSE}
-dat2 <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)"), categorical = c("X", "X", "$\\checkmark$", "$\\checkmark$ $\\checkmark$", "$\\checkmark$"), continuous = c("$\\checkmark$", "$\\checkmark$ $\\checkmark$", "X", "X", "$\\checkmark$"),R_code = c("lm(chol ~ BMI)", "lm(chol ~ BMI + age)", "lm(chol ~ factor(sex))", "lm(chol ~ factor(sex)*factor(APOE))", "lm(chol~factor(APOE)*BMI) "))
-
-
-kable(dat2, "html") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
-
-```
-
-In the table below, our R code for each of the models has been generalized. y is our predictor variable, x is a continuous variable, and f is a categorical variable (aka factor). a and b are coefficients which are implicit in the lm formulas but specified in the nls formulas.
-
-
-```{r echo = FALSE}
-dat2 <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)", "nonlinear least squares", "nonlinear analysis of covariance (ANCOVA)", "generalized linear models"), R_code = c("lm(y ~ x)", "lm(y ~ x + I(x^2))", "lm(y ~ f)", "lm(y ~ f~1~*f~2~)", "lm(y~f*x) ", "nls(y~a*x^b, start = list(a=1, b=1))", "nlsList(y ~ a*x^b|x~2~, data, start = list(a=1, b=1))","glm(cbind(y, N-y)~x, family = 'binomial')"))
-
-
-kable(dat2, "html") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
-
-```
 
 
 
+##Multiple linear regression
 
-General linear models:     
-
-- linear regression     
--association of a continuous outcome with one or more predictors (categorical or continuouss)
-- analysis of variance (ANOVA)     
--comparison of a continuous outcome over a fixed number of groups
-- analysis of covariance (ANCOVA)     
-
--linear functions of the parameters (a, b, c), not necessarily of the independent variables (x, x^2)
-ie. 
-\begin{equation*}
-Y \verb|~|  Normal(a + bx + cx^2, {\sigma^2}) 
-\end{equation*}
-
-is linear (ie. could call x^2 w and looks like multivariate ilnear regression), 
-\begin{equation*}
-Y \verb|~|  Normal(ax^b, {\sigma^2}) 
-\end{equation*}
-
-is non-linear wrt b
-
-- Simple linear regression
-- predicts y as a function of a single continuous covariate x
-
-_Expression:_ 
-
-\begin{equation*}
-Y \verb|~| Normal(a + bx, {\sigma^2})
-\end{equation*}
-
-_R code:_ 
-\begin{equation*}
-lm(y \verb|~| x)
-\end{equation*}
-
-- Y rather than y since it's a random variable
-#R code: lm(y~x), intercept a is implicit in the model
-To force the intercept to zero: Y~ Normal(bx, sigma^2)
-
-_R code:_ 
-\begin{equation*}
-lm(y \verb|~| x-1)
-\end{equation*}
+Multiple continuous variables are included to predict the outcome. 
 
 
-- Multiple linear regression
-- adding more covariates (continuous predictor variables)
-a) extra covariates that are powers of the original variable ie. polynomial regression, quadratic regression
+###Adding covariates that are powers of a variable (polynomial regression)
 
+***
 _Expression:_ 
 
 \begin{equation*}
@@ -290,12 +331,22 @@ Y \verb|~| Normal(a + b_1x + b_2x^2, {\sigma^2})
 \end{equation*}
 
 _R code:_ 
+
+lm(y ~ x + I(x^2))
+
+where I = "asis" 
+
+You might think - wait that isn't linear, but what we are actually interested in is the linear function of the _parameters_ (a,b,c) and not the independent variables (x, x^2). 
+
+The following equation is non-linear with respect to the parameter b.
+
 \begin{equation*}
-lm(y \verb|~| x + I(x^2))
+Y \verb|~|  Normal(ax^b, {\sigma^2}) 
 \end{equation*}
 
-- I = "asis"
-b) extra variables
+***
+
+###Adding extra variables to our model
 
 _Expression:_ 
 
@@ -306,9 +357,9 @@ Y \verb|~| Normal(a + b_1x + b_2x_2 + b_3x_3, {\sigma^2})
 Interpretation of b2 is the expected mean change in unit per change in x2 if x1 is held constant (controlling for x1). Is there a statistically significant relationship between mean serum cholestorl and BMI after adjusting for other predictors (ie. age) in the model? The null hypothesis is that all b1, b2, etc =0. Test that at least one is not null. Or could ask can we improve the model by incorporating more factors, such as BMI into the model.
 
 _R code:_ 
-\begin{equation*}
-lm(y \verb|~| x_1 +x_2 + x_3)
-\end{equation*}
+
+lm(y ~ x_1 +x_2 + x_3)
+
 
 Again intercept and coefficients are implicit in the code.
 
@@ -320,9 +371,7 @@ ggplot(cholesterol, aes(BMI, chol)) + geom_point() + stat_smooth(method = "lm")
 ```
 
 ```{r}
-
 ggplot(cholesterol, aes(age, BMI)) + geom_point() + stat_smooth(method = "lm")
-
 
 ```
 
@@ -349,7 +398,9 @@ Our second model is a signifcant improvement.
 
 
 
-Interaction terms. What is meant by an interaction? The slope wrt one covariate changes linearly as a function of another covariate. 
+###Interaction terms 
+
+What is meant by an interaction? The slope wrt one covariate changes linearly as a function of another covariate. 
 The association between the response and the predictor changes across the range of the new variable. This is different than a confounding factor, which is associated with the predictor and response, however the associatrion between the response and predictor is constant across the range of the new variable.
 
 The difference in means changes additionally by b3 for each unit difference in x2. b3 is the difference of differences. The slope of x1 changes with x2, because b3 is changing.
@@ -410,9 +461,105 @@ So gender doesn't change the relationship between age and cholesterol, these lin
 
 -can text between models with a certain anova parameter test = "Chisq" https://ms.mcmaster.ca/~bolker/emdbook/book.pdf
 
-##One-way anaysis of variance (ANOVA)
+##One-way analysis of variance (ANOVA)
 
-- predictor variables are discrete (factors) rather than continuous (covariates)
+In the analysis of variance (ANOVA) independent variables are categorical (factors) rather than continuous.
+
+Does the genetic factor rs174548 have an effect on cholesterol levels?
+
+We can first plot the relationship between rs174548 and cholestorol. 
+
+```{r}
+ggplot(cholesterol, aes(as.factor(rs174548), chol)) + geom_boxplot()
+
+```
+
+###Dummy Variables
+
+We can encode our categorical variable as a 'dummy' variable. 0 really means C/C, 1 is C/G and 2 is G/G. But instead we can create k-1 separate columns of 0's and 1's. The omitted category is the reference group. Otherwise 0 means it is not that SNP and 1 means it is that SNP. Each genetic factor has a unique encoding.
+
+```{r echo = FALSE}
+dat3 <- data.frame(rs174548 = c("C/C", "C/G", "G/G"), x_1=c(0,1,0), x_2 = c(0,0,1))
+
+kable(dat3, "html") %>%
+  kable_styling(full_width = FALSE, position = "center")
+```
+
+This makes the interpretation of the model a bit trickier. 
+beta0 - mean cholesterol when rs174548 is C/C
+beta0 +beta1 - mean cholestor when rs174548 is C/G
+beta0 + beta2 - mean cholestorol when rs174548 is G/G
+
+alternatively
+b1 is the differnce in mean cholestorl levels between groups with rs174548 equal to C/G and C/C
+b2 is the difference in mean cholesterol levels between groups with rs174548 equal to G/G and C/C
+
+So you can really just think of each of these groups having their own means. ie.u2 = beta0 + beta1. We are testing the hypothesis whether these means are equal or not.
+
+R will create dummy variables in the background if you state you have a categorical variable.
+
+```{r}
+anfit1 <- lm(chol ~ as.factor(rs174548), data = cholesterol)
+
+summary(anfit1)
+```
+
+```{r}
+anova(anfit1)
+```
+This tells us that there is a difference in means ie. rejects the null hypothesis that all means are the same, but doesn't tell us which means are different.
+
+In order to look at this we need to look at multiple comparisons.  
+u0 = u1, u0=u2, u1 = u2 (pairwise)
+
+###Multiple test correction
+
+Multiple comparisons at the 5% levels makes the family-wise error rate - the probability of making a false rejection, increases. This is where corrections can come in such as the Bonferroni (alpha/k or multiply pvalues by k). Simple and conservative.
+
+
+```{r}
+tfit <- lm(chol ~ -1 + as.factor(rs174548), data = cholesterol)
+
+#generate a contrast matrix for multiple comparisons
+M = contrMat(table(cholesterol$rs174548), type = "Tukey")
+M
+#get estimates for multiple comparisons, 'general linear hypothesis testing'
+mc = glht(tfit, linfct = M)
+
+#adjust pvalues for mulitple comparisons
+summary(mc, test = adjusted("none"))
+summary(mc, test = adjusted("bonferroni"))
+
+#other types
+summary(mc, test = adjusted("BH"))
+summary(mc, test = adjusted("fdr"))
+```
+It is possible we would want to do a nonpairwise comparison (test the mean for C/C against the grouped genotypes C/G and G/G.
+... this may be beyond the scope of this lesson.
+
+
+
+##Model checking
+
+Bartlett's test - test whether or not population variances are all the same
+```{r}
+bartlett.test(chol ~ as.factor(rs174548), data = cholesterol)
+```
+This is telling us that the variance is not statistically different between our populations. Our assumption of equal variance is  validated.
+
+However, you can use the one-way anova test that allows for unequal variances.
+
+```{r}
+oneway.test(chol ~ as.factor(rs174548), data = cholesterol)
+```
+Or you can do one-way anova with robust standard errors.
+```{r}
+summary(gee(chol ~ as.factor(rs174548), data = cholesterol, id=seq(1, length(chol))))
+```
+
+ - Kruskal-wallis tst = wilcox test with corrections?
+
+
 
 _Expression:_ 
 
@@ -433,9 +580,85 @@ f is the factor - as long as your data is character, R will automatically make f
 -interpretation: R parameterizes the model in terms of the differences between the first group and subsequent groups (treatment contrasts) rather than in terms of the mean of each group
 -you can tell it to fit the means of each group by: lm(y~f-1)
 
+
+Our genetic factor has 3 groups, and we will be comparing the means for each of these groups. These groups have high variance, and there is a good deal of overlap between them.
+
+To assess wherther the means are equal, the model compares:
+-variation between the sample means (MSR)
+-natural variation of the observations within the sample (MSE)
+
+The larger the MSR compared to the MSE the more support there is for a difference between the population means.
+The ratio of MSR/MSE is the F-statistic.
+
+
+
+
 ##Multi-way analysis of variance (ANOVA)
 
 - two or more discrete/categorical variables (factors)
+
+Does the effect of the genetic factor rs174548 differ between males and females?
+We need to test whether there is an effect of our factors and also if there is an interaction between them.
+
+In this first scenario, the difference in the means between groups defined by factor B does not depend on the level fo factor A and vice versa. In the second image the difference in the means between groups defined by factor B changes when A2 is present.
+![SISG_2016](img/2wayanova.png)
+
+Can run a two-way model without testing the interaction.
+
+```{r}
+twofit <-lm(chol ~ as.factor(sex) + as.factor(rs174548), data = cholesterol) 
+
+summary(twofit)
+```
+__Interpretation__
+
+- estimated mean chol for males in C/C group is the intercept (175)
+- estimated diff in mean chol between females and males controlled for genotype (11)
+- estimated diff in mean betweeen C/G and C/C groups controlled for gender (7)
+- estimated diff in mean betweeen G/G and C/C groups controlled for gender (5)
+
+There is evidence cholestorol is associated w/ gender (p<0.001).
+
+
+
+
+
+
+How does this compare to the model with just sex?
+
+```{r}
+genfit <- lm(chol ~ as.factor(sex), data = cholesterol)
+```
+
+Worth it!
+```{r}
+anova(genfit, twofit)
+```
+There is evidence cholesterol is associated w/ genotype(p=0.005).
+
+
+Two way anova with interaction.
+
+```{r}
+intfit2 <- lm(chol ~ as.factor(sex) * as.factor(rs174548), data = cholesterol)
+summary(intfit2)
+```
+__Interpretation__
+
+- the estimated mean for males in the C/C group is 178
+- the estimated mean for females in the C/C group is 178+5.7 
+- the estimated mean for men in the C/G group 178 +0.95
+- the estimated mean for females in the C/G group is 178+5.7+0.95+12.7.
+
+
+Let's compare the without interaction and with interaction model.
+
+```{r}
+anova(twofit,intfit2)
+```
+
+There is evidence for an interaction between genotype and sex (p = 0.015).
+
 
 _Expression:_ 
 
@@ -453,7 +676,7 @@ lm(y \verb|~| f_1*f_2)
 
 R code: lm(y~ f~1~*f~2~), or the main effects without the interaction as lm(y~ f~1~ + f~2~)
 
-- Analysis of covariance (ANCOVA)
+##Analysis of covariance (ANCOVA)
 -allows for different intercepts and slopes with repect to covariate x in different groups
 
 _Expression:_ 
@@ -494,6 +717,40 @@ nls(y~a*x^b, start = list(a=1, b=1))
 #not sure if I have interpreted this rights
 nlsList(y ~ a*x^b|x~2~, data, start = list(a=1, b=1))
 -fits separate a and b paramters for the two different groups
+
+Does the effect of the genetic factor rs174548 differ depending on a subject's age?
+
+
+```{r}
+ggplot(cholesterol, aes(age, chol, color = as.factor(rs174548))) + geom_point() + stat_smooth(method = "lm")
+```
+
+
+
+Again, without interaction.
+
+```{r}
+ancfit <- lm(chol ~ as.factor(rs174548) + age, data = cholesterol)
+summary(ancfit)
+
+```
+
+
+With interaction.
+
+```{r}
+intfit3 <- lm(chol ~ as.factor(rs174548) * age, data = cholesterol)
+summary(intfit3)
+```
+Compare models.
+
+```{r}
+anova(ancfit, intfit3)
+```
+... some talk of parallel vs coincident lines
+
+... using the predict fxn? w/ correction?
+
 
 
 Generalized linear models:
@@ -542,34 +799,56 @@ Negative binomial models - not explained
 
 time series and spatial data? mixed (effect) models, mcmc
 
+##Models we will Consider Today
+
+We are going to go through the code for this example dataset and then generalize to mathematical notation. We are going to start with models assuming normally distributed errors and come back to models with non-normal errors in the next lesson. For all of these models we are trying to determine the effect of different variables on cholesterol. 
+
+For _simple linear regression_ we are modelling cholesterol by a single continuous variable, BMI.
+
+For _multiple linear regression_ we are modelling cholesterol by more than one continuous variable, BMI AND age. This equation does not take into account any __interaction__ BMI might have with age on cholesterol levels. To denote the interaction term we use `*`. For example, lm(chol~ BMI + age + BMI\*age) or for the term alone lm(chol~BMI*age).
+
+For _one-way ANOVA_ we are modelling cholesterol by a single categorical variable, sex. Since we have encoded sex as 0 and 1 (instead of 'M' and 'F', for example), we need to specify that sex is to be treated as a categorical variable and not a number. Therefore we turn sex into a factor of 2 levels, 0 and 1.
+
+For _multi-way ANOVA_ we are modelling cholesterol by more than one categorical variable, sex and APOE variant. Again, we need to specify that our numeric values are encoded and to be treated as a categorical variable and not a number. APOE will be a factor of 6 levels, one for each genetic variant.
+
+Lastly, for _ANCOVA_ we are modelling cholesterol by a combination of categorical AND continuous variables, the genetic variants of APOE and BMI. 
+
+
+```{r echo = FALSE}
+dat2 <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)"), categorical = c("X", "X", "$\\checkmark$", "$\\checkmark$ $\\checkmark$", "$\\checkmark$"), continuous = c("$\\checkmark$", "$\\checkmark$ $\\checkmark$", "X", "X", "$\\checkmark$"),R_code = c("lm(chol ~ BMI)", "lm(chol ~ BMI + age)", "lm(chol ~ factor(sex))", "lm(chol ~ factor(sex)*factor(APOE))", "lm(chol~factor(APOE)*BMI) "))
+
+
+kable(dat2, "html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
+
+```
+
+In the table below, our R code for each of the models has been generalized. y is our predictor variable, x is a continuous variable, and f is a categorical variable (aka factor). a and b are coefficients which are implicit in the lm formulas but specified in the nls formulas.
+
+
+```{r echo = FALSE}
+dat2 <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)", "nonlinear least squares", "nonlinear analysis of covariance (ANCOVA)", "generalized linear models"), R_code = c("lm(y ~ x)", "lm(y ~ x + I(x^2))", "lm(y ~ f)", "lm(y ~ f~1~*f~2~)", "lm(y~f*x) ", "nls(y~a*x^b, start = list(a=1, b=1))", "nlsList(y ~ a*x^b|x~2~, data, start = list(a=1, b=1))","glm(cbind(y, N-y)~x, family = 'binomial')"))
+
+
+kable(dat2, "html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
+
+```
+
+You need not memorize any of these charts - you may just want to use them to orient yourself in the future. Much of the R code seems the same whether you are doing multiple linear regression, ANOVA or ANCOVA, so it is good to have a reference point.
 
 
 
 
-_How we Evaluate which Model to Use_
 
-- Taking a moment to think about the question we are asking...
-- Assumptions of the model
-    General linear models:
-    1. observed values are independent
-    1. normally distributed 
-    1. constant variance (homoscedastic)
-    1. any covariates (continuous predictor variables) are measured without error 
-- Interpreting the output of our model
-- Assessing the performance of the model (feedback)
-    + Diagnostic plots (ie. residuals, Q-Q plots)
 
-simple linear regression assumptions
-1. E[Y|x] is related linearly to x (linearity)
-1. Y's are independent of each other (independence)
-1. distribution of [Y|x] is normal (normality)
-1. Var[Y|x] does not depend on x (equal variance)
 
-Residuals - the difference between the observed response and the predicted response, can be used to identify poorly fit data points, unequal variance (heteroscedasticity), nonlinear relationships, identify additional variables, and examine the normality assumption.
 
-_Checking the Model_
+##Checking Residuals
 
-Look at the residuals vs x, residuals vs y, residual histogram or qqplot - are there any patterns? The residuals are taken from fit.
+_Residuals_ - the difference between the observed response and the predicted response, can be used to identify poorly fit data points, unequal variance (heteroscedasticity), nonlinear relationships, identify additional variables, and examine the normality assumption.
+
+Look at the residuals vs x, residuals vs y, residual histogram or qqplot - are there any patterns? The residuals are taken from fit, which also contains the inputs of our model.
 
 
 ```{r}
@@ -584,14 +863,12 @@ ggplot(cholesterol, aes(x=age, y=fit$residuals)) + geom_point() + geom_hline(yin
 
 If the residuals look like they are grouped in one section of the plot, or follow a pattern (ie. looks quadratic - you would have a nonlinear association), then the model is not a good fit. If it looks like a sideways tornado, then errors are increasing with x, and this is non-constant variance.
 
-_Check the (Non-)Normality of Errors_
+##Check the (Non-) Normality of Errors
 
 
-The structure of the lm output is a list of 12, which is possible, though annoying to grab data from. Use the broom() package to get info out of linear models in a glorious dataframe format that we know and love. 
+The structure of the `lm` output is a list of 12, which is possible, though annoying to grab data from. Use the `broom()` package to get info out of linear models in a glorious dataframe format that we know and love. 
 
 ```{r}
-library(broom)
-
 datfit <- augment(fit)
 ```
 
@@ -603,7 +880,7 @@ ggplot(datfit, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, 
 
 ```
 
-qqplots
+##qqplots
 
 Does our data follow the (normal) distribution? The data is plotted against a theoretical distribution. Points should fall on the straight line. Anything not fitting are moving away from the distribution. 
 
@@ -651,13 +928,11 @@ To account for this we can use:
 1. Data transformation
 1. Use a different model that does not assume constant variance (glm)
 
-Robust standard errors correctly estimate variability of parameter estimates even under non-constant variance. This does not affect point estimates, but corrects confidence intervals and p-values.
+_Robust standard errors_ correctly estimate variability of parameter estimates even under non-constant variance. This does not affect point estimates, but corrects confidence intervals and p-values.
 
 To do this, we use a package called 'gee'.
 
 ```{r}
-library(gee)
-library(BCgee)
 geefit <- gee(TG ~ age, data = cholesterol, id = seq(1, length(age)))
 
 summary(geefit)
@@ -667,7 +942,7 @@ We have the same point estimates, but our error estimates have now changed.
 (Note: residuals in geefit are the originals)
 
 
-Data transformation can solve some nonlinearity, unequal variance and non-normality problems when applied to the dependent variable, the independent variable, or both. However, interpreting the results of these transformations can be tricky.
+_Data transformation_ can solve some nonlinearity, unequal variance and non-normality problems when applied to the dependent variable, the independent variable, or both. However, interpreting the results of these transformations can be tricky.
 
 
 ```{r}
@@ -683,26 +958,21 @@ ggplot(logdat, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, 
 
 We corrected the non-constant variance issue, but it is harder to interpret our model. 
 
+This equation does not take into account any __interaction__ BMI might have with age on cholesterol levels. To denote the interaction term we use `*`. For example, lm(chol~ BMI + age + BMI\*age) or for the term alone lm(chol~BMI*age).
 
+....Slide 97 from SISG_5_2 is impact of violations to model assumptions - think about whether something like this should be included.
 
-#Slide 97 from SISG_5_2 is impact of violations to model assumptions - think about whether something like this should be included.
-
-
-_Running the Model_
-
-- Dealing with dummy variables/encoding categorical variables
-- Is it necessary to scale our data?
-- Using broom() to get a data frame of our result statistics
-- Predictors 
 
 __Challenge:__      
 
 Given this dataset, answer this question. Is this the best model for the job? What else could you apply? Can you prove this is any better?
 
 __Resources:__      
-https://github.com/ttimbers/lm_and_glm/blob/master/lm_and_glm.Rmd     
-https://github.com/seananderson/glmm-course     
-http://michael.hahsler.net/SMU/EMIS7331/R/regression.html
+
+<https://github.com/ttimbers/lm_and_glm/blob/master/lm_and_glm.Rmd>          
+<https://github.com/seananderson/glmm-course>          
+<http://michael.hahsler.net/SMU/EMIS7331/R/regression.html>     
+<https://ms.mcmaster.ca/~bolker/emdbook/book.pdf>     
     
 
 
