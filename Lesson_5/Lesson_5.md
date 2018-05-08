@@ -10,7 +10,12 @@ output:
           toc_depth: 3
 ---
 ***
-![] 
+
+![xkcd](img/xkcd_linear_regression.png)
+
+![Real-Life Confusion from Cross-Validated: Linear model seems off in R?](img/plot_confusion.png) 
+
+(AKA why is the solid line the best fit and not the dashed line?)
 
 </br>
 
@@ -35,7 +40,7 @@ How do we get there? Today we are going to be testing and interpreting the outpu
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/PVHDKDB), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/3RKC6MP), it will help me further develop this course and would be greatly appreciated. 
 
 ***
 
@@ -46,8 +51,8 @@ The following packages are used in this lesson:
 `tidyverse` (`ggplot2`, `tidyr`, `dplyr`)     
 `limma`     
 `gee`  
-`knitr`     
-`kableExtra`     
+`multcomp`     
+`broom`
 
 Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
 
@@ -57,7 +62,7 @@ Please install and load these packages for the lesson. In this document I will l
 
 `grey background` - a package, function, code or command      
 *italics* - an important term or concept     
-**bold** - heading or 'grammar of graphics' term      
+**bold** - heading or a term that is being defined      
 <span style="color:blue">blue text</span> - named or unnamed hyperlink     
 
 ***
@@ -68,158 +73,213 @@ _Discussion: Taking up the Lesson 4 Challenge question_
 
 
 ***
-__Objective:__ At the end of this session you will be able to perform simple and multiple linear regression, one- and multiway analysis of variance (ANOVA) and analysis of covariance (ANCOVA). You will be able to interpret the statistics that come out of this model, be cognizant of the assumptions the model makes, and use F-tests to select the best model for the job. 
+__Objective:__ At the end of this session you will be able to perform simple and multiple linear regression, one- and multiway analysis of variance (ANOVA) and analysis of covariance (ANCOVA). You will be able to interpret the statistics that come out of this model, be cognizant of the assumptions the model makes, and use an F-test to select the best model for the job. 
 
+
+
+##Answering questions with data
+
+
+In order to work with our data we need to be able to answer some basic questions. 
+
+- How do we describe our data?  
+- How do we test our hypotheses (what model do we use)? 
+- How do we test our assumptions about the model are using? 
+- How do we compare models? 
+- How do we make a prediction with new values? 
+
+These are all really important questions that we might ignore as we try to dive in and get our answer. Today we are going to slow down a bit and think about our data and our models. 
+
+Load the packages!
 
 
 ```r
 library(tidyverse)
-library(knitr)
-library(kableExtra)
+library(limma)
 library(gee)
 library(multcomp)
 library(broom)
 ```
 
 
-##Answering questions with data
-
-
-How do we describe our data? How do we test our assumptions about the data? How do we test our hypotheses? How do we compare models? How do we make a prediction with new values?
-
-
-
 ###Our Dataset
 
-The dataset we will use for this lesson is from the Summer Institute in Statistical Genetics at the University of Washington's course in Regression and Analysis of Variance from 2016. I like this dataset because it has a number of categorical and continuous variables, which allows us to use the same dataset for all kinds of models. Also, everyone will be familiar with the variables, which makes data interpretation easier while we are in the learning stage. 
+The dataset we will use for this lesson is from the Summer Institute in Statistical Genetics (SISG) at the University of Washington's course in Regression and Analysis of Variance by Lurdes Inoue. This lesson uses a lot of material from the [SISG 2016](https://www.biostat.washington.edu/suminst/archives/SISG2016/SM1604) course as well as conceptual material from [Ben Bolker](https://ms.mcmaster.ca/~bolker/). I like this dataset because it has a number of categorical and continuous variables, which allows us to use the same dataset for many models. Also, the variables are familiar (age, BMI, gender, cholesterol), which makes data interpretation easier while we are in the learning stage. 
+
+Read the data in and take a look at the structure.
 
 
 ```r
 cholesterol <- read.delim("data/SISG-Data-cholesterol.txt", sep = " ", header = TRUE)
+
+str(cholesterol)
 ```
 
+```
+## 'data.frame':	400 obs. of  9 variables:
+##  $ ID       : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ sex      : int  1 1 0 0 1 1 0 0 0 0 ...
+##  $ age      : int  74 51 64 34 52 39 79 38 52 58 ...
+##  $ chol     : int  215 204 205 182 175 176 159 169 175 189 ...
+##  $ BMI      : num  26.2 24.7 24.2 23.8 34.1 22.7 22.9 24.9 20.4 22 ...
+##  $ TG       : int  367 150 213 111 328 53 274 137 125 209 ...
+##  $ rs174548 : int  1 2 0 1 0 0 2 1 0 0 ...
+##  $ rs4775401: int  2 1 1 1 0 2 1 1 1 1 ...
+##  $ APOE     : int  4 4 4 1 1 4 1 1 4 5 ...
+```
+This dataset is looking at genetic variants (single nucleotide polymorphisms (SNPs)) and their relationship to cholesterol (chol) and triglycerides (TG) for 3 genes: rs174548 (FADS1 - an enzyme in fatty acid unsaturation), rs4775401 (a candidate SNP), and APOE (a major apolipoprotein important for Alzheimer's disease; variants can also affect cholestorol and triglycerides). 
+
+Note that categorical variables have been encoded. Sex is 0 and 1 instead of 'Male' and 'Female'. rs174548 has 3 possible nucleotide combinations, "C/C", "C/G", and "G/G" which have been encoded as 0, 1, and 2. Similarly rs4775401 has 0, 1, and 2 representing SNPs. APOE has 6 variants labelled starting at 1 (1-6).
 
 
-We are interested in the relationship between most of the data we have collected (age, BMI, genetic variants of rs174548 and APOE), and cholestorol. Let's start with the question: is there an association between mean serum cholestorol and age?
+We are ultimately interested in the relationship between the above genetic variants and cholestorol, while controlling for factors such as age and sex. But let's get our feet wet by starting with the easier __question: is there an association between mean serum cholestorol and age?__
 
-It is always, always, always, a good idea to plot your data and get an idea of what its distribution looks like. We can start with a simple scatterplot.
+It is always, always, always, a good idea to plot your data and get an idea of what its distribution looks like. We can start with a simple scatterplot of age and cholesterol.
 
 
 ```r
-ggplot(cholesterol, aes(age, chol)) + geom_point()
+ggplot(cholesterol, aes(age, chol)) + 
+  geom_point()
 ```
 
 ![](Lesson_5_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 
-Let's add the mean to our plot for reference.
+Let's add the mean cholesterol to our plot for reference. This is done by adding `geom_hline` and specifying the value for the 'yintercept'.
 
 
 ```r
-ggplot(cholesterol, aes(age, chol)) + geom_point() + geom_hline(yintercept = mean(cholesterol$chol), color = "red")
+ggplot(cholesterol, aes(age, chol)) + 
+  geom_point() + 
+  geom_hline(yintercept = mean(cholesterol$chol), color = "red")
 ```
 
 ![](Lesson_5_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
-We can plot this association and it looks like the mean might increase with age, how do we test this?
+
+It looks like the mean might increase with age, but how do we test this?
 
 
 ##T-tests
     
-T-tests allow us to compare the means between groups. In that case, we need to split age into 2 groups to be able to compare the mean cholestorol between the groups. One way to do this is to use our `dplyr` skills to create a new column 'age_group'. We can use an if/else statement to ask the question: is age greater than 55 (the midpoint of age in our data)? If the answer is 'yes' the value is 1 and if it is 'no' (less than 55) the value is 0. We can now use a boxplot to look at the distribution of cholestorol for our 2 groups. How do we tell if these means are truely different?
+T-tests are a simple statistical tool let us to compare the means between groups. We don't currenly have age groups, but we can make them. One way to do this is to use our `dplyr` skills to create a new column 'age_group'. The data can be split at 55 years-old (the midpoint of age in our data). 
+
+We can use an if/else statement (the `ifelse` function) to test: is age greater than 55? If the answer is 'yes' the value is 1 and if the answer is 'no' the value is 0. We can take a quick look at our dataset to make sure this worked.
 
 
 ```r
 cholesterol <- cholesterol %>% mutate(age_group = ifelse(test = cholesterol$age > 55, yes = 1, no = 0))
+str(cholesterol)
+```
+
+```
+## 'data.frame':	400 obs. of  10 variables:
+##  $ ID       : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ sex      : int  1 1 0 0 1 1 0 0 0 0 ...
+##  $ age      : int  74 51 64 34 52 39 79 38 52 58 ...
+##  $ chol     : int  215 204 205 182 175 176 159 169 175 189 ...
+##  $ BMI      : num  26.2 24.7 24.2 23.8 34.1 22.7 22.9 24.9 20.4 22 ...
+##  $ TG       : int  367 150 213 111 328 53 274 137 125 209 ...
+##  $ rs174548 : int  1 2 0 1 0 0 2 1 0 0 ...
+##  $ rs4775401: int  2 1 1 1 0 2 1 1 1 1 ...
+##  $ APOE     : int  4 4 4 1 1 4 1 1 4 5 ...
+##  $ age_group: num  1 0 1 0 0 0 1 0 0 1 ...
+```
 
 
+We can now use a boxplot to look at the distribution of cholestorol for our 2 groups. 
+
+   
+    Boxplots are a great way to visualize summary statistics for your data. As a reminder, the thick line in the center of the box is the median. The upper and lower ends of the box are the first and third quartiles (or 25th and 75th percentiles) of your data. The whiskers extend to the largest value no further than 1.5*IQR (inter-quartile range - the distance between the first and third quartiles). Data beyond these whiskers are considered outliers and plotted as individual points. This is a quick way to see how comparable your samples or variables are.
+    
+
+
+```r
 ggplot(cholesterol, aes(factor(age_group),chol)) + geom_boxplot() +
   scale_x_discrete(labels = c("30-55", "56-80")) +
   xlab("age") +
   ylab("cholestorol (mg/dl)")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 
-    Boxplots are a great way to visualize summary statistics for your data. As a reminder, the thick line in the center of the box is the median. The upper and lower ends of the box are the first and third quartiles (or 25th and 75th percentiles) of your data. The whiskers extend to the largest value no further than 1.5*IQR (inter-quartile range - the distance between the first and third quartiles). Data beyond these whiskers are considered outliers and plotted as individual points. This is a quick way to see how comparable your samples or variables are.
+There seems to be a lot of overlap in our cholesterol values. How do we tell if the means are truely different? 
 
+Let's think about this a little more explicitly:
 
+The __null hypothesis__ is that there is no difference in the sample means between our groups. 
 
-The _null hypothesis_ is always that there is no difference in the sample means between our groups. 
+An __alternative hypothesis__ is that there is a difference between the means (2-sided test), or that the difference in means is greater or lesser than zero (1-sided test). 
 
-An _alternative hypothesis_ could be that there is a difference between the means (2-sided). Or that the difference in means is positive or negative (1-sided). 
+![](img/tails5.png)
 
-We will use a simple student's t-test to test for the alternative hypothesis that the true difference in means is not equal to 0. (You can run a 1-sided t-test by specifiying `alternative = 'greater'` or `alternative = 'less'`.
+</br>
+
+$\alpha$ is our p-value, and $\mu$ is the population mean, k is our sample mean. Remember that we are _estimating_ the true population mean using the sample that have. Our __p-value__ is the probability of finding our observed value by chance given that the null hypothesis is true.
+
+We will use a simple student's t-test to test the alternative hypothesis that the true difference in means is not equal to 0.
+
+The `t.test` function inputs the variables on which we are performing the test (in vector format), the type of t-test being performed, and the confidence interval. The __confidence interval__ is the interval that will cover the true parameter x% of the time. In the image above the confidence interval covers the pink area, (1-$\alpha$).
+
+You can alternatively enter your variables in a `formula`, in this case `y ~ x`. The `~` in r language is used to separate the left and right sides of a formula. (You can run a 1-sided t-test by specifiying `alternative = 'greater'` or `alternative = 'less'`). In this case, `alternative = 'two-sided'` and `conf.level = 0.95` are the default parameters and only included for clarity. For now we are assuming that equal variance is true.
 
 
 ```r
-t.test(formula = cholesterol$chol ~ cholesterol$age_group, alternative  = "two.sided", conf.level = 0.95)
+t.test(x= cholesterol$age_group, y = cholesterol$chol, alternative  = "two.sided", conf.level = 0.95, var.equal = TRUE)
+```
+
+```r
+#is equivalent to
+t.test(formula = cholesterol$chol ~ cholesterol$age_group, var.equal = TRUE)
 ```
 
 ```
 ## 
-## 	Welch Two Sample t-test
+## 	Two Sample t-test
 ## 
 ## data:  cholesterol$chol by cholesterol$age_group
-## t = -3.637, df = 393.48, p-value = 0.0003125
+## t = -3.6349, df = 398, p-value = 0.0003146
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
-##  -12.200209  -3.638487
+##  -12.202574  -3.636122
 ## sample estimates:
 ## mean in group 0 mean in group 1 
 ##        179.9751        187.8945
 ```
 
-```r
-#is equivalent to
-t.test(x= cholesterol$age_group, y = cholesterol$chol)
-```
 
-```
-## 
-## 	Welch Two Sample t-test
-## 
-## data:  cholesterol$age_group and cholesterol$chol
-## t = -165.81, df = 399.41, p-value < 2.2e-16
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -185.5921 -181.2429
-## sample estimates:
-## mean of x mean of y 
-##    0.4975  183.9150
-```
 
-Our output tells us the mean for those aged 30-55 is 180 mg/dl and the mean for those aged 56-80 is 188 mg/dl and that this significant at a p-value of 0.0003125.
+__Interpretation__
 
-So we now know there is a positive relationship between cholesterol and age. However the t-test has limitations. What is the magnitude of this relationship during aging? Can we see how much cholesterol might change by in a continuous manner (ie. how much does cholesterol change per year?)? What if we don't want to break our data into groups? 
+Our output tells us the mean cholesterol for those aged 30-55 is 180 mg/dl and the mean for those aged 56-80 is 188 mg/dl. The difference in means is significant at a p-value of 0.0003146. 
+
+So we now know there is a positive relationship between cholesterol and age. However the t-test has limitations. What is the magnitude of this relationship during aging? Does it change by approximately the same amount per year? What if we don't want to break our data into groups? 
 
 
 ##How we Evaluate which Model to Use
 
-Before we get too far, I have put together a table of data types and assumptions and what model should be used for each permutation. I hope to show that this means model selection is basically going through a mental checklist for your data, and that all of these models are related. 
-
-Models have assumptions that, if violated, will be giving incorrect predictions.
+Models have assumptions that, if violated, will give incorrect predictions. However, we might not know if these assumptions are true when selecting our model. Here are the assumptions of _linear models_ in general, the specific models we will be using today, and an example of each. We will trouble-shoot when asssumptions fail later in the lesson.
 
 ###Assumptions of general linear models
-1. observed values are independent of each other(independence)
-1. values are normally distributed (normality)
-1. constant variance, homoscedastic (equal variance)
-1. observed values are related linearly to x (linearity)
+1. observed values are independent of each other (_independence_)
+1. variation around expected values (residuals) are normally distributed (_normality_)
+1. constant variance, homoscedastic (_equal variance_)
+1. observed values (y) are related by linear functions of the parameters to x (_linearity_)
 
 
-For _simple linear regression_ we are modelling a continuous outcome by a single continuous variable. In our example we might be modelling cholesterol using BMI.
+For __simple linear regression__ we are modelling a continuous outcome by a single continuous variable. Example: modelling cholesterol using BMI.
 
-For _multiple linear regression_ we are modelling a continuous outcome by more than one continuous variable. This could be modelling cholestorol using BMI AND age. In this case, we must consider whether there is an _interaction_ between age and BMI on cholesterol. 
+For __multiple linear regression__ we are modelling a continuous outcome by more than one continuous variable. Example: modelling cholestorol using BMI AND age. In this case, we must consider whether there is an _interaction_ between age and BMI on cholesterol (more on interactions to follow). 
 
-For _one-way ANOVA_ we are modelling a continuous outcome by a single categorical variable. This could be modelling cholesterol by sex. It is important that categorical variables are explicitly inputted as factors to be interpreted properly in the model. For example, since we have encoded sex as 0 and 1 (instead of 'M' and 'F'), we need to specify that sex is to be treated as a categorical variable and not a number. Therefore we turn sex into a factor of 2 levels, 0 and 1.
+For __one-way ANOVA__ we are modelling a continuous outcome by a single categorical variable. Example: modelling cholesterol by sex. It is important that categorical variables are explicitly input as factors to be interpreted properly in the model. For example, since we have encoded sex as 0 and 1 (instead of 'M' and 'F'), we need to specify that sex is to be treated as a categorical variable and not a number. Therefore we specify sex as a factor of 2 levels, 0 and 1.
 
-For _multi-way ANOVA_ we are modelling a continous outcome by more than one categorical variable. This could be modelling sex and APOE genetic variants. Again, we need to consider any interaction between our categorical variables, and we need to specify that our numeric values are encoded and to be treated as a categorical variable and not a number. APOE will be a factor of 6 levels, one for each genetic variant.
+For __multi-way ANOVA__ we are modelling a continous outcome by more than one categorical variable. Example: modelling sex and APOE genetic variants. Again, we need to consider any interaction between our categorical variables, and we need to specify our numeric values to be treated as categorical variables and not numbers. APOE will be a factor of 6 levels, one for each genetic variant.
 
-Lastly, for _ANCOVA_ we are modelling a continuous variable by a combination of categorical AND continuous variables. This could be modelling cholesterol using the genetic variants of APOE and BMI. Again, our categorical variable must be input as a factor.
-...............allows for separate slopes.....................
+Lastly, for __ANCOVA__ we are modelling a continuous variable by a combination of categorical AND continuous variables. This could be modelling cholesterol using the genetic variants of APOE and BMI. Again, our categorical variable must be input as a factor. ANCOVA allows for each group (each genetic variant of APOE in this example) to have a separate slope.
 
 
-This is a summary table you might find helpful choosing a model based on the data types you have and the asssumptions you are making.
+
+This is a summary table you might find helpful for choosing a model based on the data types you have and the asssumptions you are making. I hope to show that model selection is akin to going through mental checklist for your data, and not that scary.
 
 <table class="table table-striped table-hover" style="width: auto !important; ">
  <thead>
@@ -227,9 +287,9 @@ This is a summary table you might find helpful choosing a model based on the dat
    <th style="text-align:left;"> model </th>
    <th style="text-align:left;"> categorical </th>
    <th style="text-align:left;"> continuous </th>
-   <th style="text-align:left;"> linear </th>
-   <th style="text-align:left;"> normal_errors </th>
-   <th style="text-align:left;"> independent </th>
+   <th style="text-align:left;"> linearity </th>
+   <th style="text-align:left;"> normality </th>
+   <th style="text-align:left;"> independence </th>
   </tr>
  </thead>
 <tbody>
@@ -301,25 +361,27 @@ This is a summary table you might find helpful choosing a model based on the dat
 </table>
 
 
-###Interpreting the output of our model
-You don't have to know all of the assumptions are true before selecting a model. The output of our model can tell us that our assumptions are not correct. 
+</br>
 
-###Assessing the performance of the model (feedback)
-+ Diagnostic plots (ie. residuals, Q-Q plots)
-+ model comparisons (anova)
+Now, we will pick a model for the question we had answered with our t-test while considering the assumptions above.
 
+__What is the relationship between cholestorol and age?__
 
-Take a moment to think about the question we are asking...
-    What is the relationship between cholestorol and age?
-    Looking at the chart we can at least say that we are dealing with continuous variables, not categorical (ie. sex or APOE). From the plot above it looks like if there is a relationship between age and cholestorol it would be linear, and points looked like they had equal-ish variance around the mean. Are values of y normally distributed? We can take a quick look by making a histogram for values of y.  
+If we evaluate our variables, they are both continuous, not categorical (ie. sex or APOE). We have a single continuous variable with which to make our prediction about our dependent variable. From the plot we made earlier (repeated here) it looks like if there is a relationship between age and cholestorol it would be linear, and points looked like they had equal-ish variance around the mean.    
 
 
 ```r
-ggplot(cholesterol, aes(x=chol)) + geom_histogram(binwidth = 10)
+ggplot(cholesterol, aes(age, chol)) + 
+  geom_point()
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
-Mean serum cholesterol looks normally distributed, and values are independent. So we will be using a simple linear regression to test the association of mean serum cholesterol with age.
+![](Lesson_5_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
+Are values the residuals of y normally distributed?
+
+![SISG_2016_2](img/y_dist.png)
+
+I'm not really sure if the residuals are normally distributed or not. The values are independent (from separate unrelated subjects). So we will try using a simple linear regression to test the association of mean serum cholesterol with age.
 
 
 ##Simple linear regression
@@ -331,7 +393,7 @@ What I am looking for then, is the slope of the line relating cholesterol to age
 ggplot(cholesterol, aes(age, chol)) + geom_point() + stat_smooth(method = "lm")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 
 Just to make sure everyone is comfortable, we will briefly review the equation for a straight line.
 
@@ -367,16 +429,15 @@ Let's actually run this simple linear regression.
 When we use code for this in R, the intercept and slope terms are implicit.
 
 _R code:_ 
-\begin{equation*}
-lm(y \verb|~| x)
-\end{equation*}
+
+lm(y ~ x)
+
 
 To force the intercept to zero: Y~ Normal(bx, sigma^2)
 
 _R code:_ 
-\begin{equation*}
-lm(y \verb|~| x-1)
-\end{equation*}
+
+lm(y ~ x-1)
 
 Our dependent variable (cholesterol) is a function (~) of our independent variable (age), which is entered as a formula, along with the dataset. 
 
@@ -528,7 +589,7 @@ Y \verb|~|  Normal(ax^b, {\sigma^2})
 
 ###Adding extra variables to our model
 
-How we are interested in multiple linear regression is to improve our model by adding extra variable we think might have an effect on our outcome values. In the example below, we are adding the independent variables x1, x2, x3, and each of these terms has their own linear parameter b1, b2, b3.
+How we are interested in multiple linear regression is to improve our model by adding extra variable we think might have an effect on our outcome values. In the example below, we are adding the independent variables x~1~, x~2~, x~3~, and each of these terms has their own linear parameter b~1~, b~2~, b~3~.
 
 _Expression:_ 
 
@@ -537,13 +598,13 @@ Y \verb|~| Normal(a + b_1x + b_2x_2 + b_3x_3, {\sigma^2})
 \end{equation*}
 
 
-b2 is the expected mean change in unit per change in x2 if x1 is held constant (controlling for x1). The null hypothesis is that all b1, b2, b3 =0. The alternative hypothesis is that at least one of these parameters is not null. 
+b2 is the expected mean change in unit per change in x~2~ if x~1~ is held constant (controlling for x~1~). The null hypothesis is that all b~1~, b~2~, b~3~ = 0. The alternative hypothesis is that at least one of these parameters is not null. 
 
 Again intercept and coefficients are implicit in the the `lm` function.
 
 _R code:_ 
 
-lm(y ~ x_1 +x_2 + x_3)
+lm(y ~ x~1~ +x~2~ + x~3~)
 
 We know that age has an effect on cholesterol. With our new model we want to test whether BMI has an association with cholestorol when controlling for age. Let's look graphically at these relationships to help us understand our model. First let's plot BMI vs cholestorol. We can add a linear fit to make sure we are expecting a positive slope.
 
@@ -552,7 +613,7 @@ We know that age has an effect on cholesterol. With our new model we want to tes
 ggplot(cholesterol, aes(BMI, chol)) + geom_point() + stat_smooth(method = "lm")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
 
 We should also take a look at the relationship between BMI and age.
 
@@ -561,7 +622,7 @@ We should also take a look at the relationship between BMI and age.
 ggplot(cholesterol, aes(age, BMI)) + geom_point() + stat_smooth(method = "lm")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
 
 Cholesterol increases with BMI. BMI increases with age. We will look at the association of age while holding BMI constant just so our model output is in the same order as previously. Switching the variables here will not change our slope or intercept.
 
@@ -633,15 +694,9 @@ Our second model is a signifcant improvement.
 
 ###Interaction terms 
 
-What is meant by an _interaction_? The slope with respect to one covariate changes linearly as a function of another covariate.
+What is meant by an interaction? There is an __interaction__ if The slope with respect to one covariate changes linearly as a function of another covariate.
 
-![](img/GSS_sealevel_interaction.png)
-
-
-The association between the response and the predictor changes across the range of the new variable. This is different than a _confounding factor_, which is associated with the predictor and response, however the association between the response and predictor is constant across the range of the new variable.
-
-
-The difference in means changes additionally by b3 for each unit difference in x2. b3 is the difference of differences. The slope of x1 changes with x2, because b3 is changing.
+As we can see in the expression, the difference in means between x~1~ and x~2~ changes additionally by b~3~ for each unit difference in x~2~. b~3~ is the difference of differences. The slope of x~1~ changes with x~2~, because b~3~ is changing.
 
 
 _Expression:_ 
@@ -650,13 +705,23 @@ _Expression:_
 Y  \verb|~|  Normal(a + b_1x_1 + b_2x_2 + b_3x_1x_2, {\sigma^2})   
 \end{equation*}
 
+
+In this example of people who care if sea level rises 20 feet, it is apparent that there is an interaction between education and ideology. We can see, for example, that the slope for 'extremely liberal' changes with each education level. If there was no interaction with ideology, these lines would be parallel.  
+
+![](img/GSS_sealevel_interaction.png){width=600px}
+
+</br>
+
+The association between the response and the predictor changes across the range of the new variable. This is different than a _confounding factor_, which is associated with the predictor and response, however the association between the response and predictor is constant across the range of the new variable.
+
+
+
 When testing for an interaction between 2 input variables, the `lm` input uses an asterik '*' instead of a plus sign.
 
 _R code:_ 
 
-\begin{equation*}
-lm(y \verb|~| x_1*x_2)
-\end{equation*}
+
+lm(y ~ x~1~*x~2~)
 
 
 ***
@@ -697,10 +762,7 @@ We still use the `lm` function, however we replace our continuous variable with 
 
 _R code:_ 
 
-
-$\begin{aligned}
-\text{lm(y }\verb|~| \text{f)}
-\end{aligned}$
+lm(y ~ f)
 
 
 R parameterizes the model in terms of the differences between the first group and subsequent groups rather than in terms of the mean of each group. This is similar to the interpretation of the previous linear models. (You can tell it to fit the means of each group using: lm(y ~ f-1)).
@@ -714,7 +776,7 @@ We can first plot the relationship between rs174548 and cholestorol.
 ggplot(cholesterol, aes(as.factor(rs174548), chol)) + geom_boxplot()
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
 Our genetic factor has 3 groups, and we will be comparing the means for each of these groups. These groups have high variance, and there is a good deal of overlap between them.
 
 To assess wherther the means are equal, the model compares:
@@ -1272,7 +1334,7 @@ anova(fit, mfit2)
 ggplot(cholesterol, aes(age, chol, color = factor(sex))) + geom_point() + stat_smooth(method = "lm")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
 __Interpretation__
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
@@ -1421,7 +1483,7 @@ predict(mfit, newdata = data.frame(BMI = c(21,22,23), age = 60), interval = "pre
 
 
 
-##Model checking
+##Assessing the performatnce of the model (feedback)
 
 
 ###Checking Residuals
@@ -1502,7 +1564,7 @@ For example, plotting residuals against x (age), should be unstructured and cent
 ggplot(cholesterol, aes(x=age, y=fit$residuals)) + geom_point() + geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
 
 If the residuals look like they are grouped in one section of the plot, or follow a pattern (ie. looks quadratic - you would have a nonlinear association), then the model is not a good fit. If it looks like a sideways tornado, then errors are increasing with x, and this is non-constant variance.
 
@@ -1523,7 +1585,7 @@ datfit <- augment(fit)
 ggplot(datfit, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 
 Bartlett's test - test whether or not population variances are all the same
@@ -1552,7 +1614,7 @@ QQ(quantile-quantile)-plots: Does our data follow the (normal) distribution? The
 qqnorm(fit$residuals)
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
 
 This looks pretty straight. We have normality of errors.
 
@@ -1563,7 +1625,7 @@ Let's try a less perfect example and look at the relationship between age and tr
 ggplot(cholesterol, aes(age, TG)) + geom_point() + stat_smooth(method = "lm")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
 
 
 
@@ -1582,7 +1644,7 @@ datfitTG <- augment(fitTG)
 ggplot(datfitTG, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
 
 Our residuals are now increasing with increasing values of y. 
 
@@ -1591,7 +1653,7 @@ Our residuals are now increasing with increasing values of y.
 qqnorm(datfitTG$.resid)
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
 
 Our qqplot points are deviating from the line suggesting a poor fit for our model.
 
@@ -1701,7 +1763,7 @@ summary(logfit)
 ggplot(logdat, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
 
 We corrected the non-constant variance issue, but it is harder to interpret our model. 
 
@@ -1747,19 +1809,26 @@ __Resources:__
 <http://michael.hahsler.net/SMU/EMIS7331/R/regression.html>     
 <https://ms.mcmaster.ca/~bolker/emdbook/book.pdf>
 <http://www.differencebetween.net/science/mathematics-statistics/difference-between-ancova-and-regression/>
-    
+<https://stats.stackexchange.com/questions/77563/linear-model-fit-seems-off-in-r>     
+<https://www.biostat.washington.edu/suminst/archives/SISG2016/SM1604>     
+<https://ms.mcmaster.ca/~bolker/>         
+<http://www.mathnstuff.com/math/spoken/here/2class/90/htest.htm>
 
-
-##Post-Lesson Assessment
+#Post-Lesson Assessment
 ***
-_Questions_
 
-- Speed: Too slow, too fast, just right
-- Content: Too easy, too hard, just right
-- From the description of the lesson, the content was what I expected to learn. T/F
-- What was the most useful thing you learned?
-- What was the least useful thing?
-- Comments/suggestions for improvement.
+Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
+https://www.surveymonkey.com/r/3RKC6MP
+
+</br>
+
+***
+
+</br>
+
+Thanks for coming!!!
+
+![](img/rstudio-bomb.png){width=300px}
 
 
 ##Notes
