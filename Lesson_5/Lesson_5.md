@@ -258,14 +258,30 @@ So we now know there is a positive relationship between cholesterol and age. How
 
 ##How we Evaluate which Model to Use
 
-Models have assumptions that, if violated, will give incorrect predictions. However, we might not know if these assumptions are true when selecting our model. Here are the assumptions of _linear models_ in general, the specific models we will be using today, and an example of each. We will trouble-shoot when asssumptions fail later in the lesson.
+
+![All (or most) of statistics. Bolker, 2007.](img/Screenshot_2018-04-23_09-03-16.png)
+
+</br>
+
+There are a ton of models (or families of models) out there for different statistical purposes and with different assumptions. These assumptions, if violated, will give incorrect predictions. However, we might not know if these assumptions are true when selecting our model. Today we are hanging out in the top left corner, and we are going to learn the assumptions of _linear models_ in general, the specific models we will be using today, and an example of each. We will trouble-shoot when asssumptions fail later in the lesson.
+
 
 ###Assumptions of general linear models
-1. observed values are independent of each other (_independence_)
-1. variation around expected values (residuals) are normally distributed (_normality_)
-1. constant variance, homoscedastic (_equal variance_)
-1. observed values (y) are related by linear functions of the parameters to x (_linearity_)
+1. observed values are independent of each other (_independence_)     
+   - The probability of an event occurring does not affect the probability of another event occurring.
+2. variation around expected values (residuals) are normally distributed (_normality_)
+    ![SISG_2016_2](img/y_dist.png){width=400px}
+3. constant variance, homoscedastic (_equal variance_)     
+![](img/homo.png){width=400px}
+  - For values of x, values of y show equal variance.
 
+4. observed values (y) are related by linear functions of the parameters to x (_linearity_)     
+   - Example: For $y = a + b_1x+b_2x^2$, the parameters a, b~1~, and b~2~ are linear even though the independent variable has a quadratic component, $x^2$. However, $y = ax^b$ is nonlinear with respect to the parameter b, and is not suitable for linear regression.
+
+Assumptions 2 and 3 are often grouped together.
+</br>
+
+###The Linear Models
 
 For __simple linear regression__ we are modelling a continuous outcome by a single continuous variable. Example: modelling cholesterol using BMI.
 
@@ -279,7 +295,7 @@ Lastly, for __ANCOVA__ we are modelling a continuous variable by a combination o
 
 
 
-This is a summary table you might find helpful for choosing a model based on the data types you have and the asssumptions you are making. I hope to show that model selection is akin to going through mental checklist for your data, and not that scary.
+This is a summary table you might find helpful for choosing a model based on the data types you have and the asssumptions you are making. I hope to show that model selection is akin to going through mental checklist for your data, and not that scary. The independence assumption is required for all the models below, and is not included in the chart for spacing reasons.
 
 <table class="table table-striped table-hover" style="width: auto !important; ">
  <thead>
@@ -289,7 +305,7 @@ This is a summary table you might find helpful for choosing a model based on the
    <th style="text-align:left;"> continuous </th>
    <th style="text-align:left;"> linearity </th>
    <th style="text-align:left;"> normality </th>
-   <th style="text-align:left;"> independence </th>
+   <th style="text-align:left;"> equal_variance </th>
   </tr>
  </thead>
 <tbody>
@@ -353,49 +369,51 @@ This is a summary table you might find helpful for choosing a model based on the
    <td style="text-align:left;"> generalized linear models </td>
    <td style="text-align:left;"> $\checkmark$ </td>
    <td style="text-align:left;"> $\checkmark$ </td>
+   <td style="text-align:left;"> X* </td>
    <td style="text-align:left;"> X </td>
    <td style="text-align:left;"> X </td>
-   <td style="text-align:left;"> $\checkmark$ </td>
   </tr>
 </tbody>
 </table>
-
+*restricted cases
 
 </br>
 
-Now, we will pick a model for the question we had answered with our t-test while considering the assumptions above.
+***
+
+Revisiting our question:
 
 __What is the relationship between cholestorol and age?__
 
-If we evaluate our variables, they are both continuous, not categorical (ie. sex or APOE). We have a single continuous variable with which to make our prediction about our dependent variable. From the plot we made earlier (repeated here) it looks like if there is a relationship between age and cholestorol it would be linear, and points looked like they had equal-ish variance around the mean.    
+Now, we can pick a model to answer our question instead of a t-test by considering the assumptions above.
+
+If we evaluate our independent and dependent variables, cholesterol and age, they are both continuous, not categorical. We only have one dependent variable. From the plot we made earlier (repeated here) it looks like if there is a relationship between age and cholestorol it would be linear. Data points have an even spread so the variance is likely equal and normally distributed. The values are independent (from separate blood draws).    
 
 
 ```r
 ggplot(cholesterol, aes(age, chol)) + 
-  geom_point()
+  geom_point() 
 ```
 
 ![](Lesson_5_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
-Are values the residuals of y normally distributed?
-
-![SISG_2016_2](img/y_dist.png)
-
-I'm not really sure if the residuals are normally distributed or not. The values are independent (from separate unrelated subjects). So we will try using a simple linear regression to test the association of mean serum cholesterol with age.
+Based on the above criteria, we will try using a simple linear regression to test the association of mean serum cholesterol with age.
 
 
 ##Simple linear regression
 
-What I am looking for then, is the slope of the line relating cholesterol to age, which will tell me the magnitude and direction of the relationship between these variables. We can look at the slope for linear model that `ggplot` would fit for us.
+What we are looking for then, is the slope of the line relating cholesterol to age, which will tell us the magnitude and direction of the relationship between these variables. We can look at the slope for the linear model that `ggplot` would fit for us for an idea of what our model will look like.
 
 
 ```r
-ggplot(cholesterol, aes(age, chol)) + geom_point() + stat_smooth(method = "lm")
+ggplot(cholesterol, aes(age, chol)) +
+  geom_point() +
+  stat_smooth(method = "lm")
 ```
 
 ![](Lesson_5_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 
-Just to make sure everyone is comfortable, we will briefly review the equation for a straight line.
+__Review:__ the equation for a straight line.
 
 _Expression:_ 
 
@@ -404,45 +422,51 @@ Y \verb|~| Normal(a + bx, {\sigma^2})
 \end{equation*}
 
 
-\begin{equation*}
-y = a + bx + \epsilon, \epsilon \verb|~| N\{0, \sigma^2\}
-\end{equation*}
+_Y_ is our dependent variable that we are attempting to model. 
+_x_ is our independent variable.           
+_a_ is the intercept (the value of y where x = 0; where x crosses the y-axis).     
+_b_ is the slope of the line (the change in y corresponding to a unit increase in x).      
+_Normal_ is telling us that our error is normally distributed.     
+$\sigma^2$ is the variance (squared deviation of the variable x from its mean)
+
+_Slopes_     
+- A flat line (_b_ = 0) would mean that there is no association between x and y.      
+- The above example has a positive slope, meaning that y increases as values of x increase.  
+- With a negative slope, y decreases as values of x increase. 
+
+The __interpretation__ in our example is that the slope is the difference in mean serum cholesterol associated with a one year increase in age.
+
+With a straight line we are not, of course, plotting through all of our points, but rather the _mean_ of an outcome in y as a function of x. For example, there are values of cholestorol for about six 50 year-olds, and our line will fall somewhere close to the mean of these values. Values of y have a distribution at a given x, which we have assumed is normally distributed.
 
 
-y is our dependent variable that we are attempting to model and x is our independent variable. Here a is the intercept, which is the value of x where y = 0 (where x crosses the y-axis), and b is the slope of the line, which is the change in y corresponding to a unit increase in x. A flat line would mean that there is no association between x and y. The above example has a positive association with a positive slope, meaning that y increases as values of x increase. With a negative association and negative slope, y decreases as values of x decrease. The interpretation in our example is that the slope is the difference in mean serum cholesterol associated with a one year increase in age.
-
-With a straight line we are not, of course, plotting through all of our points, but rather the mean of an outcome in y as a function of x. For example, there are values of cholestorol for about six 50 year-olds, and our line will fall somewhere close to the mean of these values. Likewise, there is a distribution for values of y at a given x, and the assumption is that this distribution is normally distributed.
-
-![SISG_2016_2](img/y_dist.png)
-
-In this equation we also have some normally distributed variance - sampling error exists in our estimates, because different estimates give different means. 
+Lastly, in this equation we also have some normally distributed error - sampling error exists in our estimates, because different estimates give different means. 
 
 
-Okay, but how do we actually find the best fitting line? We are using _least squares estimation_; we are minimizing the sum of squares of the vertical distances from the observed points to the least squares regression line.
+Okay, but how do we actually find the best fitting line? We use __least squares estimation__, which minimizes the sum of squares of the vertical distances from the observed points to the least squares regression line ($y -\hat{y}$) .
 
-![](img/least_squares.png)
+$y$ - observed value         
+$\hat{y}$ - estimated value     
+$\bar{y}$ - sample mean     
+
+![](img/least_squares.png){width=600px}
  
+ </br>
  
- 
-Let's actually run this simple linear regression.
-
-When we use code for this in R, the intercept and slope terms are implicit.
+Let's run this simple linear regression. Using R, the intercept and slope terms are implicit.
 
 _R code:_ 
 
 lm(y ~ x)
 
 
-To force the intercept to zero: Y~ Normal(bx, sigma^2)
+    There are times when the intercept, the value of y at x = 0, doesn't make much intuitive sense to interpret our data. To force the intercept to zero (y = bx) to have relative comparisons instead use: lm(y ~ x-1).
 
-_R code:_ 
 
-lm(y ~ x-1)
 
-Our dependent variable (cholesterol) is a function (~) of our independent variable (age), which is entered as a formula, along with the dataset. 
+As we are used to with writing equations, our dependent variable (cholesterol) is on the left side the `lm` formula and our independent variable (age) is on the right side; tilde `~` separates these sides. We also input the dataset to the `lm` function. 
 
 ```r
-lm(chol~age, data = cholesterol)
+lm(chol ~ age, data = cholesterol)
 ```
 
 ```
@@ -455,11 +479,11 @@ lm(chol~age, data = cholesterol)
 ##    166.9017       0.3103
 ```
 
-The model will output our formula, and our slope and intercept. However, if we save the model into an object, 'fit', we get a list object of the model, its input, and all associated statistics. We can look at a summary and get our residuals, errors, p-values and more in addition to our coefficients.
+The function will output our formula, the slope and the intercept. However, if we save the output of the function into an object, 'fit', we get a list object of the model, the input, and all associated statistics. We can look at a summary and get residuals, errors, p-values and more in addition to our coefficients.
 
 
 ```r
-fit <- lm(chol~age, data = cholesterol)
+fit <- lm(chol ~ age, data = cholesterol)
 
 summary(fit)
 ```
@@ -493,10 +517,9 @@ __Interpretation__
 
 </div>
 
-Let's look for the intercept and slope here. The Intercept is 166.9 and the slope is 0.31. What does that actually mean? It means a baby (age 0) would be expected to have 167 mg/dl average serum cholesterol. For every yearly increase in age, mean serum cholesterol is expected to increase by 0.31 mg/dl. These results are significant with a p-value < 0.001. We can say that the mean serum cholesterol is significantly higher in older individuals.
+The intercept is 166.9 and the slope is 0.31. What does that actually mean? It means a baby (age 0) would be expected to have on average a serum cholesterol of 166.9 mg/dl. For every yearly increase in age, mean serum cholesterol is expected to increase by 0.31 mg/dl. These results are significant with a p-value < 0.001. We can reject the null hypothesis and say that mean serum cholesterol is significantly higher in older individuals.
 
-_Confidence intervals_ will cover the true parameter x% of the time.
-
+We can further get confidence intervals for these values to say that 95% of the time we expect the cholesterol of a baby to fall within 158.5-175.3 mg/dl, or that we are 95% confident that the difference in mean cholesterol associated with a one year increase in age is between 0.16 and 0.46 mg/dl.
 
 ```r
 confint(fit)
@@ -508,64 +531,17 @@ confint(fit)
 ## age           0.1624211   0.4582481
 ```
 
-We are 95% confident that the difference in mean cholesterol associated with a one year increase in age is between 0.16 and 0.46 mg/dl.
-
-
-Predicting values assumes that your model is true. This might be fair within the range of your data. This is to be interpreted with caution outside the range of your data.
-
-![](img/extrapolate.png)
-</br>
-
-![xkcd](img/extrapolating.png)
-
-If you want to predict the mean at a particular point, for example, at age 47. 
-
-```r
-predict.lm(fit, newdata = data.frame(age=47), interval = "confidence")
-```
-
-```
-##        fit      lwr      upr
-## 1 181.4874 179.0619 183.9129
-```
-
-
-If you want to predict where a new observation at age 47 might be.
-
-
-```r
-predict.lm(fit, newdata = data.frame(age=47), interval = "prediction")
-```
-
-```
-##        fit      lwr      upr
-## 1 181.4874 138.7833 224.1915
-```
-
-Notice the difference in the upper and lower boundaries in these predictions. The first is the prediction for the mean serum cholestorol for individuals age 47 and the second is for a single new individual of age 47. The second prediction has to account for random variability around the mean, rather than just the precision of the estimate of the mean.
-
-
-R^2 - correlation coefficient squared - ours (multiple R-squared) is 0.04. What does this tell us? 4% of the variability in cholestorol is explained by age.
-
-Degrees of Freedom
-Decomposition of sum of squares
-mean squares = SS/df
-F-Statistic = MSR/MSE
-
-in simple linear regression F-stat = (t-stat for slope)^2 for the hypothesis that the slope is not zero (ie. 2-sided)
-
-
 
 
 ##Multiple linear regression
 
-Multiple continuous variables are included to predict the outcome. Our question can now be: is there a statistically significant relationship between mean serum cholestorl and BMI after adjusting for other predictors (ie. age) in the model?
+In multiple linear regression we use multiple continuous covariates to predict outcome values. Additional terms can be added in 2 ways.
 
 ***
 
 ###Adding covariates that are powers of a variable (polynomial regression)
 
-When we talk about 'linear' what we are interested in is the linear function of the _parameters_ and not the independent variables. In the example below, the parameters a, b1, and b2 are linear even though we have the independent variable has a quadratic component, x^2. 
+It was mentioned before that the 'linear' part of linear regression is the linear function of the _parameters_ and not the independent variables. In the example below, the parameters $a$, $b_1$, and $b_2$ are linear even though we have the independent variable has a quadratic component, $x^2$. An example of this could be synthesizing a chemical, where with increasing temperature synthesis progresses with an increasing curve.
 
 _Expression:_ 
 
@@ -579,52 +555,54 @@ _R code:_
 
 lm(y ~ x + I(x^2))
 
-The following equation is non-linear with respect to the parameter b, and is not a model for linear regression.
-
-\begin{equation*}
-Y \verb|~|  Normal(ax^b, {\sigma^2}) 
-\end{equation*}
 
 ***
 
 ###Adding extra variables to our model
 
-How we are interested in multiple linear regression is to improve our model by adding extra variable we think might have an effect on our outcome values. In the example below, we are adding the independent variables x~1~, x~2~, x~3~, and each of these terms has their own linear parameter b~1~, b~2~, b~3~.
+We are interested in improving our model by adding extra variable we think might have an effect on our outcome values. In the example below, we are adding the independent variables x~1~, x~2~, x~3~, and each of these terms has their own linear parameter b~1~, b~2~, b~3~.
 
 _Expression:_ 
 
 \begin{equation*}
-Y \verb|~| Normal(a + b_1x + b_2x_2 + b_3x_3, {\sigma^2})
+Y \verb|~| Normal(a + b_1x_1 + b_2x_2 + b_3x_3, {\sigma^2})
 \end{equation*}
 
+This is the model we will be using next. To aid with interpretation let's think about a parameter. b2 is the expected mean change in unit per change in x~2~ if x~1~ is held constant (sometimes called controlling for x~1~). 
 
-b2 is the expected mean change in unit per change in x~2~ if x~1~ is held constant (controlling for x~1~). The null hypothesis is that all b~1~, b~2~, b~3~ = 0. The alternative hypothesis is that at least one of these parameters is not null. 
+The null hypothesis in this case is that all b~1~, b~2~, b~3~ = 0. The alternative hypothesis is that at least one of these parameters is not null. 
 
-Again intercept and coefficients are implicit in the the `lm` function.
+Again in R the intercept and coefficients are implicit in the the `lm` function.
 
 _R code:_ 
 
 lm(y ~ x~1~ +x~2~ + x~3~)
 
-We know that age has an effect on cholesterol. With our new model we want to test whether BMI has an association with cholestorol when controlling for age. Let's look graphically at these relationships to help us understand our model. First let's plot BMI vs cholestorol. We can add a linear fit to make sure we are expecting a positive slope.
+
+
+We know that age has an effect on cholesterol. With our new model we want to ask the question: __Is there a statistically significant relationship between mean serum cholesterol and age after controlling for BMI?__ Let's look graphically at these relationships to help us understand our model. First let's plot BMI vs cholestorol. We can add a linear fit to make sure we are expecting a positive slope.
 
 
 ```r
-ggplot(cholesterol, aes(BMI, chol)) + geom_point() + stat_smooth(method = "lm")
+ggplot(cholesterol, aes(BMI, chol)) + 
+  geom_point() + 
+  stat_smooth(method = "lm")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
 
 We should also take a look at the relationship between BMI and age.
 
 
 ```r
-ggplot(cholesterol, aes(age, BMI)) + geom_point() + stat_smooth(method = "lm")
+ggplot(cholesterol, aes(age, BMI)) + 
+  geom_point() + 
+  stat_smooth(method = "lm")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
 
-Cholesterol increases with BMI. BMI increases with age. We will look at the association of age while holding BMI constant just so our model output is in the same order as previously. Switching the variables here will not change our slope or intercept.
+Cholesterol increases with BMI. BMI increases with age. We will look at the association of age and cholesterol while holding BMI constant to see if the significance of our finding of the increase in cholesterol with age was affected by BMI.
 
 
 ```r
@@ -662,13 +640,15 @@ __Interpretation__
 
 </div>
 
-So our equation would now look like y = 137 + 0.2age + 1.43BMI. Interpreting the 0.2 slope would be the estimated increase in mean serum cholestorol over after one year holding BMI constant (for 2 subjects with the same BMI). This is less than our previous value of 0.31. Why do the estimates differ?
+Our equation would now look like $y = 137.16 + 0.20age + 1.43BMI$. 
 
-Before, we were not controlling for BMI. Our estimates of the age association for the mean increase in cholestorol is now for subjects with the same BMI and not for subjects with all BMIs.
+The estimated increase in mean serum cholestorol over after one year holding BMI constant is 0.20 mg/dl. This increase is less than our previous value of 0.31 mg/dl. Why do the estimates differ?
 
-Here it looks like both age and BMI are significant. But we might want to verify - did adding BMI actually make our model better?
+Before, we were not controlling for BMI. Our estimates of the age associated increase in mean cholestorol is now for subjects with the _same_ BMI and not for subjects with _all_ BMIs.
 
-We can compare these models with the `anova` function. With _2 lm objects_, this function _tests the models_ against one another and prints these results in an analysis of variance table. (Given _1 lm object_, it will test whether model _terms_ are significant - we will be using the function in this format later.)
+It looks like both age and BMI are significant. But we might want to verify - did adding BMI actually make our model better?
+
+We can compare these models with the `anova` function. The output of our model, 'mfit', is an `lm` object. With 2 `lm` objects, the `anova` function tests the _models_ against one another to see if their coefficients are significantly different and prints these results in an analysis of variance table. (Given 1 `lm` object, it will test whether model _terms_ of a model are significant - we will be using the function in this format later.)
 
 
 ```r
@@ -687,7 +667,9 @@ anova(fit, mfit)
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-Our second model is a signifcant improvement.
+Our second model is a signifcantly different from our first model. What is this significance based on?
+
+The significance is a probability based on an F test. While the t-test tells if you a single variable is statistically significant, and an __F-test__ tells you if a group of variables is jointly significant. Since the F-test compares the joint effect of all variables together, a large F value means 'something' is significant. F-tests are not used alone because you still need to use a p-value to find out 'what' is significant. 
 
 
 
@@ -696,14 +678,14 @@ Our second model is a signifcant improvement.
 
 What is meant by an interaction? There is an __interaction__ if The slope with respect to one covariate changes linearly as a function of another covariate.
 
-As we can see in the expression, the difference in means between x~1~ and x~2~ changes additionally by b~3~ for each unit difference in x~2~. b~3~ is the difference of differences. The slope of x~1~ changes with x~2~, because b~3~ is changing.
-
 
 _Expression:_ 
 
 \begin{equation*}
 Y  \verb|~|  Normal(a + b_1x_1 + b_2x_2 + b_3x_1x_2, {\sigma^2})   
 \end{equation*}
+
+In the expression, the difference in means between x~1~ and x~2~ changes additionally by b~3~ for each unit difference in x~2~ or x~1~. For example, the slope of x~1~ changes with x~2~, because b~3~ is changing.
 
 
 In this example of people who care if sea level rises 20 feet, it is apparent that there is an interaction between education and ideology. We can see, for example, that the slope for 'extremely liberal' changes with each education level. If there was no interaction with ideology, these lines would be parallel.  
@@ -776,7 +758,7 @@ We can first plot the relationship between rs174548 and cholestorol.
 ggplot(cholesterol, aes(as.factor(rs174548), chol)) + geom_boxplot()
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
 Our genetic factor has 3 groups, and we will be comparing the means for each of these groups. These groups have high variance, and there is a good deal of overlap between them.
 
 To assess wherther the means are equal, the model compares:
@@ -1334,7 +1316,7 @@ anova(fit, mfit2)
 ggplot(cholesterol, aes(age, chol, color = factor(sex))) + geom_point() + stat_smooth(method = "lm")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
 __Interpretation__
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
@@ -1456,6 +1438,54 @@ In the table below, our R code for each of the models has been generalized. Here
 You need not memorize any of these charts - you may just want to use them to orient yourself in the future. Much of the R code seems the same whether you are doing multiple linear regression, ANOVA or ANCOVA, so it is good to have a reference point.
 
 #Prediction
+
+Predicting values assumes that your model is true. This might be fair within the range of your data. This is to be interpreted with caution outside the range of your data.
+
+![](img/extrapolate.png)
+</br>
+
+![xkcd](img/extrapolating.png)
+
+If you want to predict the mean at a particular point, for example, at age 47. 
+
+```r
+predict.lm(fit, newdata = data.frame(age=47), interval = "confidence")
+```
+
+```
+##        fit      lwr      upr
+## 1 181.4874 179.0619 183.9129
+```
+
+
+If you want to predict where a new observation at age 47 might be.
+
+
+```r
+predict.lm(fit, newdata = data.frame(age=47), interval = "prediction")
+```
+
+```
+##        fit      lwr      upr
+## 1 181.4874 138.7833 224.1915
+```
+
+Notice the difference in the upper and lower boundaries in these predictions. The first is the prediction for the mean serum cholestorol for individuals age 47 and the second is for a single new individual of age 47. The second prediction has to account for random variability around the mean, rather than just the precision of the estimate of the mean.
+
+
+R^2 - correlation coefficient squared - ours (multiple R-squared) is 0.04. What does this tell us? 4% of the variability in cholestorol is explained by age.
+
+Degrees of Freedom
+Decomposition of sum of squares
+mean squares = SS/df
+F-Statistic = MSR/MSE
+
+in simple linear regression F-stat = (t-stat for slope)^2 for the hypothesis that the slope is not zero (ie. 2-sided)
+
+
+
+
+
 
 Once you have your model you can make predictions for new values using your 'fit' object.
 
