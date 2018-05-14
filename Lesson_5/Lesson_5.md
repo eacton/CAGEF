@@ -127,12 +127,12 @@ str(cholesterol)
 ##  $ rs4775401: int  2 1 1 1 0 2 1 1 1 1 ...
 ##  $ APOE     : int  4 4 4 1 1 4 1 1 4 5 ...
 ```
-This dataset is looking at genetic variants (single nucleotide polymorphisms (SNPs)) and their relationship to cholesterol (chol) and triglycerides (TG) for 3 genes: rs174548 (FADS1 - an enzyme in fatty acid unsaturation), rs4775401 (a candidate SNP), and APOE (a major apolipoprotein important for Alzheimer's disease; variants can also affect cholestorol and triglycerides). 
+This dataset is looking at genetic variants (single nucleotide polymorphisms (SNPs)) and their relationship to cholesterol (chol) and triglycerides (TG) for 3 genes: rs174548 (FADS1 - an enzyme in fatty acid unsaturation), rs4775401 (a candidate SNP), and APOE (a major apolipoprotein important for Alzheimer's disease; variants can also affect cholesterol and triglycerides). 
 
 Note that categorical variables have been encoded. Sex is 0 and 1 instead of 'Male' and 'Female'. rs174548 has 3 possible nucleotide combinations, "C/C", "C/G", and "G/G" which have been encoded as 0, 1, and 2. Similarly rs4775401 has 0, 1, and 2 representing SNPs. APOE has 6 variants labelled starting at 1 (1-6).
 
 
-We are ultimately interested in the relationship between the above genetic variants and cholestorol, while controlling for factors such as age and sex. But let's get our feet wet by starting with the easier __question: is there an association between mean serum cholestorol and age?__
+We are ultimately interested in the relationship between the above genetic variants and cholesterol, while controlling for factors such as age and sex. But let's get our feet wet by starting with the easier __question: is there an association between mean serum cholesterol and age?__
 
 It is always, always, always, a good idea to plot your data and get an idea of what its distribution looks like. We can start with a simple scatterplot of age and cholesterol.
 
@@ -186,7 +186,7 @@ str(cholesterol)
 ```
 
 
-We can now use a boxplot to look at the distribution of cholestorol for our 2 groups. 
+We can now use a boxplot to look at the distribution of cholesterol for our 2 groups. 
 
    
     Boxplots are a great way to visualize summary statistics for your data. As a reminder, the thick line in the center of the box is the median. The upper and lower ends of the box are the first and third quartiles (or 25th and 75th percentiles) of your data. The whiskers extend to the largest value no further than 1.5*IQR (inter-quartile range - the distance between the first and third quartiles). Data beyond these whiskers are considered outliers and plotted as individual points. This is a quick way to see how comparable your samples or variables are.
@@ -197,7 +197,7 @@ We can now use a boxplot to look at the distribution of cholestorol for our 2 gr
 ggplot(cholesterol, aes(factor(age_group),chol)) + geom_boxplot() +
   scale_x_discrete(labels = c("30-55", "56-80")) +
   xlab("age") +
-  ylab("cholestorol (mg/dl)")
+  ylab("cholesterol (mg/dl)")
 ```
 
 ![](Lesson_5_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
@@ -285,7 +285,7 @@ Assumptions 2 and 3 are often grouped together.
 
 For __simple linear regression__ we are modelling a continuous outcome by a single continuous variable. Example: modelling cholesterol using BMI.
 
-For __multiple linear regression__ we are modelling a continuous outcome by more than one continuous variable. Example: modelling cholestorol using BMI AND age. In this case, we must consider whether there is an _interaction_ between age and BMI on cholesterol (more on interactions to follow). 
+For __multiple linear regression__ we are modelling a continuous outcome by more than one continuous variable. Example: modelling cholesterol using BMI AND age. In this case, we must consider whether there is an _interaction_ between age and BMI on cholesterol (more on interactions to follow). 
 
 For __one-way ANOVA__ we are modelling a continuous outcome by a single categorical variable. Example: modelling cholesterol by sex. It is important that categorical variables are explicitly input as factors to be interpreted properly in the model. For example, since we have encoded sex as 0 and 1 (instead of 'M' and 'F'), we need to specify that sex is to be treated as a categorical variable and not a number. Therefore we specify sex as a factor of 2 levels, 0 and 1.
 
@@ -383,11 +383,11 @@ This is a summary table you might find helpful for choosing a model based on the
 
 Revisiting our question:
 
-__What is the relationship between cholestorol and age?__
+__What is the relationship between cholesterol and age?__
 
 Now, we can pick a model to answer our question instead of a t-test by considering the assumptions above.
 
-If we evaluate our independent and dependent variables, cholesterol and age, they are both continuous, not categorical. We only have one dependent variable. From the plot we made earlier (repeated here) it looks like if there is a relationship between age and cholestorol it would be linear. Data points have an even spread so the variance is likely equal and normally distributed. The values are independent (from separate blood draws).    
+If we evaluate our independent and dependent variables, cholesterol and age, they are both continuous, not categorical. We only have one dependent variable. From the plot we made earlier (repeated here) it looks like if there is a relationship between age and cholesterol it would be linear. Data points have an even spread so the variance is likely equal and normally distributed. The values are independent (from separate blood draws).    
 
 
 ```r
@@ -436,7 +436,7 @@ _Slopes_
 
 The __interpretation__ in our example is that the slope is the difference in mean serum cholesterol associated with a one year increase in age.
 
-With a straight line we are not, of course, plotting through all of our points, but rather the _mean_ of an outcome in y as a function of x. For example, there are values of cholestorol for about six 50 year-olds, and our line will fall somewhere close to the mean of these values. Values of y have a distribution at a given x, which we have assumed is normally distributed.
+With a straight line we are not, of course, plotting through all of our points, but rather the _mean_ of an outcome in y as a function of x. For example, there are values of cholesterol for about six 50 year-olds, and our line will fall somewhere close to the mean of these values. Values of y have a distribution at a given x, which we have assumed is normally distributed.
 
 
 Lastly, in this equation we also have some normally distributed error - sampling error exists in our estimates, because different estimates give different means. 
@@ -580,7 +580,7 @@ lm(y ~ x~1~ +x~2~ + x~3~)
 
 
 
-We know that age has an effect on cholesterol. With our new model we want to ask the question: __Is there a statistically significant relationship between mean serum cholesterol and age after controlling for BMI?__ Let's look graphically at these relationships to help us understand our model. First let's plot BMI vs cholestorol. We can add a linear fit to make sure we are expecting a positive slope.
+We know that age has an effect on cholesterol. With our new model we want to ask the question: __Is there a statistically significant relationship between mean serum cholesterol and age after controlling for BMI?__ Let's look graphically at these relationships to help us understand our model. First let's plot BMI vs cholesterol. We can add a linear fit to make sure we are expecting a positive slope.
 
 
 ```r
@@ -642,9 +642,9 @@ __Interpretation__
 
 Our equation would now look like $y = 137.16 + 0.20age + 1.43BMI$. 
 
-The estimated increase in mean serum cholestorol over after one year holding BMI constant is 0.20 mg/dl. This increase is less than our previous value of 0.31 mg/dl. Why do the estimates differ?
+The estimated increase in mean serum cholesterol over after one year holding BMI constant is 0.20 mg/dl. This increase is less than our previous value of 0.31 mg/dl. Why do the estimates differ?
 
-Before, we were not controlling for BMI. Our estimates of the age associated increase in mean cholestorol is now for subjects with the _same_ BMI and not for subjects with _all_ BMIs.
+Before, we were not controlling for BMI. Our estimates of the age associated increase in mean cholesterol is now for subjects with the _same_ BMI and not for subjects with _all_ BMIs.
 
 It looks like both age and BMI are significant. But we might want to verify - did adding BMI actually make our model better?
 
@@ -676,7 +676,7 @@ The significance is a probability based on an F test. While the t-test tells if 
 
 ###Interaction terms 
 
-What is meant by an interaction? There is an __interaction__ if The slope with respect to one covariate changes linearly as a function of another covariate.
+What is meant by an interaction? There is an __interaction__ if the association between the response and the predictor variable changes across the range of the new variable. This can be seen in the expression below, where the difference in means between x~1~ and x~2~ changes additionally by b~3~ for each unit difference in x~2~ or x~1~, ie. the slope of x~1~ changes with x~2~, because b~3~ is changing.
 
 
 _Expression:_ 
@@ -685,18 +685,13 @@ _Expression:_
 Y  \verb|~|  Normal(a + b_1x_1 + b_2x_2 + b_3x_1x_2, {\sigma^2})   
 \end{equation*}
 
-In the expression, the difference in means between x~1~ and x~2~ changes additionally by b~3~ for each unit difference in x~2~ or x~1~. For example, the slope of x~1~ changes with x~2~, because b~3~ is changing.
 
 
-In this example of people who care if sea level rises 20 feet, it is apparent that there is an interaction between education and ideology. We can see, for example, that the slope for 'extremely liberal' changes with each education level. If there was no interaction with ideology, these lines would be parallel.  
+In the graph below, there is an interaction between education and ideology. The slope indicating the probability that people will care if sea level rises 20 feet, changes with each education level and each shift in ideology. This interaction is greatest for those of extremely liberal ideology. If there was no interaction with ideology and education, the slopes shown would be parallel. 
 
 ![](img/GSS_sealevel_interaction.png){width=600px}
 
 </br>
-
-The association between the response and the predictor changes across the range of the new variable. This is different than a _confounding factor_, which is associated with the predictor and response, however the association between the response and predictor is constant across the range of the new variable.
-
-
 
 When testing for an interaction between 2 input variables, the `lm` input uses an asterik '*' instead of a plus sign.
 
@@ -704,6 +699,11 @@ _R code:_
 
 
 lm(y ~ x~1~*x~2~)
+
+
+An interaction is different than a __confounding factor__, for which the association between the response and predictor variable is constant across the range of the new variable. You can think of them as variables that have an effect on the outcome, but haven't been accounted for. For example, in our first model where the increase in cholesterol was ONLY due to an increase in age, BMI would be a confounding factor because weight contributes significantly to an increase in cholesterol, and age alone is not responsible for the increase in cholesterol.   
+
+
 
 
 ***
@@ -715,7 +715,7 @@ __Challenge__
 
 </div>
 
-Test if there is an interaction between age and BMI in a model predicting cholesterol. Is the interaction significant? Is there a difference between this model and the model with age as the only variable? What about the BMI and age model without interaction?
+Test if there is an interaction between age and BMI in a model predicting mean serum cholesterol. Is the interaction significant? Is there a difference between this model and the model with age as the only variable? Is there a difference between this model and the model of BMI and age model with no interaction?
 
 
 </br>
@@ -730,9 +730,11 @@ Test if there is an interaction between age and BMI in a model predicting choles
 
 ##One-way analysis of variance (ANOVA)
 
-In the analysis of variance (ANOVA) independent variables are categorical (factors) rather than continuous.
+In the analysis of variance (ANOVA) independent variables are categorical (factors) rather than continuous. This allows us to ask the the question:
 
-Does the genetic factor rs174548 have an effect on cholesterol levels?
+__Does the genetic factor rs174548 have an effect on cholesterol levels?__
+
+Our categorical example is represented by $\alpha$. $i$ represents the levels of our factor.
 
 _Expression:_ 
 
@@ -740,18 +742,18 @@ _Expression:_
 Y \verb|~| Normal({\alpha_i}, {\sigma^2}) 
 \end{equation*}
 
-We still use the `lm` function, however we replace our continuous variable with f, a categorical variable (factor). If your data is character type, R will automatically make factors for you. However if your data is numeric, R will interpret it as continuous. In this case, you need to make your numeric data a factor first using `factor`.
+We still use the `lm` function, however we replace our continuous variable with f, a categorical variable (factor). If your data is character type, R will automatically make a factor for you. However if your data is numeric, R will interpret it as continuous. In this case, you need to make your numeric data a factor first using `factor`.
 
 _R code:_ 
 
 lm(y ~ f)
 
 
-R parameterizes the model in terms of the differences between the first group and subsequent groups rather than in terms of the mean of each group. This is similar to the interpretation of the previous linear models. (You can tell it to fit the means of each group using: lm(y ~ f-1)).
+R parameterizes the model in terms of the differences between the first group and subsequent groups (ie. relative to the first group) rather than in terms of the mean of each group. This is similar to the interpretation of the previous linear models. (You can instead fit the means of each group using: lm(y ~ f-1)).
 
 
 
-We can first plot the relationship between rs174548 and cholestorol. 
+To begin to answer our question, we can first plot the relationship between rs174548 and cholesterol. 
 
 
 ```r
@@ -759,6 +761,7 @@ ggplot(cholesterol, aes(as.factor(rs174548), chol)) + geom_boxplot()
 ```
 
 ![](Lesson_5_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
+
 Our genetic factor has 3 groups, and we will be comparing the means for each of these groups. These groups have high variance, and there is a good deal of overlap between them.
 
 To assess wherther the means are equal, the model compares:
@@ -767,18 +770,18 @@ To assess wherther the means are equal, the model compares:
 - natural variation of the observations within the sample (MSE)
 
 The larger the MSR compared to the MSE the more support there is for a difference between the population means.
-The ratio of MSR/MSE is the F-statistic.
+The ratio of MSR/MSE is our F-statistic.
 
 ###Dummy Variables
 
-We can encode our categorical variable as a _dummy variable_. 0 really means C/C, 1 is C/G and 2 is G/G. But instead we can create k-1 separate columns of 0's and 1's. The omitted category is the reference group. Otherwise 0 means it is not that SNP and 1 means it is that SNP. Each genetic factor has a unique encoding.
+We can encode our categorical variable as a _dummy variable_. 0 in our data frame stands for the genotype C/C, 1 is C/G and 2 is G/G. But instead we can create a matrix with $k-1$ separate columns of 0's and 1's, where $k$ is the number of factor levels in our categorical variable. The omitted category is the reference group. Each genetic factor has a unique encoding where 0 means the SNP is not present and 1 means that SNP is present. 
 
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
  <thead>
   <tr>
    <th style="text-align:left;"> rs174548 </th>
-   <th style="text-align:right;"> x_1 </th>
-   <th style="text-align:right;"> x_2 </th>
+   <th style="text-align:right;"> x1 </th>
+   <th style="text-align:right;"> x2 </th>
   </tr>
  </thead>
 <tbody>
@@ -800,6 +803,16 @@ We can encode our categorical variable as a _dummy variable_. 0 really means C/C
 </tbody>
 </table>
 
+Now we can do regression with our dummy variables. The form of this equation should lookk more familiar.
+
+_Expression:_ 
+
+\begin{equation*}
+Y \verb|~| Normal({\beta_0 + \beta_1x_1 + \beta_2x_2}, {\sigma^2}) 
+\end{equation*}
+
+
+
 __Interpretation__
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
@@ -807,18 +820,18 @@ __Interpretation__
 
 </div>
 
-This makes the interpretation of the model a bit trickier.     
+The interpretation of this model is a bit trickier.     
 
 - $\beta_0$ - mean cholesterol when rs174548 is C/C
-- $\beta_0$ + $\beta_1$ - mean cholestor when rs174548 is C/G
-- $\beta_0$ +  $\beta_2$ - mean cholestorol when rs174548 is G/G
+- $\beta_0$ + $\beta_1$ - mean cholesterol when rs174548 is C/G
+- $\beta_0$ +  $\beta_2$ - mean cholesterol when rs174548 is G/G
 
-Alternatively
+Alternatively,
 
-- b1 is the differnce in mean cholestorl levels between groups with rs174548 equal to C/G and C/C
-- b2 is the difference in mean cholesterol levels between groups with rs174548 equal to G/G and C/C
+- $\beta_1$ is the difference in mean cholesterol levels between groups with rs174548 equal to C/G and C/C
+- $\beta_2$ is the difference in mean cholesterol levels between groups with rs174548 equal to G/G and C/C
 
-So you can really just think of each of these groups having their own means. ie.u2 = beta0 + beta1. We are testing the hypothesis whether these means are equal or not.
+So you can think of each of these groups having their own means. ie. $\mu_0 = \beta_0$, $\mu_1 = \beta_0 + \beta_1$, $\mu_2 = \beta_0 + \beta_2$. We are testing the hypothesis whether these means are equal or not.
 
 R will create dummy variables in the background if you state you have a categorical variable.
 
@@ -851,6 +864,26 @@ summary(anfit1)
 ## F-statistic: 4.487 on 2 and 397 DF,  p-value: 0.01184
 ```
 
+__Interpretation__
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/interpretation.jpg){width=150px}
+
+</div>
+
+- The intercept, 181.06 mg/dl is the mean cholesterol when rs174548 is C/C.
+- 181.06 mg/dl + 6.80 mg/dl is the mean cholesterol when rs174548 is C/G.
+- 181.06 mg/dl + 5.44 mg/dl is the mean cholesterol when rs174548 is G/G.
+
+Alternatively,
+
+- 6.80 mg/dl is the difference in mean cholesterol levels between groups with rs174548 equal to C/G and C/C
+- 5.44 mg/dl is the difference in mean cholesterol levels between groups with rs174548 equal to G/G and C/C
+
+The genetic factor rs174548 has an effect on cholesterol at a significance level of p < 0.05.
+
+An analysis of variance table with one model as input test gives us the same p-value. Why?
+
 
 ```r
 anova(anfit1)
@@ -866,21 +899,23 @@ anova(anfit1)
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
-This tells us that there is a difference in means ie. rejects the null hypothesis that all means are the same, but doesn't tell us which means are different.
 
-In order to look at this we need to look at multiple comparisons.  
-$\mu_0$ = $\mu_1$, $\mu_0$ = $\mu_2$, $\mu_1$ = $\mu_2$ (pairwise)
+This tells us that there is a difference in means (rejects the null hypothesis that all means are the same), but doesn't tell us which means are different.
+
+In order to look at this we need to look at multiple pairwise comparisons.  
+$\mu_0$ = $\mu_1$, $\mu_0$ = $\mu_2$, $\mu_1$ = $\mu_2$ 
 
 ###Multiple test correction
 
-Multiple comparisons at the 5% levels makes the family-wise error rate - the probability of making a false rejection, increases. This is where corrections can come in such as the Bonferroni ($\alpha$/k or multiply pvalues by k). Simple and conservative.
+Multiple comparisons increase the __family-wise error rate (FWER)__ - the probability of making a false discovery (aka a false positive or Type I error). This is where multiple test corrections come in to control the error at a specific threshold (ie. $\alpha = 0.05$ or 5%). One of the simpliest and conservative is the Bonferroni correction ($\alpha/k$ or multiplying p-values by $k$). 
+
+Previously, it was mentioned that you can fit the means for each group using lm(y ~ f-1). To run multiple tests to see if group means differ we can use this equation for __general linear hypotheis testing__, which takes in a model as well as a __contrast matrix__ for the comparisons you want to make. The simplist contrast matrix is a matrix of 0, 1, and -1's where the relationship -1 and 1 are the factor levels for which you want to test the differences.   
 
 
 
 ```r
 tfit <- lm(chol ~ -1 + as.factor(rs174548), data = cholesterol)
 
-#generate a contrast matrix for multiple comparisons
 M = contrMat(table(cholesterol$rs174548), type = "Tukey")
 M
 ```
@@ -895,11 +930,14 @@ M
 ## 2 - 1  0 -1 1
 ```
 
+This rownames of the contrast matrix tell us what is being compared ([1-0], [2-0], [2-1]). For example [1-0] is the difference between C/C (-1) and C/G (1). More complicated comparisons can be made. For example, the difference between C/C and the average of G/G and C/G could be specified by adding a row to the matrix of -2 1 1 (Note: rows of a contrast matrix must add to zero). 
+
+To get estimates using general linear hypothesis testing we use the `glht` function; our linear hypotheses to be tested are specified by our contrast matrix. We will first look at a summary without adjusting/correcting our p-values.
+
+
 ```r
-#get estimates for multiple comparisons, 'general linear hypothesis testing'
 mc = glht(tfit, linfct = M)
 
-#adjust pvalues for mulitple comparisons
 summary(mc, test = adjusted("none"))
 ```
 
@@ -921,6 +959,22 @@ summary(mc, test = adjusted("none"))
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## (Adjusted p values reported -- none method)
 ```
+
+__Interpretation__
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/interpretation.jpg){width=150px}
+
+</div>
+
+
+
+[1 - 0 == 0] The difference in means between C/C and C/G is 6.80 mg/dl and this difference is significant.     
+[2 - 0 == 0] The difference in means between C/C and G/G is 5.44 mg/dl and this difference is not significant.     
+[2 - 1 == 0] The difference in means between C/G and G/G is -1.36 mg/dl and this difference is not significant.     
+
+We can see if multiple test correction affects these relationships.
+
 
 ```r
 summary(mc, test = adjusted("bonferroni"))
@@ -946,65 +1000,21 @@ summary(mc, test = adjusted("bonferroni"))
 ```
 
 ```r
-#other types
-summary(mc, test = adjusted("BH"))
+## #other correction types
+## summary(mc, test = adjusted("BH"))
+## summary(mc, test = adjusted("fdr"))
 ```
-
-```
-## 
-## 	 Simultaneous Tests for General Linear Hypotheses
-## 
-## Multiple Comparisons of Means: Tukey Contrasts
-## 
-## 
-## Fit: lm(formula = chol ~ -1 + as.factor(rs174548), data = cholesterol)
-## 
-## Linear Hypotheses:
-##            Estimate Std. Error t value Pr(>|t|)  
-## 1 - 0 == 0    6.802      2.321   2.930   0.0107 *
-## 2 - 0 == 0    5.438      4.540   1.198   0.3475  
-## 2 - 1 == 0   -1.364      4.665  -0.292   0.7702  
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## (Adjusted p values reported -- BH method)
-```
-
-```r
-summary(mc, test = adjusted("fdr"))
-```
-
-```
-## 
-## 	 Simultaneous Tests for General Linear Hypotheses
-## 
-## Multiple Comparisons of Means: Tukey Contrasts
-## 
-## 
-## Fit: lm(formula = chol ~ -1 + as.factor(rs174548), data = cholesterol)
-## 
-## Linear Hypotheses:
-##            Estimate Std. Error t value Pr(>|t|)  
-## 1 - 0 == 0    6.802      2.321   2.930   0.0107 *
-## 2 - 0 == 0    5.438      4.540   1.198   0.3475  
-## 2 - 1 == 0   -1.364      4.665  -0.292   0.7702  
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## (Adjusted p values reported -- fdr method)
-```
-It is possible we would want to do a nonpairwise comparison (test the mean for C/C against the grouped genotypes C/G and G/G.
-... this may be beyond the scope of this lesson.
-
-
+The significant difference in mean cholesterol between C/C and C/G genotypes of rs174548 holds under different multiple test corrections.
 
 
 ##Multi-way analysis of variance (ANOVA)
 
-Two or more discrete/categorical variables (factors) are used to model our outcome.
+Two or more categorical variables (factors) are used to model our outcome. We can now ask the question:
 
-Does the effect of the genetic factor rs174548 differ between males and females?
-We need to test whether there is an effect of our factors and also if there is an interaction between them.
+__Does the effect of the genetic factor rs174548 differ between males and females?__
 
-$\alpha$, $\beta$ and $\gamma$ are our categorical variables. _i_ is the level of the first group, and _j_ is the level of the second group.
+We need to test whether there is an effect of our factors on cholesterol and also if there is an interaction between these factors.
+
 
 _Expression:_ 
 
@@ -1012,12 +1022,14 @@ _Expression:_
 Y \verb|~| Normal({\alpha_i} + {\beta_j} + {\gamma_{ij}}, {\sigma^2}) 
 \end{equation*}
 
-Our R code models our two categorical variables as factors.
+$\alpha$, $\beta$ and $\gamma$ are our categorical variables. _i_ is the level of the first group, and _j_ is the level of the second group.
+
+As with one-way ANOVA, R models our categorical variables as factors.
 
 _R code:_ 
 
-lm(y~ f~1~ + f~2~), testing for main effects without interaction
-lm(y~ f~1~*f~2~), testing for the main effects with interaction
+lm(y ~ f~1~ + f~2~), testing for main effects without interaction.     
+lm(y ~ f~1~*f~2~), testing for the main effects with interaction.
 
 
 The following diagram will help us visualize the differences in coefficients with and without interaction between 2 categorical variables.
@@ -1026,7 +1038,7 @@ The following diagram will help us visualize the differences in coefficients wit
 In this first scenario, the difference in the means between groups defined by factor B does not depend on the level of factor A and vice versa. This means that there is no interaction, and the lines between the factor groups are parallel. In the second scenario the difference in the means between groups defined by factor B changes when A~2~ is present. There is an interaction and the lines are not parallel.
 ![SISG_2016](img/2wayanova.png)
 
-We can first run a two-way model without testing the interaction.
+We can first run a two-way model without testing for interaction.
 
 
 ```r
@@ -1064,24 +1076,20 @@ __Interpretation__
 
 </div>
 
-- estimated mean cholesterol for males in C/C group is the intercept (175.36)
-- estimated diff in mean cholesterol between females and males controlled for genotype (11.05)
-- estimated diff in mean betweeen C/G and C/C groups controlled for gender (7.24)
-- estimated diff in mean betweeen G/G and C/C groups controlled for gender (5.18)
+-The estimated mean cholesterol for males in C/C group is the intercept, 175.36 mg/dl.     
+-The estimated difference in mean cholesterol between females and males controlled for genotype is 11.05 mg/dl.     
+-The estimated difference in mean betweeen C/G and C/C groups controlled for gender is 7.24 mg/dl.     
+-The estimated difference in mean betweeen G/G and C/C groups controlled for gender is 5.18 mg/dl.     
 
-There is evidence cholestorol is associated with gender (p<0.001).
+There is evidence cholesterol is associated with gender (p<0.001).
 
 
-How does this compare to the model with just gender?
+How does this compare to the model with gender alone as a predictor?
 
 
 ```r
 genfit <- lm(chol ~ as.factor(sex), data = cholesterol)
-```
 
-Worth it!
-
-```r
 anova(genfit, twofit)
 ```
 
@@ -1096,7 +1104,7 @@ anova(genfit, twofit)
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
-There is evidence cholesterol is associated with genotype(p=0.005).
+There is a difference between these 2 models (p=0.005).
 
 
 We can now check the two-way anova with the interaction.
@@ -1146,13 +1154,14 @@ __Interpretation__
 
 </div>
 
-- the estimated mean cholesterol for males in the C/C group is 178.
-- the estimated mean cholesterol for females in the C/C group is 178 + 5.7. 
-- the estimated mean cholesterol for men in the C/G group 178 + 0.95.
-- the estimated mean cholesterol for females in the C/G group is 178 + 5.7 + 0.95 + 12.7.
+-The estimated mean cholesterol for males in the C/C group is 178.12 mg/dl.     
+-The estimated mean cholesterol for females in the C/C group is (178.12 + 5.71) mg/dl.      
+-The estimated mean cholesterol for men in the C/G group (178.12 + 0.96) mg/dl.     
+-The estimated mean cholesterol for females in the C/G group is (178.12 + 5.71 + 0.96 + 12.74) mg/dl.     
 
+There appears to be a significant interaction between being female and having the C/G genotype.
 
-Let's compare the without interaction and with interaction model.
+Let's compare the with interaction and without interaction model.
 
 
 ```r
@@ -1171,33 +1180,40 @@ anova(twofit,intfit2)
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-There is evidence for an interaction between genotype and sex (p = 0.015).
+There is evidence that these two models are different (p = 0.015).
 
 
 ##Analysis of covariance (ANCOVA)
 
-The analysis of covariance (ANCOVA) model allows for different intercepts and slopes with repect to a continuous variable in different categorical groups. ANCOVA, therefore, has a linear regression component.
+The analysis of covariance (ANCOVA) model allows for different intercepts and slopes with repect to a continuous variable in different categorical groups. ANCOVA, therefore, has a linear regression component. This allows us to ask the question:
 
-Now we can ask if there the relationship between age and cholesterol is affected by gender?
+__Is the relationship between age and cholesterol is affected by gender?__
 
 _Expression:_ 
 
 \begin{equation*}
-Y \verb|~| Normal({\alpha_i} + {\beta_{ix}}, {\sigma^2}) 
+Y \verb|~| Normal({\beta_i} + {\beta_{i}x}, {\sigma^2}) 
 \end{equation*}
-
-
-R code:     
-
-lm(y~f + x), for parallel slopes (no interaction)     
-lm(y~f*x), for non-parallel slopes (interaction)     
-lm(y~f) for zero slopes but different intercepts     
-lm(y~x) a single slope     
 
 Parameters are the intercept of the first factor level, the slope with respect to x for the first factor level, the differences in the intercepts for each factor level other than the first, and the differences in slopes for each factor level other than the first.
 
-Now we are going to throw in a categorical variable and ask if the relationship between age and cholestorol is affected by gender.
+R code:     
 
+lm(y ~ f + x), testing for main effects without interaction.    
+lm(y ~ f*x), testing for main effects with interaction.
+
+
+
+To answer our question, let's first take a quick look at gender differences in cholesterol in our dataset, keeping in mind that males are encoded as 0 and females as 1. Based on sex information alone, we see that women have a higher mean serum cholesterol, but we don't know if this is significant. 
+
+
+```r
+ggplot(cholesterol, aes(as.factor(sex), chol)) + geom_boxplot() 
+```
+
+![](Lesson_5_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
+
+Our model won't look that different from our other equations except that we have categorical and continuous predictor variables.
 
 ```r
 mfit2 <- lm(chol ~ age + sex, data = cholesterol)
@@ -1234,7 +1250,7 @@ __Interpretation__
 
 </div>
 
-Okay, so our model would look like 162 + 0.3age + 10.5sex. Controlling for sex, mean average cholestorol increases by 0.3 for an additional year of age. This is close to the slope for our model of just cholesterol, 0.31. This does not necessarily mean that the age/cholesterol relationship is the same in males and females. We need to look at the interaction term.
+Controlling for sex, mean cholesterol increases by 0.30 mg/dl for an additional year of age. This is close to the slope for our model of cholesterol alone, 0.31 mg/dl. This does not necessarily mean that the age/cholesterol relationship is the same in males and females; we need to check out the interaction term. There appears to be an increase in mean serum cholesterol of 10.5 mg/dl in females over males. 
 
 
 
@@ -1274,9 +1290,9 @@ __Interpretation__
 
 </div>
 
-Males are coded as 0 and females are coded as 1 in this model. The intercept term is the mean serum cholestorol for MALES at age 0. The slope term for age is the difference in mean cholestorl associated with one year change in age for MALES. The slope for sex is the difference in mean cholestorol between males and females at age 0. The interaction term is the difference in the change in mean cholesterol associated with each one year change in age for females compared to males. Sex exerts a mall and not statistically significant effect on the age/cholestorol relationship.
+Males are coded as 0 and females are coded as 1 in this model. The intercept term is the mean serum cholesterol for MALES at age 0. The slope term for age is the difference in mean cholesterol associated with a one year change in age for MALES. The slope for sex is the difference in mean cholesterol between males and females at age 0. The interaction term is the difference in the change in mean cholesterol associated with each one year change in age for females compared to males. Sex exerts a small and not statistically significant effect on the age/cholesterol relationship.
 
-Let's check this with anova (an F-test).
+Let's compare our models with and without an interaction term with anova (an F-test).
 
 
 ```r
@@ -1292,7 +1308,10 @@ anova(mfit2, intfit)
 ## 1    397 176162                           
 ## 2    396 176049  1    113.52 0.2554 0.6136
 ```
-Adding the interaction term did not improve the model significantly.
+
+Adding the interaction term did not change the model significantly.
+
+Let's compare the model with age only to the model where sex is a covariate without interaction.
 
 
 ```r
@@ -1311,12 +1330,15 @@ anova(fit, mfit2)
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
+The addition of sex makes a statistically significant difference to the model. Take a look at the whole picture in graphical format.
+
+
 
 ```r
 ggplot(cholesterol, aes(age, chol, color = factor(sex))) + geom_point() + stat_smooth(method = "lm")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
 __Interpretation__
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
@@ -1324,7 +1346,7 @@ __Interpretation__
 
 </div>
 
-So gender doesn't change the relationship between age and cholesterol, these lines are almost parallel (another way to put it is whether you are male or female you cholestorl will on average be increasing by 0.3 mg/dl a year), but there is a different mean serum cholestorol estimate for males vs females that differs by 14.6 dg/ml.
+Gender doesn't change the relationship between age and cholesterol; these lines are almost parallel (another way to put it is whether you are male or female your cholesterol will on average be increasing by 0.30 mg/dl a year), but there is a different mean serum cholesterol estimate for males vs females that differs by 10.51 dg/ml.
 
 
 ***
@@ -1336,10 +1358,8 @@ __Challenge__
 
 </div>
 
-Does the effect of the genetic factor rs174548 differ depending on a subject's age? Make a plot of age versus cholesterol and color points by the genetic factor rs174548. Add a linear model to the plot. Are you expecting an interaction based on this plot? Test models for the association between cholesterol and age controlling for the genetic factor rs174548 with interaction and without interaction. Look at the summary statistics for each model fit. How would you interpret the results? Compare the two models with an analysis of variance table.    
+Does the effect of the genetic factor rs174548 differ depending on a subject's age? Make a plot of age versus cholesterol and color points by genotype. Add a linear model to the plot. Are you expecting an interaction based on this plot? Test models for the association between cholesterol and age controlling for the genetic factor rs174548 with interaction and without interaction. Look at the summary statistics for each model fit. How would you interpret the results? Compare the two models with an analysis of variance table.    
 
-</br>
-</br>
 </br>
 
 ***
@@ -1470,10 +1490,10 @@ predict.lm(fit, newdata = data.frame(age=47), interval = "prediction")
 ## 1 181.4874 138.7833 224.1915
 ```
 
-Notice the difference in the upper and lower boundaries in these predictions. The first is the prediction for the mean serum cholestorol for individuals age 47 and the second is for a single new individual of age 47. The second prediction has to account for random variability around the mean, rather than just the precision of the estimate of the mean.
+Notice the difference in the upper and lower boundaries in these predictions. The first is the prediction for the mean serum cholesterol for individuals age 47 and the second is for a single new individual of age 47. The second prediction has to account for random variability around the mean, rather than just the precision of the estimate of the mean.
 
 
-R^2 - correlation coefficient squared - ours (multiple R-squared) is 0.04. What does this tell us? 4% of the variability in cholestorol is explained by age.
+R^2 - correlation coefficient squared - ours (multiple R-squared) is 0.04. What does this tell us? 4% of the variability in cholesterol is explained by age.
 
 Degrees of Freedom
 Decomposition of sum of squares
@@ -1594,7 +1614,7 @@ For example, plotting residuals against x (age), should be unstructured and cent
 ggplot(cholesterol, aes(x=age, y=fit$residuals)) + geom_point() + geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 If the residuals look like they are grouped in one section of the plot, or follow a pattern (ie. looks quadratic - you would have a nonlinear association), then the model is not a good fit. If it looks like a sideways tornado, then errors are increasing with x, and this is non-constant variance.
 
@@ -1615,7 +1635,7 @@ datfit <- augment(fit)
 ggplot(datfit, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
 
 
 Bartlett's test - test whether or not population variances are all the same
@@ -1644,7 +1664,7 @@ QQ(quantile-quantile)-plots: Does our data follow the (normal) distribution? The
 qqnorm(fit$residuals)
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
 
 This looks pretty straight. We have normality of errors.
 
@@ -1655,7 +1675,7 @@ Let's try a less perfect example and look at the relationship between age and tr
 ggplot(cholesterol, aes(age, TG)) + geom_point() + stat_smooth(method = "lm")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
 
 
 
@@ -1674,7 +1694,7 @@ datfitTG <- augment(fitTG)
 ggplot(datfitTG, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
 
 Our residuals are now increasing with increasing values of y. 
 
@@ -1683,7 +1703,7 @@ Our residuals are now increasing with increasing values of y.
 qqnorm(datfitTG$.resid)
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
 
 Our qqplot points are deviating from the line suggesting a poor fit for our model.
 
@@ -1793,7 +1813,7 @@ summary(logfit)
 ggplot(logdat, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
 
 We corrected the non-constant variance issue, but it is harder to interpret our model. 
 
