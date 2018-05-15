@@ -13,7 +13,7 @@ output:
 
 ![xkcd](img/xkcd_linear_regression.png)
 
-![Real-Life Confusion from Cross-Validated: Linear model seems off in R?](img/plot_confusion.png) 
+![Real-Life Confusion from Cross-Validated: Linear model seems off in R?](img/plot_confusion.png){width=500px}
 
 (AKA why is the solid line the best fit and not the dashed line?)
 
@@ -134,6 +134,8 @@ Note that categorical variables have been encoded. Sex is 0 and 1 instead of 'Ma
 
 We are ultimately interested in the relationship between the above genetic variants and cholesterol, while controlling for factors such as age and sex. But let's get our feet wet by starting with the easier __question: is there an association between mean serum cholesterol and age?__
 
+For this question cholesterol is the __dependent__ variable, or the variable being measured. Age and sex are __independent variables__ that we are changing to determine the effect on cholesterol.
+
 It is always, always, always, a good idea to plot your data and get an idea of what its distribution looks like. We can start with a simple scatterplot of age and cholesterol.
 
 
@@ -250,6 +252,11 @@ t.test(formula = cholesterol$chol ~ cholesterol$age_group, var.equal = TRUE)
 
 
 __Interpretation__
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/interpretation.jpg){width=150px}
+
+</div>
 
 Our output tells us the mean cholesterol for those aged 30-55 is 180 mg/dl and the mean for those aged 56-80 is 188 mg/dl. The difference in means is significant at a p-value of 0.0003146. 
 
@@ -517,7 +524,7 @@ __Interpretation__
 
 </div>
 
-The intercept is 166.9 and the slope is 0.31. What does that actually mean? It means a baby (age 0) would be expected to have on average a serum cholesterol of 166.9 mg/dl. For every yearly increase in age, mean serum cholesterol is expected to increase by 0.31 mg/dl. These results are significant with a p-value < 0.001. We can reject the null hypothesis and say that mean serum cholesterol is significantly higher in older individuals.
+The intercept is 166.9 and the slope is 0.31. What does that actually mean? It means a baby (age 0) would be expected to have on average a serum cholesterol of 166.9 mg/dl. For every yearly increase in age, mean serum cholesterol is expected to increase by 0.31 mg/dl. These results are significant with a p-value < 0.001. We can reject the null hypothesis and say that mean serum cholesterol is significantly higher in older individuals. The Multiple R-squared value tells us that about 4% of the variability in cholesterol is explained by age.
 
 We can further get confidence intervals for these values to say that 95% of the time we expect the cholesterol of a baby to fall within 158.5-175.3 mg/dl, or that we are 95% confident that the difference in mean cholesterol associated with a one year increase in age is between 0.16 and 0.46 mg/dl.
 
@@ -530,6 +537,7 @@ confint(fit)
 ## (Intercept) 158.5171656 175.2861949
 ## age           0.1624211   0.4582481
 ```
+
 
 
 
@@ -1036,7 +1044,9 @@ The following diagram will help us visualize the differences in coefficients wit
 
 
 In this first scenario, the difference in the means between groups defined by factor B does not depend on the level of factor A and vice versa. This means that there is no interaction, and the lines between the factor groups are parallel. In the second scenario the difference in the means between groups defined by factor B changes when A~2~ is present. There is an interaction and the lines are not parallel.
-![SISG_2016](img/2wayanova.png)
+![SISG_2016](img/2wayanova.png){width=500px}
+
+SISG_2016
 
 We can first run a two-way model without testing for interaction.
 
@@ -1373,9 +1383,9 @@ Does the effect of the genetic factor rs174548 differ depending on a subject's a
 
 Before we move on I want to take a step back and quickly review the models and code we've gone through today. Firstly, with our example dataset, and then more generally. I hope you can see that though conceptually different, getting a handle on the code isn't too bad.  
 
-For all of these models we are trying to determine the effect of different variables on cholesterol. The differences are whether we are using continuous data, categorical data, a mixture of data types, and whether there is an interaction between our input variables.
+For all of these models we are trying to determine the effect of different variables on cholesterol. The differences are whether we are using continuous data, categorical data, a mixture of data types, and whether there is an interaction (`*`) between our input variables.
 
-We have started with models assuming normally distributed errors, and we will investigate models with non-normal errors in the next lesson.  
+We have started with models that assume normally distributed errors, and we will investigate models with non-normal errors in the next lesson.  
 
 
 
@@ -1393,36 +1403,36 @@ We have started with models assuming normally distributed errors, and we will in
    <td style="text-align:left;"> simple linear regression </td>
    <td style="text-align:left;"> X </td>
    <td style="text-align:left;"> $\checkmark$ </td>
-   <td style="text-align:left;"> lm(chol ~ BMI) </td>
+   <td style="text-align:left;"> lm(chol ~ age) </td>
   </tr>
   <tr>
    <td style="text-align:left;"> multiple linear regression </td>
    <td style="text-align:left;"> X </td>
    <td style="text-align:left;"> $\checkmark$ $\checkmark$ </td>
-   <td style="text-align:left;"> lm(chol ~ BMI + age) </td>
+   <td style="text-align:left;"> lm(chol ~ age + BMI), lm(chol ~ age*BMI) </td>
   </tr>
   <tr>
    <td style="text-align:left;"> one-way analysis of variance (ANOVA) </td>
    <td style="text-align:left;"> $\checkmark$ </td>
    <td style="text-align:left;"> X </td>
-   <td style="text-align:left;"> lm(chol ~ factor(sex)) </td>
+   <td style="text-align:left;"> lm(chol ~ factor(rs174548)) </td>
   </tr>
   <tr>
    <td style="text-align:left;"> multi-way analysis of variance (ANOVA) </td>
    <td style="text-align:left;"> $\checkmark$ $\checkmark$ </td>
    <td style="text-align:left;"> X </td>
-   <td style="text-align:left;"> lm(chol ~ factor(sex)*factor(APOE)) </td>
+   <td style="text-align:left;"> lm(chol ~ factor(sex) + factor(rs174548)), lm(chol ~ factor(sex)*factor(rs174548)) </td>
   </tr>
   <tr>
    <td style="text-align:left;"> analysis of covariance (ANCOVA) </td>
    <td style="text-align:left;"> $\checkmark$ </td>
    <td style="text-align:left;"> $\checkmark$ </td>
-   <td style="text-align:left;"> lm(chol~factor(APOE)*BMI) </td>
+   <td style="text-align:left;"> lm(chol ~ factor(sex) + age), lm(chol ~ factor(sex)*age) </td>
   </tr>
 </tbody>
 </table>
 
-In the table below, our R code for each of the models has been generalized. Here, y is our predictor variable, x is a continuous variable, and f is a categorical variable (factor). * denotes an interaction.
+In the table below, our R code for each of the models has been generalized. Here, y is our predictor variable, x is a continuous variable, and f is a categorical variable (factor). 
 
 <table class="table table-striped table-hover" style="width: auto !important; ">
  <thead>
@@ -1438,7 +1448,7 @@ In the table below, our R code for each of the models has been generalized. Here
   </tr>
   <tr>
    <td style="text-align:left;"> multiple linear regression </td>
-   <td style="text-align:left;"> lm(y ~ x + I(x^2)) </td>
+   <td style="text-align:left;"> lm(y ~ x + I(x^2)), lm(y ~ x~1~ + x~2~), lm(y ~ x~1~*x~2~) </td>
   </tr>
   <tr>
    <td style="text-align:left;"> one-way analysis of variance (ANOVA) </td>
@@ -1446,27 +1456,55 @@ In the table below, our R code for each of the models has been generalized. Here
   </tr>
   <tr>
    <td style="text-align:left;"> multi-way analysis of variance (ANOVA) </td>
-   <td style="text-align:left;"> lm(y ~ f~1~*f~2~) </td>
+   <td style="text-align:left;"> lm(y ~ f~1~ + f~2~), lm(y ~ f~1~*f~2~) </td>
   </tr>
   <tr>
    <td style="text-align:left;"> analysis of covariance (ANCOVA) </td>
-   <td style="text-align:left;"> lm(y~f*x) </td>
+   <td style="text-align:left;"> lm(y ~ f + x), lm(y ~ f*x) </td>
   </tr>
 </tbody>
 </table>
 
 You need not memorize any of these charts - you may just want to use them to orient yourself in the future. Much of the R code seems the same whether you are doing multiple linear regression, ANOVA or ANCOVA, so it is good to have a reference point.
 
-#Prediction
+##Prediction
 
-Predicting values assumes that your model is true. This might be fair within the range of your data. This is to be interpreted with caution outside the range of your data.
+When predicting values you are assuming that your model is true. This might be fair within the range of your data. This is to be interpreted with caution outside the range of your data. For example, polynomial data may look linear over a certain range.
 
-![](img/extrapolate.png)
+
+![](img/extrapolate.png){width=500px}
 </br>
+
+This is one of my favourite xkcd comics, probably just because I am getting married soon and this extrapolation is terrifying.
 
 ![xkcd](img/extrapolating.png)
 
-If you want to predict the mean at a particular point, for example, at age 47. 
+The `predict` function works with many different kinds of fits: not just linear models but nonlinear, polynomial, generalized linear models, etc. `predict` will try to guess the fit based on the object input, but this information can be specified using `predict.lm`. The help page for `predict.lm` is more useful as it is specific for the linear model fit. 
+
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/04722ac51b800387ee8498fb072834e7.jpg){width=150px}
+
+</div>
+
+Use `predict.lm` to predict the mean cholesterol at age 47 from our model object 'fit'. ('fit' is our first model, lm(chol ~ age, data = cholesterol)).   
+
+</br>
+
+</br>
+
+***
+
+
+
+
+
+
+In addition to the linear model, the function needs the `newdata` that we want to predict. Note that `newdata` takes in a data frame. We can predict the mean cholesterol at age 47 within a confidence interval that can be specified using `level`. The output is the mean, as well as the upper and lower boundaries of the estimate.
+
 
 ```r
 predict.lm(fit, newdata = data.frame(age=47), interval = "confidence")
@@ -1476,9 +1514,7 @@ predict.lm(fit, newdata = data.frame(age=47), interval = "confidence")
 ##        fit      lwr      upr
 ## 1 181.4874 179.0619 183.9129
 ```
-
-
-If you want to predict where a new observation at age 47 might be.
+We can also use the a 'prediction' interval.
 
 
 ```r
@@ -1490,57 +1526,44 @@ predict.lm(fit, newdata = data.frame(age=47), interval = "prediction")
 ## 1 181.4874 138.7833 224.1915
 ```
 
-Notice the difference in the upper and lower boundaries in these predictions. The first is the prediction for the mean serum cholesterol for individuals age 47 and the second is for a single new individual of age 47. The second prediction has to account for random variability around the mean, rather than just the precision of the estimate of the mean.
+
+Notice the difference in the upper and lower boundaries for these predictions. The first is the prediction for the mean serum cholesterol for _individuals_ of age 47 and the second is for a _single new individual_ of age 47. The second prediction has to account for random variability around the mean, rather than just the precision of the estimate of the mean. This may seem like a subtle difference, but as you can see it can change our boundaries quite a bit - we need to be clear on the question we are asking.
 
 
-R^2 - correlation coefficient squared - ours (multiple R-squared) is 0.04. What does this tell us? 4% of the variability in cholesterol is explained by age.
-
-Degrees of Freedom
-Decomposition of sum of squares
-mean squares = SS/df
-F-Statistic = MSR/MSE
-
-in simple linear regression F-stat = (t-stat for slope)^2 for the hypothesis that the slope is not zero (ie. 2-sided)
-
-
-
-
-
-
-Once you have your model you can make predictions for new values using your 'fit' object.
+For our multiple linear regression model explaining cholesterol as a function of age and BMI ('mfit'), we could ask what cholesterol is predicted to be for a 60-year-old at a BMI of 21, a 60-year-old at a BMI of 26, and a 60-year-old at a BMI of 30. The standard error on the estimate of your means is obtained by setting `se.fit = TRUE`.
 
 
 ```r
-predict(mfit, newdata = data.frame(BMI = 23, age = 60), interval = "confidence")
+predict(mfit, newdata = data.frame(BMI = c(21,26,30), age = 60), interval = "prediction", se.fit = TRUE)
 ```
 
 ```
-##        fit      lwr      upr
-## 1 182.1088 179.2451 184.9726
-```
-
-```r
-predict(mfit, newdata = data.frame(BMI = c(21,22,23), age = 60), interval = "prediction")
-```
-
-```
+## $fit
 ##        fit      lwr      upr
 ## 1 179.2557 137.1078 221.4036
-## 2 180.6823 138.5866 222.7780
-## 3 182.1088 140.0519 224.1657
+## 2 186.3885 144.3676 228.4095
+## 3 192.0947 149.9339 234.2556
+## 
+## $se.fit
+##        1        2        3 
+## 2.025888 1.157454 2.094542 
+## 
+## $df
+## [1] 397
+## 
+## $residual.scale
+## [1] 21.34293
 ```
 
 
-
-
-##Assessing the performatnce of the model (feedback)
+##Assessing the performance of the model (feedback)
 
 
 ###Checking Residuals
 
-_Residuals_ - the difference between the observed response and the predicted response, can be used to identify poorly fit data points, unequal variance (heteroscedasticity), nonlinear relationships, identify additional variables, and examine the normality assumption.
+__Residuals__ are the differences between the observed response and the predicted response, and can be used to identify poorly fit data points, unequal variance (heteroscedasticity), nonlinear relationships, and examine the normality assumption.
 
-Look at the residuals vs x, residuals vs y, residual histogram or qqplot - are there any patterns? The residuals are taken from fit, which also contains the inputs of our model.
+The residuals are found in our  `lm` object, 'fit', which also contains the inputs of our model.
 
 
 
@@ -1607,77 +1630,115 @@ str(fit)
 ##   .. .. .. ..- attr(*, "names")= chr [1:2] "chol" "age"
 ##  - attr(*, "class")= chr "lm"
 ```
-For example, plotting residuals against x (age), should be unstructured and centered at 0.
+
+We can plot the residuals vs x, residuals vs y, and a histogram of the residulas to see if there are any patterns. For example, plotting residuals against x (age), should be unstructured and centered at 0. We can subset the residuals from the list using `$` or `[[ ]]`.
 
 
 ```r
-ggplot(cholesterol, aes(x=age, y=fit$residuals)) + geom_point() + geom_hline(yintercept=0, color="black")
+ggplot(cholesterol, aes(x=age, y=fit[['residuals']])) + 
+  geom_point() + 
+  geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
 
-If the residuals look like they are grouped in one section of the plot, or follow a pattern (ie. looks quadratic - you would have a nonlinear association), then the model is not a good fit. If it looks like a sideways tornado, then errors are increasing with x, and this is non-constant variance.
+If the residuals look like they are grouped in one section of the plot, or follow a pattern, then the model is not a good fit (ie. looks quadratic - you would have a nonlinear association). If it looks like a sideways tornado, then errors are increasing with x, and this is non-constant variance.
 
 
 
-The structure of the `lm` output is a list of 12, which is possible, though annoying to grab data from. Use the `broom()` package to get info out of linear models in a glorious dataframe format that we know and love. 
+The structure of the `lm` object is a list of 12. We can use the `broom()` package to get information out of linear model objects into the glorious dataframe format that we know and love. This is done using the `augment` function. 
 
 
 ```r
 datfit <- augment(fit)
+str(datfit)
 ```
 
-
+```
+## 'data.frame':	400 obs. of  9 variables:
+##  $ chol      : int  215 204 205 182 175 176 159 169 175 189 ...
+##  $ age       : int  74 51 64 34 52 39 79 38 52 58 ...
+##  $ .fitted   : num  190 183 187 177 183 ...
+##  $ .se.fit   : num  1.8 1.12 1.29 1.91 1.1 ...
+##  $ .resid    : num  25.13 21.27 18.24 4.55 -8.04 ...
+##  $ .hat      : num  0.00693 0.00268 0.00351 0.00772 0.0026 ...
+##  $ .sigma    : num  21.7 21.7 21.7 21.7 21.7 ...
+##  $ .cooksd   : num  0.004717 0.001294 0.001251 0.000172 0.000179 ...
+##  $ .std.resid: num  1.163 0.982 0.842 0.21 -0.371 ...
+```
+To make the same plot as above, we simply use .resid and .fitted from our data frame.
 
 
 
 ```r
-ggplot(datfit, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
+ggplot(datfit, aes(.fitted, .resid)) + 
+  geom_point()  + 
+  geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
 
 
-Bartlett's test - test whether or not population variances are all the same
+You can plot the fitted and residual values with a categorical variable, but it is sometimes difficult to view patterns. For example, here is what plotting the residuals for our model of cholesterol as a function of genotype would look like.
+
 
 ```r
-bartlett.test(chol ~ as.factor(rs174548), data = cholesterol)
+anfit1 <- augment(anfit1)
+
+ggplot(anfit1, aes(.fitted, .resid, color = as.factor.rs174548.)) + 
+  geom_point()  + 
+  geom_hline(yintercept=0, color="black")
+```
+
+![](Lesson_5_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
+
+You could 'jitter' the points to see the distribution a bit better, but you can also perform a statistical test of equal variance.
+
+Bartlett's test can test whether or not population (group) variances are the same. We can see if variances are equal in our model of cholesterol as a function of sex by inputting the formula and dataset into the `bartlett.test` function.
+
+
+```r
+bartlett.test(chol ~ factor(rs174548), data = cholesterol)
 ```
 
 ```
 ## 
 ## 	Bartlett test of homogeneity of variances
 ## 
-## data:  chol by as.factor(rs174548)
+## data:  chol by factor(rs174548)
 ## Bartlett's K-squared = 4.8291, df = 2, p-value = 0.08941
 ```
-This is telling us that the variance is not statistically different between our populations. Our assumption of equal variance is  validated.
+The p-value is telling us that the variance is not statistically different between our populations. Our assumption of equal variance is valid.
 
 
 
 ###QQ-plots
 
-QQ(quantile-quantile)-plots: Does our data follow the (normal) distribution? The data is plotted against a theoretical distribution. Points should fall on the straight line. Anything not fitting are moving away from the distribution. 
+__QQ-plots (quantile-quantile)__ are a tool to answer the question: Does our data plausibly come from the (normal) distribution? The data is plotted against a theoretical distribution. Points should fall on the straight line. Anything data points not fitting are moving away from the distribution. 
+
+The `qqnorm` function plots our residuals along the y-axis in ascending order, and theoretical quantiles of a normal distribution along the x-axis.
 
 
 ```r
-qqnorm(fit$residuals)
+qqnorm(datfit$.resid)
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
 
-This looks pretty straight. We have normality of errors.
+This looks pretty straight. We likely have normality of errors.
 
-Let's try a less perfect example and look at the relationship between age and triglycerides.
+Let's try a less perfect example and look at the relationship between age and triglycerides (TG). Make a scatterplot of age and triglycerides with a linear fit to take a look at the data. 
 
 
 ```r
-ggplot(cholesterol, aes(age, TG)) + geom_point() + stat_smooth(method = "lm")
+ggplot(cholesterol, aes(age, TG)) + 
+  geom_point() + 
+  stat_smooth(method = "lm")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
 
-
+Write a linear model for triglyceride levels as a function of age. Use `broom` to get the output of the `lm` object into data frame format.
 
 
 ```r
@@ -1686,38 +1747,89 @@ fitTG <- lm(TG ~ age, data = cholesterol)
 datfitTG <- augment(fitTG)
 ```
 
-
+Plot the residuals against the fitted values. Does the variance look equal across the residuals?
 
 
 
 ```r
-ggplot(datfitTG, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
+ggplot(datfitTG, aes(.fitted, .resid)) +
+  geom_point()  +
+  geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
 
-Our residuals are now increasing with increasing values of y. 
+Our residuals are increasing with increasing values of y. 
+
+What do the residuals look like in a qq-plot?
 
 
 ```r
-qqnorm(datfitTG$.resid)
+qqnorm(datfitTG$.resid) 
 ```
 
-![](Lesson_5_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
+![](Lesson_5_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
 
 Our qqplot points are deviating from the line suggesting a poor fit for our model.
 
-We have a case of _non-constant variance (heteroscedasticity)_. This means that there is a mean-variance relationship. We now need some different tools.
+##Next Steps (or When Assumptions Fail)
+
+The consequences of violating the assumptions for linear models depends, of course, on the assumption being violated. The worst offence, of course, is having non-linearity of your parameters in which case you are using the wrong model.  
+
+
+Our last example had a case of __non-constant variance (heteroscedasticity)__. This means that there is a mean-variance relationship (recall the tornado shape). In this case the parameter estimates are minimally impacted, however variance estimates are incorrect.
 
 To account for this we can use:
 
-1. Robust standard errors
 1. Data transformation
+1. Robust standard errors
 1. Use a different model that does not assume constant variance (glm)
 
-_Robust standard errors_ correctly estimate variability of parameter estimates even under non-constant variance. This does not affect point estimates, but corrects confidence intervals and p-values.
+_Data transformation_ can solve some nonlinearity, unequal variance and non-normality problems when applied to the dependent variable, the independent variable, or both. However, interpreting the results of these transformations can be tricky.
 
-To do this, we use a package called 'gee'.
+
+
+```r
+logfit <- lm(log(TG) ~ age, data = cholesterol)
+
+logdat <- augment(logfit)
+summary(logfit)
+```
+
+```
+## 
+## Call:
+## lm(formula = log(TG) ~ age, data = cholesterol)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.75656 -0.20390 -0.02207  0.17910  1.06931 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 3.7115803  0.0559237   66.37   <2e-16 ***
+## age         0.0248646  0.0009866   25.20   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.2844 on 398 degrees of freedom
+## Multiple R-squared:  0.6148,	Adjusted R-squared:  0.6138 
+## F-statistic: 635.2 on 1 and 398 DF,  p-value: < 2.2e-16
+```
+
+
+```r
+ggplot(logdat, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
+```
+
+![](Lesson_5_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
+
+We corrected the non-constant variance issue, but it is harder to interpret our model. 
+
+
+__Robust standard errors__ correctly estimate the variability of parameter estimates even under non-constant variance. This does not affect point estimates (which are minimally impacted), but corrects confidence intervals and p-values.
+
+To do this, we use a package called `gee` (generalized estimation equation). The syntax is similar to the `lm` function, we are just adding an 'id' variable.
 
 
 ```r
@@ -1772,68 +1884,18 @@ summary(geefit)
 ## [1,]    1
 ```
 
-We have the same point estimates, but our error estimates have now changed.
-(Note: residuals in geefit are the originals)
+We have the same estimates for our intercept and slope, but our error estimates have now changed.
+(Note: residuals in geefit are the originals.)
+
+__Use a different model that does not assume constant variance (glm)__
+
+Generalized linear models can deal with non-normal errors as well as non-linearity. They use linker functions to transform nonlinear relationships into linear ones. They will be tackled in the next lesson.
+
+Breaking the non-normality assumption will have minimal effect on estimates unless in the presence of outliers. Robust regression (ie. least squares) can be used. We will use this in the next lesson.
+
+Breaking the dependency assumption will have minimal effect on estimates, but the variance will be inaccurate. A different regression model for dependent data should be investigated. 
 
 
-_Data transformation_ can solve some nonlinearity, unequal variance and non-normality problems when applied to the dependent variable, the independent variable, or both. However, interpreting the results of these transformations can be tricky.
-
-
-
-```r
-logfit <- lm(log(TG) ~ age, data = cholesterol)
-
-logdat <- augment(logfit)
-summary(logfit)
-```
-
-```
-## 
-## Call:
-## lm(formula = log(TG) ~ age, data = cholesterol)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -0.75656 -0.20390 -0.02207  0.17910  1.06931 
-## 
-## Coefficients:
-##              Estimate Std. Error t value Pr(>|t|)    
-## (Intercept) 3.7115803  0.0559237   66.37   <2e-16 ***
-## age         0.0248646  0.0009866   25.20   <2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 0.2844 on 398 degrees of freedom
-## Multiple R-squared:  0.6148,	Adjusted R-squared:  0.6138 
-## F-statistic: 635.2 on 1 and 398 DF,  p-value: < 2.2e-16
-```
-
-
-```r
-ggplot(logdat, aes(.fitted, .resid)) + geom_point()  + geom_hline(yintercept=0, color="black")
-```
-
-![](Lesson_5_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
-
-We corrected the non-constant variance issue, but it is harder to interpret our model. 
-
-
-
-
-
-....Slide 97 from SISG_5_2 is impact of violations to model assumptions - think about whether something like this should be included.
-
-T-test tells if you a single variable is statistically significant, and an F-test tells you if a group of variables are jointly significant.
-
-F-statistic compares the joint effect of all variables together.
-
-Is the variance between the means of 2 populations statistically significant.
-
-F value = variance of group means (mean square between) /mean of the withing group variances (mean squared error)
-
-F value used with pvalue. a large F value means something is significant. pvalue means all results ar esignificant.
-
-F value in regression - test of null hypothesis that all of the regression coefficients are equal to zero.
 ***
 
 __Challenge:__      
@@ -1843,10 +1905,10 @@ __Challenge:__
 
 </div>
 
-Does the effect of the genetic factor APOE affect cholesterol levels? If so, does this interaction vary depending on a subject's age? Plot the relationship between APOE and cholesterol. Choose your model(s). Interpret your summary statistics. What model did you find 'best' for the job?
+Does the effect of the genetic factor APOE affect cholesterol levels? If so, does this interaction vary depending on a subject's age? Plot the relationship between APOE and cholesterol. Choose your model(s). Interpret your summary statistics. What model did you find 'best' for the job? Can you use any tools to assess whether the assumptions of your model are accurate?
 
-</br>
-</br>
+
+
 </br>
 
 ***
@@ -1880,8 +1942,3 @@ Thanks for coming!!!
 
 ![](img/rstudio-bomb.png){width=300px}
 
-
-##Notes
-***
-- Possibly split lesson 5 - definately - does that put lesson 6 as glms + functions or do we need another lesson?
-- Do we want to include nonlinear models, parametric vs nonparametric in this lesson? It might be better to go slow with this so people don't get confused. 
