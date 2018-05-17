@@ -11,6 +11,12 @@ output:
 ---
 ***
 
+
+
+
+
+
+
 Approximate time: 2 hours per lesson
 
  _Each lesson will have:_
@@ -20,26 +26,195 @@ Approximate time: 2 hours per lesson
  - Give the class a function not previously used during the lesson and have them figure out what it does and how to use it.
  - Each lesson will start from an excel spreadsheet with imperfect data.
 
+```{r}
+library(tidyverse)
+```
+
+
 ***
 __Objective:__ At the end of this session you will be able to write functions, making your coding more efficient, understandable, reproducible, and hopefully less frustrating.
 
 
+###Our Dataset
+
+Metagenomic 16SrRNA sequencing of latrines from Tanzania and Vietnam at different depths (multiples of 20cm). 
+
+We have 2 csv files (change one to tsv or xlsx - maybe both and make an additional files and get a google spreadsheet): 
+1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.
+2. A table of species abundance.
+
+B Torondel, JHJ Ensink, O Gunvirusdu, UZ Ijaz, J Parkhill, F Abdelahi, V-A Nguyen, S Sudgen, W Gibson, AW Walker, and C Quince.
+Assessment of the influence of intrinsic environmental and geographical factors on the bacterial ecology of pit latrines
+Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
+
+***
+
+
+_Why functions?_
+
+
+
+```{r}
+dat <- read.csv("data/long_SPE_pitlatrine.csv", header = T, stringsAsFactors = F)
+
+```
+
+I want to know the median and median absolute deviation of OTUs in all of our samples for Clostrida.
+
+```{r}
+dat %>% filter(Taxa == "Clostridia") %>% summarize(mean = median(OTUs), mad = mad(OTUs))
+
+```
+Great. What about the median and median absolute deviation for Bacilli? Hmmmm. I guess I'll just copy and paste the above code because it will take 2 seconds.
+
+```{r}
+dat %>% filter(Taxa == "Bacilli") %>% summarize(mean = median(OTUs), mad = mad(OTUs))
+```
+Maybe I'll check out Bacteroidia, too... by copy and pasting AGAIN.
+
+```{r}
+dat %>% filter(Taxa == "Bacteroidia") %>% summarize(mean = median(OTUs), mad = mad(OTUs))
+```
+
+Come to think of it, there are a lot of zeros in this data. Maybe I should be looking at mean and standard deviation instead of median and mad. I'll just go back and change this in each of my 3 lines of code.
+
+
+```{r}
+dat %>% filter(Taxa == "Clostridia") %>% summarize(mean = mean(OTUs), sd = sd(OTUs))
+dat %>% filter(Taxa == "Bacilli") %>% summarize(mean = mean(OTUs), sd = sd(OTUs))
+dat %>% filter(Taxa == "Bacteroidia") %>% summarize(mean = mean(OTUs), sd = sd(OTUs))
+```
+
+
+
+Does any of this feel familiar??
+
+
+
+Allows us to vary the Taxa.
+
+```{r}
+mean_func <- function(x) {
+  dat <- filter(dat, Taxa == x) %>% summarize(mean = mean(OTUs), sd = sd(OTUs))
+}
+
+mean_func("Clostridia")
+```
+
+-may want to be able to take into different data frames...
+
+
+```{r}
+mean_func <- function(dat, x) {
+  dat <- filter(dat, Taxa == x) %>% summarize(mean = mean(OTUs), sd = sd(OTUs))
+}
+
+mean_func(dat, "Clostridia")
+```
+
+
+
+
+Allows us to vary the Taxa and the functions.
+
+```{r}
+mean_func <- function(x, funs = list(mean = mean, sd = sd)) {
+  dat <- filter(dat, Taxa == x) 
+  lapply(funs, function(f) f(dat$OTUs))
+}
+
+mean_func("Clostridia", funs = list(mean = mean, median = median, sd = sd))
+
+
+```
+But it is not foolproof.
+
+```{r}
+mean_func("Clostridia", funs = list(mean = quantile, median = median, sd = mean))
+```
+
+-testthat assumption for function name = name?
+
+Returns the last line... unless explicitly called with `return`
+
+```{r}
+mean_func <- function(x, funs = list(mean = mean, sd = sd)) {
+  dat <- filter(dat, Taxa == x) 
+  lapply(funs, function(f) f(dat$OTUs))
+  return(dat)
+}
+```
+
+
+
+```{r}
+formals(mean_func)
+
+body(mean_func)
+
+environment(mean_func)
+
+
+```
+
+
+function(x) {
+  return(x) 
+  }
+
+
+
+
+
+
+
+
+generalize to country, bacteria, #otus above/below mean? ranking position?
+
+
+- newb copy and pasting (fewer changes)
+- more compact
+- you can us it again
+- updateable
+
+
 _Basic Syntax of Functions in R_
 
-- the structure of a function
+- the structure of a function (formals, body, parent environment)
 - understanding scoping
 - naming conventions
+- generalizing a function
+- setting default values
 - adding '...'
 - the output of your function
 - sourcing functions
+- NAs in functions
+- return
   
 _Handling Errors_
 
 - stopifnot(), warning(), suppressWarnings(), tryCatch()
+- if stop
 
 _Testing Arguments and Validity of your Function_
 
+- informal testing
 - testthat() for formal unit testing
+- assertthat
+
+_Upscaling with functions_
+
+functions can be:
+
+- assigned in variables
+- stored in lists
+- passed as arguments to other functions
+- created inside other functions
+- output by other functions
+
+DRY principle - Don't Repeat Yourself
+
+
 
 
 __Challenge:__
@@ -50,10 +225,11 @@ __Challenge:__
 
 __Resources:__ 
 
-http://stat545.com/block011_write-your-own-function-01.html     
-http://stat545.com/block011_write-your-own-function-02.html     
-http://stat545.com/block011_write-your-own-function-03.html     
-http://mazamascience.com/WorkingWithData/?p=912
+<http://stat545.com/block011_write-your-own-function-01.html>     
+<http://stat545.com/block011_write-your-own-function-02.html>     
+<http://stat545.com/block011_write-your-own-function-03.html>     
+<http://mazamascience.com/WorkingWithData/?p=912>
+<http://adv-r.had.co.nz/Functions.html>
 
 
 ##Post-Lesson Assessment
