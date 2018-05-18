@@ -11,29 +11,67 @@ output:
 ---
 ***
 
+![](img/cartoon37.png)
 
 
+</br>
+
+##A quick intro to the intro to R Lesson Series
+
+</br>
+
+This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This course was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
 
 
+This lesson is the last in a 6-part series. Hopefully you have learned a bit about how to import and manipulate data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share to results. 
 
 
-Approximate time: 2 hours per lesson
+![](img/data-science-explore.png)
 
- _Each lesson will have:_
- 
- - Comprehension questions as we go along on Socrative.
- - How to read help pages online.
- - Give the class a function not previously used during the lesson and have them figure out what it does and how to use it.
- - Each lesson will start from an excel spreadsheet with imperfect data.
+</br>
 
-```{r}
-library(tidyverse)
-```
+Today we are going to learn to write functions, which can save you time and help scale up your analyses. It will also help to minimize copy and pasting, redundancy, and feeling like a newb.
+
+
+![](img/spotify-howtobuildmvp.gif)
+
+</br>
+
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/X5C2JGR), it will help me further develop this course and would be greatly appreciated. 
+
+***
+
+####Packages Used in This Lesson
+
+The following packages are used in this lesson:
+
+`tidyverse` (`ggplot2`, `tidyr`, `dplyr`)     
+`testthat`
+`assertr`
+
+Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
+
+
+***
+####Highlighting
+
+`grey background` - a package, function, code or command      
+*italics* - an important term or concept     
+**bold** - heading or a term that is being defined      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink     
 
 
 ***
 __Objective:__ At the end of this session you will be able to write functions, making your coding more efficient, understandable, reproducible, and hopefully less frustrating.
 
+
+Load the packages!
+
+```{r warning = FALSE, message = FALSE}
+library(tidyverse)
+library(testthat)
+library(assertr)
+```
 
 ###Our Dataset
 
@@ -50,7 +88,7 @@ Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
 ***
 
 
-_Why functions?_
+##Why Functions?
 
 
 
@@ -89,24 +127,108 @@ dat %>% filter(Taxa == "Bacteroidia") %>% summarize(mean = mean(OTUs), sd = sd(O
 
 Does any of this feel familiar??
 
+Functions allow us to:
 
+- avoid repetition, make our code more compact
+- avoid errors, copy/paste errors, typos
+- versatile, updateable
+- upscale, generalizable
+- resuable, even for other projects!
 
-Allows us to vary the Taxa.
+##The Structure of a Function
+
+A function has 3 parts: 
+
+- _formals_ are the input(s) of the function, 
+- the _body_ is the braced expression, 
+- and the _environment_ is the enclosure in which the function was defined. 
+
+We can look at these for a function we are familiar with, `read.csv`. Each argument is specified with `$` and any default values are listed `[1]`. To use `read.csv` you must input a file - this argument has no default value. The rest of the arguments have a default value (such as `header = TRUE`), but can be modified by specifying the argument (by inputting `header = FALSE`). Most function defaults as 'sensible', but if you have not used the function before it is worth reading about the arguments in the help menu. ESPECIALLY do this with mathematical functions to see what assumptions you are making by using the default parameters. `read.csv` also has the magical `...` argument. This argument allows you to pass arbitrary arguments to another function. We will see this in use shortly.
+
 
 ```{r}
-mean_func <- function(x) {
-  dat <- filter(dat, Taxa == x) %>% summarize(mean = mean(OTUs), sd = sd(OTUs))
-}
-
-mean_func("Clostridia")
+formals(read.csv)
 ```
+
+The body of `read.csv` looks suspiciously like the function `read.table` because it is, indeed a 'wrapper' function which uses an existing function with different values for default arguments.
+
+```{r}
+body(read.csv)
+```
+The environment for `read.csv` is the utils package. When we make a function, it will be created in '.GlobalEnv' the 'global environment'. The global environment is our interactive workspace, viewed in the environment window in the top right, and can be thought of as a bag that holds all of our variables and functions. Note that we can use the dropdown menu to change the environment to package:utils, and we can find `read.csv` in that environment.
+ 
+```{r}
+environment(read.csv)
+```
+
+##Writing Functions
+
+
+The basic form of a function takes in arguments (specifications by the user), has statements or expressions (what the function does), and returns an object. A function does not need to be named to be used, however, the greatest utility comes from reusing functions. A named function is called using parentheses: `named_function(arguments)`.
+
+Different from other programming languages, R is not picky about whitespace (the arrangement of tabs, spaces, indents). However formatting your function as below (statements indented below your arguments) will help to make it readable and familiar to other languages. 
+
+This may be a good time to point out that placing your cursor beside a closing bracket will highlight its corresponding opening bracket. This is really useful as your code gets more complex. Also, try deleting the closing bracket beside 'object'. You will see that R is giving you a series of warnings (brackets highlighted in red, and 'x' beside 3 lines of code). Again, this is a helpful warning that saves you time from running an incomplete function.
+
+```{r}
+named_function <- 
+  function(arguments) {
+      statments
+      return(object) 
+  }
+```
+
+
+We want to write a function that will calculate the mean and standard deviation for a given Taxa. 
+
+We can start by naming our function something vaguely informative. (Technically, you can name your functions and variables whatever you want. I could name them after Avengers characters, but people (or myself in 3 months) would have to work pretty hard to figure out what I was doing. Remember, with great power comes great responsibility). 
+
+Our function is going to take 'Taxa' as an argument. For some of you, when you type '{' R will automatically give you your closing bracket '}' so you won't forget - ever trying to be helpful, thanks R. Next we can take our previous code, and save the output into an object called 'summary_dat'. This is because I don't want to overwrite my original data frame every time I run the function. We replace our specific Taxa, 'Clostridia', with our argument, 'Taxa'. This is our expression. All we have to do now is `return` our data frame and make sure all of our brackets match.
+
+Voila! 
+
+```{r}
+mean_func <- 
+  function(Taxa) {
+    summary_dat <- filter(dat, Taxa == Taxa) %>% 
+    summarize(mean = mean(OTUs), sd = sd(OTUs))
+    return(summary_dat)
+}
+```
+
+When you run this function, it will appear, named and with its arguments, in the global environment. If you click on the white box to the right of the function, you can see the code for your function. You can now use your function. 
+
+```{r}
+mean_func("Clostridia")
+mean_func("Bacilli")
+mean_func("Bacteriodia")
+```
+```{r}
+out <- mean_func("Bacteriodia")
+```
+
+
+```{r}
+mean_func <- 
+  function(Taxa) {
+    filter(dat, Taxa == Taxa) %>% 
+    summarize(mean = mean(OTUs), sd = sd(OTUs))
+    print(paste('This is the mean for', Taxa))
+}
+```
+
+##Understanding Lexical Scoping 
+
+- why does dat get changed, but summary_dat does not end up being a global environmental variable when returned?
+
 
 -may want to be able to take into different data frames...
 
 
 ```{r}
 mean_func <- function(dat, x) {
-  dat <- filter(dat, Taxa == x) %>% summarize(mean = mean(OTUs), sd = sd(OTUs))
+  dat <- filter(dat, Taxa == x) %>% 
+    summarize(mean = mean(OTUs), sd = sd(OTUs))
 }
 
 mean_func(dat, "Clostridia")
@@ -127,11 +249,48 @@ mean_func("Clostridia", funs = list(mean = mean, median = median, sd = sd))
 
 
 ```
-But it is not foolproof.
+
+##Defensive Programming
+
+
+###Testing Arguments and Validity of your Function
+
+You might think that you are done with this function. You have the answers, right? But functions are not foolproof.
 
 ```{r}
 mean_func("Clostridia", funs = list(mean = quantile, median = median, sd = mean))
 ```
+
+Hmmm... mislabelled numbers could get a little confusing. 
+
+What if I wanted the summary statistics for 3 Taxa at once?
+
+```{r}
+mean_func(c("Clostridia", "Bacteriodia", "Bacilli"))
+```
+Uh oh. That's bad. I didn't want to merge the 3 Taxa... or did it take the last value?
+
+Your next step is to try and intentionally break your function. Give it input that wasn't meant for it and see what happens. Trouble-shooting this way is called 'defensive programming'. What we are going to do is implement checks and balances such that our function can't do anything weird. 
+
+Initial checks can be things like - what happens when I give an input that is numeric when I am expecting character data? What happens if there is an NA in the dataset? What happens if there is a typo? What happens if I am given an unexpected data structure? What happens if there is more or less data than I am expecting? What happens when I input logical data?
+
+```{r}
+mean_func("Bacilllli")
+```
+```{r}
+mean_func(NA)
+```
+```{r}
+mean_func(210)
+```
+```{r}
+mean_func()
+```
+
+###Error Handling
+
+
+###Unit Tests
 
 -testthat assumption for function name = name?
 
@@ -147,20 +306,7 @@ mean_func <- function(x, funs = list(mean = mean, sd = sd)) {
 
 
 
-```{r}
-formals(mean_func)
 
-body(mean_func)
-
-environment(mean_func)
-
-
-```
-
-
-function(x) {
-  return(x) 
-  }
 
 
 
@@ -171,11 +317,6 @@ function(x) {
 
 generalize to country, bacteria, #otus above/below mean? ranking position?
 
-
-- newb copy and pasting (fewer changes)
-- more compact
-- you can us it again
-- updateable
 
 
 _Basic Syntax of Functions in R_
@@ -217,11 +358,44 @@ DRY principle - Don't Repeat Yourself
 
 
 
-__Challenge:__
+***
+__Challenge__ 
 
-1. Write a function to check that the packages c("dplyr", "readxml", "tidyr") are installed and to load the packages. The function should install the packages if they are not already installled. Write a warning if the package is not installed, but is being installed. Will this function work for other packages? 
 
-2. Write a function to read all .csv files in a directory into R and save each of them in a separate data frame.
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/PeEeK7H.gif){width=150px}
+
+</div>
+
+Write a function to check that the packages c("dplyr", "readxml", "tidyr") are installed and to load the packages. The function should install the packages if they are not already installled. Write a warning if the package is not installed, but is being installed. Will this function work for other packages?
+
+
+</br>
+</br>
+</br>
+
+***
+
+
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/guinea-pig-stuffing-his-face-with-carrot-2531.jpg){width=150px}
+
+</div>
+
+Write a function to read all .csv files in a directory into R and save each of them in a separate data frame.
+
+
+</br>
+</br>
+</br>
+
+***
+
+
 
 __Resources:__ 
 
@@ -232,19 +406,18 @@ __Resources:__
 <http://adv-r.had.co.nz/Functions.html>
 
 
-##Post-Lesson Assessment
+#Post-Lesson Assessment
 ***
-_Questions_
 
-- Speed: Too slow, too fast, just right
-- Content: Too easy, too hard, just right
-- From the description of the lesson, the content was what I expected to learn. T/F
-- What was the most useful thing you learned?
-- What was the least useful thing?
-- Comments/suggestions for improvement.
+Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
+https://www.surveymonkey.com/r/X5C2JGR
 
+</br>
 
-##Notes
 ***
-- Possibly split lesson 5 into 2 lessons: Basic Statistics and Linear regression
-- Maybe switch Regex and Plotting lesson order
+
+</br>
+
+Thanks for coming!!!
+
+![](img/rstudio-bomb.png){width=300px}
