@@ -39,9 +39,17 @@ How do we get there? Today we are going to be learning about the basic data stru
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/GD3KJB9), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF> __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/GD3KJB9>), it will help me further develop this course and would be greatly appreciated. 
 
 </br>
+
+***
+####Highlighting
+
+`grey background` - a package, function, code, command or directory      
+*italics* - an important term or concept or an individual file or folder     
+**bold** - heading or a term that is being defined      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink     
 
 ***
 
@@ -53,14 +61,14 @@ __Objective:__ At the end of this session you will be familiar with the R enviro
 
 Installing R: 
   Windows: 
-    - Go to http://cran.utstat.utoronto.ca/ 
+    - Go to <http://cran.utstat.utoronto.ca/> 
     - Click on 'Download R for Windows'
     - Click on 'install R for the first time'
     - Click on 'Download R 3.4.4 for Windows' (if there is a newer version that is a-okay)
     - Double-click on the .exe file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
   
   (Mac) OS X:
-    - Go to http://cran.utstat.utoronto.ca/ 
+    - Go to <http://cran.utstat.utoronto.ca/> 
     - Click on 'Download R for (Mac) OS X'
     - Click on R-3.4.4.pkg (if there is a newer version that is a-okay)
     - Open the .pkg file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
@@ -72,17 +80,17 @@ Installing R:
 
 Installing RStudio: 
   Windows:
-    - Go to https://www.rstudio.com/products/rstudio/download/#download
+    - Go to <https://www.rstudio.com/products/rstudio/download/#download>
     - Click on 'RStudio 1.1.442 - Windows Vista/7/8/10' to download the installer (if there is a newer version that is a-okay)
     - Double-click on the .exe file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
     
   (Mac) OS X:
-    - Go to https://www.rstudio.com/products/rstudio/download/#download
+    - Go to <https://www.rstudio.com/products/rstudio/download/#download>
     - Click on 'RStudio 1.1.442 - Mac OS X 10.6+ (64-bit)' to download the installer (if there is a newer version that is a-okay)
     - Double-click on the .dmg file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
     
    Linux:
-    - Go to https://www.rstudio.com/products/rstudio/download/#download
+    - Go to <https://www.rstudio.com/products/rstudio/download/#download>
     - Click on the installer that describes your system ie. 'RStudio 1.1.442 - Ubuntu 16.04+/Debian 9+ (64-bit)' (if there is a newer version that is a-okay)
     - Double-click on the .deb file once it has downloaded and follow the instructions.
     - If double-clicking on your .deb file did not open the software manager open the terminal (this can be found by searching for Terminal) and type sudo dpkg -i Downloads/rstudio-xenial-1.1.442-amd64.deb 
@@ -95,18 +103,21 @@ If you have a problem with installing R or RStudio, please come 15 minutes befor
     
 ##A quick intro to  the R environment
 
-The "Comprehensive R Archive Network" (CRAN) is a collection of sites that have the same R and related R material (ie. new and previous versions of R software, documentation, packages and collections of R packages to download that might be useful in a particular field (CRAN Task Views), links to the R journal and R search sites, bug reports and fixes). Different sites (for example, we used http://cran.utstat.utoronto.ca/), are called a mirrors because they reflect the content from the master site in Austria. There are mirrors worldwide to reduce the burden on the network. CRAN will be referred to here as a main repository for obtaining R packages.
+The "Comprehensive R Archive Network" (CRAN) is a collection of sites that have the same R and related R material (ie. new and previous versions of R software, documentation, packages and collections of R packages to download that might be useful in a particular field (CRAN Task Views), links to the R journal and R search sites, bug reports and fixes). Different sites (for example, we used http://cran.utstat.utoronto.ca/), are called a _mirrors_ because they reflect the content from the master site in Austria. There are mirrors worldwide to reduce the burden on the network. CRAN will be referred to here as a main repository for obtaining R packages.
 
 To paraphrase the CRAN gurus:     
-https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf
+<https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf>
 
 
-R is an 'environment' because it has the tools and software for the storage, manipulation, statistical analysis, and graphical display for of data.  It comes with about 25 built-in 'packages' and uses a simple programming language ("S"). Users have been encouraged to make there own packages... there are now over 12,000 packages on CRAN and about 1,500 on Bioconductor.
-
+R is an __environment__ because it has the tools and software for the storage, manipulation, statistical analysis, and graphical display for of data.  It comes with about 25 built-in 'packages' and uses a simple programming language ("S"). Users have been encouraged to make there own packages... there are now over 12,000 packages on CRAN and about 1,500 on [Bioconductor](https://www.bioconductor.org/). 
 ![](img/cran_pkg.png){width=600px}
 </br>
 
-RStudio is an IDE (Integrated Development Environment) for R that provides a more user-friendly experience than using R in a terminal setting. It has 4 main areas or panes, which you can customize to some extent under Tools > Global Options > Pane Layout:
+Bioconductor is another repository for R packages, but it specializes in tools for high-throughput genomics data. One nice thing about Bioconductor is that it has decent vignettes; a __vignette__ is the set of documentation for a package explaining its functions and usages in a tutorial-like format. 
+
+So...what are in these packages? A __package__ is a collection of functions, sometimes data, and compiled code. __Functions__ are the basic workhorses of R; they are the tools we use to analyze our data. Each function can be thought of as a unit that has a specific task. A function takes an input, evaluates an expression (ie. a calucation, plot, merge, etc.), and returns a value.
+
+RStudio is an IDE (Integrated Development Environment) for R that provides a more user-friendly experience than using R in a terminal setting. It has 4 main areas or panes, which you can customize to some extent under `Tools > Global Options > Pane Layout`:
 
 1. Source - The code you are annotating and keeping in your script.
 2. Console - Where your code is executed.
@@ -119,13 +130,17 @@ RStudio is an IDE (Integrated Development Environment) for R that provides a mor
 
 Let me elaborate.
 
-Source is where you are keeping the code and annotation that you want to be saved as your script. The tab at the top of the pane has your script name ('Untitled.R'), and you can switch between scripts by toggling the tabs. All of the panes can be minimized or maximized. You can save, search or publish your source code using the buttons along the pane header. Nothing in the Source pane is 'run' or 'executed' automatically. To run your current line of code or a highlighted segment of code from the Source pane you can a) click the button 'Run' -> 'Run Selected Line(s)', b) click 'Code' -> 'Run Selected Line(s)' from the menu bar, c) use the keyboard shortcut `CTRL + ENTER` (recommended), d) copy and paste your code into the Console and hit Enter.
+The __Source__ is where you are keeping the code and annotation that you want to be saved as your script. The tab at the top left of the pane has your script name ('Untitled.R'), and you can switch between scripts by toggling the tabs. All of the panes can be minimized or maximized using the large and small box outlines in the top right of each pane. You can save, search or publish your source code using the buttons along the pane header. Nothing in the Source pane is _run_ or _executed_ automatically. To run your current line of code or a highlighted segment of code from the Source pane you can: a) click the button `'Run' -> 'Run Selected Line(s)'`, b) click `'Code' -> 'Run Selected Line(s)'` from the menu bar, c) use the keyboard shortcut `CTRL + ENTER` (recommended), d) copy and paste your code into the Console and hit `Enter` (not recommended).
 
-You can also type and execute (by hitting ENTER) your code in the Console when the '>' prompt is visible. The Console also shows information: upon startup about R, during the installation of packages, when there are warnings, and when there are errors in your code. If you enter code and you see a '+' instead of a prompt, R doesn't think you are finished entering code (you are probably missing a bracket). If this isn't immediately fixable, you can hit Esc twice to get back to your prompt. Beside Console in the top left of that pane is your current working directory. Pressing the arrow next to your working directory will open your current folder in the Files pane. If you find your Console is getting too cluttered, selecting the broom icon in that pane will clear it for you. Using the arrow keys, you can find previous commands in the Console if you want to rerun code or fix an error resulting from a typo.
+You can also type and execute your code (by hitting `ENTER`) in the __Console__ when the `>` prompt is visible. The Console also shows information: upon startup about R, during the installation of packages, when there are warnings, and when there are errors in your code. If you enter code and you see a `+` instead of a prompt, R doesn't think you are finished entering code (ie. you might be missing a bracket). If this isn't immediately fixable, you can hit `Esc` twice to get back to your prompt. Beside Console in the top left of that pane is your current working directory. Pressing the arrow next to your working directory will open your current folder in the Files pane. If you find your Console is getting too cluttered, selecting the broom icon in that pane will clear it for you. Using the arrow keys, you can find previous commands in the Console if you want to rerun code or fix an error resulting from a typo.
 
-The Global Environment is super-handy. In the Environment Tab you can see all of the stored objects you have created. You can immediately see the dimension and data type of 2D objects, and click the arrow to see their structure in more detail (ie. the variabless making up the columns and their data types). Clicking on their name will open them in the view. 1D objects data type can be seen immediately as well as their first few values. Custom functions created in session or sourced will also appear in this pane. The Global Environment dropdown displays all of the currently loaded packages. Loaded means that all of the tools/functions in the package are available for use. R comes with a number of packages pre-loaded (ie. base, grDevices). The Environment can become cluttered, so it also has a broom button to clear its workspace. In the History tab are all of the commands you have executed in the Console during your session. You can select a line of code and send it to the Source or Console. The Connections tab is to connect to data sources and will not be used in this lesson.
+The __Global Environment__ is super-handy. In the Environment Tab you can see all of the stored objects you have created. __Objects__ are made by using the assignment operator `<-`. On the left side of the arrow, you have the name of your object. On the right side you have what you are assigning to that object. In this sense, you can think of an object as a container. The container holds the values given as well as information about 'class' and 'methods' (which we will come back to).T ype `x <- c(2,4)` in the Console followed by `Enter`. 1D objects' data types can be seen immediately as well as their first few values. Now type `y <- data.frame(numbers = c(1,2,3), letters = c("a","b","c"))` in the Console followed by `Enter`. You can immediately see the dimension of 2D objects, and you can check the structure of data frames and lists (more later) by clicking on the object's arrow. Clicking on the object name will open the object to view in a new tab. Custom functions created in session or sourced will also appear in this pane. The Global Environment dropdown displays all of the currently loaded packages. _Loaded_ means that all of the tools/functions in the package are available for use. R comes with a number of packages pre-loaded (ie. base, grDevices). The Environment can become cluttered, so it also has a broom button to clear its workspace. In the History tab are all of the commands you have executed in the Console during your session. You can select a line of code and send it to the Source or Console. The Connections tab is to connect to data sources such as Spark and will not be used in this lesson.
 
+The Files tab allows you to search through directories; you can go to or set your working directory by making the appropriate selection under the `More` (blue gear) drop-down menu. The `...` to the top left of the pane allows you to search for a folder in a more traditional manner. The Plots tab is where plots you make in a .R script will appear (notebooks and markdown plots will be shown in the Source pane). There is the option to Export and save these plots manually. The Packages tab has all of the packages that are installed and their versions, and buttons to Install or Update packages. A checkmark in the box next to the package means that the package is loaded. You can load a package by adding a checkmark next to a package, however it is good practice to instead load the package in your script to aid in reproducibility. The Help menu has the documentation for all packages and functions. For each function you will find a description of what the function does, the arguments it takes in, what the function does to the inputs (details), what it outputs, and an example. Some of the help documentation is difficult to read or less than comprehensive, in which case googling the function is a good idea. The Viewer will display vignettes, or local web content such as a Shiny app, interactive graphs, or a rendered html document.
 
+I suggest you take a look at `Tools -> Global Options` to customize your experience. For example, under `Code -> Editing` I have selected `Soft-wrap R source files` followed by `Apply` so that my text will wrap by itself when I am typing and not create a long line of text. You may also want to change the `Appearance` of your code. I like the `RStudio theme: Modern` and `Editor font: Ubuntu Mono`, but pick whatever you like! Again, you need to hit `Apply` to makee changes.
+
+That whirlwind tour isn't everything the IDE can do, but it is enough to get started.
 
 ##A quick note on directory structure
 
@@ -135,14 +150,14 @@ This is an image of a possible directory.
 
 </br>
 
-In this hierarchy we will pretend to be benedict, and we are hanging out in our Tables folder. R looks to read in your files from your _working directory_, which in this case would be Tables, so at this moment, R would have access to proof.tsv and genes.csv. If I tried to open paper.txt under benedict, R would tell me there is no such file in my current working directory.
+In this hierarchy we will pretend to be _benedict_, and we are hanging out in our _Tables_ folder. R looks to read in your files from your __working directory__, which in this case would be _Tables_, so at this moment, R would have access to _proof.tsv_ and _genes.csv_. If I tried to open _paper.txt_ under _benedict_, R would tell me there is no such file in my current working directory.
 
-To get your working directory in R you would type in your source pane: 
+To get your working directory in R you would type in your Source pane: 
 
 ```
 getwd()
 ```
-You would then press Enter to execute the code in the Console. Technically, there is no reason to save this code and it could be typed and executed in the Console. However, to save some mental effort choosing which code to save or not (especiallly when starting out), let's type everything in the Source. You can always go back and choose what to delete, and harder to recreate what you didn't save.
+You would then press `Enter` to execute the code in the Console. Technically, there is no reason to save this code and it could be typed and executed in the Console. However, to save some mental effort choosing which code to save or not (especially when starting out), let's type everything in the Source. You can always go back and choose what to delete, and harder to recreate what you didn't save.
 
 The output in your Console would be:
 
@@ -150,43 +165,69 @@ The output in your Console would be:
 [1] "/home/benedict/Tables"
 ```
 
-R will tell you your _absolute directory_. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names are in the path.
+R will always tell you your __absolute directory__. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names differ in the path.
 
 
 To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"home/benedict"`). Therefore, our current location could also be denoted as `"~/Tables"`.
 
-To move to the directory 'sue' we us a function that will set the working directory:
+To move to the directory _ewan_ we use a function that will set the working directory:
 
 ```
-setwd("/home/benedict")
+setwd("/home/ewan")
 #or 
-setwd("~")
+setwd("~/ewan")
 #or 
-setwd("..")
+setwd("../ewan")
 
 ```
 A _relative directory_ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
 
-If I wanted to move back to Tables using the _absolute path_, I would set a new working directory:
+If I wanted to move back to _Tables_ using the _absolute path_, I would set a new working directory:
 
 ```
 setwd("/home/benedict/Tables")
 #or
-setwd("~/Tables")
+setwd("~/benedict/Tables")
 ```
 
 And the _relative path_ would be:
 
 ```
-setwd("./Tables")
+setwd("../benedict/Tables")
 ```
 
-There is some talk over setting working directories within scripts. Obviously, not everyone has the same absolute path, so if you are setting a directory in your script, _it is best to have a relative path starting from the folder your script is in_. Keep in mind that others you share your script with might not have the same directory structure if you refer to subfolders. 
+There is some talk over setting working directories within scripts. Obviously, not everyone has the same absolute path, so if must set a directory in your script, _it is best to have a relative path starting from the folder your script is in_. Keep in mind that others you share your script with might not have the same directory structure if you refer to subfolders. 
 
 You can set your working directory by:
-1. setwd()
-2. Session -> Set Working Directory (3 Options)
-3. Files Window -> More (Gear Symbol) -> Set As Working Directory
+1. `setwd()`
+2. `Session -> Set Working Directory` (3 Options)
+3. `Files Window -> More (Gear Symbol) -> Set As Working Directory`
+
+
+***
+__Challenge__ 
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/turtle_challenge.jpg){width=100px}
+</div>
+
+</br>
+__Socrative__
+
+Assume you are in the _Tables_ folder. Which is NOT a valid way to get to the _Thesis_ folder?
+
+- `setwd("../../ewan/Thesis")`
+- `setwd("~/ewan/Thesis")`
+- `setwd("../brad/../ewan/Thesis")`
+- `setwd("./../../ewan/Thesis")`
+- `setwd("/home/ewan/Thesis")`
+- They are all valid, stop messing with me.
+
+Follow-up: Which are the absolute paths?
+
+</br>
+
+***
 
 
 ##Making Life Easier
@@ -255,27 +296,24 @@ Reflow Comment (Wrap comments) `CTRL + SHIFT + /`
 
     Use version control.
 
-https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/
+<https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/>
 
 
 
 ###Trouble-shooting basics
 
-- _file does not exist_ - working directory errors  - use getwd() to check where you are working, the Files window to check that your file exists there, and setwd() to change your directory
-                         - work inside an _R project_ with your files in the same folder - your working directory will be set automatically when you open the project
+- _file does not exist_ - working directory errors  - use `getwd()` to check where you are working, the Files window to check that your file exists there, and `setwd()` to change your directory
+                         - work inside an _R project_ with your files in the same folder - your working directory will be set automatically when you open the project (this can be done by using `File -> New Project` and following prompts)
 - _typos_ - R is case sensitive, check that you've spelled everything right
-            - use tab-completion when possible
+            - use _tab-completion_ when possible
 - _open quotes, parentheses, brackets_
             - R Studio highlights matching brackets, and gives an 'x' on your left sidebar if your final bracket is not closed
 - _data type_ - you can't perform a calculation on those 1, and 0's because they are actually characters and not numeric
-- _unexpected answers_ - check in the help menu ie. `help("function")` or `?function` to double-check how the function works and its output
+- _unexpected answers_ - access the _help menu_ by typing `help("function")` or `?function` or `help(package = "package")` in the Source or Console to double-check how the function works and its output. The result will be in the lower-right pane under the Help tab (which is also searchable). 
 - _function is not found_ - make sure the package is installed AND loaded
 - _weird error_ you are not sure the meaning of - find answers online (see below)
 - sometimes weird things happen - clear your environment and restart your R session
 - _the R bomb_!! - congrats, you have completed an R rite of passage.
-
-
-
 
 ***
 
@@ -298,7 +336,7 @@ _Finding answers online_
 - 99% of the time, someone has already asked your question     
 - Google, Stackoverflow, SEQanswers, quora, researchgate, RSeek, twitter, even reddit     
 - Including the program, version, error, package and function helps, be specific     
-- http://stat545.com/help-general.html      
+- <http://stat545.com/help-general.html>      
   
   
 _Asking a question_
@@ -308,8 +346,8 @@ _Asking a question_
 - Show enough of your code to reproduce the problem.
 - Add tags that match your problem.
 - Respond to the feedback. People put in their free time to answer you.
-- https://stackoverflow.com/help/how-to-ask     
-- https://www.r-project.org/posting-guide.html
+- <https://stackoverflow.com/help/how-to-ask>     
+- <https://www.r-project.org/posting-guide.html>
 
 </br>
 
@@ -327,7 +365,7 @@ Last but not least, to make life easier: under Help there is a `Cheatsheet of Ke
 ##A quick intro to R data structures
 
 
-There are 4 types of data structures in R.
+There are 5 types of data structures in R.
 
 1. vectors - 1D - holds one type of data
 2. lists - 1D - holds multiple data types
@@ -357,7 +395,7 @@ object_name = value
 
 We are going to use a simple function to create a vector. Functions take arguments. To find out which arguments they take, we can look at the help menu. The help menus in R can be intimidating and hard to read. Don't think it is just because you are new. If you really don't understand the help menu, you are probably not the only one, so look online and there will likely be a simpler explanation.
 
-Let's look up the function `c()`, which combines values into a vector or list. It takes in the argument `'...'`, which is defined as the objects to be concatenated. In the description it says 'all agruments are coerced to a common type, which is the type of the returned value' and in the details it tells you the hierarchy 'NULL < raw < logical < integer < double < complex < character < list < expression' and 'factors are treated only via their internal integer codes'. Now we don't know what all this means yet, but we come back to this as we go along. The output of the function is 'NULL or an expression or a vector'. At the bottom of the help menu, there are usually examples of how to use the function, which are sometimes easier to understand than the documentation. 
+Let's look up the function `c()`, which combines values into a vector or list. It takes in the argument `'...'`, which is defined as the objects to be concatenated. In the description it says 'all agruments are coerced to a common type, which is the type of the returned value' and in the details it tells you the hierarchy _NULL < raw < logical < integer < double < complex < character < list < expression_ and 'factors are treated only via their internal integer codes'. Now we don't know what all this means yet, but we come back to this as we go along. The output of the function is 'NULL or an expression or a vector'. At the bottom of the help menu, there are usually examples of how to use the function, which are sometimes easier to understand than the documentation. 
 
 
 ###Vectors
@@ -385,7 +423,7 @@ vec_mixed
 ```
 
 
-R will coerce your vector to be of one data type, in this case the type that is most inclusive is a character vector. 
+R will _coerce_ your vector to be of one data type, in this case the type that is most inclusive is a character vector. 
 What do you think will happen if 'bacteria' is removed from the vector? Will it be coerced to the same type?
 
 ```{r}
@@ -468,7 +506,6 @@ Lists can get complicated. If you forget what is in your list, use the `str()` f
 str(list_mix)
 
 str(vec_mixed)
-
 ```
 
 
@@ -478,7 +515,6 @@ To subset for 'virus', I first have to subset for the character element of the l
 list_mix[[1]]
 
 list_mix[[1]][2]
-
 ```
 
 
@@ -498,8 +534,20 @@ mat
 ![](img/pause.jpg){width=100px}
 
 </div>
-What has happened here? Look up the rep() function. Why has R not thrown an error? How would I make this same matrix without vector recycling?          
+What has happened here? Look up the `rep()` function. Why has R not thrown an error? How would I make this same matrix without vector recycling? Can you think of 2 ways?          
 </br>     
+
+```{r include = FALSE}
+mat <- matrix(c(rep(0, 10), rep(1,10), rep(0, 5)), nrow = 5, ncol = 5)
+
+mat <- matrix(c(0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0), nrow = 5, ncol = 5)
+
+mat <- matrix(as.numeric(c(rep(FALSE, 10), rep(TRUE,10), rep(TRUE, 5))), nrow = 5, ncol = 5)
+
+#This may be a good time to mention that TRUE and FALSE can be abbreviated to T and F
+mat <- matrix(as.numeric(c(F,F,F,F,F,F,F,F,F,F,T,T,T,T,T,T,T,T,T,T,F,F,F,F,F)), nrow = 5, ncol = 5)
+```
+
 
 ***
 __Challenge__ 
@@ -507,7 +555,7 @@ __Challenge__
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
-Make a 4 x 4 matrix that looks like this, using the seq() function at least once. 
+Make a 4 x 4 matrix that looks like this, using the `seq()` function at least once. 
 
 <pre>
 2   4   6   8
@@ -517,6 +565,14 @@ Make a 4 x 4 matrix that looks like this, using the seq() function at least once
 </pre>
 
 ***
+
+```{r include = FALSE}
+matrix(c(seq(from = 2, to = 12, by = 2), seq(3,12,3), rep(seq(0,1,1), 3)), nrow = 4, ncol = 4, byrow = TRUE)
+matrix(c(seq(from = 2, to = 12, by = 2), seq(3,12,3), c(0,1,0,1,0,1)), nrow = 4, ncol = 4, byrow = TRUE)
+matrix(c(seq(from = 2, to = 12, by = 2), seq(3,12,3), rep(c(0,1), 3)), nrow = 4, ncol = 4, byrow = TRUE)
+matrix(c(seq(from = 2, to = 12, by = 2), seq(3,12,3), rep(c(F,T), 3)), nrow = 4, ncol = 4, byrow = TRUE) # coerces
+#etc
+```
 
 
 
@@ -532,6 +588,7 @@ dim(mat)
 
 length(mat)
 ```
+
 To access a specific row or column we can still use indexing.
 
 ```{r}
@@ -539,12 +596,14 @@ mat[3:5,]
 
 mat[, 4]
 ```
+
 Note that when we are subsetting a single row or column, we end up with a vector.
 
 ```{r}
 is.vector(mat[,4])
 
 ```
+
 It is common to transform matrices. Note that the set of ones will now be in rows rather than columns.
 
 ```{r}
@@ -569,6 +628,7 @@ class(mat)
 class(list_mix)
 
 ```
+
 Some package creaters will have created their own data classes and will require your data to be in the format required of that class. For example in Bioconducter there is an _ExpressionSet_ class. 
 
 ![](img/expressionset.jpg)
@@ -623,6 +683,7 @@ ncol(dat_large)
 dim(dat_large)
 
 ```
+
 If we look at the structure again, we still have 3 levels. This is because each unique character element has been encoded as a number.
 (Note that a column can be subset by index or by its name using the `'$'` operator.)
 
@@ -633,7 +694,8 @@ dat_large[ ,1]
 
 levels(dat_large$character)
 ```
-Note that the first character object in the data frame is 'bacteria', however, the first factor level is archaea. R by default puts factor levels in alphabetical order. This can cause problems if we aren't aware of it. Always check to make sure your factor levels are what you expect. With factors, we can deal with our character levels directly, or their numeric equivalents. Factors are extremely useful for performing group calculations as we will see later in the course.
+
+Note that the first character object in the data frame is 'bacteria', however, the first factor level is archaea. R by default puts factor levels in _alphabetical order_. This can cause problems if we aren't aware of it. Always check to make sure your factor levels are what you expect. With factors, we can deal with our character levels directly, or their numeric equivalents. Factors are extremely useful for performing group calculations as we will see later in the course.
 
 ```{r}
 as.numeric(dat_large$character)
@@ -647,12 +709,48 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Look up the factor function. Use it to make 'bacteria' the first level, 'virus' the second level, and 'archaea' the third level. Use functions from the lesson to make sure your answer is correct. 
+Look up the factor function. Use it to make 'bacteria' the first level, 'virus' the second level, and 'archaea' the third level for the data frame 'dat'. Bonus if you can make the level numbers match (1,2,3 instead of 2,3,1). Use functions from the lesson to make sure your answer is correct. 
 
 </br>     
 </br>     
 
 ***
+
+```{r include = FALSE}
+#this is okay - but be aware of alphabetical order
+dat$character <- factor(dat$character, levels = c('bacteria', 'virus', 'archaea'))
+#archaea, bacteria, virus
+#2,3,1
+
+#this is okay, what we wanted except implies a < relationship
+#class is actually 'ordered' 'factor'
+#Ordered factors differ from factors only in their class, but methods and the model-fitting functions treat the two classes quite differently.
+dat$character <- factor(dat$character, levels = c('bacteria', 'virus', 'archaea'), ordered = TRUE)
+#bacteria, virus, archaea
+#1,2,3
+
+#this is super not okay
+dat$character <- factor(dat$character, labels = c('bacteria', 'virus', 'archaea'))
+#bacteria, virus, archaea
+#BUT named levels above, therefore
+#bacteria = archaea, virus = bacteria, archaea = virus
+#2,3,1
+#BUT data frame changed to:
+#virus, archaea, bacteria
+
+#this is okay - what we wanted
+dat$character <- factor(dat$character, levels = c('bacteria', 'virus', 'archaea'), labels = c('bacteria', 'virus', 'archaea'))
+
+#bacteria, virus, archaea
+#1,2,3
+levels(dat$character)
+str(dat)
+
+#if this isn't working for people it is likely due to the fact that labels inherit from prior factor levels
+#have them remake the original dat and then try again 
+```
+
+
 
 We can also convert between data types if they are similar enough. For example, I can convert my matrix into a data frame. Since a data frame can hold any type of data, it can hold all of the numeric data in a matrix.
 
@@ -660,6 +758,7 @@ We can also convert between data types if they are similar enough. For example, 
 new_dat <- as.data.frame(mat)
 new_dat
 ```
+
 Note that R just made up column names for us. We can provide our own vector of column names.
 
 ```{r}
@@ -668,6 +767,7 @@ colnames(new_dat) <- c("col1", "col2", "col3", "col4", "col5")
 colnames(new_dat) <- c(paste0(rep("col",5), 1:5))
 new_dat
 ```
+
 In contrast, our data frame with multiple data types can not be converted into a matrix, as a matrix can only hold one data type. We could however, transform our new_dat back into a matrix. The matrix will retain our column heading.
 
 ```{r}
@@ -803,7 +903,8 @@ arr * 4
 
 arr[1, 2, 5] * 4 
 ```
-These are illustrative examples to see how our different data structures behave. In reality, you will want to do calculations across rows and columns, and not on your entire matrix or data frame. For example, we might have a count table where rows are genes, columns are samples, and we want to know the sum of all the counts for a gene. To do this, we can use the apply function.
+
+These are illustrative examples to see how our different data structures behave. In reality, you will want to do calculations across rows and columns, and not on your entire matrix or data frame. For example, we might have a count table where rows are genes, columns are samples, and we want to know the sum of all the counts for a gene. To do this, we can use the `apply()` function. `apply()` takes an array, matrix (or something that can be coerced to such, like a numeric data frame), and applies a function over row (`MARGIN = 1`) or columns (`MARGIN = 2`). Here we can invoke the `sum` function. 
 
 ```{r}
 counts <- data.frame(Site1 = c(geneA = 2, geneB = 4, geneC = 12, geneD = 8),
@@ -814,8 +915,11 @@ counts
 
 apply(counts, MARGIN = 1, sum)
 
+str(apply(counts, MARGIN = 1, sum))
+class(apply(counts, MARGIN = 1, sum))
 ```
-The apply function will recognize basic functions.
+
+Note that the output is no longer a data frame. Since the resulting sums would have the dimensions of a 1x4 matrix, the results are instead coerced to a named numeric vector. The apply function will recognize basic functions.
 
 ```{r}
 apply(counts, MARGIN = 1, mean)
@@ -826,14 +930,22 @@ apply(counts, MARGIN = 1, median)
 
 apply(counts, MARGIN = 1, quantile)
 ```
+
 Public service announcement. Know what logarithm you are using. 
 
 ```{r}
 apply(counts, MARGIN = 1, log) #this is base exp(1)
+str(apply(counts, MARGIN = 1, log))
+class(apply(counts, MARGIN = 1, log))
+
 apply(counts, MARGIN = 1, log2)
 apply(counts, MARGIN = 1, log10)
 ```
-What if I want to know something else? We can create a function.
+
+When all data values are transformed, the output is a numeric matrix.
+
+What if I want to know something else? We can create a function. The sum function we called before can also be written as a function taking in x (in this case the vector of values from our coerced data frame row by row) and summing them. Other functions can be passed to `apply()` in this way.
+
 ```{r}
 apply(counts, MARGIN = 1, sum)
 #equivalent to
@@ -848,13 +960,19 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-
+Create a function to get the counts within +/- 2 standard deviations for each gene.
 Create a function to test if ALL of the counts for a gene are greater than 10.     
 
 </br>
 </br>     
 
 ***
+
+```{r include = FALSE}
+
+
+```
+
 
 </br>
 
@@ -1281,25 +1399,26 @@ Try reading in one of your own datasets. Write it to a different file format.
 
   
 #Resources
-https://github.com/eacton/CAGEF
-https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd     
-http://stat545.com/block002_hello-r-workspace-wd-project.html  
-http://stat545.com/block026_file-out-in.html     
-http://sisbid.github.io/Module1/
-https://github.com/tidyverse/readxl
-https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf
-https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/
-http://stat545.com/help-general.html
-https://stackoverflow.com/help/how-to-ask     
-https://www.r-project.org/posting-guide.html
-https://github.com/jennybc/googlesheets
+<https://github.com/eacton/CAGEF>
+<https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd>     
+<http://stat545.com/block002_hello-r-workspace-wd-project.html>  
+<http://stat545.com/block026_file-out-in.html>     
+<http://sisbid.github.io/Module1/>
+<https://github.com/tidyverse/readxl>
+<https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf>
+<https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/>
+<http://stat545.com/help-general.html>
+<https://stackoverflow.com/help/how-to-ask>     
+<https://www.r-project.org/posting-guide.html>
+<https://github.com/jennybc/googlesheets>     
+<http://www.quantide.com/ramarro-chapter-07/>
 
 
 #Post-Lesson Assessment
 ***
 
 Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
-https://www.surveymonkey.com/r/GD3KJB9
+<https://www.surveymonkey.com/r/GD3KJB9>
 
 </br>
 
