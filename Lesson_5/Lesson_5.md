@@ -15,7 +15,7 @@ output:
 
 ![Real-Life Confusion from Cross-Validated: Linear model seems off in R?](img/plot_confusion.png){width=500px}
 
-(AKA why is the solid line the best fit and not the dashed line?)
+(Why is the solid line the best fit and not the dashed line?)
 
 </br>
 
@@ -394,7 +394,7 @@ __What is the relationship between cholesterol and age?__
 
 Now, we can pick a model to answer our question instead of a t-test by considering the assumptions above.
 
-If we evaluate our independent and dependent variables, cholesterol and age, they are both continuous, not categorical. We only have one dependent variable. From the plot we made earlier (repeated here) it looks like if there is a relationship between age and cholesterol it would be linear. Data points have an even spread so the variance is likely equal and normally distributed. The values are independent (from separate blood draws).    
+If we evaluate our independent and dependent variables, age and cholesterol, they are both continuous, not categorical. We only have one independent variable. From the plot we made earlier (repeated here) it looks like if there is a relationship between age and cholesterol it would be linear. Data points have an even spread so the variance is likely equal and normally distributed. The values are independent (from separate blood draws).    
 
 
 ```r

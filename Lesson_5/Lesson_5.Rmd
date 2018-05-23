@@ -15,7 +15,7 @@ output:
 
 ![Real-Life Confusion from Cross-Validated: Linear model seems off in R?](img/plot_confusion.png){width=500px}
 
-(AKA why is the solid line the best fit and not the dashed line?)
+(Why is the solid line the best fit and not the dashed line?)
 
 </br>
 

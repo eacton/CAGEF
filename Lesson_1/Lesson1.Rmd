@@ -960,8 +960,7 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Create a function to get the counts within +/- 2 standard deviations for each gene.
-Create a function to test if ALL of the counts for a gene are greater than 10.     
+Create a function to get the counts to multiply all for each gene by 3.
 
 </br>
 </br>     
@@ -969,7 +968,7 @@ Create a function to test if ALL of the counts for a gene are greater than 10.
 ***
 
 ```{r include = FALSE}
-
+apply(counts, MARGIN = 1, function(x) (x*3))
 
 ```
 
@@ -1011,7 +1010,7 @@ remove_na_vec <- na.omit(na_vec)
 remove_na_vec
 ```
 
-With a large data frame, it may be hard to look at every cell to tell if there are NAs. The function complete.cases looks by row to see whether any row contains an NA. You can then subset out the rows with the NAs.
+With a large data frame, it may be hard to look at every cell to tell if there are NAs. The function `complete.cases()` looks by row to see whether any row contains an NA. You can then subset out the rows with the NAs.
 ```{r}
 is.na(counts)
 
@@ -1021,7 +1020,7 @@ complete.cases(counts)
 
 counts[complete.cases(counts),]
 ```
-If you want to keep all of the observations in your data frame and do your calculations anyways, now that you are aware of what is going on in your dataset, some functions specifically allow for this. Let's look up the documentation for the mean function.
+If you want to keep all of the observations in your data frame and do your calculations anyways, now that you are aware of what is going on in your dataset, some functions specifically allow for this. Let's look up the documentation for the `mean()` function.
 
 ```{r}
 apply(counts, MARGIN = 1, mean, na.rm = TRUE)
@@ -1040,23 +1039,22 @@ In this case na.omit can be useful.
 apply(counts, MARGIN = 1, na.omit(log))
 
 ```
-You can similarly deal with NaNs in R. NaNs (not a number) are NAs (not available), but NAs and NaNs. NaNs appear for imaginary or complex numbers or some numeric values for example 0/0. Some packages may output NAs, NaNs, or Inf/-Inf (rare, use is.finite). 
+You can similarly deal with NaNs in R. NaNs (not a number) are NAs (not available), but NAs are not NaNs. NaNs appear for imaginary or complex numbers or unusual numeric values. Some packages may output NAs, NaNs, or Inf/-Inf (can be found with `is.finite()`). 
 
 ```{r}
-counts <- data.frame(Site1 = c(geneA = 2, geneB = 4, geneC = 12, geneD = 8),
-                     Site2 = c(geneA = 15, geneB = NaN, geneC = 27, geneD = 28),
-                     Site3 = c(geneA = 10, geneB = 7, geneC = 13, geneD = NaN))
-
-counts
-
-nan_vec <- c(5, 6, NaN, 7, 7, NaN)
+na_vec <- c(5, 6, NA, 7, 7, NA)
+nan_vec <- c(5, 6, NaN, 7, 7, 0/0)
 
 is.na(na_vec)
 is.na(nan_vec)
 
-is.nan(nan_vec)
 is.nan(na_vec)
+is.nan(nan_vec)
+
 ```
+
+Basically, if you come across NaNs, you can use the same functions such as `complete.cases()` that you use with NAs.
+
 Depending on your purpose, you may replace NAs with a sample average, or the mode of the data, or a value that is below a threshold.
 
 ```{r}
@@ -1071,7 +1069,7 @@ counts
 
 There are a few different places you can install packages from R. Listed in order of decreasing sketchiness:
 
-- Bioconductor (Bioinformatics focus)
+- Bioconductor (Bioinformatics/Genomics focus)
     + Guidelines for submission, reviewed, and must have a vignette.
 - CRAN (The Comprehensive R Archive Network)
     + Guidelines for submission, reviewed. Where the majority of packages are.
@@ -1083,19 +1081,19 @@ There are a few different places you can install packages from R. Listed in orde
     
 </br>
 
-_Readr_ is a package that will help us to read in our files (easily). It is installed from CRAN.
+`devtools` is a package that is used for making R packages, but it also helps us to install packages from Github. It is downloaded from CRAN.
 
 ```{r eval=FALSE}
-install.packages('readr') #would be better to have something with dependencies here
+install.packages('devtools') #would be better to have something with dependencies here
 
 ```
 
-R may give you package installation warnings. Don't panic. In general, your package will either be installed and R will test if the installed package can be loaded, or R will give you a 'non-zero exit status' - which means your package did not install. If you read the entire error message, it will give you a hint as to why the package did not install.
+R may give you package installation warnings. Don't panic. In general, your package will either be installed and R will test if the installed package can be loaded, or R will give you a _non-zero exit status_ - which means your package did not install. If you read the entire error message, it will give you a hint as to why the package did not install.
 
-Some packages depend on previously developed packages and can only be installed after said package is installed in your library. Similarly, the previous package may depend on another package... here is the solution to install the package and all of the prior packages it relies on.
+Some packages _depend_ on previously developed packages and can only be installed after another package is installed in your library. Similarly, that previous package may depend on another package... here is the solution to install the package and all of the prior packages it relies on.
 
 ```{r eval = FALSE}
-install.packages('readr', dependencies = TRUE)
+install.packages('devtools', dependencies = TRUE)
 
 ```
 
@@ -1105,7 +1103,7 @@ You can install more than one package at once.
 install.packages(c('dplyr', 'devtools', 'readxl'), dependencies = TRUE)
 ```
 
-To load a package (ie. to actually use it):
+A package only has to be installed once. It is now in your _library_. To use a package, you must _load_ the package into memory. Unless this is one of the packages R loads automatically, you choose which packages to load every session. 
 
 ```{r eval = FALSE}
 library(devtools) # or library('devtools')
@@ -1125,7 +1123,7 @@ source("https://bioconductor.org/biocLite.R")
 biocLite("BiocInstaller")
 ```
 
-Or you can use the BiocInstaller package to install other packages.
+Or you can use the BiocInstaller package to install other packages instead of typing in that url every time.
 
 ```{r eval = FALSE}
 library(BiocInstaller)
@@ -1133,14 +1131,14 @@ biocLite('limma')
 ```
 
 
-Devtools is required to install from GitHub. We don't actually need to load the entire library for devtools if we are only going to use one function.
+As forementioned `devtools` is required to install from GitHub. We don't actually need to load the entire package for `devtools` if we are only going to use one function. We select a function using this syntax `package::function()`.
 
 ```{r eval = FALSE}
 devtools::install_github("jennybc/googlesheets")
 
 ```
 
-Libraries from Bioconductor and GitHub load the same as packages from CRAN.
+All packages are loaded the same regardless of their origin, using `library()`.
 
 ```{r eval = FALSE}
 library(googlesheets)
@@ -1154,7 +1152,7 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Install and load the package 'DESeq2'.
+Install and load the package `DESeq2`.
 
 </br>
 
@@ -1163,17 +1161,32 @@ Install and load the package 'DESeq2'.
 
 ***
 
+```{r include = FALSE}
+library(BiocInstaller)
+biocLite('DESeq2', dependencies = TRUE)
+#or
+
+BiocInstaller::biocLite('DESeq2', dependencies = TRUE)
+#or
+
+source("https://bioconductor.org/biocLite.R")
+biocLite("DESeq2", dependencies = TRUE)
+
+#didn't have to have 'dependencies = TRUE', but may have run into some issues
+```
+
+
 </br>
 
 #Reading in data & writing data
 
-###Our Dataset
+###Dataset: Pyrosequencing of the V3-V5 hypervariable regions of the 16S rRNA gene
 
-Metagenomic 16SrRNA sequencing of latrines from Tanzania and Vietnam at different depths (multiples of 20cm). 
+16S rRNA pyrosequencing of 30 latrines from Tanzania and Vietnam at different depths (multiples of 20cm). Microbial abundance is represented in Operational Taxonomic Units (OTUs). Operational Taxonomic Units (OTUs) are groups of organisms defined by a specified level of DNA sequence similarity at a marker gene (e.g. 97% similarity at the V4 hypervariable region of the 16S rRNA gene). Intrinsic environmental factors such as pH, temperature, organic matter composition were also recorded.
 
-We have 2 csv files (change one to tsv or xlsx - maybe both and make an additional files and get a google spreadsheet): 
+We have 2 csv files: 
 1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.
-2. A table of species abundance.
+2. OTU abundance table.
 
 B Torondel, JHJ Ensink, O Gunvirusdu, UZ Ijaz, J Parkhill, F Abdelahi, V-A Nguyen, S Sudgen, W Gibson, AW Walker, and C Quince.
 Assessment of the influence of intrinsic environmental and geographical factors on the bacterial ecology of pit latrines
@@ -1181,37 +1194,47 @@ Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
 
 ***
 
-Let's read our metadata file into R. While we do these exercises, we are going to become friends with the help menu.
+Let's read our metadata file into R. While we do these exercises, we are going to become friends with the Help menu. Let's start by using the `read.table()` function which takes in the path to our file.
 
-To see the result, we can either click on meta in the global environment to open it in the viewer, or we can write code to view the variable. `head()` will show us the first 10 rows of our data frame. `tail()` would show the last 10 rows.
+
 
 ```{r}
 meta <- read.table(file = "data/ENV_pitlatrine.csv")
+
+```
+
+To see the result, we can look at 'meta' in the Environment pane and see that there are 82 observations of one variable. If we click on the arrow next to 'meta' we can now see that we have a column 'V1' and the variable type is a factor. We can also hover the mouse over the column name for this information. We can click on 'meta' in the Environment pane or type `View(meta)` in the Console to open a spreadsheet-like view of 'meta' in a new tab. `head()` will show us the first 10 rows of our data frame. `tail()` would show the last 10 rows.
+
+```{r}
 head(meta)
 ```
 
 This is pretty ugly looking. Why?
-In the help file the default 'sep' or what is separating columns is expected to be a space. We need to use specify a comma instead.  
+In the help file the default `sep` or what is separating columns is expected to be a space. We need to use specify a comma instead.  
 
 ```{r}
 meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",")
 head(meta)
 ```
 
-Better. Our columns are now separated appropriately, but what about our column titles?
+Better. Looking in the Environment pane 'meta' now has 82 rows and 12 columns, meaning our columns are separated appropriately, but what about our column titles? We want the names in the 1st row to be our column headings.
 
 ```{r}
 meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = TRUE)
 head(meta)
 ```
 
-These samples are not replicates. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)
+We use `header=TRUE` to specify that the first row we read in will be the column headers. We now have 81 rows and 12 columns. 
+
+These samples are not replicates. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character data, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)
 
 ```{r}
 meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = T, stringsAsFactors = F)
-head(meta)
+str(meta)
 ```
 
+Don't forget! `str()` is still the best way to look at your data structure without taking your hands off the keyboard.
+
 ***
 __Challenge__ 
 
@@ -1220,11 +1243,20 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Use a parameter in read.table to read in metadata such that all non-character columns are numeric.
+Use a parameter in `read.table()` to read in metadata such that all columns will be of character data type, and the first column is a factor.
 
 </br>
 
 </br>
+
+```{r include = FALSE}
+meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = T, stringsAsFactors = F, colClasses = c("factor", rep("character",11)))
+str(meta)
+
+meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = T, stringsAsFactors = F, colClasses = c("factor", "character", "character", "character", "character", "character", "character", "character", "character", "character", "character", "character"))
+
+```
+
 
 ***
 
@@ -1234,31 +1266,46 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Read our data table into R using any function under Usage in the read.table help menu. Save your result in a variable called dat.
+Read our metadata table into R using any previously unused function under Usage in the `read.table()` Help menu. Save your result in a variable called 'dat'.
 
 </br>
 </br>
+
+```{r include = FALSE}
+#read.csv has header=T as default and sep = ","
+dat <- read.csv(file = "data/ENV_pitlatrine.csv", stringsAsFactors =F)
+#read.csv2 has header=T as default and sep = ";"
+dat <- read.csv2(file = "data/ENV_pitlatrine.csv", sep = ",", stringsAsFactors =F)
+
+#read.delim has header=T as default and sep = "\t"
+dat <- read.delim(file = "data/ENV_pitlatrine.csv", sep = ",", stringsAsFactors =F)
+#read.delim2 has header=T as default and sep = "\t" and dec = ","
+dat <- read.delim2(file = "data/ENV_pitlatrine.csv", sep = ",", dec = ".", stringsAsFactors =F)
+
+```
+
 
 ***
 
-Hopefully this exercise forced you to look at the differences in the default values of the parameters in these different functions. I suggest that you keep these in mind as we look at some functions that were aimed to make a few typing shortcuts. Let's load the readr library.
+Hopefully this exercise forced you to look at the differences in the default values of the parameters in these different functions. I suggest that you keep these in mind as we look at some functions that were aimed to make a few typing shortcuts. Let's load the `readr` library.
 
 ```{r}
 library(readr)
 
 ```
 
-Use read_csv() to read in your metadata file. What is different from read.csv?
+Use `read_csv()` to read in your metadata file. What is different from `read.csv()`?
 
 ```{r}
 meta <- read_csv("data/ENV_pitlatrine.csv")
 head(meta)
 ```
-Note that readr tells you exactly how it parsed your file, and how each column is encoded.   
+
+Note that `readr` tells you exactly how it parsed your file, and how each column is encoded. It also saves us from typing `stringsAsFactors = FALSE`. Every. Time. The syntax is a bit different - for example, `col_names = TRUE` instead of `header = TRUE`, `col_types = 'c'` instead of `colClasses = 'character'`. It is a matter of personal preference what you want to use. If you have a csv file you are really struggling with, I would try `read_csv` as it has some pretty sensible defaults.     
 
 ***
 
-But what happens if we have a good, old-fashioned excel file? The _readxl_ package will recognize both xls and xlsx files. It expects tabular data.
+But what happens if we have a good, old-fashioned excel file? The `readxl` package will recognize both xls and xlsx files. It expects tabular data.
 
 ```{r}
 library(readxl)
@@ -1267,36 +1314,64 @@ head(read_excel("data/books_alpha.xlsx"))
 
 ```
 
-This doesn't look like a workbook. Why not? The read_excel function defaults to reading in the first worksheet. You can specify which sheet you want to read in by position or name. Let's see what the name of our sheets are.
+This doesn't look like a workbook. Why not? The `read_excel()` function defaults to reading in the first worksheet. You can specify which sheet you want to read in by position or name. Let's see what the name of our sheets are.
 
 ```{r}
 excel_sheets("data/books_alpha.xlsx")
 
 ```
 
-Note that the argument to both of these functions was the path to our data sheet. We can save this path into a variable. You can also subset using cell numbers or ranges.
-
+Note that the argument to both of these functions was the path to our data sheet. We can save this path into a variable to save ourselves some typing.
 
 ```{r}
 path <- "data/books_alpha.xlsx"
-
-read_excel(path, sheet = 1, range = "C1:D9")
-
-read_excel(path, sheet = "Top titles", range = cell_rows(1:9))
-
-read_excel(path, sheet = 1, range = cell_cols("B:D"))
-
 ```
 
 
+It is possible to subset from a sheet by specifying cell numbers or ranges. Here we are grabbing sheet 1, and subsetting cells over 2 columns - C1:D9.
 
-You can also use a list version of the apply function to read in all sheets at once. Each sheet will be stored as a data frame inside of a list object. You can subset the sheet you would like to work with (or work with all sheets at once - see the purrr package for working with list objects).
 
+```{r}
+read_excel(path, sheet = 1, range = "C1:D9")
+
+```
+
+We could alternatively specify the sheet by name. This is how you would simply grab rows.
+
+```{r}
+read_excel(path, sheet = "Top titles", range = cell_rows(1:9))
+```
+
+And likewise, how you would subset just columns from the same sheet.
+
+```{r}
+read_excel(path, sheet = 1, range = cell_cols("B:D"))
+```
+
+
+You can also use a list version of the apply function `lapply()` to read in all sheets at once. Each sheet will be stored as a data frame inside of a list object. If you remember, `apply()` took in a matrix, a row/column specification (MARGIN), and a function. `lapply()` takes in a list (which does not have rows and columns) and a function. 
 
 ```{r}
 ex <- lapply(excel_sheets(path), read_excel, path = path)
 
 str(ex)
+```
+
+
+Explain using example like this:
+<https://stackoverflow.com/questions/2275896/is-rs-apply-family-more-than-syntactic-sugar>
+
+```{r}
+
+```
+
+
+
+
+You can subset the sheet you would like to work with (or work with all sheets at once - see the `purrr` package for working with list objects).
+
+
+```{r}
 str(ex[[3]])
 
 excel2 <- data.frame(ex[[2]])
@@ -1306,7 +1381,7 @@ At this point, you will be able to use your excel worksheet as a normal data fra
 
 ***
 
-_Googlesheets_ have a similar structure to excel workbooks, the only tricky thing is getting the name of your googlesheet to input.
+Googlesheets have a similar structure to excel workbooks, the only tricky thing is getting the name of your googlesheet to input.
 
 If you load googlesheets and ask it to list the googlesheets you have, googlesheets will open a new window and ask if it can have access to your googlesheets. If you say yes, you can return to R and breathe a sigh of relief. Your import of your googlesheets worked.
 
@@ -1357,7 +1432,7 @@ books_alpha <- gs_read(books, ws = "Top titles", range = cell_rows(1:10))
 ```
 
 
-One nice thing about the googlesheets package is that all of the functions begin with gs_ which is great for finding functions and tab completion.
+One nice thing about the `googlesheets` package is that all of the functions begin with `gs_` which is great for finding functions and tab completion.
 
 
 You 'download' ie. save this file to your computer.
