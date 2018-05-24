@@ -1413,20 +1413,20 @@ str(ex)</code></pre>
 <pre class="r"><code>library(googlesheets)</code></pre>
 <p>If you load googlesheets and ask it to list the googlesheets you have, googlesheets will open a new window and ask if it can have access to your googlesheets. If you say yes, you can return to R and breathe a sigh of relief. Your import of your googlesheets worked.</p>
 <pre class="r"><code>gs_ls()</code></pre>
-<pre><code>## # A tibble: 50 x 10
+<pre><code>## # A tibble: 51 x 10
 ##    sheet_title  author perm  version updated             sheet_key ws_feed
 ##    &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;   &lt;dttm&gt;              &lt;chr&gt;     &lt;chr&gt;  
-##  1 CAGEF Time … &quot;    … r     new     2018-05-24 17:50:48 1SdrZhSp… https:…
-##  2 &quot;          … &quot;  ac… rw    new     2018-05-24 17:47:11 1KChnoyH… https:…
-##  3 &quot;          … &quot;  ac… rw    new     2018-05-24 17:46:42 1y-Tf6Vn… https:…
-##  4 &quot;          … &quot;  ac… rw    new     2018-05-24 17:45:48 1k0qlncj… https:…
-##  5 &quot;          … &quot;  ac… rw    new     2018-05-24 17:42:41 1Votk4h1… https:…
-##  6 &quot;          … &quot;  ac… rw    new     2018-05-24 17:23:22 1t2TpXLg… https:…
-##  7 &quot;          … &quot;  ac… rw    new     2018-05-24 16:39:26 1iRB__yR… https:…
-##  8 &quot;          … &quot;  ac… rw    new     2018-05-24 16:38:19 1hXxP3RT… https:…
-##  9 &quot;          … &quot;  ac… rw    new     2018-05-24 16:35:02 1Uc75eno… https:…
-## 10 &quot;          … &quot;  ac… rw    new     2018-05-24 16:34:13 1QlChZjv… https:…
-## # ... with 40 more rows, and 3 more variables: alternate &lt;chr&gt;,
+##  1 CAGEF Time … &quot;    … r     new     2018-05-24 17:59:31 1SdrZhSp… https:…
+##  2 &quot;          … &quot;  ac… rw    new     2018-05-24 17:53:51 1ctyHaqo… https:…
+##  3 &quot;          … &quot;  ac… rw    new     2018-05-24 17:47:11 1KChnoyH… https:…
+##  4 &quot;          … &quot;  ac… rw    new     2018-05-24 17:46:42 1y-Tf6Vn… https:…
+##  5 &quot;          … &quot;  ac… rw    new     2018-05-24 17:45:48 1k0qlncj… https:…
+##  6 &quot;          … &quot;  ac… rw    new     2018-05-24 17:42:41 1Votk4h1… https:…
+##  7 &quot;          … &quot;  ac… rw    new     2018-05-24 17:23:22 1t2TpXLg… https:…
+##  8 &quot;          … &quot;  ac… rw    new     2018-05-24 16:39:26 1iRB__yR… https:…
+##  9 &quot;          … &quot;  ac… rw    new     2018-05-24 16:38:19 1hXxP3RT… https:…
+## 10 &quot;          … &quot;  ac… rw    new     2018-05-24 16:35:02 1Uc75eno… https:…
+## # ... with 41 more rows, and 3 more variables: alternate &lt;chr&gt;,
 ## #   self &lt;chr&gt;, alt_key &lt;chr&gt;</code></pre>
 <pre class="r"><code>#if you have many googlesheets like I do you may need to search for your sheet
 #tail(gs_ls())</code></pre>
@@ -1442,13 +1442,13 @@ str(ex)</code></pre>
 <p>The structure of the googlesheet is a list.</p>
 <pre class="r"><code>str(books)</code></pre>
 <pre><code>## List of 17
-##  $ sheet_key  : chr &quot;1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU&quot;
+##  $ sheet_key  : chr &quot;1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc&quot;
 ##  $ sheet_title: chr &quot;books_alpha&quot;
 ##  $ n_ws       : int 4
-##  $ ws_feed    : chr &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full&quot;
-##  $ browser_url: chr &quot;https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/&quot;
-##  $ updated    : POSIXct[1:1], format: &quot;2018-05-24 17:53:51&quot;
-##  $ reg_date   : POSIXct[1:1], format: &quot;2018-05-24 17:53:54&quot;
+##  $ ws_feed    : chr &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full&quot;
+##  $ browser_url: chr &quot;https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/&quot;
+##  $ updated    : POSIXct[1:1], format: &quot;2018-05-24 18:02:25&quot;
+##  $ reg_date   : POSIXct[1:1], format: &quot;2018-05-24 18:02:27&quot;
 ##  $ visibility : chr &quot;private&quot;
 ##  $ lookup     : logi TRUE
 ##  $ is_public  : logi FALSE
@@ -1459,20 +1459,20 @@ str(ex)</code></pre>
 ##  $ links      :Classes 'tbl_df', 'tbl' and 'data.frame': 4 obs. of  3 variables:
 ##   ..$ rel : chr [1:4] &quot;alternate&quot; &quot;http://schemas.google.com/g/2005#feed&quot; &quot;http://schemas.google.com/g/2005#post&quot; &quot;self&quot;
 ##   ..$ type: chr [1:4] &quot;application/atom+xml&quot; &quot;application/atom+xml&quot; &quot;application/atom+xml&quot; &quot;application/atom+xml&quot;
-##   ..$ href: chr [1:4] &quot;https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/edit&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full&quot;
+##   ..$ href: chr [1:4] &quot;https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/edit&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full&quot;
 ##  $ ws         :Classes 'tbl_df', 'tbl' and 'data.frame': 4 obs. of  12 variables:
-##   ..$ ws_id           : chr [1:4] &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ov3sn8v&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/or2xc7x&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ovoh3sd&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ochezbu&quot;
-##   ..$ ws_key          : chr [1:4] &quot;ov3sn8v&quot; &quot;or2xc7x&quot; &quot;ovoh3sd&quot; &quot;ochezbu&quot;
+##   ..$ ws_id           : chr [1:4] &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/orhpqh8&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/opmsc9x&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/oj0ev5b&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/oabolo2&quot;
+##   ..$ ws_key          : chr [1:4] &quot;orhpqh8&quot; &quot;opmsc9x&quot; &quot;oj0ev5b&quot; &quot;oabolo2&quot;
 ##   ..$ ws_title        : chr [1:4] &quot;Lists&quot; &quot;All alphabetised&quot; &quot;Top titles&quot; &quot;dropoff&quot;
 ##   ..$ row_extent      : int [1:4] 1000 2004 1000 1000
 ##   ..$ col_extent      : int [1:4] 26 26 26 26
-##   ..$ gid             : chr [1:4] &quot;1880826485&quot; &quot;1637501895&quot; &quot;1915560119&quot; &quot;754846336&quot;
-##   ..$ listfeed        : chr [1:4] &quot;https://spreadsheets.google.com/feeds/list/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/ov3sn8v/private/full&quot; &quot;https://spreadsheets.google.com/feeds/list/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/or2xc7x/private/full&quot; &quot;https://spreadsheets.google.com/feeds/list/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/ovoh3sd/private/full&quot; &quot;https://spreadsheets.google.com/feeds/list/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/ochezbu/private/full&quot;
-##   ..$ cellsfeed       : chr [1:4] &quot;https://spreadsheets.google.com/feeds/cells/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/ov3sn8v/private/full&quot; &quot;https://spreadsheets.google.com/feeds/cells/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/or2xc7x/private/full&quot; &quot;https://spreadsheets.google.com/feeds/cells/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/ovoh3sd/private/full&quot; &quot;https://spreadsheets.google.com/feeds/cells/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/ochezbu/private/full&quot;
-##   ..$ visualizationApi: chr [1:4] &quot;https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/gviz/tq?gid=1880826485&quot; &quot;https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/gviz/tq?gid=1637501895&quot; &quot;https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/gviz/tq?gid=1915560119&quot; &quot;https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/gviz/tq?gid=754846336&quot;
-##   ..$ exportcsv       : chr [1:4] &quot;https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/export?gid=1880826485&amp;format=csv&quot; &quot;https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/export?gid=1637501895&amp;format=csv&quot; &quot;https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/export?gid=1915560119&amp;format=csv&quot; &quot;https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/export?gid=754846336&amp;format=csv&quot;
-##   ..$ self            : chr [1:4] &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ov3sn8v&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/or2xc7x&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ovoh3sd&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ochezbu&quot;
-##   ..$ edit            : chr [1:4] &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ov3sn8v/17puu5&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/or2xc7x/upb972&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ovoh3sd/ld5d1q&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ochezbu/vuj6yw&quot;
+##   ..$ gid             : chr [1:4] &quot;1662340758&quot; &quot;1549928191&quot; &quot;1149550837&quot; &quot;624285544&quot;
+##   ..$ listfeed        : chr [1:4] &quot;https://spreadsheets.google.com/feeds/list/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/orhpqh8/private/full&quot; &quot;https://spreadsheets.google.com/feeds/list/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/opmsc9x/private/full&quot; &quot;https://spreadsheets.google.com/feeds/list/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/oj0ev5b/private/full&quot; &quot;https://spreadsheets.google.com/feeds/list/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/oabolo2/private/full&quot;
+##   ..$ cellsfeed       : chr [1:4] &quot;https://spreadsheets.google.com/feeds/cells/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/orhpqh8/private/full&quot; &quot;https://spreadsheets.google.com/feeds/cells/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/opmsc9x/private/full&quot; &quot;https://spreadsheets.google.com/feeds/cells/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/oj0ev5b/private/full&quot; &quot;https://spreadsheets.google.com/feeds/cells/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/oabolo2/private/full&quot;
+##   ..$ visualizationApi: chr [1:4] &quot;https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/gviz/tq?gid=1662340758&quot; &quot;https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/gviz/tq?gid=1549928191&quot; &quot;https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/gviz/tq?gid=1149550837&quot; &quot;https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/gviz/tq?gid=624285544&quot;
+##   ..$ exportcsv       : chr [1:4] &quot;https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/export?gid=1662340758&amp;format=csv&quot; &quot;https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/export?gid=1549928191&amp;format=csv&quot; &quot;https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/export?gid=1149550837&amp;format=csv&quot; &quot;https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/export?gid=624285544&amp;format=csv&quot;
+##   ..$ self            : chr [1:4] &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/orhpqh8&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/opmsc9x&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/oj0ev5b&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/oabolo2&quot;
+##   ..$ edit            : chr [1:4] &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/orhpqh8/17puu5&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/opmsc9x/upb972&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/oj0ev5b/ld5d1q&quot; &quot;https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/oabolo2/vuj6yw&quot;
 ##  $ alt_key    : chr NA
 ##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;googlesheet&quot; &quot;list&quot;</code></pre>
 <p>How many worksheets are in this spreadsheet and what are their names? To find the number of worksheets, I subset from the list <code>n_ws</code>. To get the names of the worksheets, I grab the worksheets <code>ws</code> (itself a data frame) and subset the column <code>ws_title</code> for their titles.</p>
@@ -1543,8 +1543,14 @@ booksfilt &lt;- gs_read(books, ws = 1, range = &quot;A1:N1000&quot;)</code></pre
 <a href="https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd" class="uri">https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd</a><br />
 <a href="http://stat545.com/block002_hello-r-workspace-wd-project.html" class="uri">http://stat545.com/block002_hello-r-workspace-wd-project.html</a><br />
 <a href="http://stat545.com/block026_file-out-in.html" class="uri">http://stat545.com/block026_file-out-in.html</a><br />
-<a href="http://sisbid.github.io/Module1/" class="uri">http://sisbid.github.io/Module1/</a> <a href="https://github.com/tidyverse/readxl" class="uri">https://github.com/tidyverse/readxl</a> <a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf" class="uri">https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf</a> <a href="https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/" class="uri">https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/</a> <a href="http://stat545.com/help-general.html" class="uri">http://stat545.com/help-general.html</a> <a href="https://stackoverflow.com/help/how-to-ask" class="uri">https://stackoverflow.com/help/how-to-ask</a><br />
-<a href="https://www.r-project.org/posting-guide.html" class="uri">https://www.r-project.org/posting-guide.html</a> <a href="https://github.com/jennybc/googlesheets" class="uri">https://github.com/jennybc/googlesheets</a><br />
+<a href="http://sisbid.github.io/Module1/" class="uri">http://sisbid.github.io/Module1/</a><br />
+<a href="https://github.com/tidyverse/readxl" class="uri">https://github.com/tidyverse/readxl</a><br />
+<a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf" class="uri">https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf</a><br />
+<a href="https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/" class="uri">https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/</a><br />
+<a href="http://stat545.com/help-general.html" class="uri">http://stat545.com/help-general.html</a><br />
+<a href="https://stackoverflow.com/help/how-to-ask" class="uri">https://stackoverflow.com/help/how-to-ask</a><br />
+<a href="https://www.r-project.org/posting-guide.html" class="uri">https://www.r-project.org/posting-guide.html</a><br />
+<a href="https://github.com/jennybc/googlesheets" class="uri">https://github.com/jennybc/googlesheets</a><br />
 <a href="http://www.quantide.com/ramarro-chapter-07/" class="uri">http://www.quantide.com/ramarro-chapter-07/</a></p>
 </div>
 <div id="post-lesson-assessment" class="section level1">

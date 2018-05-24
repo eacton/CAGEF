@@ -1578,13 +1578,13 @@ Try reading in one of your own datasets. Write it to a different file format.
 <https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd>     
 <http://stat545.com/block002_hello-r-workspace-wd-project.html>  
 <http://stat545.com/block026_file-out-in.html>     
-<http://sisbid.github.io/Module1/>
-<https://github.com/tidyverse/readxl>
-<https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf>
-<https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/>
-<http://stat545.com/help-general.html>
+<http://sisbid.github.io/Module1/>     
+<https://github.com/tidyverse/readxl>     
+<https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf>     
+<https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/>     
+<http://stat545.com/help-general.html>     
 <https://stackoverflow.com/help/how-to-ask>     
-<https://www.r-project.org/posting-guide.html>
+<https://www.r-project.org/posting-guide.html>     
 <https://github.com/jennybc/googlesheets>     
 <http://www.quantide.com/ramarro-chapter-07/>
 
