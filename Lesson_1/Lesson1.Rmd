@@ -44,6 +44,17 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 </br>
 
 ***
+
+####Data Used in This Lesson
+
+-ENV_pitlatrine.csv     
+-books_alpha.xlsx     
+-adult_income.tsv     
+
+These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_1/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
+
+
+***
 ####Highlighting
 
 `grey background` - a package, function, code, command or directory      
@@ -53,50 +64,51 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 
 ***
 
+
 __Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
 
 ***
 
 ##Installing R and RStudio
 
-Installing R: 
-  Windows: 
-    - Go to <http://cran.utstat.utoronto.ca/> 
-    - Click on 'Download R for Windows'
-    - Click on 'install R for the first time'
-    - Click on 'Download R 3.4.4 for Windows' (if there is a newer version that is a-okay)
+Installing R:      
+  Windows:      
+    - Go to <http://cran.utstat.utoronto.ca/>      
+    - Click on 'Download R for Windows'     
+    - Click on 'install R for the first time'     
+    - Click on 'Download R 3.4.4 for Windows' (if there is a newer version that is a-okay)     
     - Double-click on the .exe file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
   
-  (Mac) OS X:
-    - Go to <http://cran.utstat.utoronto.ca/> 
-    - Click on 'Download R for (Mac) OS X'
-    - Click on R-3.4.4.pkg (if there is a newer version that is a-okay)
+  (Mac) OS X:     
+    - Go to <http://cran.utstat.utoronto.ca/>      
+    - Click on 'Download R for (Mac) OS X'     
+    - Click on R-3.4.4.pkg (if there is a newer version that is a-okay)     
     - Open the .pkg file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
   
-  Linux:
-    - sudo apt-get update
-    - sudo apt-get install r-base
+  Linux:     
+    - sudo apt-get update     
+    - sudo apt-get install r-base     
     - sudo apt-get install r-base-dev (so you can compile packages from source)
 
-Installing RStudio: 
-  Windows:
-    - Go to <https://www.rstudio.com/products/rstudio/download/#download>
-    - Click on 'RStudio 1.1.442 - Windows Vista/7/8/10' to download the installer (if there is a newer version that is a-okay)
+Installing RStudio:      
+  Windows:     
+    - Go to <https://www.rstudio.com/products/rstudio/download/#download>     
+    - Click on 'RStudio 1.1.442 - Windows Vista/7/8/10' to download the installer (if there is a newer version that is a-okay)     
     - Double-click on the .exe file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
     
-  (Mac) OS X:
-    - Go to <https://www.rstudio.com/products/rstudio/download/#download>
-    - Click on 'RStudio 1.1.442 - Mac OS X 10.6+ (64-bit)' to download the installer (if there is a newer version that is a-okay)
-    - Double-click on the .dmg file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
+  (Mac) OS X:     
+    - Go to <https://www.rstudio.com/products/rstudio/download/#download>     
+    - Click on 'RStudio 1.1.442 - Mac OS X 10.6+ (64-bit)' to download the installer (if there is a newer version that is a-okay)     
+    - Double-click on the .dmg file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.     
     
-   Linux:
-    - Go to <https://www.rstudio.com/products/rstudio/download/#download>
-    - Click on the installer that describes your system ie. 'RStudio 1.1.442 - Ubuntu 16.04+/Debian 9+ (64-bit)' (if there is a newer version that is a-okay)
-    - Double-click on the .deb file once it has downloaded and follow the instructions.
-    - If double-clicking on your .deb file did not open the software manager open the terminal (this can be found by searching for Terminal) and type sudo dpkg -i Downloads/rstudio-xenial-1.1.442-amd64.deb 
-     Note: You have 3 things that could change in this command.
-     1. This assumes you have just opened the terminal and are in your home directory. (If not, you have to modify your path. You can get to your home directory by typing cd ~.)
-     2. This assumes you have downloaded the .deb file to Downloads. (If you downloaded the file somewhere else, you have to change the path to the file, or download the .deb file to Downloads). 
+   Linux:     
+    - Go to <https://www.rstudio.com/products/rstudio/download/#download>     
+    - Click on the installer that describes your system ie. 'RStudio 1.1.442 - Ubuntu 16.04+/Debian 9+ (64-bit)' (if there is a newer version that is a-okay)     
+    - Double-click on the .deb file once it has downloaded and follow the instructions.     
+    - If double-clicking on your .deb file did not open the software manager open the terminal (this can be found by searching for Terminal) and type sudo dpkg -i Downloads/rstudio-xenial-1.1.442-amd64.deb      
+     _Note: You have 3 things that could change in this last command._     
+     1. This assumes you have just opened the terminal and are in your home directory. (If not, you have to modify your path. You can get to your home directory by typing cd ~.)     
+     2. This assumes you have downloaded the .deb file to Downloads. (If you downloaded the file somewhere else, you have to change the path to the file, or download the .deb file to Downloads).      
      3. This assumes your filename for .deb is the same as above. (Put the name matching the .deb file you downloaded).
     
 If you have a problem with installing R or RStudio, please come 15 minutes before the lesson starts and I will help you troubleshoot your installation. You can also try to solve the problem yourself by Googling any error messages you get.    
@@ -109,36 +121,77 @@ To paraphrase the CRAN gurus:
 <https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf>
 
 
-R is an __environment__ because it has the tools and software for the storage, manipulation, statistical analysis, and graphical display for of data.  It comes with about 25 built-in 'packages' and uses a simple programming language ("S"). Users have been encouraged to make there own packages... there are now over 12,000 packages on CRAN and about 1,500 on [Bioconductor](https://www.bioconductor.org/). 
+R is an __environment__ because it has the tools and software for the storage, manipulation, statistical analysis, and graphical display for of data.  It comes with about 25 built-in 'packages' and uses a simple programming language ("S"). Users have been encouraged to make there own packages... there are now over 12,000 packages on CRAN and about 1,500 on Bioconductor.
+
 ![](img/cran_pkg.png){width=600px}
 </br>
 
-Bioconductor is another repository for R packages, but it specializes in tools for high-throughput genomics data. One nice thing about Bioconductor is that it has decent vignettes; a __vignette__ is the set of documentation for a package explaining its functions and usages in a tutorial-like format. 
+Bioconductor is another repository for R packages (<https://www.bioconductor.org/>), but it specializes in tools for high-throughput genomics data. One nice thing about Bioconductor is that it has decent vignettes; a __vignette__ is the set of documentation for a package explaining its functions and usages in a tutorial-like format. 
 
-So...what are in these packages? A __package__ is a collection of functions, sometimes data, and compiled code. __Functions__ are the basic workhorses of R; they are the tools we use to analyze our data. Each function can be thought of as a unit that has a specific task. A function takes an input, evaluates an expression (ie. a calucation, plot, merge, etc.), and returns a value.
+So...what are in these packages? A __package__ is a collection of functions, sometimes data, and compiled code. __Functions__ are the basic workhorses of R; they are the tools we use to analyze our data. Each function can be thought of as a unit that has a specific task. A function takes an input, evaluates an expression (ie. a calucation, plot, merge, etc.), and returns a value. (We will have an entire separate lesson to explore functions.)
 
 RStudio is an IDE (Integrated Development Environment) for R that provides a more user-friendly experience than using R in a terminal setting. It has 4 main areas or panes, which you can customize to some extent under `Tools > Global Options > Pane Layout`:
 
-1. Source - The code you are annotating and keeping in your script.
-2. Console - Where your code is executed.
-3. Environment - What global objects you have created and functions you have written/sourced.
-   History -  A record of all the code you have executed in the console.
+1. __Source__ - The code you are annotating and keeping in your script.
+2. __Console__ - Where your code is executed.
+3. __Environment__ - What global objects you have created and functions you have written/sourced.     
+   History -  A record of all the code you have executed in the console.     
    Connections - Which data sources you are connecting to. (Not being used in this course.)
-4. Files, Plots, Packages, Help, Viewer - self-explanatoryish if you click on their tabs.
+4. __Files, Plots, Packages, Help, Viewer__ - self-explanatoryish if you click on their tabs.
 
-(In-class moment for going over these 4 quadrants + Global Options.)
+All of the panes can be minimized or maximized using the large and small box outlines in the top right of each pane.
 
-Let me elaborate.
+###Source
 
-The __Source__ is where you are keeping the code and annotation that you want to be saved as your script. The tab at the top left of the pane has your script name ('Untitled.R'), and you can switch between scripts by toggling the tabs. All of the panes can be minimized or maximized using the large and small box outlines in the top right of each pane. You can save, search or publish your source code using the buttons along the pane header. Nothing in the Source pane is _run_ or _executed_ automatically. To run your current line of code or a highlighted segment of code from the Source pane you can: a) click the button `'Run' -> 'Run Selected Line(s)'`, b) click `'Code' -> 'Run Selected Line(s)'` from the menu bar, c) use the keyboard shortcut `CTRL + ENTER` (recommended), d) copy and paste your code into the Console and hit `Enter` (not recommended).
+The __Source__ is where you are keeping the code and annotation that you want to be saved as your script. The tab at the top left of the pane has your script name (ie. 'Untitled.R'), and you can switch between scripts by toggling the tabs. You can save, search or publish your source code using the buttons along the pane header. Code in the Source pane is _run_ or _executed_ automatically. 
 
-You can also type and execute your code (by hitting `ENTER`) in the __Console__ when the `>` prompt is visible. The Console also shows information: upon startup about R, during the installation of packages, when there are warnings, and when there are errors in your code. If you enter code and you see a `+` instead of a prompt, R doesn't think you are finished entering code (ie. you might be missing a bracket). If this isn't immediately fixable, you can hit `Esc` twice to get back to your prompt. Beside Console in the top left of that pane is your current working directory. Pressing the arrow next to your working directory will open your current folder in the Files pane. If you find your Console is getting too cluttered, selecting the broom icon in that pane will clear it for you. Using the arrow keys, you can find previous commands in the Console if you want to rerun code or fix an error resulting from a typo.
+To run your current line of code or a highlighted segment of code from the Source pane you can:      
+     a) click the button `'Run' -> 'Run Selected Line(s)'`,      
+     b) click `'Code' -> 'Run Selected Line(s)'` from the menu bar,      
+     c) use the keyboard shortcut `CTRL + ENTER` (recommended),      
+     d) copy and paste your code into the Console and hit `Enter` (not recommended).
+     
+There are always many ways to do things in R, but the fastest way will always be the option that keeps your hands on the keyboard.
 
-The __Global Environment__ is super-handy. In the Environment Tab you can see all of the stored objects you have created. __Objects__ are made by using the assignment operator `<-`. On the left side of the arrow, you have the name of your object. On the right side you have what you are assigning to that object. In this sense, you can think of an object as a container. The container holds the values given as well as information about 'class' and 'methods' (which we will come back to).T ype `x <- c(2,4)` in the Console followed by `Enter`. 1D objects' data types can be seen immediately as well as their first few values. Now type `y <- data.frame(numbers = c(1,2,3), letters = c("a","b","c"))` in the Console followed by `Enter`. You can immediately see the dimension of 2D objects, and you can check the structure of data frames and lists (more later) by clicking on the object's arrow. Clicking on the object name will open the object to view in a new tab. Custom functions created in session or sourced will also appear in this pane. The Global Environment dropdown displays all of the currently loaded packages. _Loaded_ means that all of the tools/functions in the package are available for use. R comes with a number of packages pre-loaded (ie. base, grDevices). The Environment can become cluttered, so it also has a broom button to clear its workspace. In the History tab are all of the commands you have executed in the Console during your session. You can select a line of code and send it to the Source or Console. The Connections tab is to connect to data sources such as Spark and will not be used in this lesson.
+###Console
 
-The Files tab allows you to search through directories; you can go to or set your working directory by making the appropriate selection under the `More` (blue gear) drop-down menu. The `...` to the top left of the pane allows you to search for a folder in a more traditional manner. The Plots tab is where plots you make in a .R script will appear (notebooks and markdown plots will be shown in the Source pane). There is the option to Export and save these plots manually. The Packages tab has all of the packages that are installed and their versions, and buttons to Install or Update packages. A checkmark in the box next to the package means that the package is loaded. You can load a package by adding a checkmark next to a package, however it is good practice to instead load the package in your script to aid in reproducibility. The Help menu has the documentation for all packages and functions. For each function you will find a description of what the function does, the arguments it takes in, what the function does to the inputs (details), what it outputs, and an example. Some of the help documentation is difficult to read or less than comprehensive, in which case googling the function is a good idea. The Viewer will display vignettes, or local web content such as a Shiny app, interactive graphs, or a rendered html document.
+You can also type and execute your code (by hitting `ENTER`) in the __Console__ when the `>` prompt is visible. If you enter code and you see a `+` instead of a prompt, R doesn't think you are finished entering code (ie. you might be missing a bracket). If this isn't immediately fixable, you can hit `Esc` twice to get back to your prompt. Using the up and down arrow keys, you can find previous commands in the Console if you want to rerun code or fix an error resulting from a typo.
 
-I suggest you take a look at `Tools -> Global Options` to customize your experience. For example, under `Code -> Editing` I have selected `Soft-wrap R source files` followed by `Apply` so that my text will wrap by itself when I am typing and not create a long line of text. You may also want to change the `Appearance` of your code. I like the `RStudio theme: Modern` and `Editor font: Ubuntu Mono`, but pick whatever you like! Again, you need to hit `Apply` to makee changes.
+On the Console tab in the top left of that pane is your current working directory. Pressing the arrow next to your working directory will open your current folder in the Files pane. If you find your Console is getting too cluttered, selecting the broom icon in that pane will clear it for you. The Console also shows information: upon startup about R (such as version number), during the installation of packages, when there are warnings, and when there are errors. 
+
+###Environment
+
+In the __Global Environment__ you can see all of the stored objects you have created or sourced (imported from another script). The Global Environment can become cluttered, so it also has a broom button to clear its workspace.
+
+__Objects__ are made by using the assignment operator `<-`. On the left side of the arrow, you have the name of your object. On the right side you have what you are assigning to that object. In this sense, you can think of an object as a container. The container holds the values given as well as information about 'class' and 'methods' (which we will come back to).
+
+Type `x <- c(2,4)` in the Console followed by `Enter`. 1D objects' data types can be seen immediately as well as their first few values. Now type `y <- data.frame(numbers = c(1,2,3), letters = c("a","b","c"))` in the Console followed by `Enter`. You can immediately see the dimension of 2D objects, and you can check the structure of data frames and lists (more later) by clicking on the object's arrow. Clicking on the object name will open the object to view in a new tab. Custom functions created in session or sourced will also appear in this pane. 
+
+The Environment pane dropdown displays all of the currently loaded packages in addition to the Global Environment. _Loaded_ means that all of the tools/functions in the package are available for use. R comes with a number of packages pre-loaded (ie. base, grDevices).  
+
+In the History tab are all of the commands you have executed in the Console during your session. You can select a line of code and send it to the Source or Console. 
+
+The Connections tab is to connect to data sources such as Spark and will not be used in this lesson.
+
+###Files, Plots, Packages, Help, Viewer
+
+The Files tab allows you to search through directories; you can go to or set your working directory by making the appropriate selection under the `More` (blue gear) drop-down menu. The `...` to the top left of the pane allows you to search for a folder in a more traditional manner. 
+
+The Plots tab is where plots you make in a .R script will appear (notebooks and markdown plots will be shown in the Source pane). There is the option to Export and save these plots manually. 
+
+The Packages tab has all of the packages that are installed and their versions, and buttons to Install or Update packages. A checkmark in the box next to the package means that the package is loaded. You can load a package by adding a checkmark next to a package, however it is good practice to instead load the package in your script to aid in reproducibility. 
+
+The Help menu has the documentation for all packages and functions. For each function you will find a description of what the function does, the arguments it takes, what the function does to the inputs (details), what it outputs, and an example. Some of the help documentation is difficult to read or less than comprehensive, in which case googling the function is a good idea. 
+
+The Viewer will display vignettes, or local web content such as a Shiny app, interactive graphs, or a rendered html document.
+
+###Global Options
+
+I suggest you take a look at `Tools -> Global Options` to customize your experience. 
+
+For example, under `Code -> Editing` I have selected `Soft-wrap R source files` followed by `Apply` so that my text will wrap by itself when I am typing and not create a long line of text. 
+
+You may also want to change the `Appearance` of your code. I like the `RStudio theme: Modern` and `Editor font: Ubuntu Mono`, but pick whatever you like! Again, you need to hit `Apply` to make changes.
 
 That whirlwind tour isn't everything the IDE can do, but it is enough to get started.
 
@@ -146,7 +199,7 @@ That whirlwind tour isn't everything the IDE can do, but it is enough to get sta
 
 This is an image of a possible directory. 
 
-![](img/unix_boys.jpg)
+![](img/unix_boys.jpg){width=500px}
 
 </br>
 
@@ -199,9 +252,10 @@ setwd("../benedict/Tables")
 There is some talk over setting working directories within scripts. Obviously, not everyone has the same absolute path, so if must set a directory in your script, _it is best to have a relative path starting from the folder your script is in_. Keep in mind that others you share your script with might not have the same directory structure if you refer to subfolders. 
 
 You can set your working directory by:
-1. `setwd()`
-2. `Session -> Set Working Directory` (3 Options)
-3. `Files Window -> More (Gear Symbol) -> Set As Working Directory`
+
+1. `setwd()`     
+2. `Session -> Set Working Directory` (3 Options)     
+3. `Files Window -> More (Gear Symbol) -> Set As Working Directory`     
 
 
 ***
@@ -212,7 +266,6 @@ __Challenge__
 </div>
 
 </br>
-__Socrative__
 
 Assume you are in the _Tables_ folder. Which is NOT a valid way to get to the _Thesis_ folder?
 
@@ -357,7 +410,7 @@ _Asking a question_
 
 _Remember_ - everyone looks for help online ALL THE TIME. It is completely normal. Also, with programming there are multiple ways to come up with an answer. There are different packages that let you do the same thing, but with shortcuts. There are different levels of 'efficiency' and 'redundancy' in coding. You will work on refining these aspects of your code as you go along in this course, and in your coding career.
 
-Last but not least, to make life easier: under Help there is a `Cheatsheet of Keyboard Shortcuts`.
+Last but not least, to make life easier: under Help there is a _Cheatsheet of Keyboard Shortcuts_.
 
 
 
@@ -395,12 +448,12 @@ object_name = value
 
 We are going to use a simple function to create a vector. Functions take arguments. To find out which arguments they take, we can look at the help menu. The help menus in R can be intimidating and hard to read. Don't think it is just because you are new. If you really don't understand the help menu, you are probably not the only one, so look online and there will likely be a simpler explanation.
 
-Let's look up the function `c()`, which combines values into a vector or list. It takes in the argument `'...'`, which is defined as the objects to be concatenated. In the description it says 'all agruments are coerced to a common type, which is the type of the returned value' and in the details it tells you the hierarchy _NULL < raw < logical < integer < double < complex < character < list < expression_ and 'factors are treated only via their internal integer codes'. Now we don't know what all this means yet, but we come back to this as we go along. The output of the function is 'NULL or an expression or a vector'. At the bottom of the help menu, there are usually examples of how to use the function, which are sometimes easier to understand than the documentation. 
+Let's look up the function `c()`, which combines values into a vector or list. It takes in the argument `'...'`, which is defined as the objects to be concatenated. In the description it says 'all arguments are coerced to a common type, which is the type of the returned value' and in the details it tells you the hierarchy of coercion: _NULL < raw < logical < integer < double < complex < character < list < expression_. It also says 'factors are treated only via their internal integer codes'. Now we don't know what all this means yet, but we come back to this as we go along. The output of the function is 'NULL or an expression or a vector'. At the bottom of the help menu, there are usually examples of how to use the function, which are sometimes easier to understand than the documentation. 
 
 
 ###Vectors
 
-Here are what vectors of each 'type' would look like. Note that character items must be in quotations. 
+Here are what vectors of each data 'type' would look like. Note that character items must be in quotations. 'L' is placed next to a number to specify an integer. 
 
 ```{r}
 vec_char <- c("bacteria", "virus", "archaea")
@@ -413,6 +466,9 @@ vec_num
 
 vec_log <- c(TRUE, FALSE, TRUE)
 vec_log
+
+vec_int <- c(1L, 8L)
+vec_int
 ```
 
 What happens if we try to include more than one type of data?
@@ -480,7 +536,9 @@ You can grab a specific element by its index, or by its name.
 ```{r}
 vec_char[3]
 
-vec_char[2:3] #second and third element in the vector inclusive (this is not the same for all programming languages)
+vec_char[2:3] 
+#second and third element in the vector inclusive 
+#(this is not the same for all programming languages)
 
 vec_log["male"]
 ```
@@ -934,7 +992,8 @@ apply(counts, MARGIN = 1, quantile)
 Public service announcement. Know what logarithm you are using. 
 
 ```{r}
-apply(counts, MARGIN = 1, log) #this is base exp(1)
+#this is base exp(1)
+apply(counts, MARGIN = 1, log) 
 str(apply(counts, MARGIN = 1, log))
 class(apply(counts, MARGIN = 1, log))
 
@@ -1039,7 +1098,7 @@ In this case na.omit can be useful.
 apply(counts, MARGIN = 1, na.omit(log))
 
 ```
-You can similarly deal with NaNs in R. NaNs (not a number) are NAs (not available), but NAs are not NaNs. NaNs appear for imaginary or complex numbers or unusual numeric values. Some packages may output NAs, NaNs, or Inf/-Inf (can be found with `is.finite()`). 
+You can similarly deal with NaNs in R. NaNs (not a number) are NAs (not available), but NAs are not NaNs. NaNs appear for imaginary or complex numbers or unusual numeric values. Some packages may output NAs, NaNs, or Inf/-Inf (can be found with `is.finite()` ). 
 
 ```{r}
 na_vec <- c(5, 6, NA, 7, 7, NA)
@@ -1084,7 +1143,7 @@ There are a few different places you can install packages from R. Listed in orde
 `devtools` is a package that is used for making R packages, but it also helps us to install packages from Github. It is downloaded from CRAN.
 
 ```{r eval=FALSE}
-install.packages('devtools') #would be better to have something with dependencies here
+install.packages('devtools') 
 
 ```
 
@@ -1106,7 +1165,8 @@ install.packages(c('dplyr', 'devtools', 'readxl'), dependencies = TRUE)
 A package only has to be installed once. It is now in your _library_. To use a package, you must _load_ the package into memory. Unless this is one of the packages R loads automatically, you choose which packages to load every session. 
 
 ```{r eval = FALSE}
-library(devtools) # or library('devtools')
+library(devtools) 
+# or library('devtools')
 
 ```
 
@@ -1161,7 +1221,7 @@ Install and load the package `DESeq2`.
 
 ***
 
-```{r include = FALSE}
+```{r include = FALSE, eval = FALSE}
 library(BiocInstaller)
 biocLite('DESeq2', dependencies = TRUE)
 #or
@@ -1184,8 +1244,9 @@ biocLite("DESeq2", dependencies = TRUE)
 
 16S rRNA pyrosequencing of 30 latrines from Tanzania and Vietnam at different depths (multiples of 20cm). Microbial abundance is represented in Operational Taxonomic Units (OTUs). Operational Taxonomic Units (OTUs) are groups of organisms defined by a specified level of DNA sequence similarity at a marker gene (e.g. 97% similarity at the V4 hypervariable region of the 16S rRNA gene). Intrinsic environmental factors such as pH, temperature, organic matter composition were also recorded.
 
-We have 2 csv files: 
-1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.
+We have 2 csv files:
+
+1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.     
 2. OTU abundance table.
 
 B Torondel, JHJ Ensink, O Gunvirusdu, UZ Ijaz, J Parkhill, F Abdelahi, V-A Nguyen, S Sudgen, W Gibson, AW Walker, and C Quince.
@@ -1193,6 +1254,8 @@ Assessment of the influence of intrinsic environmental and geographical factors 
 Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
 
 ***
+
+##tsv/csv files (utils and readr) 
 
 Let's read our metadata file into R. While we do these exercises, we are going to become friends with the Help menu. Let's start by using the `read.table()` function which takes in the path to our file.
 
@@ -1203,7 +1266,9 @@ meta <- read.table(file = "data/ENV_pitlatrine.csv")
 
 ```
 
-To see the result, we can look at 'meta' in the Environment pane and see that there are 82 observations of one variable. If we click on the arrow next to 'meta' we can now see that we have a column 'V1' and the variable type is a factor. We can also hover the mouse over the column name for this information. We can click on 'meta' in the Environment pane or type `View(meta)` in the Console to open a spreadsheet-like view of 'meta' in a new tab. `head()` will show us the first 10 rows of our data frame. `tail()` would show the last 10 rows.
+To see the result, we can look at 'meta' in the Environment pane and see that there are 82 observations of one variable. If we click on the arrow next to 'meta' we can now see that we have a column 'V1' and the variable type is a factor. We can also hover the mouse over the column name for this information. 
+
+We can click on 'meta' in the Environment pane or type `View(meta)` in the Console to open a spreadsheet-like view of 'meta' in a new tab. `head()` will show us the first 10 rows of our data frame. `tail()` would show the last 10 rows.
 
 ```{r}
 head(meta)
@@ -1303,7 +1368,7 @@ head(meta)
 
 Note that `readr` tells you exactly how it parsed your file, and how each column is encoded. It also saves us from typing `stringsAsFactors = FALSE`. Every. Time. The syntax is a bit different - for example, `col_names = TRUE` instead of `header = TRUE`, `col_types = 'c'` instead of `colClasses = 'character'`. It is a matter of personal preference what you want to use. If you have a csv file you are really struggling with, I would try `read_csv` as it has some pretty sensible defaults.     
 
-***
+##Excel spreadsheets
 
 But what happens if we have a good, old-fashioned excel file? The `readxl` package will recognize both xls and xlsx files. It expects tabular data.
 
@@ -1344,31 +1409,24 @@ read_excel(path, sheet = "Top titles", range = cell_rows(1:9))
 
 And likewise, how you would subset just columns from the same sheet.
 
-```{r}
+```{r }
 read_excel(path, sheet = 1, range = cell_cols("B:D"))
 ```
 
 
 You can also use a list version of the apply function `lapply()` to read in all sheets at once. Each sheet will be stored as a data frame inside of a list object. If you remember, `apply()` took in a matrix, a row/column specification (MARGIN), and a function. `lapply()` takes in a list (which does not have rows and columns) and a function. 
 
+While so far we are used to functions finding our variables globally (in the global environment), `lapply()` is looking locally (within the function) and so we need to explicitly provide our path. We will get more into local vs global variables in our functions lesson. For now, I just want you to be able to read in all worksheets from an excel workbook.
+
 ```{r}
 ex <- lapply(excel_sheets(path), read_excel, path = path)
 
 str(ex)
 ```
+We now have a list object with each worksheet being one item in the list. 
 
 
-Explain using example like this:
-<https://stackoverflow.com/questions/2275896/is-rs-apply-family-more-than-syntactic-sugar>
-
-```{r}
-
-```
-
-
-
-
-You can subset the sheet you would like to work with (or work with all sheets at once - see the `purrr` package for working with list objects).
+You can subset the sheet you would like to work with using the syntax 'list[[x]]' and store it as a variable using `data.frame()` (or work with all sheets at once - see the `purrr` package for working with list objects).
 
 
 ```{r}
@@ -1379,54 +1437,75 @@ excel2 <- data.frame(ex[[2]])
 
 At this point, you will be able to use your excel worksheet as a normal data frame in R.
 
-***
+##Googlesheets
 
 Googlesheets have a similar structure to excel workbooks, the only tricky thing is getting the name of your googlesheet to input.
 
+I have a googlesheet to share from my Google Drive: <https://docs.google.com/spreadsheets/d/1JTy5sCtQz8PmlpDrgvOnwZ1tB2pxOndxoNMTHQR_PrQ/edit?usp=sharing>. 
+
+Add the sheet to your own Google Drive. Then load googlesheets.
+
+```{r }
+library(googlesheets)
+```
+
+
 If you load googlesheets and ask it to list the googlesheets you have, googlesheets will open a new window and ask if it can have access to your googlesheets. If you say yes, you can return to R and breathe a sigh of relief. Your import of your googlesheets worked.
 
-```{r eval=FALSE}
-library(googlesheets) #hypothetically already loaded from earlier code
-
+```{r }
 gs_ls()
 
+#if you have many googlesheets like I do you may need to search for your sheet
 #tail(gs_ls())
 ```
 
-Register the sheet you are going to use with the sheet title.
+_Register_ the sheet you are going to use (gather information on the sheet from the API) with the sheet title using `gs_title()`.
 
-```{r eval=FALSE}
+```{r}
 books <- gs_title('Books Everyone Should Read')
 ```
 
-How many worksheets are in this spreadsheet and what are their names?
+If this did not work for some reason, download [books_alpha.xlsx](https://github.com/eacton/CAGEF/blob/master/Lesson_1/data/books_alpha.xlsx) and save it to your current working directory. Upload the file to Google Drive using `gs_upload()`.
+
+```{r}
+books <- gs_upload(file = "data/books_alpha.xlsx")
+```
 
 
-```{r eval=FALSE}
+The structure of the googlesheet is a list.
+
+```{r}
+str(books)
+```
+
+
+How many worksheets are in this spreadsheet and what are their names? To find the number of worksheets, I subset from the list `n_ws`. To get the names of the worksheets, I grab the worksheets `ws` (itself a data frame) and subset the column `ws_title` for their titles. 
+
+```{r }
 books$n_ws
 
 books$ws$ws_title
 ```
 
 
-Read in the worksheet you want to access. You can do this using the worksheet number.
+Read in the worksheet you want to access using `gs_read()`. You can do this by specifying the worksheet number or title.
 
-```{r eval=FALSE}
+```{r}
 book_sheet1 <- gs_read(books, ws = 1)
 
 ```
 
-The last 2 columns don't hold much information. Specify a subset of this sheet. You can do this by selecting the cell columns, or by using the 'excel-like' cell range.
+The last 2 columns don't hold much information. You can specify a subset of this sheet similarly to the excel sheets using `range`. You can do this by selecting the cell columns with `cell_cols`, or by using the cell range.
 
-```{r eval=FALSE}
+```{r eval = FALSE}
 booksfilt <- gs_read(books, ws = 1, range = cell_cols(1:14))
 #or
 booksfilt <- gs_read(books, ws = 1, range = "A1:N1000")
 ```
 
-You can also specify the worksheet by name, and sort by rows. Here are the top recommendations for what to read, when you are no longer in academia.
+Here we specify the worksheet by name, and sort by rows using `cell_rows`. Here are the top recommendations for what to read, when you are no longer in academia.
 
-```{r eval=FALSE}
+```{r eval = FALSE}
 books_alpha <- gs_read(books, ws = "Top titles", range = cell_rows(1:10)) 
 
 ```
@@ -1435,7 +1514,8 @@ books_alpha <- gs_read(books, ws = "Top titles", range = cell_rows(1:10))
 One nice thing about the `googlesheets` package is that all of the functions begin with `gs_` which is great for finding functions and tab completion.
 
 
-You 'download' ie. save this file to your computer.
+You can use `gs_download` to save this file to your computer as an excel workbook by giving the title of the googlesheet and the name for the output file. You can overwrite an existing file by selecting `overwrite = TRUE`.
+
 ```{r eval=FALSE}
 gs_download(gs_title("Books Everyone Should Read"), to = "books_alpha.xlsx", overwrite = TRUE)
 ```
@@ -1454,9 +1534,29 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Read in one of the provided test sheets. Change the column names to something user friendly. How many rows and columns in the dataset? Can you delete the last column? What flavour of variables are there? Write the data to a csv file. 
+Read in the 'adult_income.tsv' dataset. How many rows and columns in the dataset? Can you delete the last column? What flavour of variables are there? Change a column name. Write the data to a csv file. 
 
 </br>
+
+```{r include = FALSE, eval = FALSE}
+
+#doesn't really matter if strings are character or factor
+dat <- read.table("data/adult_income.tsv", stringsAsFactors = F)
+
+#rows 16281, columns 15
+str(dat)
+dim(dat)
+
+#delete last column
+dat <- dat[, -1]
+
+#flavor of variables: integer and character or integer and factor
+#assumes row names which we don't have in this case, row.names = FALSE 
+#to not be imported with extra column of index numbers
+write.csv(dat, "data/adult_income.csv", row.names = FALSE)
+
+```
+
 
 </br>
 
@@ -1474,7 +1574,7 @@ Try reading in one of your own datasets. Write it to a different file format.
 
   
 #Resources
-<https://github.com/eacton/CAGEF>
+<http://archive.ics.uci.edu/ml/datasets/Adult>     
 <https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd>     
 <http://stat545.com/block002_hello-r-workspace-wd-project.html>  
 <http://stat545.com/block026_file-out-in.html>     

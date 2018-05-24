@@ -39,95 +39,248 @@ How do we get there? Today we are going to be learning about the basic data stru
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/GD3KJB9), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF> __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/GD3KJB9>), it will help me further develop this course and would be greatly appreciated. 
 
 </br>
 
 ***
+
+####Data Used in This Lesson
+
+-ENV_pitlatrine.csv     
+-books_alpha.xlsx     
+-adult_income.tsv     
+
+These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_1/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
+
+
+***
+####Highlighting
+
+`grey background` - a package, function, code, command or directory      
+*italics* - an important term or concept or an individual file or folder     
+**bold** - heading or a term that is being defined      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink     
+
+***
+
 
 __Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
 
 ***
 
-##A quick intro to the R environment
+##Installing R and RStudio
+
+Installing R:      
+  Windows:      
+    - Go to <http://cran.utstat.utoronto.ca/>      
+    - Click on 'Download R for Windows'     
+    - Click on 'install R for the first time'     
+    - Click on 'Download R 3.4.4 for Windows' (if there is a newer version that is a-okay)     
+    - Double-click on the .exe file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
+  
+  (Mac) OS X:     
+    - Go to <http://cran.utstat.utoronto.ca/>      
+    - Click on 'Download R for (Mac) OS X'     
+    - Click on R-3.4.4.pkg (if there is a newer version that is a-okay)     
+    - Open the .pkg file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
+  
+  Linux:     
+    - sudo apt-get update     
+    - sudo apt-get install r-base     
+    - sudo apt-get install r-base-dev (so you can compile packages from source)
+
+Installing RStudio:      
+  Windows:     
+    - Go to <https://www.rstudio.com/products/rstudio/download/#download>     
+    - Click on 'RStudio 1.1.442 - Windows Vista/7/8/10' to download the installer (if there is a newer version that is a-okay)     
+    - Double-click on the .exe file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.
+    
+  (Mac) OS X:     
+    - Go to <https://www.rstudio.com/products/rstudio/download/#download>     
+    - Click on 'RStudio 1.1.442 - Mac OS X 10.6+ (64-bit)' to download the installer (if there is a newer version that is a-okay)     
+    - Double-click on the .dmg file once it has downloaded (in your Downloads folder if you haven't specified elsewhere) and follow the instructions.     
+    
+   Linux:     
+    - Go to <https://www.rstudio.com/products/rstudio/download/#download>     
+    - Click on the installer that describes your system ie. 'RStudio 1.1.442 - Ubuntu 16.04+/Debian 9+ (64-bit)' (if there is a newer version that is a-okay)     
+    - Double-click on the .deb file once it has downloaded and follow the instructions.     
+    - If double-clicking on your .deb file did not open the software manager open the terminal (this can be found by searching for Terminal) and type sudo dpkg -i Downloads/rstudio-xenial-1.1.442-amd64.deb      
+     _Note: You have 3 things that could change in this last command._     
+     1. This assumes you have just opened the terminal and are in your home directory. (If not, you have to modify your path. You can get to your home directory by typing cd ~.)     
+     2. This assumes you have downloaded the .deb file to Downloads. (If you downloaded the file somewhere else, you have to change the path to the file, or download the .deb file to Downloads).      
+     3. This assumes your filename for .deb is the same as above. (Put the name matching the .deb file you downloaded).
+    
+If you have a problem with installing R or RStudio, please come 15 minutes before the lesson starts and I will help you troubleshoot your installation. You can also try to solve the problem yourself by Googling any error messages you get.    
+    
+##A quick intro to  the R environment
+
+The "Comprehensive R Archive Network" (CRAN) is a collection of sites that have the same R and related R material (ie. new and previous versions of R software, documentation, packages and collections of R packages to download that might be useful in a particular field (CRAN Task Views), links to the R journal and R search sites, bug reports and fixes). Different sites (for example, we used http://cran.utstat.utoronto.ca/), are called a _mirrors_ because they reflect the content from the master site in Austria. There are mirrors worldwide to reduce the burden on the network. CRAN will be referred to here as a main repository for obtaining R packages.
 
 To paraphrase the CRAN gurus:     
-https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf
+<https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf>
 
 
-R is an 'environment' because it has the tools and software for the storage, manipulation, statistical analysis, and graphical display for of data.  It comes with about 25 built-in 'packages' and uses a simple programming language ("S"). Users have been encouraged to make there own packages... there are now over 10,000 packages on CRAN and about 1,500 on Bioconductor.
+R is an __environment__ because it has the tools and software for the storage, manipulation, statistical analysis, and graphical display for of data.  It comes with about 25 built-in 'packages' and uses a simple programming language ("S"). Users have been encouraged to make there own packages... there are now over 12,000 packages on CRAN and about 1,500 on Bioconductor.
 
 ![](img/cran_pkg.png){width=600px}
 </br>
 
-RStudio is an IDE (Integrated Development Environment) for R that provides a more user-friendly experience than using R in a terminal setting. It has 4 main areas or panes, which you can customize to some extent under Tools > Global Options > Pane Layout:
+Bioconductor is another repository for R packages (<https://www.bioconductor.org/>), but it specializes in tools for high-throughput genomics data. One nice thing about Bioconductor is that it has decent vignettes; a __vignette__ is the set of documentation for a package explaining its functions and usages in a tutorial-like format. 
 
-1. Source - The code you are annotating and keeping in your script.
-2. Console - Where your code is executed.
-3. Environment - What global objects you have created and functions you have written/sourced.
-   History -  A record of all the code you have executed in the console.
+So...what are in these packages? A __package__ is a collection of functions, sometimes data, and compiled code. __Functions__ are the basic workhorses of R; they are the tools we use to analyze our data. Each function can be thought of as a unit that has a specific task. A function takes an input, evaluates an expression (ie. a calucation, plot, merge, etc.), and returns a value. (We will have an entire separate lesson to explore functions.)
+
+RStudio is an IDE (Integrated Development Environment) for R that provides a more user-friendly experience than using R in a terminal setting. It has 4 main areas or panes, which you can customize to some extent under `Tools > Global Options > Pane Layout`:
+
+1. __Source__ - The code you are annotating and keeping in your script.
+2. __Console__ - Where your code is executed.
+3. __Environment__ - What global objects you have created and functions you have written/sourced.     
+   History -  A record of all the code you have executed in the console.     
    Connections - Which data sources you are connecting to. (Not being used in this course.)
-4. Files, Plots, Packages, Help, Viewer - self-explanatoryish if you click on their tabs.
+4. __Files, Plots, Packages, Help, Viewer__ - self-explanatoryish if you click on their tabs.
 
-(In-class moment for going over these 4 quadrants + Global Options.)
+All of the panes can be minimized or maximized using the large and small box outlines in the top right of each pane.
 
+###Source
+
+The __Source__ is where you are keeping the code and annotation that you want to be saved as your script. The tab at the top left of the pane has your script name (ie. 'Untitled.R'), and you can switch between scripts by toggling the tabs. You can save, search or publish your source code using the buttons along the pane header. Code in the Source pane is _run_ or _executed_ automatically. 
+
+To run your current line of code or a highlighted segment of code from the Source pane you can:      
+     a) click the button `'Run' -> 'Run Selected Line(s)'`,      
+     b) click `'Code' -> 'Run Selected Line(s)'` from the menu bar,      
+     c) use the keyboard shortcut `CTRL + ENTER` (recommended),      
+     d) copy and paste your code into the Console and hit `Enter` (not recommended).
+     
+There are always many ways to do things in R, but the fastest way will always be the option that keeps your hands on the keyboard.
+
+###Console
+
+You can also type and execute your code (by hitting `ENTER`) in the __Console__ when the `>` prompt is visible. If you enter code and you see a `+` instead of a prompt, R doesn't think you are finished entering code (ie. you might be missing a bracket). If this isn't immediately fixable, you can hit `Esc` twice to get back to your prompt. Using the up and down arrow keys, you can find previous commands in the Console if you want to rerun code or fix an error resulting from a typo.
+
+On the Console tab in the top left of that pane is your current working directory. Pressing the arrow next to your working directory will open your current folder in the Files pane. If you find your Console is getting too cluttered, selecting the broom icon in that pane will clear it for you. The Console also shows information: upon startup about R (such as version number), during the installation of packages, when there are warnings, and when there are errors. 
+
+###Environment
+
+In the __Global Environment__ you can see all of the stored objects you have created or sourced (imported from another script). The Global Environment can become cluttered, so it also has a broom button to clear its workspace.
+
+__Objects__ are made by using the assignment operator `<-`. On the left side of the arrow, you have the name of your object. On the right side you have what you are assigning to that object. In this sense, you can think of an object as a container. The container holds the values given as well as information about 'class' and 'methods' (which we will come back to).
+
+Type `x <- c(2,4)` in the Console followed by `Enter`. 1D objects' data types can be seen immediately as well as their first few values. Now type `y <- data.frame(numbers = c(1,2,3), letters = c("a","b","c"))` in the Console followed by `Enter`. You can immediately see the dimension of 2D objects, and you can check the structure of data frames and lists (more later) by clicking on the object's arrow. Clicking on the object name will open the object to view in a new tab. Custom functions created in session or sourced will also appear in this pane. 
+
+The Environment pane dropdown displays all of the currently loaded packages in addition to the Global Environment. _Loaded_ means that all of the tools/functions in the package are available for use. R comes with a number of packages pre-loaded (ie. base, grDevices).  
+
+In the History tab are all of the commands you have executed in the Console during your session. You can select a line of code and send it to the Source or Console. 
+
+The Connections tab is to connect to data sources such as Spark and will not be used in this lesson.
+
+###Files, Plots, Packages, Help, Viewer
+
+The Files tab allows you to search through directories; you can go to or set your working directory by making the appropriate selection under the `More` (blue gear) drop-down menu. The `...` to the top left of the pane allows you to search for a folder in a more traditional manner. 
+
+The Plots tab is where plots you make in a .R script will appear (notebooks and markdown plots will be shown in the Source pane). There is the option to Export and save these plots manually. 
+
+The Packages tab has all of the packages that are installed and their versions, and buttons to Install or Update packages. A checkmark in the box next to the package means that the package is loaded. You can load a package by adding a checkmark next to a package, however it is good practice to instead load the package in your script to aid in reproducibility. 
+
+The Help menu has the documentation for all packages and functions. For each function you will find a description of what the function does, the arguments it takes, what the function does to the inputs (details), what it outputs, and an example. Some of the help documentation is difficult to read or less than comprehensive, in which case googling the function is a good idea. 
+
+The Viewer will display vignettes, or local web content such as a Shiny app, interactive graphs, or a rendered html document.
+
+###Global Options
+
+I suggest you take a look at `Tools -> Global Options` to customize your experience. 
+
+For example, under `Code -> Editing` I have selected `Soft-wrap R source files` followed by `Apply` so that my text will wrap by itself when I am typing and not create a long line of text. 
+
+You may also want to change the `Appearance` of your code. I like the `RStudio theme: Modern` and `Editor font: Ubuntu Mono`, but pick whatever you like! Again, you need to hit `Apply` to make changes.
+
+That whirlwind tour isn't everything the IDE can do, but it is enough to get started.
 
 ##A quick note on directory structure
 
 This is an image of a possible directory. 
 
-![](img/unix_boys.jpg)
+![](img/unix_boys.jpg){width=500px}
 
 </br>
 
-In this hierarchy we will pretend to be benedict, and we are hanging out in our Tables folder. R looks to read in your files from your _working directory_, which in this case would be Tables, so at this moment, R would have access to proof.tsv and genes.csv. If I tried to open paper.txt under benedict, R would tell me there is no such file in my current working directory.
+In this hierarchy we will pretend to be _benedict_, and we are hanging out in our _Tables_ folder. R looks to read in your files from your __working directory__, which in this case would be _Tables_, so at this moment, R would have access to _proof.tsv_ and _genes.csv_. If I tried to open _paper.txt_ under _benedict_, R would tell me there is no such file in my current working directory.
 
-To get your working directory in R you would type:
+To get your working directory in R you would type in your Source pane: 
 
 ```
 getwd()
+```
+You would then press `Enter` to execute the code in the Console. Technically, there is no reason to save this code and it could be typed and executed in the Console. However, to save some mental effort choosing which code to save or not (especially when starting out), let's type everything in the Source. You can always go back and choose what to delete, and harder to recreate what you didn't save.
 
+The output in your Console would be:
 
+```
 [1] "/home/benedict/Tables"
 ```
 
-R will tell you your _absolute directory_. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names are in the path.
+R will always tell you your __absolute directory__. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names differ in the path.
 
 
 To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"home/benedict"`). Therefore, our current location could also be denoted as `"~/Tables"`.
 
-To move to the directory 'sue' we us a function that will set the working directory:
+To move to the directory _ewan_ we use a function that will set the working directory:
 
 ```
-setwd("/home/benedict")
+setwd("/home/ewan")
 #or 
-setwd("~")
+setwd("~/ewan")
 #or 
-setwd("..")
+setwd("../ewan")
 
 ```
 A _relative directory_ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
 
-If I wanted to move back to Tables using the _absolute path_, I would set a new working directory:
+If I wanted to move back to _Tables_ using the _absolute path_, I would set a new working directory:
 
 ```
 setwd("/home/benedict/Tables")
 #or
-setwd("~/Tables")
+setwd("~/benedict/Tables")
 ```
 
 And the _relative path_ would be:
 
 ```
-setwd("./Tables")
+setwd("../benedict/Tables")
 ```
 
-There is some talk over setting working directories within scripts. Obviously, not everyone has the same absolute path, so if you are setting a directory in your script, _it is best to have a relative path starting from the folder your script is in_. Keep in mind that others you share your script with might not have the same directory structure if you refer to subfolders. 
+There is some talk over setting working directories within scripts. Obviously, not everyone has the same absolute path, so if must set a directory in your script, _it is best to have a relative path starting from the folder your script is in_. Keep in mind that others you share your script with might not have the same directory structure if you refer to subfolders. 
 
 You can set your working directory by:
-1. setwd()
-2. Session -> Set Working Directory (3 Options)
-3. Files Window -> More (Gear Symbol) -> Set As Working Directory
+
+1. `setwd()`     
+2. `Session -> Set Working Directory` (3 Options)     
+3. `Files Window -> More (Gear Symbol) -> Set As Working Directory`     
+
+
+***
+__Challenge__ 
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/turtle_challenge.jpg){width=100px}
+</div>
+
+</br>
+
+Assume you are in the _Tables_ folder. Which is NOT a valid way to get to the _Thesis_ folder?
+
+- `setwd("../../ewan/Thesis")`
+- `setwd("~/ewan/Thesis")`
+- `setwd("../brad/../ewan/Thesis")`
+- `setwd("./../../ewan/Thesis")`
+- `setwd("/home/ewan/Thesis")`
+- They are all valid, stop messing with me.
+
+Follow-up: Which are the absolute paths?
+
+</br>
+
+***
 
 
 ##Making Life Easier
@@ -196,27 +349,24 @@ Reflow Comment (Wrap comments) `CTRL + SHIFT + /`
 
     Use version control.
 
-https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/
+<https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/>
 
 
 
 ###Trouble-shooting basics
 
-- _file does not exist_ - working directory errors  - use getwd() to check where you are working, the Files window to check that your file exists there, and setwd() to change your directory
-                         - work inside an _R project_ with your files in the same folder - your working directory will be set automatically when you open the project
+- _file does not exist_ - working directory errors  - use `getwd()` to check where you are working, the Files window to check that your file exists there, and `setwd()` to change your directory
+                         - work inside an _R project_ with your files in the same folder - your working directory will be set automatically when you open the project (this can be done by using `File -> New Project` and following prompts)
 - _typos_ - R is case sensitive, check that you've spelled everything right
-            - use tab-completion when possible
+            - use _tab-completion_ when possible
 - _open quotes, parentheses, brackets_
             - R Studio highlights matching brackets, and gives an 'x' on your left sidebar if your final bracket is not closed
 - _data type_ - you can't perform a calculation on those 1, and 0's because they are actually characters and not numeric
-- _unexpected answers_ - check in the help menu ie. `help("function")` or `?function` to double-check how the function works and its output
+- _unexpected answers_ - access the _help menu_ by typing `help("function")` or `?function` or `help(package = "package")` in the Source or Console to double-check how the function works and its output. The result will be in the lower-right pane under the Help tab (which is also searchable). 
 - _function is not found_ - make sure the package is installed AND loaded
 - _weird error_ you are not sure the meaning of - find answers online (see below)
 - sometimes weird things happen - clear your environment and restart your R session
 - _the R bomb_!! - congrats, you have completed an R rite of passage.
-
-
-
 
 ***
 
@@ -239,7 +389,7 @@ _Finding answers online_
 - 99% of the time, someone has already asked your question     
 - Google, Stackoverflow, SEQanswers, quora, researchgate, RSeek, twitter, even reddit     
 - Including the program, version, error, package and function helps, be specific     
-- http://stat545.com/help-general.html      
+- <http://stat545.com/help-general.html>      
   
   
 _Asking a question_
@@ -249,8 +399,8 @@ _Asking a question_
 - Show enough of your code to reproduce the problem.
 - Add tags that match your problem.
 - Respond to the feedback. People put in their free time to answer you.
-- https://stackoverflow.com/help/how-to-ask     
-- https://www.r-project.org/posting-guide.html
+- <https://stackoverflow.com/help/how-to-ask>     
+- <https://www.r-project.org/posting-guide.html>
 
 </br>
 
@@ -260,7 +410,7 @@ _Asking a question_
 
 _Remember_ - everyone looks for help online ALL THE TIME. It is completely normal. Also, with programming there are multiple ways to come up with an answer. There are different packages that let you do the same thing, but with shortcuts. There are different levels of 'efficiency' and 'redundancy' in coding. You will work on refining these aspects of your code as you go along in this course, and in your coding career.
 
-Last but not least, to make life easier: under Help there is a `Cheatsheet of Keyboard Shortcuts`.
+Last but not least, to make life easier: under Help there is a _Cheatsheet of Keyboard Shortcuts_.
 
 
 
@@ -268,7 +418,7 @@ Last but not least, to make life easier: under Help there is a `Cheatsheet of Ke
 ##A quick intro to R data structures
 
 
-There are 4 types of data structures in R.
+There are 5 types of data structures in R.
 
 1. vectors - 1D - holds one type of data
 2. lists - 1D - holds multiple data types
@@ -298,12 +448,12 @@ object_name = value
 
 We are going to use a simple function to create a vector. Functions take arguments. To find out which arguments they take, we can look at the help menu. The help menus in R can be intimidating and hard to read. Don't think it is just because you are new. If you really don't understand the help menu, you are probably not the only one, so look online and there will likely be a simpler explanation.
 
-Let's look up the function `c()`, which combines values into a vector or list. It takes in the argument `'...'`, which is defined as the objects to be concatenated. In the description it says 'all agruments are coerced to a common type, which is the type of the returned value' and in the details it tells you the hierarchy 'NULL < raw < logical < integer < double < complex < character < list < expression' and 'factors are treated only via their internal integer codes'. Now we don't know what all this means yet, but we come back to this as we go along. The output of the function is 'NULL or an expression or a vector'. At the bottom of the help menu, there are usually examples of how to use the function, which are sometimes easier to understand than the documentation. 
+Let's look up the function `c()`, which combines values into a vector or list. It takes in the argument `'...'`, which is defined as the objects to be concatenated. In the description it says 'all arguments are coerced to a common type, which is the type of the returned value' and in the details it tells you the hierarchy of coercion: _NULL < raw < logical < integer < double < complex < character < list < expression_. It also says 'factors are treated only via their internal integer codes'. Now we don't know what all this means yet, but we come back to this as we go along. The output of the function is 'NULL or an expression or a vector'. At the bottom of the help menu, there are usually examples of how to use the function, which are sometimes easier to understand than the documentation. 
 
 
 ###Vectors
 
-Here are what vectors of each 'type' would look like. Note that character items must be in quotations. 
+Here are what vectors of each data 'type' would look like. Note that character items must be in quotations. 'L' is placed next to a number to specify an integer. 
 
 
 ```r
@@ -335,6 +485,15 @@ vec_log
 ## [1]  TRUE FALSE  TRUE
 ```
 
+```r
+vec_int <- c(1L, 8L)
+vec_int
+```
+
+```
+## [1] 1 8
+```
+
 What happens if we try to include more than one type of data?
 
 
@@ -348,7 +507,7 @@ vec_mixed
 ```
 
 
-R will coerce your vector to be of one data type, in this case the type that is most inclusive is a character vector. 
+R will _coerce_ your vector to be of one data type, in this case the type that is most inclusive is a character vector. 
 What do you think will happen if 'bacteria' is removed from the vector? Will it be coerced to the same type?
 
 
@@ -455,7 +614,7 @@ vec_char[3]
 ```
 
 ```r
-vec_char[2:3] #second and third element in the vector inclusive (this is not the same for all programming languages)
+vec_char[2:3] 
 ```
 
 ```
@@ -463,6 +622,9 @@ vec_char[2:3] #second and third element in the vector inclusive (this is not the
 ```
 
 ```r
+#second and third element in the vector inclusive 
+#(this is not the same for all programming languages)
+
 vec_log["male"]
 ```
 
@@ -567,8 +729,11 @@ mat
 ![](img/pause.jpg){width=100px}
 
 </div>
-What has happened here? Look up the rep() function. Why has R not thrown an error? How would I make this same matrix without vector recycling?          
+What has happened here? Look up the `rep()` function. Why has R not thrown an error? How would I make this same matrix without vector recycling? Can you think of 2 ways?          
 </br>     
+
+
+
 
 ***
 __Challenge__ 
@@ -576,7 +741,7 @@ __Challenge__
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
-Make a 4 x 4 matrix that looks like this, using the seq() function at least once. 
+Make a 4 x 4 matrix that looks like this, using the `seq()` function at least once. 
 
 <pre>
 2   4   6   8
@@ -586,6 +751,8 @@ Make a 4 x 4 matrix that looks like this, using the seq() function at least once
 </pre>
 
 ***
+
+
 
 
 
@@ -631,6 +798,7 @@ length(mat)
 ```
 ## [1] 25
 ```
+
 To access a specific row or column we can still use indexing.
 
 
@@ -652,6 +820,7 @@ mat[, 4]
 ```
 ## [1] 1 1 1 1 1
 ```
+
 Note that when we are subsetting a single row or column, we end up with a vector.
 
 
@@ -662,6 +831,7 @@ is.vector(mat[,4])
 ```
 ## [1] TRUE
 ```
+
 It is common to transform matrices. Note that the set of ones will now be in rows rather than columns.
 
 
@@ -719,6 +889,7 @@ class(list_mix)
 ```
 ## [1] "list"
 ```
+
 Some package creaters will have created their own data classes and will require your data to be in the format required of that class. For example in Bioconducter there is an _ExpressionSet_ class. 
 
 ![](img/expressionset.jpg)
@@ -811,6 +982,7 @@ dim(dat_large)
 ```
 ## [1] 9 3
 ```
+
 If we look at the structure again, we still have 3 levels. This is because each unique character element has been encoded as a number.
 (Note that a column can be subset by index or by its name using the `'$'` operator.)
 
@@ -843,7 +1015,8 @@ levels(dat_large$character)
 ```
 ## [1] "archaea"  "bacteria" "virus"
 ```
-Note that the first character object in the data frame is 'bacteria', however, the first factor level is archaea. R by default puts factor levels in alphabetical order. This can cause problems if we aren't aware of it. Always check to make sure your factor levels are what you expect. With factors, we can deal with our character levels directly, or their numeric equivalents. Factors are extremely useful for performing group calculations as we will see later in the course.
+
+Note that the first character object in the data frame is 'bacteria', however, the first factor level is archaea. R by default puts factor levels in _alphabetical order_. This can cause problems if we aren't aware of it. Always check to make sure your factor levels are what you expect. With factors, we can deal with our character levels directly, or their numeric equivalents. Factors are extremely useful for performing group calculations as we will see later in the course.
 
 
 ```r
@@ -861,12 +1034,16 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Look up the factor function. Use it to make 'bacteria' the first level, 'virus' the second level, and 'archaea' the third level. Use functions from the lesson to make sure your answer is correct. 
+Look up the factor function. Use it to make 'bacteria' the first level, 'virus' the second level, and 'archaea' the third level for the data frame 'dat'. Bonus if you can make the level numbers match (1,2,3 instead of 2,3,1). Use functions from the lesson to make sure your answer is correct. 
 
 </br>     
 </br>     
 
 ***
+
+
+
+
 
 We can also convert between data types if they are similar enough. For example, I can convert my matrix into a data frame. Since a data frame can hold any type of data, it can hold all of the numeric data in a matrix.
 
@@ -884,6 +1061,7 @@ new_dat
 ## 4  0  0  1  1  0
 ## 5  0  0  1  1  0
 ```
+
 Note that R just made up column names for us. We can provide our own vector of column names.
 
 
@@ -902,6 +1080,7 @@ new_dat
 ## 4    0    0    1    1    0
 ## 5    0    0    1    1    0
 ```
+
 In contrast, our data frame with multiple data types can not be converted into a matrix, as a matrix can only hold one data type. We could however, transform our new_dat back into a matrix. The matrix will retain our column heading.
 
 
@@ -1190,7 +1369,8 @@ dat * 4
 ```
 
 ```
-## Warning in Ops.factor(left, right): '*' not meaningful for factors
+## Warning in Ops.ordered(left, right): '*' is not meaningful for ordered
+## factors
 ```
 
 ```
@@ -1262,7 +1442,8 @@ arr[1, 2, 5] * 4
 ```
 ## [1] 28
 ```
-These are illustrative examples to see how our different data structures behave. In reality, you will want to do calculations across rows and columns, and not on your entire matrix or data frame. For example, we might have a count table where rows are genes, columns are samples, and we want to know the sum of all the counts for a gene. To do this, we can use the apply function.
+
+These are illustrative examples to see how our different data structures behave. In reality, you will want to do calculations across rows and columns, and not on your entire matrix or data frame. For example, we might have a count table where rows are genes, columns are samples, and we want to know the sum of all the counts for a gene. To do this, we can use the `apply()` function. `apply()` takes an array, matrix (or something that can be coerced to such, like a numeric data frame), and applies a function over row (`MARGIN = 1`) or columns (`MARGIN = 2`). Here we can invoke the `sum` function. 
 
 
 ```r
@@ -1289,7 +1470,25 @@ apply(counts, MARGIN = 1, sum)
 ## geneA geneB geneC geneD 
 ##    27    29    52    51
 ```
-The apply function will recognize basic functions.
+
+```r
+str(apply(counts, MARGIN = 1, sum))
+```
+
+```
+##  Named num [1:4] 27 29 52 51
+##  - attr(*, "names")= chr [1:4] "geneA" "geneB" "geneC" "geneD"
+```
+
+```r
+class(apply(counts, MARGIN = 1, sum))
+```
+
+```
+## [1] "numeric"
+```
+
+Note that the output is no longer a data frame. Since the resulting sums would have the dimensions of a 1x4 matrix, the results are instead coerced to a named numeric vector. The apply function will recognize basic functions.
 
 
 ```r
@@ -1331,11 +1530,13 @@ apply(counts, MARGIN = 1, quantile)
 ## 75%   12.5  12.5  20.0  21.5
 ## 100%  15.0  18.0  27.0  28.0
 ```
+
 Public service announcement. Know what logarithm you are using. 
 
 
 ```r
-apply(counts, MARGIN = 1, log) #this is base exp(1)
+#this is base exp(1)
+apply(counts, MARGIN = 1, log) 
 ```
 
 ```
@@ -1343,6 +1544,25 @@ apply(counts, MARGIN = 1, log) #this is base exp(1)
 ## Site1 0.6931472 1.386294 2.484907 2.079442
 ## Site2 2.7080502 2.890372 3.295837 3.332205
 ## Site3 2.3025851 1.945910 2.564949 2.708050
+```
+
+```r
+str(apply(counts, MARGIN = 1, log))
+```
+
+```
+##  num [1:3, 1:4] 0.693 2.708 2.303 1.386 2.89 ...
+##  - attr(*, "dimnames")=List of 2
+##   ..$ : chr [1:3] "Site1" "Site2" "Site3"
+##   ..$ : chr [1:4] "geneA" "geneB" "geneC" "geneD"
+```
+
+```r
+class(apply(counts, MARGIN = 1, log))
+```
+
+```
+## [1] "matrix"
 ```
 
 ```r
@@ -1366,7 +1586,11 @@ apply(counts, MARGIN = 1, log10)
 ## Site2 1.176091 1.255273 1.431364 1.447158
 ## Site3 1.000000 0.845098 1.113943 1.176091
 ```
-What if I want to know something else? We can create a function.
+
+When all data values are transformed, the output is a numeric matrix.
+
+What if I want to know something else? We can create a function. The sum function we called before can also be written as a function taking in x (in this case the vector of values from our coerced data frame row by row) and summing them. Other functions can be passed to `apply()` in this way.
+
 
 ```r
 apply(counts, MARGIN = 1, sum)
@@ -1394,13 +1618,15 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-
-Create a function to test if ALL of the counts for a gene are greater than 10.     
+Create a function to get the counts to multiply all for each gene by 3.
 
 </br>
 </br>     
 
 ***
+
+
+
 
 </br>
 
@@ -1473,7 +1699,7 @@ remove_na_vec
 ## [1] "omit"
 ```
 
-With a large data frame, it may be hard to look at every cell to tell if there are NAs. The function complete.cases looks by row to see whether any row contains an NA. You can then subset out the rows with the NAs.
+With a large data frame, it may be hard to look at every cell to tell if there are NAs. The function `complete.cases()` looks by row to see whether any row contains an NA. You can then subset out the rows with the NAs.
 
 ```r
 is.na(counts)
@@ -1512,7 +1738,7 @@ counts[complete.cases(counts),]
 ## geneA     2    15    10
 ## geneC    12    27    13
 ```
-If you want to keep all of the observations in your data frame and do your calculations anyways, now that you are aware of what is going on in your dataset, some functions specifically allow for this. Let's look up the documentation for the mean function.
+If you want to keep all of the observations in your data frame and do your calculations anyways, now that you are aware of what is going on in your dataset, some functions specifically allow for this. Let's look up the documentation for the `mean()` function.
 
 
 ```r
@@ -1547,27 +1773,12 @@ apply(counts, MARGIN = 1, na.omit(log))
 ## Site2 2.7080502       NA 3.295837 3.332205
 ## Site3 2.3025851 1.945910 2.564949       NA
 ```
-You can similarly deal with NaNs in R. NaNs (not a number) are NAs (not available), but NAs and NaNs. NaNs appear for imaginary or complex numbers or some numeric values for example 0/0. Some packages may output NAs, NaNs, or Inf/-Inf (rare, use is.finite). 
+You can similarly deal with NaNs in R. NaNs (not a number) are NAs (not available), but NAs are not NaNs. NaNs appear for imaginary or complex numbers or unusual numeric values. Some packages may output NAs, NaNs, or Inf/-Inf (can be found with `is.finite()` ). 
 
 
 ```r
-counts <- data.frame(Site1 = c(geneA = 2, geneB = 4, geneC = 12, geneD = 8),
-                     Site2 = c(geneA = 15, geneB = NaN, geneC = 27, geneD = 28),
-                     Site3 = c(geneA = 10, geneB = 7, geneC = 13, geneD = NaN))
-
-counts
-```
-
-```
-##       Site1 Site2 Site3
-## geneA     2    15    10
-## geneB     4   NaN     7
-## geneC    12    27    13
-## geneD     8    28   NaN
-```
-
-```r
-nan_vec <- c(5, 6, NaN, 7, 7, NaN)
+na_vec <- c(5, 6, NA, 7, 7, NA)
+nan_vec <- c(5, 6, NaN, 7, 7, 0/0)
 
 is.na(na_vec)
 ```
@@ -1585,6 +1796,14 @@ is.na(nan_vec)
 ```
 
 ```r
+is.nan(na_vec)
+```
+
+```
+## [1] FALSE FALSE FALSE FALSE FALSE FALSE
+```
+
+```r
 is.nan(nan_vec)
 ```
 
@@ -1592,13 +1811,8 @@ is.nan(nan_vec)
 ## [1] FALSE FALSE  TRUE FALSE FALSE  TRUE
 ```
 
-```r
-is.nan(na_vec)
-```
+Basically, if you come across NaNs, you can use the same functions such as `complete.cases()` that you use with NAs.
 
-```
-## [1] FALSE FALSE FALSE FALSE FALSE FALSE
-```
 Depending on your purpose, you may replace NAs with a sample average, or the mode of the data, or a value that is below a threshold.
 
 
@@ -1622,7 +1836,7 @@ counts
 
 There are a few different places you can install packages from R. Listed in order of decreasing sketchiness:
 
-- Bioconductor (Bioinformatics focus)
+- Bioconductor (Bioinformatics/Genomics focus)
     + Guidelines for submission, reviewed, and must have a vignette.
 - CRAN (The Comprehensive R Archive Network)
     + Guidelines for submission, reviewed. Where the majority of packages are.
@@ -1634,20 +1848,20 @@ There are a few different places you can install packages from R. Listed in orde
     
 </br>
 
-_Readr_ is a package that will help us to read in our files (easily). It is installed from CRAN.
+`devtools` is a package that is used for making R packages, but it also helps us to install packages from Github. It is downloaded from CRAN.
 
 
 ```r
-install.packages('readr') #would be better to have something with dependencies here
+install.packages('devtools') 
 ```
 
-R may give you package installation warnings. Don't panic. In general, your package will either be installed and R will test if the installed package can be loaded, or R will give you a 'non-zero exit status' - which means your package did not install. If you read the entire error message, it will give you a hint as to why the package did not install.
+R may give you package installation warnings. Don't panic. In general, your package will either be installed and R will test if the installed package can be loaded, or R will give you a _non-zero exit status_ - which means your package did not install. If you read the entire error message, it will give you a hint as to why the package did not install.
 
-Some packages depend on previously developed packages and can only be installed after said package is installed in your library. Similarly, the previous package may depend on another package... here is the solution to install the package and all of the prior packages it relies on.
+Some packages _depend_ on previously developed packages and can only be installed after another package is installed in your library. Similarly, that previous package may depend on another package... here is the solution to install the package and all of the prior packages it relies on.
 
 
 ```r
-install.packages('readr', dependencies = TRUE)
+install.packages('devtools', dependencies = TRUE)
 ```
 
 You can install more than one package at once.
@@ -1657,11 +1871,12 @@ You can install more than one package at once.
 install.packages(c('dplyr', 'devtools', 'readxl'), dependencies = TRUE)
 ```
 
-To load a package (ie. to actually use it):
+A package only has to be installed once. It is now in your _library_. To use a package, you must _load_ the package into memory. Unless this is one of the packages R loads automatically, you choose which packages to load every session. 
 
 
 ```r
-library(devtools) # or library('devtools')
+library(devtools) 
+# or library('devtools')
 ```
 
 Likewise, you can load many packages at once:
@@ -1679,7 +1894,7 @@ source("https://bioconductor.org/biocLite.R")
 biocLite("BiocInstaller")
 ```
 
-Or you can use the BiocInstaller package to install other packages.
+Or you can use the BiocInstaller package to install other packages instead of typing in that url every time.
 
 
 ```r
@@ -1688,14 +1903,14 @@ biocLite('limma')
 ```
 
 
-Devtools is required to install from GitHub. We don't actually need to load the entire library for devtools if we are only going to use one function.
+As forementioned `devtools` is required to install from GitHub. We don't actually need to load the entire package for `devtools` if we are only going to use one function. We select a function using this syntax `package::function()`.
 
 
 ```r
 devtools::install_github("jennybc/googlesheets")
 ```
 
-Libraries from Bioconductor and GitHub load the same as packages from CRAN.
+All packages are loaded the same regardless of their origin, using `library()`.
 
 
 ```r
@@ -1710,7 +1925,7 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Install and load the package 'DESeq2'.
+Install and load the package `DESeq2`.
 
 </br>
 
@@ -1719,17 +1934,21 @@ Install and load the package 'DESeq2'.
 
 ***
 
+
+
+
 </br>
 
 #Reading in data & writing data
 
-###Our Dataset
+###Dataset: Pyrosequencing of the V3-V5 hypervariable regions of the 16S rRNA gene
 
-Metagenomic 16SrRNA sequencing of latrines from Tanzania and Vietnam at different depths (multiples of 20cm). 
+16S rRNA pyrosequencing of 30 latrines from Tanzania and Vietnam at different depths (multiples of 20cm). Microbial abundance is represented in Operational Taxonomic Units (OTUs). Operational Taxonomic Units (OTUs) are groups of organisms defined by a specified level of DNA sequence similarity at a marker gene (e.g. 97% similarity at the V4 hypervariable region of the 16S rRNA gene). Intrinsic environmental factors such as pH, temperature, organic matter composition were also recorded.
 
-We have 2 csv files (change one to tsv or xlsx - maybe both and make an additional files and get a google spreadsheet): 
-1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.
-2. A table of species abundance.
+We have 2 csv files:
+
+1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.     
+2. OTU abundance table.
 
 B Torondel, JHJ Ensink, O Gunvirusdu, UZ Ijaz, J Parkhill, F Abdelahi, V-A Nguyen, S Sudgen, W Gibson, AW Walker, and C Quince.
 Assessment of the influence of intrinsic environmental and geographical factors on the bacterial ecology of pit latrines
@@ -1737,13 +1956,23 @@ Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
 
 ***
 
-Let's read our metadata file into R. While we do these exercises, we are going to become friends with the help menu.
+##tsv/csv files (utils and readr) 
 
-To see the result, we can either click on meta in the global environment to open it in the viewer, or we can write code to view the variable. `head()` will show us the first 10 rows of our data frame. `tail()` would show the last 10 rows.
+Let's read our metadata file into R. While we do these exercises, we are going to become friends with the Help menu. Let's start by using the `read.table()` function which takes in the path to our file.
+
+
 
 
 ```r
 meta <- read.table(file = "data/ENV_pitlatrine.csv")
+```
+
+To see the result, we can look at 'meta' in the Environment pane and see that there are 82 observations of one variable. If we click on the arrow next to 'meta' we can now see that we have a column 'V1' and the variable type is a factor. We can also hover the mouse over the column name for this information. 
+
+We can click on 'meta' in the Environment pane or type `View(meta)` in the Console to open a spreadsheet-like view of 'meta' in a new tab. `head()` will show us the first 10 rows of our data frame. `tail()` would show the last 10 rows.
+
+
+```r
 head(meta)
 ```
 
@@ -1758,7 +1987,7 @@ head(meta)
 ```
 
 This is pretty ugly looking. Why?
-In the help file the default 'sep' or what is separating columns is expected to be a space. We need to use specify a comma instead.  
+In the help file the default `sep` or what is separating columns is expected to be a space. We need to use specify a comma instead.  
 
 
 ```r
@@ -1776,7 +2005,7 @@ head(meta)
 ## 6   T_2_3 6.46 27.9 29.45 26.85 27.5  161   35         22 2.4 19.4    31
 ```
 
-Better. Our columns are now separated appropriately, but what about our column titles?
+Better. Looking in the Environment pane 'meta' now has 82 rows and 12 columns, meaning our columns are separated appropriately, but what about our column titles? We want the names in the 1st row to be our column headings.
 
 
 ```r
@@ -1794,23 +2023,33 @@ head(meta)
 ## 6   T_2_6 7.69 28.7 65.52  7.03  1.5   57    3          6 0.8  0.0    14
 ```
 
-These samples are not replicates. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)
+We use `header=TRUE` to specify that the first row we read in will be the column headers. We now have 81 rows and 12 columns. 
+
+These samples are not replicates. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character data, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)
 
 
 ```r
 meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = T, stringsAsFactors = F)
-head(meta)
+str(meta)
 ```
 
 ```
-##   Samples   pH Temp    TS    VS  VFA CODt CODs perCODsbyt NH4 Prot Carbo
-## 1   T_2_1 7.82 25.1 14.53 71.33 71.0  874  311         36 3.3 35.4    22
-## 2  T_2_10 9.08 24.2 37.76 31.52  2.0  102    9          9 1.2 18.4    43
-## 3  T_2_12 8.84 25.1 71.11  5.94  1.0   35    4         10 0.5  0.0    17
-## 4   T_2_2 6.49 29.6 13.91 64.93  3.7  389  180         46 6.2 29.3    25
-## 5   T_2_3 6.46 27.9 29.45 26.85 27.5  161   35         22 2.4 19.4    31
-## 6   T_2_6 7.69 28.7 65.52  7.03  1.5   57    3          6 0.8  0.0    14
+## 'data.frame':	81 obs. of  12 variables:
+##  $ Samples   : chr  "T_2_1" "T_2_10" "T_2_12" "T_2_2" ...
+##  $ pH        : num  7.82 9.08 8.84 6.49 6.46 7.69 7.48 7.6 7.55 7.68 ...
+##  $ Temp      : num  25.1 24.2 25.1 29.6 27.9 28.7 29.8 25 28.8 28.9 ...
+##  $ TS        : num  14.5 37.8 71.1 13.9 29.4 ...
+##  $ VS        : num  71.33 31.52 5.94 64.93 26.85 ...
+##  $ VFA       : num  71 2 1 3.7 27.5 1.5 1.1 1.1 30.9 24.2 ...
+##  $ CODt      : int  874 102 35 389 161 57 107 62 384 372 ...
+##  $ CODs      : int  311 9 4 180 35 3 9 8 57 57 ...
+##  $ perCODsbyt: int  36 9 10 46 22 6 8 13 15 15 ...
+##  $ NH4       : num  3.3 1.2 0.5 6.2 2.4 0.8 0.7 0.9 21.6 20.4 ...
+##  $ Prot      : num  35.4 18.4 0 29.3 19.4 0 14.1 7.6 33.1 44.5 ...
+##  $ Carbo     : num  22 43 17 25 31 14 28 28 47 48 ...
 ```
+
+Don't forget! `str()` is still the best way to look at your data structure without taking your hands off the keyboard.
 
 ***
 __Challenge__ 
@@ -1820,11 +2059,14 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Use a parameter in read.table to read in metadata such that all non-character columns are numeric.
+Use a parameter in `read.table()` to read in metadata such that all columns will be of character data type, and the first column is a factor.
 
 </br>
 
 </br>
+
+
+
 
 ***
 
@@ -1834,21 +2076,24 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Read our data table into R using any function under Usage in the read.table help menu. Save your result in a variable called dat.
+Read our metadata table into R using any previously unused function under Usage in the `read.table()` Help menu. Save your result in a variable called 'dat'.
 
 </br>
 </br>
+
+
+
 
 ***
 
-Hopefully this exercise forced you to look at the differences in the default values of the parameters in these different functions. I suggest that you keep these in mind as we look at some functions that were aimed to make a few typing shortcuts. Let's load the readr library.
+Hopefully this exercise forced you to look at the differences in the default values of the parameters in these different functions. I suggest that you keep these in mind as we look at some functions that were aimed to make a few typing shortcuts. Let's load the `readr` library.
 
 
 ```r
 library(readr)
 ```
 
-Use read_csv() to read in your metadata file. What is different from read.csv?
+Use `read_csv()` to read in your metadata file. What is different from `read.csv()`?
 
 
 ```r
@@ -1881,19 +2126,20 @@ head(meta)
 ## # A tibble: 6 x 12
 ##   Samples    pH  Temp    TS    VS   VFA  CODt  CODs perCODsbyt   NH4  Prot
 ##   <chr>   <dbl> <dbl> <dbl> <dbl> <dbl> <int> <int>      <int> <dbl> <dbl>
-## 1 T_2_1    7.82  25.1  14.5 71.3  71.0    874   311         36 3.30   35.4
-## 2 T_2_10   9.08  24.2  37.8 31.5   2.00   102     9          9 1.20   18.4
-## 3 T_2_12   8.84  25.1  71.1  5.94  1.00    35     4         10 0.500   0  
-## 4 T_2_2    6.49  29.6  13.9 64.9   3.70   389   180         46 6.20   29.3
-## 5 T_2_3    6.46  27.9  29.4 26.8  27.5    161    35         22 2.40   19.4
-## 6 T_2_6    7.69  28.7  65.5  7.03  1.50    57     3          6 0.800   0  
+## 1 T_2_1    7.82  25.1  14.5 71.3   71     874   311         36   3.3  35.4
+## 2 T_2_10   9.08  24.2  37.8 31.5    2     102     9          9   1.2  18.4
+## 3 T_2_12   8.84  25.1  71.1  5.94   1      35     4         10   0.5   0  
+## 4 T_2_2    6.49  29.6  13.9 64.9    3.7   389   180         46   6.2  29.3
+## 5 T_2_3    6.46  27.9  29.4 26.8   27.5   161    35         22   2.4  19.4
+## 6 T_2_6    7.69  28.7  65.5  7.03   1.5    57     3          6   0.8   0  
 ## # ... with 1 more variable: Carbo <dbl>
 ```
-Note that readr tells you exactly how it parsed your file, and how each column is encoded.   
 
-***
+Note that `readr` tells you exactly how it parsed your file, and how each column is encoded. It also saves us from typing `stringsAsFactors = FALSE`. Every. Time. The syntax is a bit different - for example, `col_names = TRUE` instead of `header = TRUE`, `col_types = 'c'` instead of `colClasses = 'character'`. It is a matter of personal preference what you want to use. If you have a csv file you are really struggling with, I would try `read_csv` as it has some pretty sensible defaults.     
 
-But what happens if we have a good, old-fashioned excel file? The _readxl_ package will recognize both xls and xlsx files. It expects tabular data.
+##Excel spreadsheets
+
+But what happens if we have a good, old-fashioned excel file? The `readxl` package will recognize both xls and xlsx files. It expects tabular data.
 
 
 ```r
@@ -1924,7 +2170,7 @@ head(read_excel("data/books_alpha.xlsx"))
 ## #   five...` <lgl>
 ```
 
-This doesn't look like a workbook. Why not? The read_excel function defaults to reading in the first worksheet. You can specify which sheet you want to read in by position or name. Let's see what the name of our sheets are.
+This doesn't look like a workbook. Why not? The `read_excel()` function defaults to reading in the first worksheet. You can specify which sheet you want to read in by position or name. Let's see what the name of our sheets are.
 
 
 ```r
@@ -1936,13 +2182,19 @@ excel_sheets("data/books_alpha.xlsx")
 ## [4] "dropoff"
 ```
 
-Note that the argument to both of these functions was the path to our data sheet. We can save this path into a variable. You can also subset using cell numbers or ranges.
-
+Note that the argument to both of these functions was the path to our data sheet. We can save this path into a variable to save ourselves some typing.
 
 
 ```r
 path <- "data/books_alpha.xlsx"
+```
 
+
+It is possible to subset from a sheet by specifying cell numbers or ranges. Here we are grabbing sheet 1, and subsetting cells over 2 columns - C1:D9.
+
+
+
+```r
 read_excel(path, sheet = 1, range = "C1:D9")
 ```
 
@@ -1960,6 +2212,9 @@ read_excel(path, sheet = 1, range = "C1:D9")
 ## 8 A Thousand Acres                Atlas Shrugged
 ```
 
+We could alternatively specify the sheet by name. This is how you would simply grab rows.
+
+
 ```r
 read_excel(path, sheet = "Top titles", range = cell_rows(1:9))
 ```
@@ -1968,15 +2223,18 @@ read_excel(path, sheet = "Top titles", range = cell_rows(1:9))
 ## # A tibble: 8 x 2
 ##   Title                                `No of mentions`
 ##   <chr>                                           <dbl>
-## 1 To Kill a Mockingbird                           11.0 
-## 2 1984.0                                           9.00
-## 3 Catch-22                                         9.00
-## 4 Crime and Punishment                             9.00
-## 5 One Hundred Years of Solitude                    9.00
-## 6 The Catcher in the Rye                           9.00
-## 7 The Great Gatsby                                 9.00
-## 8 The Hitchhiker's Guide to the Galaxy             9.00
+## 1 To Kill a Mockingbird                              11
+## 2 1984.0                                              9
+## 3 Catch-22                                            9
+## 4 Crime and Punishment                                9
+## 5 One Hundred Years of Solitude                       9
+## 6 The Catcher in the Rye                              9
+## 7 The Great Gatsby                                    9
+## 8 The Hitchhiker's Guide to the Galaxy                9
 ```
+
+And likewise, how you would subset just columns from the same sheet.
+
 
 ```r
 read_excel(path, sheet = 1, range = cell_cols("B:D"))
@@ -2000,9 +2258,9 @@ read_excel(path, sheet = 1, range = cell_cols("B:D"))
 ```
 
 
+You can also use a list version of the apply function `lapply()` to read in all sheets at once. Each sheet will be stored as a data frame inside of a list object. If you remember, `apply()` took in a matrix, a row/column specification (MARGIN), and a function. `lapply()` takes in a list (which does not have rows and columns) and a function. 
 
-You can also use a list version of the apply function to read in all sheets at once. Each sheet will be stored as a data frame inside of a list object. You can subset the sheet you would like to work with (or work with all sheets at once - see the purrr package for working with list objects).
-
+While so far we are used to functions finding our variables globally (in the global environment), `lapply()` is looking locally (within the function) and so we need to explicitly provide our path. We will get more into local vs global variables in our functions lesson. For now, I just want you to be able to read in all worksheets from an excel workbook.
 
 
 ```r
@@ -2039,6 +2297,12 @@ str(ex)
 ##  $ :Classes 'tbl_df', 'tbl' and 'data.frame':	0 obs. of  1 variable:
 ##   ..$ add to Books Everyone Should Read http://www.brainpickings.org/index.php/2012/01/30/writers-top-ten-favorite-books/?fb_action_ids=10203689181294105&fb_action_types=og.likes: logi(0)
 ```
+We now have a list object with each worksheet being one item in the list. 
+
+
+You can subset the sheet you would like to work with using the syntax 'list[[x]]' and store it as a variable using `data.frame()` (or work with all sheets at once - see the `purrr` package for working with list objects).
+
+
 
 ```r
 str(ex[[3]])
@@ -2056,47 +2320,176 @@ excel2 <- data.frame(ex[[2]])
 
 At this point, you will be able to use your excel worksheet as a normal data frame in R.
 
-***
+##Googlesheets
 
-_Googlesheets_ have a similar structure to excel workbooks, the only tricky thing is getting the name of your googlesheet to input.
+Googlesheets have a similar structure to excel workbooks, the only tricky thing is getting the name of your googlesheet to input.
+
+I have a googlesheet to share from my Google Drive: <https://docs.google.com/spreadsheets/d/1JTy5sCtQz8PmlpDrgvOnwZ1tB2pxOndxoNMTHQR_PrQ/edit?usp=sharing>. 
+
+Add the sheet to your own Google Drive. Then load googlesheets.
+
+
+```r
+library(googlesheets)
+```
+
 
 If you load googlesheets and ask it to list the googlesheets you have, googlesheets will open a new window and ask if it can have access to your googlesheets. If you say yes, you can return to R and breathe a sigh of relief. Your import of your googlesheets worked.
 
 
 ```r
-library(googlesheets) #hypothetically already loaded from earlier code
-
 gs_ls()
+```
 
+```
+## # A tibble: 50 x 10
+##    sheet_title  author perm  version updated             sheet_key ws_feed
+##    <chr>        <chr>  <chr> <chr>   <dttm>              <chr>     <chr>  
+##  1 CAGEF Time … "    … r     new     2018-05-24 17:50:48 1SdrZhSp… https:…
+##  2 "          … "  ac… rw    new     2018-05-24 17:47:11 1KChnoyH… https:…
+##  3 "          … "  ac… rw    new     2018-05-24 17:46:42 1y-Tf6Vn… https:…
+##  4 "          … "  ac… rw    new     2018-05-24 17:45:48 1k0qlncj… https:…
+##  5 "          … "  ac… rw    new     2018-05-24 17:42:41 1Votk4h1… https:…
+##  6 "          … "  ac… rw    new     2018-05-24 17:23:22 1t2TpXLg… https:…
+##  7 "          … "  ac… rw    new     2018-05-24 16:39:26 1iRB__yR… https:…
+##  8 "          … "  ac… rw    new     2018-05-24 16:38:19 1hXxP3RT… https:…
+##  9 "          … "  ac… rw    new     2018-05-24 16:35:02 1Uc75eno… https:…
+## 10 "          … "  ac… rw    new     2018-05-24 16:34:13 1QlChZjv… https:…
+## # ... with 40 more rows, and 3 more variables: alternate <chr>,
+## #   self <chr>, alt_key <chr>
+```
+
+```r
+#if you have many googlesheets like I do you may need to search for your sheet
 #tail(gs_ls())
 ```
 
-Register the sheet you are going to use with the sheet title.
+_Register_ the sheet you are going to use (gather information on the sheet from the API) with the sheet title using `gs_title()`.
 
 
 ```r
 books <- gs_title('Books Everyone Should Read')
 ```
 
-How many worksheets are in this spreadsheet and what are their names?
+```
+## Sheet successfully identified: "Books Everyone Should Read"
+```
 
+If this did not work for some reason, download [books_alpha.xlsx](https://github.com/eacton/CAGEF/blob/master/Lesson_1/data/books_alpha.xlsx) and save it to your current working directory. Upload the file to Google Drive using `gs_upload()`.
+
+
+```r
+books <- gs_upload(file = "data/books_alpha.xlsx")
+```
+
+```
+## File uploaded to Google Drive:
+## data/books_alpha.xlsx
+## As the Google Sheet named:
+## books_alpha
+```
+
+
+The structure of the googlesheet is a list.
+
+
+```r
+str(books)
+```
+
+```
+## List of 17
+##  $ sheet_key  : chr "1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU"
+##  $ sheet_title: chr "books_alpha"
+##  $ n_ws       : int 4
+##  $ ws_feed    : chr "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full"
+##  $ browser_url: chr "https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/"
+##  $ updated    : POSIXct[1:1], format: "2018-05-24 17:53:51"
+##  $ reg_date   : POSIXct[1:1], format: "2018-05-24 17:53:54"
+##  $ visibility : chr "private"
+##  $ lookup     : logi TRUE
+##  $ is_public  : logi FALSE
+##  $ author     : chr "acton.erica"
+##  $ email      : chr "acton.erica@gmail.com"
+##  $ perm       : chr "rw"
+##  $ version    : chr "new"
+##  $ links      :Classes 'tbl_df', 'tbl' and 'data.frame':	4 obs. of  3 variables:
+##   ..$ rel : chr [1:4] "alternate" "http://schemas.google.com/g/2005#feed" "http://schemas.google.com/g/2005#post" "self"
+##   ..$ type: chr [1:4] "application/atom+xml" "application/atom+xml" "application/atom+xml" "application/atom+xml"
+##   ..$ href: chr [1:4] "https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/edit" "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full" "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full" "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full"
+##  $ ws         :Classes 'tbl_df', 'tbl' and 'data.frame':	4 obs. of  12 variables:
+##   ..$ ws_id           : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ov3sn8v" "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/or2xc7x" "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ovoh3sd" "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ochezbu"
+##   ..$ ws_key          : chr [1:4] "ov3sn8v" "or2xc7x" "ovoh3sd" "ochezbu"
+##   ..$ ws_title        : chr [1:4] "Lists" "All alphabetised" "Top titles" "dropoff"
+##   ..$ row_extent      : int [1:4] 1000 2004 1000 1000
+##   ..$ col_extent      : int [1:4] 26 26 26 26
+##   ..$ gid             : chr [1:4] "1880826485" "1637501895" "1915560119" "754846336"
+##   ..$ listfeed        : chr [1:4] "https://spreadsheets.google.com/feeds/list/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/ov3sn8v/private/full" "https://spreadsheets.google.com/feeds/list/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/or2xc7x/private/full" "https://spreadsheets.google.com/feeds/list/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/ovoh3sd/private/full" "https://spreadsheets.google.com/feeds/list/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/ochezbu/private/full"
+##   ..$ cellsfeed       : chr [1:4] "https://spreadsheets.google.com/feeds/cells/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/ov3sn8v/private/full" "https://spreadsheets.google.com/feeds/cells/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/or2xc7x/private/full" "https://spreadsheets.google.com/feeds/cells/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/ovoh3sd/private/full" "https://spreadsheets.google.com/feeds/cells/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/ochezbu/private/full"
+##   ..$ visualizationApi: chr [1:4] "https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/gviz/tq?gid=1880826485" "https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/gviz/tq?gid=1637501895" "https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/gviz/tq?gid=1915560119" "https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/gviz/tq?gid=754846336"
+##   ..$ exportcsv       : chr [1:4] "https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/export?gid=1880826485&format=csv" "https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/export?gid=1637501895&format=csv" "https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/export?gid=1915560119&format=csv" "https://docs.google.com/spreadsheets/d/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/export?gid=754846336&format=csv"
+##   ..$ self            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ov3sn8v" "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/or2xc7x" "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ovoh3sd" "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ochezbu"
+##   ..$ edit            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ov3sn8v/17puu5" "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/or2xc7x/upb972" "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ovoh3sd/ld5d1q" "https://spreadsheets.google.com/feeds/worksheets/1ctyHaqoZzn_ZeHzYiYjQazUb3-z2STvDOSNPUG_N3gU/private/full/ochezbu/vuj6yw"
+##  $ alt_key    : chr NA
+##  - attr(*, "class")= chr [1:2] "googlesheet" "list"
+```
+
+
+How many worksheets are in this spreadsheet and what are their names? To find the number of worksheets, I subset from the list `n_ws`. To get the names of the worksheets, I grab the worksheets `ws` (itself a data frame) and subset the column `ws_title` for their titles. 
 
 
 ```r
 books$n_ws
+```
 
+```
+## [1] 4
+```
+
+```r
 books$ws$ws_title
 ```
 
+```
+## [1] "Lists"            "All alphabetised" "Top titles"      
+## [4] "dropoff"
+```
 
-Read in the worksheet you want to access. You can do this using the worksheet number.
+
+Read in the worksheet you want to access using `gs_read()`. You can do this by specifying the worksheet number or title.
 
 
 ```r
 book_sheet1 <- gs_read(books, ws = 1)
 ```
 
-The last 2 columns don't hold much information. Specify a subset of this sheet. You can do this by selecting the cell columns, or by using the 'excel-like' cell range.
+```
+## Accessing worksheet titled 'Lists'.
+```
+
+```
+## Parsed with column specification:
+## cols(
+##   `UK's most borrowed library books` = col_character(),
+##   `Desert Island Discs book choices` = col_character(),
+##   `Pulitzer Prize winners (Fiction 1948-, Novel pre-1948)` = col_character(),
+##   `Askmetafilter.com Books Everyone Should Read` = col_character(),
+##   `LibraryThing.com (top 50)` = col_character(),
+##   `World Book Day Poll (top 100)` = col_character(),
+##   `Telegraph 100 Novels Everyone Should Read` = col_character(),
+##   `Goodreads.com Books That Everyone Should Read At Least Once (top 100)` = col_character(),
+##   `Bspcn.com 30 Books Everyone Should Read Before They're 30` = col_character(),
+##   `Guardian 1000 Novels Everyone Must Read` = col_character(),
+##   `Bighow.com 100 Greatest Books of All Time Everyone Must Read` = col_character(),
+##   `The Best 100 Lists Top 100 Novels of All Time` = col_character(),
+##   `Man Booker Prize winners` = col_character(),
+##   `Oprah's Book Club List` = col_character(),
+##   `1001 Books You Should Read Before You Die (Cassell, 2005)` = col_character(),
+##   `Author's own top five...` = col_character()
+## )
+```
+
+The last 2 columns don't hold much information. You can specify a subset of this sheet similarly to the excel sheets using `range`. You can do this by selecting the cell columns with `cell_cols`, or by using the cell range.
 
 
 ```r
@@ -2105,7 +2498,7 @@ booksfilt <- gs_read(books, ws = 1, range = cell_cols(1:14))
 booksfilt <- gs_read(books, ws = 1, range = "A1:N1000")
 ```
 
-You can also specify the worksheet by name, and sort by rows. Here are the top recommendations for what to read, when you are no longer in academia.
+Here we specify the worksheet by name, and sort by rows using `cell_rows`. Here are the top recommendations for what to read, when you are no longer in academia.
 
 
 ```r
@@ -2113,10 +2506,11 @@ books_alpha <- gs_read(books, ws = "Top titles", range = cell_rows(1:10))
 ```
 
 
-One nice thing about the googlesheets package is that all of the functions begin with gs_ which is great for finding functions and tab completion.
+One nice thing about the `googlesheets` package is that all of the functions begin with `gs_` which is great for finding functions and tab completion.
 
 
-You 'download' ie. save this file to your computer.
+You can use `gs_download` to save this file to your computer as an excel workbook by giving the title of the googlesheet and the name for the output file. You can overwrite an existing file by selecting `overwrite = TRUE`.
+
 
 ```r
 gs_download(gs_title("Books Everyone Should Read"), to = "books_alpha.xlsx", overwrite = TRUE)
@@ -2137,9 +2531,12 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Read in one of the provided test sheets. Change the column names to something user friendly. How many rows and columns in the dataset? Can you delete the last column? What flavour of variables are there? Write the data to a csv file. 
+Read in the 'adult_income.tsv' dataset. How many rows and columns in the dataset? Can you delete the last column? What flavour of variables are there? Change a column name. Write the data to a csv file. 
 
 </br>
+
+
+
 
 </br>
 
@@ -2157,25 +2554,26 @@ Try reading in one of your own datasets. Write it to a different file format.
 
   
 #Resources
-https://github.com/eacton/CAGEF
-https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd     
-http://stat545.com/block002_hello-r-workspace-wd-project.html  
-http://stat545.com/block026_file-out-in.html     
-http://sisbid.github.io/Module1/
-https://github.com/tidyverse/readxl
-https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf
-https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/
-http://stat545.com/help-general.html
-https://stackoverflow.com/help/how-to-ask     
-https://www.r-project.org/posting-guide.html
-https://github.com/jennybc/googlesheets
+<http://archive.ics.uci.edu/ml/datasets/Adult>     
+<https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd>     
+<http://stat545.com/block002_hello-r-workspace-wd-project.html>  
+<http://stat545.com/block026_file-out-in.html>     
+<http://sisbid.github.io/Module1/>
+<https://github.com/tidyverse/readxl>
+<https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf>
+<https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/>
+<http://stat545.com/help-general.html>
+<https://stackoverflow.com/help/how-to-ask>     
+<https://www.r-project.org/posting-guide.html>
+<https://github.com/jennybc/googlesheets>     
+<http://www.quantide.com/ramarro-chapter-07/>
 
 
 #Post-Lesson Assessment
 ***
 
 Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
-https://www.surveymonkey.com/r/GD3KJB9
+<https://www.surveymonkey.com/r/GD3KJB9>
 
 </br>
 
