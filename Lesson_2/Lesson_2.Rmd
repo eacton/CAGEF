@@ -37,27 +37,63 @@ How do we get there? Today we are going to be learning about how to subset and f
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/SMGKMCS), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF> __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/SMGKMCS>), it will help me further develop this course and would be greatly appreciated. 
 
 </br>
 
 ***
+
+####Highlighting
+
+`grey background` - a package, function, code, command or directory      
+*italics* - an important term or concept or an individual file or folder     
+**bold** - heading or a term that is being defined      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink   
+
+
+***
+
+####Packages Used in This Lesson
+
+The following packages are used in this lesson:
+
+`tidyverse` (`tidyr`, `dplyr`)     
+
+
+Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
+
+***
+
+####Data Files Used in This Lesson
+
+-ENV_pitlatrine.csv     
+-gapminder_wide.csv         
+-SPE_pitlatrine.csv     
+
+These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_2/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
+
+
+***
+
+
+
 __Objective:__ At the end of this session you will know the principles of tidy data, and be able to subset and transform your data, merge data frames, and perform simple calculations.
 
 ***
 
 ##A quick intro to base R subsetting
 
-First, I am going to show you how to subset data in __base R__. Then I will show you how do the same thing with the popular packages `dplyr` and `tidyr`. These packages are great for data wrangling with __data frames__. While a lot of new packages play nicely with the functions we are going to use today, but not all packages or data structures will work with `dplyr` functions. You will see `dplyr` and `tidyr` used for data cleaning and the manipulation of data frames.
+First, I am going to show you how to subset data in __base R__. Then I will show you how do the same thing with the popular packages `dplyr` and `tidyr`. These packages are great for data wrangling with _data frames_. While a lot of new packages play nicely with the functions we are going to use today, not all packages or data structures will work with `dplyr` functions. You will see `dplyr` and `tidyr` used for data cleaning and the manipulation of data frames.
 
 
-###Our Dataset
+###Dataset: Pyrosequencing of the V3-V5 hypervariable regions of the 16S rRNA gene
 
-Metagenomic 16SrRNA sequencing of latrines from Tanzania and Vietnam at different depths (multiples of 20cm). 
+16S rRNA pyrosequencing of 30 latrines from Tanzania and Vietnam at different depths (multiples of 20cm). Microbial abundance is represented in Operational Taxonomic Units (OTUs). Operational Taxonomic Units (OTUs) are groups of organisms defined by a specified level of DNA sequence similarity at a marker gene (e.g. 97% similarity at the V4 hypervariable region of the 16S rRNA gene). Intrinsic environmental factors such as pH, temperature, organic matter composition were also recorded.
 
-We have 2 csv files (change one to tsv or xlsx - maybe both and make an additional files and get a google spreadsheet): 
-1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.
-2. A table of species abundance.
+We have 2 csv files:
+
+1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.     
+2. OTU abundance table.
 
 B Torondel, JHJ Ensink, O Gunvirusdu, UZ Ijaz, J Parkhill, F Abdelahi, V-A Nguyen, S Sudgen, W Gibson, AW Walker, and C Quince.
 Assessment of the influence of intrinsic environmental and geographical factors on the bacterial ecology of pit latrines
@@ -135,7 +171,9 @@ Wait a second - why is this answer different? Why do we have 0 rows instead of 2
 c(1,2,3) + c(10,11)
 
 ```
-Vectors recycle. In this case, R gave us a warning that our vectors don't match. However, R will assume that you know what you are doing as long as your one of your vector lengths is a multiple of your other vector length.
+Vectors recycle. In this case, R gave us a warning that our vectors don't match. It returned to us a vector of length 3 (our longest vector), and it recycled the 10 from the shorter vector to add to the 3.
+
+However, R will assume that you know what you are doing as long as your one of your vector lengths is a multiple of your other vector length. Here the shorter vector is recycled twice. No warning is given.
 
 ```{r}
 c(1,2,3,4) + c(10,11)
@@ -160,34 +198,51 @@ Be careful when filtering. You have been warned.
 
 ***
 </br>
-You can also filter to obtain more specific subsets using more than one column. To see if there were any Bacteroidia at site T_2_1, you can use the following filter:
+You can also filter to obtain more specific subsets using more than one column. To get only Taxa that had OTUs at sites T_2_1 and T_2_10 you can use the following filter:
 
 ```{r}
-dat[dat$Taxa == "Bacteroidia" & dat$T_2_1 != 0, ]
+dat[dat$T_2_10!=0 & dat$T_2_1 != 0, ]
 ```
 
-You can select columns by name or position, and reorder them as well (you can also do this for rows). I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. To inspect the first rows of an output, you can use the `head()` function. Likewise, to inspect the last rows, you can use the `tail()` function. Try changing the output to show only the first 5 rows of your data frame.
+You can select columns by name or position, and reorder them as well (you can also do this for rows). I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. To inspect the first rows of an output, you can use the `head()` function. 
 
-```{r }
+```{r}
 head(dat[ , c("T_2_9", "T_2_10", "Taxa")])
 #equivalent to
 head(dat[ , c(9:10,1)])
 
+```
+
+Likewise, to inspect the last rows, you can use the `tail()` function. 
+
+```{r }
 tail(dat[ , "Taxa"])
 #equivalent to
 tail(dat[ , 1])
 
 ```
-You can arrange your data frame alphabetically or by value using `order()`. Let's take the first 10 columns for ease of visualization.
+Try changing the output to show only the first 5 rows of your data frame.
+
+```{r include = FALSE}
+#using head
+head(dat,5)
+#subsetting
+dat[1:5,]
+#technically, but fallible, not obvious if following code, and so much typing
+dat[dat$Taxa == "Acidobacteria_Gp1" | dat$Taxa == "Acidobacteria_Gp10" | dat$Taxa == "Acidobacteria_Gp14" | dat$Taxa == "Acidobacteria_Gp16" |dat$Taxa == "Acidobacteria_Gp17", ]
+```
+
+
+You can arrange your data frame alphabetically or by value using `order()`. Let's take the first 10 columns for ease of visualization. Adding `decreasing = TRUE` to this function call results in reverse alphabetical ordering or highest to lowest values.
 
 ```{r}
 head(dat[order(dat$Taxa, decreasing = TRUE), 1:10]) 
 head(dat[order(dat$T_2_1, decreasing = TRUE), 1:10])
 ```
-You can order your data frame by multiple variables.
+You can order your data frame by multiple variables. If we look at the top 10 rows after ordering we can see that as soon as T_2_12 gets to 0 OTUs, the data frame is ordered by values in T_2_9. 
 
 ```{r}
-head(dat[order(dat$T_2_1, dat$T_2_12, dat$T_2_9, decreasing = TRUE), 1:10])
+head(dat[order(dat$T_2_12, dat$T_2_9, decreasing = TRUE), 1:10], 10)
 ```
 Now that we have some basic data-wrangling skills:
 
@@ -227,7 +282,7 @@ The `dplyr` package was made by Hadley Wickham to help make data manipulation wi
   5. `summarize()` - reduces data to summary values (for example using `mean()`, `sd()`, `min()`, `quantile()`, etc)
   
   
-The `dplyr` package, and some other common packages for data frame manipulation allow the use of the pipe function, `%>%`. This is equivalent to `|` for any unix peeps. __Piping__ allows the output of a function to be passed to the next function without making intermediate variables. Piping can save typing, make your code more readable, and reduce clutter in your global environment from variables you don't need.
+The `dplyr` package, and some other common packages for data frame manipulation allow the use of the pipe function, `%>%`. This is equivalent to `|` for any unix peeps. __Piping__ allows the output of a function to be passed to the next function without making intermediate variables. Piping can save typing, make your code more readable, and reduce clutter in your global environment from variables you don't need. The keyboard shortcut for `%>%` is `CTRL+SHIFT+M`. 
 
 Let's load the library.
 
@@ -237,6 +292,7 @@ library(dplyr)
 
 We are going to see how pipes work in conjunction with our first function, `filter()`. We are going to use the same subsetting examples so you can see how the syntax differs from base R. In this case, we want to keep all rows that have either Fusobacteria or Methanobacteria. 
 
+
 ```{r eval = FALSE}
 
 filter(dat, Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
@@ -245,32 +301,32 @@ dat %>% filter(Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
 #equivalent to
 ```
 ```{r }
-dat %>% filter(., Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
+dat %>% filter(., Taxa == "Fusobacteria" | Taxa == "Methanobacteria") 
 ```
 
+You'll notice that when piping, we are not explicitly writing the first argument (our data frame) to `filter()`, but rather passing the first argument to filter using `%>%`. The dot `.` is sometimes used to fill in the first argument as a placeholder (this is useful for nested functions (functions inside of functions), which we will come across a bit later).  
 
+The `column_to_rownames()` function is used here to move our character data, Taxa, to rownames. We will then have a numeric dataframe on which to do any calculations while preserving all information. This function requires the column variable to be quoted. Click on 'dat' in the Global Environment to see the difference.
 
-To see if there were any Bacteroidia at site T_2_1, you can use the following filter:
 
 ```{r}
-dat %>% filter(., Taxa == "Bacteroidia" & T_2_1 != 0)
+dat <- dat %>% column_to_rownames("Taxa") 
 ```
 
-You can subset columns by using the `select()` function. You can also reorder columns while using this function. I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. `head()` and `tail()` can also be used with pipes to look at your output.
+
+Continuing, with our previous base R subsetting examples, to get only Taxa that had OTUs at sites T_2_1 and T_2_10 using `dplyr`, you can use the following filter:
 
 ```{r}
-
-dat %>% select(T_2_9, T_2_10, Taxa) %>% head()
+dat %>% filter(., T_2_10 != 0 & T_2_1 != 0)
 ```
-If I wanted to perform a calculation, I would want to exclude Taxa since it is of character type and not used in the calculation. If your data is unique you may want to retain your character data as rownames. Note: you cannot use a positive and negative selection in the same function call.
 
-```{r error=TRUE, eval=-4}
-rownames(dat) <- dat$Taxa
-dat %>% select(-Taxa) %>% select(T_2_1:T_2_9) %>% head()
-#equivalent to
-dat %>% select(T_2_1:T_2_9) %>% head()
+You can subset columns by using the `select()` function. You can also reorder columns using this function. I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. In this case, before using `select()`, we need the rownames to be back as a 'Taxa' column. We can use the reverse function `rownames_to_column` to recreate Taxa. `head()` and `tail()` can also be used with pipes to look at the output.
+
+```{r}
+dat %>% rownames_to_column("Taxa") %>% select(T_2_9, T_2_10, Taxa) %>% head()
 ```
-`dplyr` also includes some helper functions that allow you to select variables based on their names. For example, if we only wanted the samples from Vietnam, we could use `starts_with()`.
+
+`dplyr` also includes some helper functions that allow you to select variables based on their names. For example, if we only wanted the samples from Vietnam, we could use `starts_with()`. 
 
 ```{r}
 dat %>% select(starts_with("V")) %>% head()
@@ -284,7 +340,7 @@ dat %>% select(ends_with("4")) %>% head()
 
 ```
 
-You can look up other `dplyr` 'select_helpers' in the help menu.
+You can look up other 'select_helpers' in the help menu.
 
 ***
 __Challenge__ 
@@ -297,20 +353,31 @@ __Challenge__
 
 Check out 'select_helpers' in the help menu. Grab all of the columns that contain depths for Well 2, whether it is from Vietnam or Tanzania.
 
+```{r include = FALSE}
+dat %>% select(contains("_2_")) 
+
+dat %>% select(matches("_2_")) 
+
+dat %>% select(starts_with("T_2_"), starts_with("V_2_")) 
+
+```
+
+
 </br>
 </br>
 </br>
 
 ***
 
-The `arrange()` function helps you to sort your data. The default is ordered from smallest to largest (or a-z for character data). You can switch the order as shown below. 
+The `arrange()` function helps you to sort your data. The default is ordered from smallest to largest (or a-z for character data). You can switch the order by specifying `desc` as shown below. 
 
 I have added a few extra lines of code to show you how we can start building code that passes a result to the next function instead of creating a bunch of new variables to store data in between functions being exectuted. However, if you get more than 2 pipes `%>%` it gets hard to follow for a reader (or yourself after 5 minutes). Starting a new line after each pipe, allows a reader to easily see which function is operating and makes it easier to follow your logic.
 
 ```{r eval = c(3:8)}
-dat %>% select(Taxa, T_2_1) %>% arrange(desc(T_2_1)) %>% filter(T_2_1 !=0) %>% filter(Taxa != "Unknown") %>% unique()
+dat %>% rownames_to_column("Taxa") %>% select(Taxa, T_2_1) %>% arrange(desc(T_2_1)) %>% filter(T_2_1 !=0) %>% filter(Taxa != "Unknown") %>% unique()
 #equivalent to
 dat %>% 
+  rownames_to_column("Taxa") %>%
   select(Taxa, T_2_1) %>% 
   arrange(desc(T_2_1)) %>% 
   filter(T_2_1 !=0) %>%
@@ -321,32 +388,48 @@ dat %>%
 
 `unique()` is a function that removes duplicate rows. How many rows did it remove in this case?
 
-
-`mutate()` is a function to create new column, most often the product of a calculation. For example, let's calculate the total number of OTUs for each bacteria using `rowSums()`. You must specify a column name for the column you are creating. `transmute()` will also create a new variable, but it will drop the existing variables (it will give you a single column of your new variable).
-
-```{r}
-
-dat %>% select(-Taxa) %>% mutate(total_OTUs = rowSums(.)) %>% head()
+```{r include = FALSE}
+#Trick question. None. I just wanted to include the `unique()` function in the lesson.
 
 ```
-Versus:
+
+
+`mutate()` is a function to create new column, most often the product of a calculation. For example, let's calculate the total number of OTUs for each Taxa using `rowSums()`. You must specify a column name for the column you are creating. 
+
+An annoying part of `dplyr` is that it will drop rownames with most functions (ie. `mutate()`, `filter()` and `arrange()`, but not `select()`). It doesn't make much sense to take row sums if we can't tell what the rows are, so I will add back Taxa as a column. However, to do the `rowSums()` calculation we cannot have character data in our rows. Therefore `.[ , -1]` is everything but our character data, which was added back as our first column.
+
+You may have noticed that I included the dot (`.`) in the bracket for `rowSums()`. This is because it is inside a nested function (`mutate()` is a function and `rowSums()` is inside it). Without an argument to `rowSums()` an error would be generated that "argument 'x' is missing with no default". 
 
 ```{r}
-#maintains answer in data frame
-dat %>% select(-Taxa) %>% transmute(total_OTUs = rowSums(.))
-#answer is now a vector
-dat %>% select(-Taxa) %>% rowSums()
+dat %>% rownames_to_column("Taxa") %>% mutate(total_OTUs = rowSums(.[,-1])) %>% head()
+
+```
+Note that if I use `rowSums()` outside of another function (ie. not nested), I do not need to specify the data frame. In this case, the output is a vector and the rownames were preserved for the names of the vector elements.
+
+```{r}
+#answer is now a vector (with rownames)
+dat %>% rowSums()
 ```
 
-You may have noticed that I included "." in the bracket for `rowSums()`. In this case, an error would be generated with empty brackets that argument 'x' is missing with no default. You need to specify your input if you are inside a nested function. Note that if I use `rowSums()` outside of another function, I do not need to specify the data frame.
 
-Note: it is up to you whether you want to keep your data in a data frame or switch to a vector if you are dealing with a single variable. Using a `dplyr` function will maintain your data in a data frame. Using non-dplyr functions will switch your data to a vector if you have a single variable.
-
-
-`dplyr` has one more super-useful function, `summarize()` which allows us to get summary statistics on data. I'll give one example and then we'll come back to this function once our data is in 'tidy' format. `n()` is a `dplyr` function to count the number of observations in a group - we are simply going to count the instances of a Taxa. We can arrange the results in descending order to see if there is more than one row per Taxa. Can anyone think of another way to see if there is more than one row per Taxa? 
+`transmute()` will also create a new variable, but it will drop the existing variables (it will give you a single column of your new variable). The output for `transmute()` is a data frame of one column. Rownames have been lost.
 
 ```{r}
-dat %>% group_by(Taxa) %>% summarize(n = n()) %>% arrange(desc(.))
+dat %>% transmute(total_OTUs = rowSums(.[ , -1]))
+
+```
+
+
+
+It is up to you whether you want to keep your data in a data frame or switch to a vector if you are dealing with a single variable. Using a `dplyr` function will maintain your data in a data frame. Using non-dplyr functions will switch your data to a vector if you have a single variable.
+
+
+`dplyr` has one more super-useful function, `summarize()` which allows us to get summary statistics on data. I'll give one example and then we'll come back to this function once our data is in 'tidy' format. 
+
+`n()` is a `dplyr` function to count the number of observations in a group - we are simply going to count the instances of a Taxa. We can arrange the results in descending order to see if there is more than one row per Taxa. Can anyone think of another way to see if there is more than one row per Taxa? 
+
+```{r}
+dat %>% summarize(n = n()) 
 ```
 
 

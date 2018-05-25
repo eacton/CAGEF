@@ -45,7 +45,7 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 
 ***
 
-####Data Used in This Lesson
+####Data Files Used in This Lesson
 
 -ENV_pitlatrine.csv     
 -books_alpha.xlsx     

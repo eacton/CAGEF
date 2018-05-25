@@ -61,12 +61,26 @@ Please install and load these packages for the lesson. In this document I will l
 ***
 ####Highlighting
 
-`grey background` - a package or function or code      
-*italics* - an important term or concept     
-**bold** - heading or 'grammar of graphics' term      
+`grey background` - a package, function, code, command or directory      
+*italics* - an important term or concept or an individual file or folder     
+**bold** - heading or a term that is being defined      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink  
 
 ***
+
+####Data Files Used in This Lesson
+
+-split_ENV_pitlatrine.csv     
+-long_SPE_pitlatrine.csv         
+-SPE_pitlatrine.csv     
+
+These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_3/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
+
+
+***
+
 __Objective:__ At the end of this session you will be able to use `ggplot2` to make a ton of different types of plots with your data for both for data exploration and for publication-quality figures.  
+
 
 ***
 
@@ -95,13 +109,14 @@ This grammar allows very specific control over your plot and the ability to chan
 
 ##The Grammar of Graphics in Action: Making Figures with ggplot2
 
-###Our Dataset
+####Dataset: Pyrosequencing of the V3-V5 hypervariable regions of the 16S rRNA gene
 
-Metagenomic 16SrRNA sequencing of latrines from Tanzania and Vietnam at different depths (multiples of 20cm). 
+16S rRNA pyrosequencing of 30 latrines from Tanzania and Vietnam at different depths (multiples of 20cm). Microbial abundance is represented in Operational Taxonomic Units (OTUs). Operational Taxonomic Units (OTUs) are groups of organisms defined by a specified level of DNA sequence similarity at a marker gene (e.g. 97% similarity at the V4 hypervariable region of the 16S rRNA gene). Intrinsic environmental factors such as pH, temperature, organic matter composition were also recorded.
 
-We have 2 csv files (change one to tsv or xlsx - maybe both and make an additional files and get a google spreadsheet): 
-1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.
-2. A table of species abundance.
+We have 2 csv files:
+
+1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.     
+2. OTU abundance table.
 
 B Torondel, JHJ Ensink, O Gunvirusdu, UZ Ijaz, J Parkhill, F Abdelahi, V-A Nguyen, S Sudgen, W Gibson, AW Walker, and C Quince.
 Assessment of the influence of intrinsic environmental and geographical factors on the bacterial ecology of pit latrines
@@ -166,7 +181,7 @@ ggplot(ndat, aes(x=TS, y=CODt)) + geom_point()
 
 The data looks like there are two groupings. My guess would be that this is for the 2 different countries. We can easily test this by colouring our points by Country. Look at the structure of ndat in either the Global Environment or using `str()`. Note that Country is a factor. A colour will be chosen for each factor level. A legend will be automatically created for you. 
 
-The **aesthetic** of colour which is mapped to Country can be specified when we are selecting the data to be plotted, or, as it describes the colour of our points, can be specified in `geom_point()`. I usually do the former, because it is more likely that I will change *how* I plot a figure (points, lines, bars) versus *what* I plot in a figure (TS, CODt, Country). There are minor implications for each of these choices.
+The **aesthetic** of colour which is mapped to Country can be specified when 'x' and 'y' (the data to be plotted) are specified using `aes()`. Colour can alternatively be specified using `geom_point(aes())` since it is a description of the points being plotted. I usually do the former, because it is more likely that I will change *how* I plot a figure (points, lines, bars) versus *what* I plot in a figure (TS, CODt, Country). There are minor implications for each of these choices.
 
 ```{r}
 ggplot(ndat, aes(x=TS, y=CODt, colour = Country)) + geom_point() 
@@ -402,7 +417,7 @@ ggplot(ndat, aes(x=Depth, y=pH, fill = Country)) +
   coord_polar()
 ```
 
-To make your classic venn diagram, use theta to specify what variable is going to be used to make up the angles (width of pie slices). To wrap to a full circle instead of having sections (as in the above Coxcomb plot), the width is set to one.
+To make your classic pie chart, use theta to specify what variable is going to be used to make up the angles (width of pie slices). To wrap to a full circle instead of having sections (as in the above Coxcomb plot), the width is set to one.
 
 ```{r}
 ggplot(dat, aes(x="", y=Country, fill = Country)) + 

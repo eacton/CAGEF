@@ -45,7 +45,7 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 
 ***
 
-####Data Used in This Lesson
+####Data Files Used in This Lesson
 
 -ENV_pitlatrine.csv     
 -books_alpha.xlsx     
@@ -2342,20 +2342,20 @@ gs_ls()
 ```
 
 ```
-## # A tibble: 51 x 10
+## # A tibble: 52 x 10
 ##    sheet_title  author perm  version updated             sheet_key ws_feed
 ##    <chr>        <chr>  <chr> <chr>   <dttm>              <chr>     <chr>  
-##  1 CAGEF Time … "    … r     new     2018-05-24 17:59:31 1SdrZhSp… https:…
-##  2 "          … "  ac… rw    new     2018-05-24 17:53:51 1ctyHaqo… https:…
-##  3 "          … "  ac… rw    new     2018-05-24 17:47:11 1KChnoyH… https:…
-##  4 "          … "  ac… rw    new     2018-05-24 17:46:42 1y-Tf6Vn… https:…
-##  5 "          … "  ac… rw    new     2018-05-24 17:45:48 1k0qlncj… https:…
-##  6 "          … "  ac… rw    new     2018-05-24 17:42:41 1Votk4h1… https:…
-##  7 "          … "  ac… rw    new     2018-05-24 17:23:22 1t2TpXLg… https:…
-##  8 "          … "  ac… rw    new     2018-05-24 16:39:26 1iRB__yR… https:…
-##  9 "          … "  ac… rw    new     2018-05-24 16:38:19 1hXxP3RT… https:…
-## 10 "          … "  ac… rw    new     2018-05-24 16:35:02 1Uc75eno… https:…
-## # ... with 41 more rows, and 3 more variables: alternate <chr>,
+##  1 CAGEF Time … "    … r     new     2018-05-24 18:03:18 1SdrZhSp… https:…
+##  2 "          … "  ac… rw    new     2018-05-24 18:02:25 1eiM1CJh… https:…
+##  3 "          … "  ac… rw    new     2018-05-24 17:53:51 1ctyHaqo… https:…
+##  4 "          … "  ac… rw    new     2018-05-24 17:47:11 1KChnoyH… https:…
+##  5 "          … "  ac… rw    new     2018-05-24 17:46:42 1y-Tf6Vn… https:…
+##  6 "          … "  ac… rw    new     2018-05-24 17:45:48 1k0qlncj… https:…
+##  7 "          … "  ac… rw    new     2018-05-24 17:42:41 1Votk4h1… https:…
+##  8 "          … "  ac… rw    new     2018-05-24 17:23:22 1t2TpXLg… https:…
+##  9 "          … "  ac… rw    new     2018-05-24 16:39:26 1iRB__yR… https:…
+## 10 "          … "  ac… rw    new     2018-05-24 16:38:19 1hXxP3RT… https:…
+## # ... with 42 more rows, and 3 more variables: alternate <chr>,
 ## #   self <chr>, alt_key <chr>
 ```
 
@@ -2399,13 +2399,13 @@ str(books)
 
 ```
 ## List of 17
-##  $ sheet_key  : chr "1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc"
+##  $ sheet_key  : chr "1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4"
 ##  $ sheet_title: chr "books_alpha"
 ##  $ n_ws       : int 4
-##  $ ws_feed    : chr "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full"
-##  $ browser_url: chr "https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/"
-##  $ updated    : POSIXct[1:1], format: "2018-05-24 18:02:25"
-##  $ reg_date   : POSIXct[1:1], format: "2018-05-24 18:02:27"
+##  $ ws_feed    : chr "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full"
+##  $ browser_url: chr "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/"
+##  $ updated    : POSIXct[1:1], format: "2018-05-24 18:12:01"
+##  $ reg_date   : POSIXct[1:1], format: "2018-05-24 18:12:03"
 ##  $ visibility : chr "private"
 ##  $ lookup     : logi TRUE
 ##  $ is_public  : logi FALSE
@@ -2416,20 +2416,20 @@ str(books)
 ##  $ links      :Classes 'tbl_df', 'tbl' and 'data.frame':	4 obs. of  3 variables:
 ##   ..$ rel : chr [1:4] "alternate" "http://schemas.google.com/g/2005#feed" "http://schemas.google.com/g/2005#post" "self"
 ##   ..$ type: chr [1:4] "application/atom+xml" "application/atom+xml" "application/atom+xml" "application/atom+xml"
-##   ..$ href: chr [1:4] "https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/edit" "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full" "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full" "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full"
+##   ..$ href: chr [1:4] "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/edit" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full"
 ##  $ ws         :Classes 'tbl_df', 'tbl' and 'data.frame':	4 obs. of  12 variables:
-##   ..$ ws_id           : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/orhpqh8" "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/opmsc9x" "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/oj0ev5b" "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/oabolo2"
-##   ..$ ws_key          : chr [1:4] "orhpqh8" "opmsc9x" "oj0ev5b" "oabolo2"
+##   ..$ ws_id           : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/ov230kd" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/ovi65it" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/oo6wqj2" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/olsyzkx"
+##   ..$ ws_key          : chr [1:4] "ov230kd" "ovi65it" "oo6wqj2" "olsyzkx"
 ##   ..$ ws_title        : chr [1:4] "Lists" "All alphabetised" "Top titles" "dropoff"
 ##   ..$ row_extent      : int [1:4] 1000 2004 1000 1000
 ##   ..$ col_extent      : int [1:4] 26 26 26 26
-##   ..$ gid             : chr [1:4] "1662340758" "1549928191" "1149550837" "624285544"
-##   ..$ listfeed        : chr [1:4] "https://spreadsheets.google.com/feeds/list/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/orhpqh8/private/full" "https://spreadsheets.google.com/feeds/list/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/opmsc9x/private/full" "https://spreadsheets.google.com/feeds/list/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/oj0ev5b/private/full" "https://spreadsheets.google.com/feeds/list/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/oabolo2/private/full"
-##   ..$ cellsfeed       : chr [1:4] "https://spreadsheets.google.com/feeds/cells/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/orhpqh8/private/full" "https://spreadsheets.google.com/feeds/cells/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/opmsc9x/private/full" "https://spreadsheets.google.com/feeds/cells/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/oj0ev5b/private/full" "https://spreadsheets.google.com/feeds/cells/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/oabolo2/private/full"
-##   ..$ visualizationApi: chr [1:4] "https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/gviz/tq?gid=1662340758" "https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/gviz/tq?gid=1549928191" "https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/gviz/tq?gid=1149550837" "https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/gviz/tq?gid=624285544"
-##   ..$ exportcsv       : chr [1:4] "https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/export?gid=1662340758&format=csv" "https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/export?gid=1549928191&format=csv" "https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/export?gid=1149550837&format=csv" "https://docs.google.com/spreadsheets/d/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/export?gid=624285544&format=csv"
-##   ..$ self            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/orhpqh8" "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/opmsc9x" "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/oj0ev5b" "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/oabolo2"
-##   ..$ edit            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/orhpqh8/17puu5" "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/opmsc9x/upb972" "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/oj0ev5b/ld5d1q" "https://spreadsheets.google.com/feeds/worksheets/1eiM1CJhRkPs4m0aMZvW8NtxUYdDqrvNHbJyvBR563Nc/private/full/oabolo2/vuj6yw"
+##   ..$ gid             : chr [1:4] "1877951047" "1904971439" "1462793620" "1318451579"
+##   ..$ listfeed        : chr [1:4] "https://spreadsheets.google.com/feeds/list/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/ov230kd/private/full" "https://spreadsheets.google.com/feeds/list/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/ovi65it/private/full" "https://spreadsheets.google.com/feeds/list/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/oo6wqj2/private/full" "https://spreadsheets.google.com/feeds/list/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/olsyzkx/private/full"
+##   ..$ cellsfeed       : chr [1:4] "https://spreadsheets.google.com/feeds/cells/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/ov230kd/private/full" "https://spreadsheets.google.com/feeds/cells/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/ovi65it/private/full" "https://spreadsheets.google.com/feeds/cells/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/oo6wqj2/private/full" "https://spreadsheets.google.com/feeds/cells/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/olsyzkx/private/full"
+##   ..$ visualizationApi: chr [1:4] "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/gviz/tq?gid=1877951047" "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/gviz/tq?gid=1904971439" "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/gviz/tq?gid=1462793620" "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/gviz/tq?gid=1318451579"
+##   ..$ exportcsv       : chr [1:4] "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/export?gid=1877951047&format=csv" "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/export?gid=1904971439&format=csv" "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/export?gid=1462793620&format=csv" "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/export?gid=1318451579&format=csv"
+##   ..$ self            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/ov230kd" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/ovi65it" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/oo6wqj2" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/olsyzkx"
+##   ..$ edit            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/ov230kd/17puu5" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/ovi65it/upb972" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/oo6wqj2/ld5d1q" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/olsyzkx/vuj6yw"
 ##  $ alt_key    : chr NA
 ##  - attr(*, "class")= chr [1:2] "googlesheet" "list"
 ```
