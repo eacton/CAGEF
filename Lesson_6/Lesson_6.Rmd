@@ -47,7 +47,7 @@ The following packages are used in this lesson:
 
 `tidyverse` (`ggplot2`, `tidyr`, `dplyr`)     
 `testthat`
-`assertr`
+`assertthat`
 
 Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
 
@@ -295,6 +295,142 @@ mean_func()
 -testthat assumption for function name = name?
 
 Returns the last line... unless explicitly called with `return`
+
+
+```{r}
+test_that("input is Taxa", {
+  expect_success(expect_type(mean_func("Bacilli"), type = "character"))
+  expect_failure(expect_type(mean_func(1), type = "character"))
+})
+```
+
+###Assertions
+
+In a perfect world, if something goes wrong while you are coding, you want an informative error message to reduce time trouble-shooting. We also want to do that for other people. Again, Hadley has come to the rescue with a way to test assertions and give meaningful error messages with the package `assertthat`. 
+
+__Assertions__ are statements that are known to be TRUE, but we use whether these statements are TRUE or FALSE to our advantage in testing. For example, you can test whether the input to a function is a specific data type, length, or other custom argument by placing the assertion inside the function. You can also customize the output messages.
+
+
+Let's write some assertions into our function to test that:
+
+-our input is a character vector
+-our input is in our list of Taxa (no typos!)
+-our input is only 1 value
+
+We will then see how well this takes care of all of our inputs that 'broke' the function earlier. We will assess the error messages to see if they are clear.
+
+```{r}
+mean_func <- function(Taxa) {
+    #assertions to test input
+    assert_that(is.character(Taxa)) 
+    assert_that(Taxa %in% dat$Taxa) 
+    assert_that(length(Taxa) == 1)
+    
+    summary <- filter(dat, Taxa == Taxa) %>% 
+    summarize(mean = mean(OTUs), sd = sd(OTUs))
+ 
+    print(paste('The mean for', Taxa,'is', round(summary$mean,2)))
+    return(summary)
+    
+
+}
+
+```
+
+I usually test to make sure it still works on something I expect it to when I make changes to my code.
+
+```{r error = TRUE}
+mean_func("Bacilli")
+
+mean_func(c("Clostridia", "Bacteriodia", "Bacilli"))
+
+```
+My function is still working on expected input.
+
+For a vector of length 3, we receive the error that the 'length of the assertion is not 1'. This could be more explicit for a user ie. "Please input only one Taxa", but it is not bad.  Note that using `assert_that()` we are not getting an output. The function stops when it gets a value that is FALSE and does not continue evaluation. This is much better than previously when we still got an output that was incorrect and did not get any warning. This also means that this passed the assertions for being a character vector and being in the Taxa in our dataset without error.
+
+```{r error = TRUE}
+mean_func("Bacilllli")
+
+```
+
+```{r error = TRUE}
+mean_func(NA)
+mean_func(210)
+mean_func()
+```
+
+Most of these error messages are informative, but maybe not as explicit as they could be. Let's customize our messages.
+
+```{r}
+mean_func <- function(Taxa) {
+    #assertions to test input
+    assert_that(is.character(Taxa), msg = paste("Taxa is expected to be of type character. You have input type", typeof(Taxa), ".")) 
+    assert_that(Taxa %in% dat$Taxa, msg = paste(Taxa, "is not a Taxa in the dataset."))
+    assert_that(length(Taxa) == 1, msg = "Please input only one Taxa.")
+    summary <- filter(dat, Taxa == Taxa) %>% 
+    summarize(mean = mean(OTUs), sd = sd(OTUs))
+ 
+    print(paste('The mean for', Taxa,'is', round(summary$mean,2), "."))
+    return(summary)
+    
+
+}
+```
+
+We could be even more helpful and show the option of all Taxa to choose from, or convert everything to lowercase to reduce the chance of errors from having a mix of uppercase and lowercase. These are things you should think about, especially if you are passing on your code or making a package yourself. The easier people can use your functions, the more adoptable they will be.
+
+There are a few functions included in `assertthat` for commonly used assertions. `is.string()` looks for a character vector of length 1 (combining 2 of our above assertions). Similarily `is.count()` looks for a single positive integer. `noNA()` tests the assertion that there are no NAs (different from `is.na()` because assertions are TRUE). Remember that the order of your assertions will affect the error message you receive. For example, an NA is not a string, but this fact may be masked if the check for a string precedes the check for an NA since the function will stop at the first FALSE evaluation.
+
+`not_empty()` tests that all dimensions are greater than 0.
+
+Let's change a few assertions to test for an empty function call, NA as an input, and the use of `is.string()`.
+
+```{r}
+mean_func <- function(Taxa) {
+    
+    assert_that(not_empty(Taxa))
+    assert_that(noNA(Taxa)) 
+    assert_that(is.string(Taxa)) 
+    assert_that(Taxa %in% dat$Taxa, msg = paste(Taxa, "is not a Taxa in the dataset.")) 
+    
+    summary <- filter(dat, Taxa == Taxa) %>% 
+    summarize(mean = mean(OTUs), sd = sd(OTUs))
+ 
+    print(paste('The mean for', Taxa,'is', round(summary$mean,2)))
+    return(summary)
+    
+
+}
+```
+
+
+
+```{r error = TRUE}
+mean_func("Bacilli")
+
+mean_func(c("Clostridia", "Bacteriodia", "Bacilli"))
+mean_func("Bacilllli")
+mean_func(NA)
+mean_func(210)
+mean_func()
+```
+We are told there is a missing value, but not where is is. (case for data frames?)
+
+There are more of these helper functions to `assert_that()` which I encourage you to check out in the help menu.
+
+
+
+
+
+tryCatch
+
+
+
+
+
+
+
 
 ```{r}
 mean_func <- function(x, funs = list(mean = mean, sd = sd)) {
