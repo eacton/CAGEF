@@ -57,7 +57,7 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 
 The following packages are used in this lesson:
 
-`tidyverse` (`tidyr`, `dplyr`)     
+`tidyverse` (`tidyr`, `dplyr`, `tibble`)     
 
 
 Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
@@ -288,6 +288,7 @@ Let's load the library.
 
 ```{r message = FALSE}
 library(dplyr)
+library(tibble)
 ```
 
 We are going to see how pipes work in conjunction with our first function, `filter()`. We are going to use the same subsetting examples so you can see how the syntax differs from base R. In this case, we want to keep all rows that have either Fusobacteria or Methanobacteria. 
@@ -426,10 +427,37 @@ It is up to you whether you want to keep your data in a data frame or switch to 
 
 `dplyr` has one more super-useful function, `summarize()` which allows us to get summary statistics on data. I'll give one example and then we'll come back to this function once our data is in 'tidy' format. 
 
-`n()` is a `dplyr` function to count the number of observations in a group - we are simply going to count the instances of a Taxa. We can arrange the results in descending order to see if there is more than one row per Taxa. Can anyone think of another way to see if there is more than one row per Taxa? 
+`n()` is a `dplyr` function to count the number of observations in a group - we are simply going to count the instances of a Taxa. In order for R to know we want to count the instances of each Taxa (as opposed to say, each row), there is a function `group_by()` that we can use to group variables or sets of variables together. That way if we had more than one case of "Clostridia", they would be grouped together and when we counted the number of cases, the result would be greater than 1. `group_by()` is useful for calculations and plotting on subsets of your data without having to turn your variables into factors.
+
+We can arrange the results in descending order to see if there is more than one row per Taxa. What is the result if you don't use `group_by()`? Can anyone think of another way to see if there is more than one row per Taxa? 
 
 ```{r}
-dat %>% summarize(n = n()) 
+dat %>% 
+  rownames_to_column("Taxa") %>% 
+  group_by(Taxa) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n))
+```
+```{r include = FALSE}
+#using mutate
+dat %>% 
+  rownames_to_column("Taxa") %>% 
+  group_by(Taxa) %>%
+  mutate(n = n()) %>%
+  arrange(desc(n))
+#using transmute
+dat %>% 
+  rownames_to_column("Taxa") %>% 
+  group_by(Taxa) %>%
+  transmute(n = n()) %>%
+  arrange(desc(n))
+#unique - total number of unique Taxa equal to number of rows
+dat %>% 
+  rownames_to_column("Taxa") %>% 
+  select(Taxa) %>%
+  unique() %>%
+  summarize(n()) #or nrow(.)
+
 ```
 
 
@@ -537,6 +565,7 @@ library(tidyverse)
 Note that 8 different packages are loaded, and that 2 functions from the `stats` package have been replaced by functions of the same name by `dplyr`. Note that you can still access the `stats` version of the function by calling it directly as `stats::filter()`. 
 
 We can use the `gather()` function to collect our columns. This will make our dataset 'long' instead of 'wide'. 
+
 We need to provide `gather()` with information on our new columns. The first argument is our data frame, the second argument is the __key__, which is our named variable. In this case we want the column names that represent our Sites. The next argument is the __value__, which are our measurements; relative abundance values or OTUs. The third argument is all of the columns that we need to gather. You can specify the columns by listing their names or positions. In this example "-" means every column except Taxa.
 
 ```{r }
@@ -565,7 +594,7 @@ split_dat <- spread_dat %>% separate(Site, c("Country", "Latrine_Number", "Depth
 #equivalent to
 split_dat <- spread_dat %>% separate(Site, c("Country", "Latrine_Number", "Depth"), sep = "_", remove = TRUE)
 
-split_dat %>% separate(Taxa, c("Taxa", "Group"), sep = "_Gp") %>% head(20)
+#split_dat %>% separate(Taxa, c("Taxa", "Group"), sep = "_Gp") %>% head(20)
 ```
 We get a warning from R that it has filled in 'NA' for the bacteria that did not have groups. Note that I chose to split Taxa using '_Gp' since I did not need 'Gp'. 
 
@@ -642,11 +671,11 @@ split_dat %>%
 Is there more Clostridia in Tanzania or Vietnam?
 
 ```{r}
-split_dat %>% 
-  filter(Taxa == "Clostridia") %>% 
-  group_by(Country) %>% 
-  summarise(sum = sum(OTUs)) %>% 
-  arrange(desc(sum))
+# split_dat %>% 
+#   filter(Taxa == "Clostridia") %>% 
+#   group_by(Country) %>% 
+#   summarise(sum = sum(OTUs)) %>% 
+#   arrange(desc(sum))
 
 ```
 
@@ -689,6 +718,12 @@ __Challenge__
 
 Collapse Country, Latrine_Number and Depth back into one variable, 'Site', using the `unite()` function. Store the output in a data frame called unite_dat.
 
+```{r include = FALSE}
+unite_dat <- split_dat %>% 
+  unite("Site", c("Country", "Latrine_Number", "Depth"), sep = "_") 
+```
+
+
 </br>
 </br>
 </br>
@@ -703,6 +738,11 @@ __Challenge__
 </div>
 
 Use the `spread()` function to turn unite_dat into the wide shape of our original dataset. 
+
+```{r include = FALSE}
+spread_dat <- unite_dat %>% 
+  spread(key = Site, value = OTUs)
+```
 
 </br>
 </br>
@@ -829,6 +869,14 @@ __Challenge__
 </div>
 
 Make a column and add it to jdat using the base R function `cbind()` and the `dplyr` function `bind_cols()`. Do you forsee any problems in using either of these functions?
+
+
+```{r include = FALSE}
+pdat <- cbind(jdat, Turtles = c(rep(5, 75)))
+pdat <- bind_cols(jdat, Turtles = c(rep(5, 75)))
+
+#these don't match row by identity, safter to use a join 
+```
 
 </br>
 </br>

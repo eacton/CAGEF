@@ -40,6 +40,16 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 
 ***
 
+####Highlighting
+
+`grey background` - a package, function, code, command or directory      
+*italics* - an important term or concept or an individual file or folder     
+**bold** - heading or a term that is being defined      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink  
+
+
+***
+
 ####Packages Used in This Lesson
 
 The following packages are used in this lesson:
@@ -59,14 +69,7 @@ The following packages are used in this lesson:
 Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
 
 ***
-####Highlighting
 
-`grey background` - a package, function, code, command or directory      
-*italics* - an important term or concept or an individual file or folder     
-**bold** - heading or a term that is being defined      
-<span style="color:blue">blue text</span> - named or unnamed hyperlink  
-
-***
 
 ####Data Files Used in This Lesson
 
@@ -504,13 +507,13 @@ Let's group our OTUs by Country and Taxa and look at the Taxa for the top 30 OTU
 We are going to make our bubbles (which can be thought of as large points) with `geom_jitter()` so that our bubbles don't overlap. Remember that we want to specify what we are plotting with **aesthetics**. We want the bubbles representing OTUs_per_Taxa, so we divide each value by pi when calling size.
 
 ```{r} 
-bdat <- dat %>%
-  select(-Latrine_Number, -Depth) %>%
-  group_by(Taxa, Country) %>%
-  mutate(OTUs_per_Taxa = sum(OTUs)) %>%
-  select(-OTUs)
-
-bdat <- unique(bdat) %>% arrange(desc(OTUs_per_Taxa)) %>% .[1:30,]
+bdat <- dat %>% 
+  group_by(Taxa, Country) %>% 
+  mutate(OTUs_per_Taxa = sum(OTUs)) %>% 
+  arrange(desc(OTUs_per_Taxa)) %>%
+  select(Taxa, Country, OTUs_per_Taxa) %>%
+  unique() %>%
+  .[1:30,]
 
 ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
   scale_y_log10() +
@@ -646,6 +649,17 @@ keep <- dat %>%
   filter(n > 1) 
 
 keep <- unique(keep[duplicated(keep$Taxa),"Taxa"])
+
+# keep <- dat %>% 
+#   filter(OTUs >=2) %>% 
+#   group_by(Country, Taxa) %>% 
+#   summarize(n = n()) %>% 
+#   filter(n >1) %>% 
+#   ungroup() %>%
+#   select(Taxa) %>%
+#   .[duplicated(.),] %>%
+#   unique()
+  
 
 ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs)) + 
   geom_boxplot() + 
@@ -960,6 +974,13 @@ ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs, fill = Taxa)) +
   ylab("log(OTUs)") + 
   guides(fill=FALSE)
 
+# p+theme_minimal()+
+#   theme(axis.text.x = element_text(angle = 90, hjust = 1),
+#         panel.border = element_rect(fill=NA),
+#         strip.text.x = element_text(face = "bold", size = 16),
+#         plot.title = element_text(hjust=0.5, size = 18),
+#         axis.ticks.y = element_line())
+
 ```
 
 ***
@@ -977,6 +998,19 @@ Change the colour of the plot background. Add minor gridlines, and make the majo
 </br>
 </br>
 </br>
+
+```{r include = FALSE}
+p+theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        panel.border = element_rect(fill = NA),
+        strip.text.x = element_text(face = "bold", size = 16),
+        plot.title = element_text(hjust=0.5, size = 18),
+        axis.ticks.y = element_line(),
+        panel.grid.major = element_line(),
+        panel.grid.minor = element_line(), 
+        plot.background = element_rect(fill = "cornflowerblue"))
+```
+
 
 ***
 ##Taking it up a notch
@@ -1038,6 +1072,49 @@ cdat <- cdat[clust$order, clust$order]
 clong <- as.data.frame(cdat) %>% 
   rownames_to_column("Site1") %>% 
   gather(key = "Site2", value = "correlation", -Site1)
+
+
+
+# cdat <- read.csv("SPE_pitlatrine.csv", row.names=1)
+# cdat <- cor(cdat, method = "pearson", use = "complete.obs")
+# 
+# clevels <- rownames(cdat)
+# 
+# 
+# clong <- as.data.frame(cdat) %>% 
+#   rownames_to_column("Site1") %>% 
+#   gather(key = "Site2", value = "correlation", -Site1)
+# 
+# clong$Site1 <- factor(clong$Site1, levels = clevels, labels = clevels)
+# clong$Site2 <- factor(clong$Site2, levels = clevels, labels = clevels)
+# 
+# ggplot(clong, aes(Site1, Site2, fill = correlation)) +
+#          geom_tile() +
+#          xlab(NULL) +
+#          ylab(NULL) +
+#         scale_fill_gradient(name= "Pearson\nCorrelation", low = "red", high = "yellow")+
+#         theme(axis.text.x = element_text(angle = 90, hjust = 1))
+#         
+# distance <- dist(cdat)
+# clust <- hclust(distance)
+# fdat <- cdat[clust$order, clust$order]
+# 
+# levels <- rownames(fdat)
+# 
+# flong <- as.data.frame(fdat) %>% 
+#   rownames_to_column("Site1") %>% 
+#   gather(key = "Site2", value = "correlation", -Site1)
+# 
+# flong$Site1 <- factor(flong$Site1, levels = levels, labels = levels)
+# flong$Site2 <- factor(flong$Site2, levels = levels, labels = levels)
+# 
+# ggplot(flong, aes(Site1, Site2, fill = correlation)) +
+#   geom_tile() +
+#   xlab(NULL) +
+#   ylab(NULL) +
+#   scale_fill_gradient(name= "Pearson\nCorrelation", low = "red", high = "yellow")+
+#   theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
 
 ```
 

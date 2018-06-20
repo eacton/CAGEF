@@ -43,7 +43,18 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 
 </br>
 
+
 ***
+####Highlighting
+
+`grey background` - a package, function, code, command or directory      
+*italics* - an important term or concept or an individual file or folder     
+**bold** - heading or a term that is being defined      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink     
+
+
+***
+
 
 ####Data Files Used in This Lesson
 
@@ -54,13 +65,6 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_1/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
 
 
-***
-####Highlighting
-
-`grey background` - a package, function, code, command or directory      
-*italics* - an important term or concept or an individual file or folder     
-**bold** - heading or a term that is being defined      
-<span style="color:blue">blue text</span> - named or unnamed hyperlink     
 
 ***
 
@@ -148,7 +152,7 @@ The __Source__ is where you are keeping the code and annotation that you want to
 To run your current line of code or a highlighted segment of code from the Source pane you can:      
      a) click the button `'Run' -> 'Run Selected Line(s)'`,      
      b) click `'Code' -> 'Run Selected Line(s)'` from the menu bar,      
-     c) use the keyboard shortcut `CTRL + ENTER` (recommended),      
+     c) use the keyboard shortcut `CTRL + ENTER` (Windows & Linux) `Command + ENTER` (Mac) (recommended),      
      d) copy and paste your code into the Console and hit `Enter` (not recommended).
      
 There are always many ways to do things in R, but the fastest way will always be the option that keeps your hands on the keyboard.
@@ -233,9 +237,9 @@ setwd("~/ewan")
 setwd("../ewan")
 
 ```
-A _relative directory_ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
+A __relative directory__ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
 
-If I wanted to move back to _Tables_ using the _absolute path_, I would set a new working directory:
+If I wanted to move back to _Tables_ using the absolute _path_, I would set a new working directory:
 
 ```
 setwd("/home/benedict/Tables")
@@ -315,8 +319,8 @@ How do I start?
 
 _Keyboard shortcuts:_
 
-Comment/Uncomment lines `CTRL + SHIFT + C`     
-Reflow Comment (Wrap comments) `CTRL + SHIFT + /`
+Comment/Uncomment lines `CTRL + SHIFT + C` (Windows, Linux) / `Command + SHIFT + C` (Mac)         
+Reflow Comment (Wrap comments) `CTRL + SHIFT + /` (Windows, Linux) / `Command + SHIFT + /` (Mac)   
 
 
 ###Best Practices for Writing Scripts
@@ -410,12 +414,20 @@ _Asking a question_
 
 _Remember_ - everyone looks for help online ALL THE TIME. It is completely normal. Also, with programming there are multiple ways to come up with an answer. There are different packages that let you do the same thing, but with shortcuts. There are different levels of 'efficiency' and 'redundancy' in coding. You will work on refining these aspects of your code as you go along in this course, and in your coding career.
 
-Last but not least, to make life easier: under Help there is a _Cheatsheet of Keyboard Shortcuts_.
+Last but not least, to make life easier: under Help there is a _Cheatsheet of Keyboard Shortcuts_ or a browser list [here]<file:///usr/lib/rstudio/www/docs/keyboard.htm>.
 
 
 
 
-##A quick intro to R data structures
+##A quick intro to R data types and data structures
+
+
+What do I mean by 'types' (flavours) of data?     
+
+- character - a#c$E 
+- numeric - 7.5
+- integer - 1
+- logical - TRUE, FALSE
 
 
 There are 5 types of data structures in R.
@@ -426,12 +438,6 @@ There are 5 types of data structures in R.
 4. data frames - 2D - holds multiple data types
 5. arrays - nD - holds one type of data
 
-What do I mean by 'type of data'?     
-
-- character - a#c$E 
-- numeric - 7.5
-- integer - 1
-- logical - TRUE, FALSE
 
 Let's make some data!! 
 
@@ -540,6 +546,9 @@ vec_char[2:3]
 #second and third element in the vector inclusive 
 #(this is not the same for all programming languages)
 
+#you can use negative indexing to select 'everything but'
+vec_char[-1]
+
 vec_log["male"]
 ```
 
@@ -569,10 +578,12 @@ str(vec_mixed)
 
 To subset for 'virus', I first have to subset for the character element of the list. Kind of like a Russian nested doll or a present, where you have to open the outer layer to get to the next.
 
-```{r}
+```{r eval = c(1,3)}
 list_mix[[1]]
+list_mix$character
 
 list_mix[[1]][2]
+list_mix$character[2]
 ```
 
 
@@ -583,6 +594,8 @@ Create a demo matrix.
 
 ```{r}
 mat <- matrix(c(rep(0, 10), rep(1,10)), nrow = 5, ncol = 5)
+#equivalent to
+mat <- matrix(c(rep(0:1, each = 10, times = 2)), nrow = 5, ncol = 5)
 mat
 ```
 
@@ -596,6 +609,8 @@ What has happened here? Look up the `rep()` function. Why has R not thrown an er
 </br>     
 
 ```{r include = FALSE}
+mat <- matrix(c(rep(0:1, each = 10, times = 2, length = 25)), nrow = 5, ncol = 5)
+
 mat <- matrix(c(rep(0, 10), rep(1,10), rep(0, 5)), nrow = 5, ncol = 5)
 
 mat <- matrix(c(0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0), nrow = 5, ncol = 5)
@@ -944,7 +959,7 @@ mat * 4
 
 ```
 
-So you can do math... on a data frame.
+So you can do math... on a data frame. Non-numeric (character) data will throw an error, while factors will give a warning message and populate the offending column with NAs. Logical data will be converted to numeric values and multiplied. Therefore be careful to specify your numeric data for mathematical operations.
 
 ```{r}
 dat * 4
@@ -1063,7 +1078,8 @@ We are returned a logical vector of whether or not a value was NA. We can get th
 ```{r}
 which(is.na(na_vec))
 
-remove_na_vec <- na_vec[c(-3,-6)]
+idx <- which(is.na(na_vec))
+remove_na_vec <- na_vec[-idx]
 #equivalentish to 
 remove_na_vec <- na.omit(na_vec)
 remove_na_vec
@@ -1134,7 +1150,8 @@ There are a few different places you can install packages from R. Listed in orde
     + Guidelines for submission, reviewed. Where the majority of packages are.
 - GitHub
     + No formal review process, but peers can opens issues to highlight problems or suggest fixes.
-    + The is an increasing number of publibacteriaion-related packages.
+    + The is an increasing number of publication-related packages.
+    + Check to see the last time updates or comments were made to see if it is maintained by the developer.     
 - Joe's website
     + No review process. Not sure I trust that guy. 
     
@@ -1156,11 +1173,6 @@ install.packages('devtools', dependencies = TRUE)
 
 ```
 
-You can install more than one package at once.
-
-```{r eval = FALSE}
-install.packages(c('dplyr', 'devtools', 'readxl'), dependencies = TRUE)
-```
 
 A package only has to be installed once. It is now in your _library_. To use a package, you must _load_ the package into memory. Unless this is one of the packages R loads automatically, you choose which packages to load every session. 
 
@@ -1170,11 +1182,8 @@ library(devtools)
 
 ```
 
-Likewise, you can load many packages at once:
+`library()` takes a single argument. We are going to write a function later in the course to load a character vector of packages. `library()` will throw an _error_ if you try to load a package that is not installed. You may see `require()` on help pages, which also loads packages. It is usually used inside functions (it gives a _warning_ instead of an error if a package is not installed). Errors will stop code from running while warnings allow code to run until an error is reached.
 
-```{r eval = FALSE}
-library(c('dplyr', 'readxl'))
-```
 
 To install from Bioconductor you can either always use source to use biocLite...
 
@@ -1268,7 +1277,7 @@ meta <- read.table(file = "data/ENV_pitlatrine.csv")
 
 To see the result, we can look at 'meta' in the Environment pane and see that there are 82 observations of one variable. If we click on the arrow next to 'meta' we can now see that we have a column 'V1' and the variable type is a factor. We can also hover the mouse over the column name for this information. 
 
-We can click on 'meta' in the Environment pane or type `View(meta)` in the Console to open a spreadsheet-like view of 'meta' in a new tab. `head()` will show us the first 10 rows of our data frame. `tail()` would show the last 10 rows.
+We can click on 'meta' in the Environment pane or type `View(meta)` in the Console to open a spreadsheet-like view of 'meta' in a new tab. `head()` will show us the first 6 rows of our data frame. `tail()` would show the last 6 rows.
 
 ```{r}
 head(meta)
@@ -1299,6 +1308,16 @@ str(meta)
 ```
 
 Don't forget! `str()` is still the best way to look at your data structure without taking your hands off the keyboard.
+
+This is as good a time as any to mention that you do not have to specify the name for every argument in a function. If unnamed, arguments are assumed to be input in the order they appear in the function documentation. You can place arguments out of order if they are named (`header = TRUE` is the second argument to `read.table()`, but can be placed in the 3rd position above due to being named). 
+
+Only leave out argument names that are fairly obvious. In the example below, we can easily assume what character string is supposed to be the file, but there are many TRUE/FALSE argument options and it is not obvious what `TRUE` is referring to without looking up the documentation. I would also retain `sep=` as there are other quoted argument options, and it is better to be explicitly obvious than implicitly so (ie. the file is a .csv so it is comma separated).  
+
+```{r}
+meta <- read.table("data/ENV_pitlatrine.csv", TRUE, ",", stringsAsFactors = FALSE)
+```
+
+
 
 ***
 __Challenge__ 
@@ -1432,7 +1451,7 @@ You can subset the sheet you would like to work with using the syntax 'list[[x]]
 ```{r}
 str(ex[[3]])
 
-excel2 <- data.frame(ex[[2]])
+excel3 <- data.frame(ex[[3]])
 ```
 
 At this point, you will be able to use your excel worksheet as a normal data frame in R.
@@ -1441,7 +1460,8 @@ At this point, you will be able to use your excel worksheet as a normal data fra
 
 Googlesheets have a similar structure to excel workbooks, the only tricky thing is getting the name of your googlesheet to input.
 
-I have a googlesheet to share from my Google Drive: <https://docs.google.com/spreadsheets/d/1JTy5sCtQz8PmlpDrgvOnwZ1tB2pxOndxoNMTHQR_PrQ/edit?usp=sharing>. 
+I have a googlesheet to share from my Google Drive:     
+<https://docs.google.com/spreadsheets/d/1JTy5sCtQz8PmlpDrgvOnwZ1tB2pxOndxoNMTHQR_PrQ/edit?usp=sharing>. 
 
 Add the sheet to your own Google Drive. Then load googlesheets.
 
@@ -1520,7 +1540,7 @@ You can use `gs_download` to save this file to your computer as an excel workboo
 gs_download(gs_title("Books Everyone Should Read"), to = "books_alpha.xlsx", overwrite = TRUE)
 ```
 
-You can upload sheets you've made to googlesheets. This file is now in your google account online.
+You can upload sheets you've made on your computer to use in googlesheets. This file is now in your google account online.
 
 ```{r eval=FALSE}
 books <- gs_upload("books_alpha.xlsx")
@@ -1586,7 +1606,8 @@ Try reading in one of your own datasets. Write it to a different file format.
 <https://stackoverflow.com/help/how-to-ask>     
 <https://www.r-project.org/posting-guide.html>     
 <https://github.com/jennybc/googlesheets>     
-<http://www.quantide.com/ramarro-chapter-07/>
+<http://www.quantide.com/ramarro-chapter-07/>     
+<file:///usr/lib/rstudio/www/docs/keyboard.htm>
 
 
 #Post-Lesson Assessment

@@ -37,27 +37,63 @@ How do we get there? Today we are going to be learning about how to subset and f
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/SMGKMCS), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF> __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/SMGKMCS>), it will help me further develop this course and would be greatly appreciated. 
 
 </br>
 
 ***
+
+####Highlighting
+
+`grey background` - a package, function, code, command or directory      
+*italics* - an important term or concept or an individual file or folder     
+**bold** - heading or a term that is being defined      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink   
+
+
+***
+
+####Packages Used in This Lesson
+
+The following packages are used in this lesson:
+
+`tidyverse` (`tidyr`, `dplyr`, `tibble`)     
+
+
+Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
+
+***
+
+####Data Files Used in This Lesson
+
+-ENV_pitlatrine.csv     
+-gapminder_wide.csv         
+-SPE_pitlatrine.csv     
+
+These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_2/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
+
+
+***
+
+
+
 __Objective:__ At the end of this session you will know the principles of tidy data, and be able to subset and transform your data, merge data frames, and perform simple calculations.
 
 ***
 
 ##A quick intro to base R subsetting
 
-First, I am going to show you how to subset data in __base R__. Then I will show you how do the same thing with the popular packages `dplyr` and `tidyr`. These packages are great for data wrangling with __data frames__. While a lot of new packages play nicely with the functions we are going to use today, but not all packages or data structures will work with `dplyr` functions. You will see `dplyr` and `tidyr` used for data cleaning and the manipulation of data frames.
+First, I am going to show you how to subset data in __base R__. Then I will show you how do the same thing with the popular packages `dplyr` and `tidyr`. These packages are great for data wrangling with _data frames_. While a lot of new packages play nicely with the functions we are going to use today, not all packages or data structures will work with `dplyr` functions. You will see `dplyr` and `tidyr` used for data cleaning and the manipulation of data frames.
 
 
-###Our Dataset
+###Dataset: Pyrosequencing of the V3-V5 hypervariable regions of the 16S rRNA gene
 
-Metagenomic 16SrRNA sequencing of latrines from Tanzania and Vietnam at different depths (multiples of 20cm). 
+16S rRNA pyrosequencing of 30 latrines from Tanzania and Vietnam at different depths (multiples of 20cm). Microbial abundance is represented in Operational Taxonomic Units (OTUs). Operational Taxonomic Units (OTUs) are groups of organisms defined by a specified level of DNA sequence similarity at a marker gene (e.g. 97% similarity at the V4 hypervariable region of the 16S rRNA gene). Intrinsic environmental factors such as pH, temperature, organic matter composition were also recorded.
 
-We have 2 csv files (change one to tsv or xlsx - maybe both and make an additional files and get a google spreadsheet): 
-1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.
-2. A table of species abundance.
+We have 2 csv files:
+
+1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.     
+2. OTU abundance table.
 
 B Torondel, JHJ Ensink, O Gunvirusdu, UZ Ijaz, J Parkhill, F Abdelahi, V-A Nguyen, S Sudgen, W Gibson, AW Walker, and C Quince.
 Assessment of the influence of intrinsic environmental and geographical factors on the bacterial ecology of pit latrines
@@ -272,7 +308,9 @@ c(1,2,3) + c(10,11)
 ```
 ## [1] 11 13 13
 ```
-Vectors recycle. In this case, R gave us a warning that our vectors don't match. However, R will assume that you know what you are doing as long as your one of your vector lengths is a multiple of your other vector length.
+Vectors recycle. In this case, R gave us a warning that our vectors don't match. It returned to us a vector of length 3 (our longest vector), and it recycled the 10 from the shorter vector to add to the 3.
+
+However, R will assume that you know what you are doing as long as your one of your vector lengths is a multiple of your other vector length. Here the shorter vector is recycled twice. No warning is given.
 
 
 ```r
@@ -304,33 +342,81 @@ Be careful when filtering. You have been warned.
 
 ***
 </br>
-You can also filter to obtain more specific subsets using more than one column. To see if there were any Bacteroidia at site T_2_1, you can use the following filter:
+You can also filter to obtain more specific subsets using more than one column. To get only Taxa that had OTUs at sites T_2_1 and T_2_10 you can use the following filter:
 
 
 ```r
-dat[dat$Taxa == "Bacteroidia" & dat$T_2_1 != 0, ]
+dat[dat$T_2_10!=0 & dat$T_2_1 != 0, ]
 ```
 
 ```
-##           Taxa T_2_1 T_2_10 T_2_12 T_2_2 T_2_3 T_2_6 T_2_7 T_2_9 T_3_2
-## 19 Bacteroidia  1547      8      0   718   679   143     1   924   314
-##    T_3_3 T_3_5 T_4_3 T_4_4 T_4_5 T_4_6 T_4_7 T_5_2 T_5_3 T_5_4 T_5_5 T_6_2
-## 19   138    22     1   116   156    49    13   964  1377    70    41     1
-##    T_6_5 T_6_7 T_6_8 T_9_1 T_9_2 T_9_3 T_9_4 T_9_5 V_1_2 V_10_1 V_11_1
-## 19     3   274    81     0   317    26   830   504   347   4221     45
-##    V_11_2 V_11_3 V_12_1 V_12_2 V_13_1 V_13_2 V_14_1 V_14_2 V_14_3 V_15_1
-## 19    112    366    126     21     49    542    722      4    399   1003
-##    V_15_2 V_15_3 V_16_1 V_16_2 V_17_1 V_17_2 V_18_1 V_18_2 V_18_3 V_18_4
-## 19    541    540   4267   2556  11392   2140    389    368    176    976
-##    V_19_1 V_19_2 V_19_3 V_2_1 V_2_2 V_2_3 V_20_1 V_21_1 V_21_4 V_22_1
-## 19   2560    800    262    48    37   100   1652    200     84     31
-##    V_22_3 V_22_4 V_3_1 V_3_2 V_4_1 V_4_2 V_5_1 V_5_3 V_6_1 V_6_2 V_6_3
-## 19    311     53     4    11     3     3   274   217    48   468   134
-##    V_7_1 V_7_2 V_7_3 V_8_2 V_9_1 V_9_2 V_9_3 V_9_4
-## 19  2231   141   166  1346  3582    56     2     7
+##                   Taxa T_2_1 T_2_10 T_2_12 T_2_2 T_2_3 T_2_6 T_2_7 T_2_9
+## 15      Actinobacteria   110      3      5   240   414   227     1   811
+## 18             Bacilli    19     60     36    32    33    11    17    41
+## 19         Bacteroidia  1547      8      0   718   679   143     1   924
+## 25          Clostridia  6213     71      0  8999 10944 12169    28 17471
+## 35 Gammaproteobacteria    23     30     27    17    25     4     0    37
+## 48         Synergistia    21      4      0    84   110   333     0   658
+## 52             Unknown   759     24      6  1342  1555  1832     7  3240
+##    T_3_2 T_3_3 T_3_5 T_4_3 T_4_4 T_4_5 T_4_6 T_4_7 T_5_2 T_5_3 T_5_4 T_5_5
+## 15    89    36     7   498   573  1345   444    57   120   139    20     6
+## 18    23    11    43     3    60   109    55     8    78   100     6    36
+## 19   314   138    22     1   116   156    49    13   964  1377    70    41
+## 25  3431  1277   277     7 10545  3612  1306   198  5985  8981   763   311
+## 35    20     5     4    10    37    68    39    11    75    47    12     2
+## 48   125    70    13     0   404   297    95    22   218   324    20     8
+## 52   676   306    69     3   826   676   200    44  1871  3214   131    94
+##    T_6_2 T_6_5 T_6_7 T_6_8 T_9_1 T_9_2 T_9_3 T_9_4 T_9_5 V_1_2 V_10_1
+## 15     2     3   160   193     0     2     2     6     4   182     94
+## 18     1    30    13    32     0    50    58    10    56   387    194
+## 19     1     3   274    81     0   317    26   830   504   347   4221
+## 25   106   496  3841  1264     0   740    33  1085  1064  3947  11180
+## 35     0     0    27    20     9    24    20   353    26   472    516
+## 48     1    47    80    37     0     7     3    16    32     0      0
+## 52    13   128   602   560     0 10624    75  2808  2817    89    132
+##    V_11_1 V_11_2 V_11_3 V_12_1 V_12_2 V_13_1 V_13_2 V_14_1 V_14_2 V_14_3
+## 15   5182    452   2364   1572    492     25    214     77      2     87
+## 18   4941     80    383    776    331     48    121    251      3    214
+## 19     45    112    366    126     21     49    542    722      4    399
+## 25    790    278   1608   2165    622   1008   4648   3449     33   1712
+## 35   6078    304   2806   3818    906    193    450    421      6    409
+## 48      0      0      2      0      0      2      5      1      0      5
+## 52    425    141   1304    482    196    123    914    416      0     81
+##    V_15_1 V_15_2 V_15_3 V_16_1 V_16_2 V_17_1 V_17_2 V_18_1 V_18_2 V_18_3
+## 15    237    379    273    138    391    112    248    116     77    288
+## 18    323    106    126   1280    717   1624   1060   2301   1549     14
+## 19   1003    541    540   4267   2556  11392   2140    389    368    176
+## 25   8244   4761   3910  10043  17572   7722  13875   7481   6071   1044
+## 35   1915   1206   1031    776    607    482   1710   1449   2491    866
+## 48     50      5      3      0      9      0      5      0      0      0
+## 52    837    504    429    345   1365     87    285     55     54    404
+##    V_18_4 V_19_1 V_19_2 V_19_3 V_2_1 V_2_2 V_2_3 V_20_1 V_21_1 V_21_4
+## 15    683    313    221    352    15  1717   260    425    608    160
+## 18    103    277     63     32    18   177    49   2266    217     39
+## 19    976   2560    800    262    48    37   100   1652    200     84
+## 25   6246   1720    493   5970   174    93   716   5878   4052   3797
+## 35   1225   1145    274    356    60   354   165   2184   1131    226
+## 48      0      3      0      0     0     0     0      0      0      0
+## 52   1483    484    176    371    16   167   150    725     58     72
+##    V_22_1 V_22_3 V_22_4 V_3_1 V_3_2 V_4_1 V_4_2 V_5_1 V_5_3 V_6_1 V_6_2
+## 15   1771    751    387  2312  2649    30    70    12  1671  1367   779
+## 18    113     19    399  2435  1040    25    48    40   286    86   232
+## 19     31    311     53     4    11     3     3   274   217    48   468
+## 25   1093   1046    324   237   688   233   571   794  4461  1134  6048
+## 35   1070   1114   1408  5191  4515    68    90    64  1762   995  2616
+## 48      0      0      0     0     2     0     0     0     0     3    22
+## 52   1013    670    784   814   645    79   242    30  1139   227   187
+##    V_6_3 V_7_1 V_7_2 V_7_3 V_8_2 V_9_1 V_9_2 V_9_3 V_9_4
+## 15  2280   376  1005   337   675    84   870     6   273
+## 18    78   157   315   161    53    76    44     9    82
+## 19   134  2231   141   166  1346  3582    56     2     7
+## 25  1432  4213   717  3134  3084  2356   143    18  3051
+## 35  1346   316  1154   406  1163    69  2668    10   559
+## 48     2     0     0     2     0     0     0     0     0
+## 52   527    50   696  1170   792    41   954     2   303
 ```
 
-You can select columns by name or position, and reorder them as well (you can also do this for rows). I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. To inspect the first rows of an output, you can use the `head()` function. Likewise, to inspect the last rows, you can use the `tail()` function. Try changing the output to show only the first 5 rows of your data frame.
+You can select columns by name or position, and reorder them as well (you can also do this for rows). I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. To inspect the first rows of an output, you can use the `head()` function. 
 
 
 ```r
@@ -362,6 +448,9 @@ head(dat[ , c(9:10,1)])
 ## 6    15     2 Acidobacteria_Gp18
 ```
 
+Likewise, to inspect the last rows, you can use the `tail()` function. 
+
+
 ```r
 tail(dat[ , "Taxa"])
 ```
@@ -380,7 +469,12 @@ tail(dat[ , 1])
 ## [1] "Subdivision3"   "Synergistia"    "Thermomicrobia" "Thermoplasmata"
 ## [5] "Thermotogae"    "Unknown"
 ```
-You can arrange your data frame alphabetically or by value using `order()`. Let's take the first 10 columns for ease of visualization.
+Try changing the output to show only the first 5 rows of your data frame.
+
+
+
+
+You can arrange your data frame alphabetically or by value using `order()`. Let's take the first 10 columns for ease of visualization. Adding `decreasing = TRUE` to this function call results in reverse alphabetical ordering or highest to lowest values.
 
 
 ```r
@@ -410,21 +504,36 @@ head(dat[order(dat$T_2_1, decreasing = TRUE), 1:10])
 ## 15  Actinobacteria   110      3      5   240   414   227     1   811    89
 ## 46    Spirochaetes    62      0      0    72   266    43     1   175    19
 ```
-You can order your data frame by multiple variables.
+You can order your data frame by multiple variables. If we look at the top 10 rows after ordering we can see that as soon as T_2_12 gets to 0 OTUs, the data frame is ordered by values in T_2_9. 
 
 
 ```r
-head(dat[order(dat$T_2_1, dat$T_2_12, dat$T_2_9, decreasing = TRUE), 1:10])
+head(dat[order(dat$T_2_12, dat$T_2_9, decreasing = TRUE), 1:10], 10)
 ```
 
 ```
-##               Taxa T_2_1 T_2_10 T_2_12 T_2_2 T_2_3 T_2_6 T_2_7 T_2_9 T_3_2
-## 25      Clostridia  6213     71      0  8999 10944 12169    28 17471  3431
-## 19     Bacteroidia  1547      8      0   718   679   143     1   924   314
-## 52         Unknown   759     24      6  1342  1555  1832     7  3240   676
-## 31 Erysipelotrichi   433      0      0   495   643   629     0   933   193
-## 15  Actinobacteria   110      3      5   240   414   227     1   811    89
-## 46    Spirochaetes    62      0      0    72   266    43     1   175    19
+##                   Taxa T_2_1 T_2_10 T_2_12 T_2_2 T_2_3 T_2_6 T_2_7 T_2_9
+## 20  Betaproteobacteria     2      0   2545     7    61     4     1     5
+## 18             Bacilli    19     60     36    32    33    11    17    41
+## 35 Gammaproteobacteria    23     30     27    17    25     4     0    37
+## 52             Unknown   759     24      6  1342  1555  1832     7  3240
+## 15      Actinobacteria   110      3      5   240   414   227     1   811
+## 16 Alphaproteobacteria    11      0      2    21    11    49     0    71
+## 25          Clostridia  6213     71      0  8999 10944 12169    28 17471
+## 31     Erysipelotrichi   433      0      0   495   643   629     0   933
+## 19         Bacteroidia  1547      8      0   718   679   143     1   924
+## 48         Synergistia    21      4      0    84   110   333     0   658
+##    T_3_2
+## 20     4
+## 18    23
+## 35    20
+## 52   676
+## 15    89
+## 16    13
+## 25  3431
+## 31   193
+## 19   314
+## 48   125
 ```
 Now that we have some basic data-wrangling skills:
 
@@ -464,16 +573,18 @@ The `dplyr` package was made by Hadley Wickham to help make data manipulation wi
   5. `summarize()` - reduces data to summary values (for example using `mean()`, `sd()`, `min()`, `quantile()`, etc)
   
   
-The `dplyr` package, and some other common packages for data frame manipulation allow the use of the pipe function, `%>%`. This is equivalent to `|` for any unix peeps. __Piping__ allows the output of a function to be passed to the next function without making intermediate variables. Piping can save typing, make your code more readable, and reduce clutter in your global environment from variables you don't need.
+The `dplyr` package, and some other common packages for data frame manipulation allow the use of the pipe function, `%>%`. This is equivalent to `|` for any unix peeps. __Piping__ allows the output of a function to be passed to the next function without making intermediate variables. Piping can save typing, make your code more readable, and reduce clutter in your global environment from variables you don't need. The keyboard shortcut for `%>%` is `CTRL+SHIFT+M`. 
 
 Let's load the library.
 
 
 ```r
 library(dplyr)
+library(tibble)
 ```
 
 We are going to see how pipes work in conjunction with our first function, `filter()`. We are going to use the same subsetting examples so you can see how the syntax differs from base R. In this case, we want to keep all rows that have either Fusobacteria or Methanobacteria. 
+
 
 
 ```r
@@ -484,7 +595,7 @@ dat %>% filter(Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
 ```
 
 ```r
-dat %>% filter(., Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
+dat %>% filter(., Taxa == "Fusobacteria" | Taxa == "Methanobacteria") 
 ```
 
 ```
@@ -514,39 +625,96 @@ dat %>% filter(., Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
 ## 2     0     0     0     0     0     0     0     0
 ```
 
+You'll notice that when piping, we are not explicitly writing the first argument (our data frame) to `filter()`, but rather passing the first argument to filter using `%>%`. The dot `.` is sometimes used to fill in the first argument as a placeholder (this is useful for nested functions (functions inside of functions), which we will come across a bit later).  
 
+The `column_to_rownames()` function is used here to move our character data, Taxa, to rownames. We will then have a numeric dataframe on which to do any calculations while preserving all information. This function requires the column variable to be quoted. Click on 'dat' in the Global Environment to see the difference.
 
-To see if there were any Bacteroidia at site T_2_1, you can use the following filter:
-
-
-```r
-dat %>% filter(., Taxa == "Bacteroidia" & T_2_1 != 0)
-```
-
-```
-##          Taxa T_2_1 T_2_10 T_2_12 T_2_2 T_2_3 T_2_6 T_2_7 T_2_9 T_3_2
-## 1 Bacteroidia  1547      8      0   718   679   143     1   924   314
-##   T_3_3 T_3_5 T_4_3 T_4_4 T_4_5 T_4_6 T_4_7 T_5_2 T_5_3 T_5_4 T_5_5 T_6_2
-## 1   138    22     1   116   156    49    13   964  1377    70    41     1
-##   T_6_5 T_6_7 T_6_8 T_9_1 T_9_2 T_9_3 T_9_4 T_9_5 V_1_2 V_10_1 V_11_1
-## 1     3   274    81     0   317    26   830   504   347   4221     45
-##   V_11_2 V_11_3 V_12_1 V_12_2 V_13_1 V_13_2 V_14_1 V_14_2 V_14_3 V_15_1
-## 1    112    366    126     21     49    542    722      4    399   1003
-##   V_15_2 V_15_3 V_16_1 V_16_2 V_17_1 V_17_2 V_18_1 V_18_2 V_18_3 V_18_4
-## 1    541    540   4267   2556  11392   2140    389    368    176    976
-##   V_19_1 V_19_2 V_19_3 V_2_1 V_2_2 V_2_3 V_20_1 V_21_1 V_21_4 V_22_1
-## 1   2560    800    262    48    37   100   1652    200     84     31
-##   V_22_3 V_22_4 V_3_1 V_3_2 V_4_1 V_4_2 V_5_1 V_5_3 V_6_1 V_6_2 V_6_3
-## 1    311     53     4    11     3     3   274   217    48   468   134
-##   V_7_1 V_7_2 V_7_3 V_8_2 V_9_1 V_9_2 V_9_3 V_9_4
-## 1  2231   141   166  1346  3582    56     2     7
-```
-
-You can subset columns by using the `select()` function. You can also reorder columns while using this function. I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. `head()` and `tail()` can also be used with pipes to look at your output.
 
 
 ```r
-dat %>% select(T_2_9, T_2_10, Taxa) %>% head()
+dat <- dat %>% column_to_rownames("Taxa") 
+```
+
+
+Continuing, with our previous base R subsetting examples, to get only Taxa that had OTUs at sites T_2_1 and T_2_10 using `dplyr`, you can use the following filter:
+
+
+```r
+dat %>% filter(., T_2_10 != 0 & T_2_1 != 0)
+```
+
+```
+##   T_2_1 T_2_10 T_2_12 T_2_2 T_2_3 T_2_6 T_2_7 T_2_9 T_3_2 T_3_3 T_3_5
+## 1   110      3      5   240   414   227     1   811    89    36     7
+## 2    19     60     36    32    33    11    17    41    23    11    43
+## 3  1547      8      0   718   679   143     1   924   314   138    22
+## 4  6213     71      0  8999 10944 12169    28 17471  3431  1277   277
+## 5    23     30     27    17    25     4     0    37    20     5     4
+## 6    21      4      0    84   110   333     0   658   125    70    13
+## 7   759     24      6  1342  1555  1832     7  3240   676   306    69
+##   T_4_3 T_4_4 T_4_5 T_4_6 T_4_7 T_5_2 T_5_3 T_5_4 T_5_5 T_6_2 T_6_5 T_6_7
+## 1   498   573  1345   444    57   120   139    20     6     2     3   160
+## 2     3    60   109    55     8    78   100     6    36     1    30    13
+## 3     1   116   156    49    13   964  1377    70    41     1     3   274
+## 4     7 10545  3612  1306   198  5985  8981   763   311   106   496  3841
+## 5    10    37    68    39    11    75    47    12     2     0     0    27
+## 6     0   404   297    95    22   218   324    20     8     1    47    80
+## 7     3   826   676   200    44  1871  3214   131    94    13   128   602
+##   T_6_8 T_9_1 T_9_2 T_9_3 T_9_4 T_9_5 V_1_2 V_10_1 V_11_1 V_11_2 V_11_3
+## 1   193     0     2     2     6     4   182     94   5182    452   2364
+## 2    32     0    50    58    10    56   387    194   4941     80    383
+## 3    81     0   317    26   830   504   347   4221     45    112    366
+## 4  1264     0   740    33  1085  1064  3947  11180    790    278   1608
+## 5    20     9    24    20   353    26   472    516   6078    304   2806
+## 6    37     0     7     3    16    32     0      0      0      0      2
+## 7   560     0 10624    75  2808  2817    89    132    425    141   1304
+##   V_12_1 V_12_2 V_13_1 V_13_2 V_14_1 V_14_2 V_14_3 V_15_1 V_15_2 V_15_3
+## 1   1572    492     25    214     77      2     87    237    379    273
+## 2    776    331     48    121    251      3    214    323    106    126
+## 3    126     21     49    542    722      4    399   1003    541    540
+## 4   2165    622   1008   4648   3449     33   1712   8244   4761   3910
+## 5   3818    906    193    450    421      6    409   1915   1206   1031
+## 6      0      0      2      5      1      0      5     50      5      3
+## 7    482    196    123    914    416      0     81    837    504    429
+##   V_16_1 V_16_2 V_17_1 V_17_2 V_18_1 V_18_2 V_18_3 V_18_4 V_19_1 V_19_2
+## 1    138    391    112    248    116     77    288    683    313    221
+## 2   1280    717   1624   1060   2301   1549     14    103    277     63
+## 3   4267   2556  11392   2140    389    368    176    976   2560    800
+## 4  10043  17572   7722  13875   7481   6071   1044   6246   1720    493
+## 5    776    607    482   1710   1449   2491    866   1225   1145    274
+## 6      0      9      0      5      0      0      0      0      3      0
+## 7    345   1365     87    285     55     54    404   1483    484    176
+##   V_19_3 V_2_1 V_2_2 V_2_3 V_20_1 V_21_1 V_21_4 V_22_1 V_22_3 V_22_4 V_3_1
+## 1    352    15  1717   260    425    608    160   1771    751    387  2312
+## 2     32    18   177    49   2266    217     39    113     19    399  2435
+## 3    262    48    37   100   1652    200     84     31    311     53     4
+## 4   5970   174    93   716   5878   4052   3797   1093   1046    324   237
+## 5    356    60   354   165   2184   1131    226   1070   1114   1408  5191
+## 6      0     0     0     0      0      0      0      0      0      0     0
+## 7    371    16   167   150    725     58     72   1013    670    784   814
+##   V_3_2 V_4_1 V_4_2 V_5_1 V_5_3 V_6_1 V_6_2 V_6_3 V_7_1 V_7_2 V_7_3 V_8_2
+## 1  2649    30    70    12  1671  1367   779  2280   376  1005   337   675
+## 2  1040    25    48    40   286    86   232    78   157   315   161    53
+## 3    11     3     3   274   217    48   468   134  2231   141   166  1346
+## 4   688   233   571   794  4461  1134  6048  1432  4213   717  3134  3084
+## 5  4515    68    90    64  1762   995  2616  1346   316  1154   406  1163
+## 6     2     0     0     0     0     3    22     2     0     0     2     0
+## 7   645    79   242    30  1139   227   187   527    50   696  1170   792
+##   V_9_1 V_9_2 V_9_3 V_9_4
+## 1    84   870     6   273
+## 2    76    44     9    82
+## 3  3582    56     2     7
+## 4  2356   143    18  3051
+## 5    69  2668    10   559
+## 6     0     0     0     0
+## 7    41   954     2   303
+```
+
+You can subset columns by using the `select()` function. You can also reorder columns using this function. I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. In this case, before using `select()`, we need the rownames to be back as a 'Taxa' column. We can use the reverse function `rownames_to_column` to recreate Taxa. `head()` and `tail()` can also be used with pipes to look at the output.
+
+
+```r
+dat %>% rownames_to_column("Taxa") %>% select(T_2_9, T_2_10, Taxa) %>% head()
 ```
 
 ```
@@ -558,29 +726,8 @@ dat %>% select(T_2_9, T_2_10, Taxa) %>% head()
 ## 5     0      0 Acidobacteria_Gp17
 ## 6    15      0 Acidobacteria_Gp18
 ```
-If I wanted to perform a calculation, I would want to exclude Taxa since it is of character type and not used in the calculation. If your data is unique you may want to retain your character data as rownames. Note: you cannot use a positive and negative selection in the same function call.
 
-
-```r
-rownames(dat) <- dat$Taxa
-dat %>% select(-Taxa) %>% select(T_2_1:T_2_9) %>% head()
-```
-
-```
-##                    T_2_1 T_2_10 T_2_12 T_2_2 T_2_3 T_2_6 T_2_7 T_2_9
-## Acidobacteria_Gp1      0      0      0     0     0     0     0     0
-## Acidobacteria_Gp10     0      0      0     0     0     0     0     0
-## Acidobacteria_Gp14     0      0      0     0     0     0     0     0
-## Acidobacteria_Gp16     0      0      0     0     0     0     0     0
-## Acidobacteria_Gp17     0      0      0     0     0     0     0     0
-## Acidobacteria_Gp18     0      0      0     2     2     5     0    15
-```
-
-```r
-#equivalent to
-## dat %>% select(T_2_1:T_2_9) %>% head()
-```
-`dplyr` also includes some helper functions that allow you to select variables based on their names. For example, if we only wanted the samples from Vietnam, we could use `starts_with()`.
+`dplyr` also includes some helper functions that allow you to select variables based on their names. For example, if we only wanted the samples from Vietnam, we could use `starts_with()`. 
 
 
 ```r
@@ -656,7 +803,7 @@ dat %>% select(ends_with("4")) %>% head()
 ## Acidobacteria_Gp18     1     0     0      0      0      0     0
 ```
 
-You can look up other `dplyr` 'select_helpers' in the help menu.
+You can look up other 'select_helpers' in the help menu.
 
 ***
 __Challenge__ 
@@ -669,21 +816,25 @@ __Challenge__
 
 Check out 'select_helpers' in the help menu. Grab all of the columns that contain depths for Well 2, whether it is from Vietnam or Tanzania.
 
+
+
+
 </br>
 </br>
 </br>
 
 ***
 
-The `arrange()` function helps you to sort your data. The default is ordered from smallest to largest (or a-z for character data). You can switch the order as shown below. 
+The `arrange()` function helps you to sort your data. The default is ordered from smallest to largest (or a-z for character data). You can switch the order by specifying `desc` as shown below. 
 
 I have added a few extra lines of code to show you how we can start building code that passes a result to the next function instead of creating a bunch of new variables to store data in between functions being exectuted. However, if you get more than 2 pipes `%>%` it gets hard to follow for a reader (or yourself after 5 minutes). Starting a new line after each pipe, allows a reader to easily see which function is operating and makes it easier to follow your logic.
 
 
 ```r
-## dat %>% select(Taxa, T_2_1) %>% arrange(desc(T_2_1)) %>% filter(T_2_1 !=0) %>% filter(Taxa != "Unknown") %>% unique()
+## dat %>% rownames_to_column("Taxa") %>% select(Taxa, T_2_1) %>% arrange(desc(T_2_1)) %>% filter(T_2_1 !=0) %>% filter(Taxa != "Unknown") %>% unique()
 ## #equivalent to
 dat %>% 
+  rownames_to_column("Taxa") %>%
   select(Taxa, T_2_1) %>% 
   arrange(desc(T_2_1)) %>% 
   filter(T_2_1 !=0) %>%
@@ -712,138 +863,83 @@ dat %>%
 `unique()` is a function that removes duplicate rows. How many rows did it remove in this case?
 
 
-`mutate()` is a function to create new column, most often the product of a calculation. For example, let's calculate the total number of OTUs for each bacteria using `rowSums()`. You must specify a column name for the column you are creating. `transmute()` will also create a new variable, but it will drop the existing variables (it will give you a single column of your new variable).
+
+
+`mutate()` is a function to create new column, most often the product of a calculation. For example, let's calculate the total number of OTUs for each Taxa using `rowSums()`. You must specify a column name for the column you are creating. 
+
+An annoying part of `dplyr` is that it will drop rownames with most functions (ie. `mutate()`, `filter()` and `arrange()`, but not `select()`). It doesn't make much sense to take row sums if we can't tell what the rows are, so I will add back Taxa as a column. However, to do the `rowSums()` calculation we cannot have character data in our rows. Therefore `.[ , -1]` is everything but our character data, which was added back as our first column.
+
+You may have noticed that I included the dot (`.`) in the bracket for `rowSums()`. This is because it is inside a nested function (`mutate()` is a function and `rowSums()` is inside it). Without an argument to `rowSums()` an error would be generated that "argument 'x' is missing with no default". 
 
 
 ```r
-dat %>% select(-Taxa) %>% mutate(total_OTUs = rowSums(.)) %>% head()
+dat %>% rownames_to_column("Taxa") %>% mutate(total_OTUs = rowSums(.[,-1])) %>% head()
 ```
 
 ```
-##   T_2_1 T_2_10 T_2_12 T_2_2 T_2_3 T_2_6 T_2_7 T_2_9 T_3_2 T_3_3 T_3_5
-## 1     0      0      0     0     0     0     0     0     0     0     0
-## 2     0      0      0     0     0     0     0     0     0     0     0
-## 3     0      0      0     0     0     0     0     0     0     0     0
-## 4     0      0      0     0     0     0     0     0     0     0     0
-## 5     0      0      0     0     0     0     0     0     0     0     0
-## 6     0      0      0     2     2     5     0    15     2     1     0
-##   T_4_3 T_4_4 T_4_5 T_4_6 T_4_7 T_5_2 T_5_3 T_5_4 T_5_5 T_6_2 T_6_5 T_6_7
-## 1     0     0     1     0     0     0     0     0     0     0     0     0
+##                 Taxa T_2_1 T_2_10 T_2_12 T_2_2 T_2_3 T_2_6 T_2_7 T_2_9
+## 1  Acidobacteria_Gp1     0      0      0     0     0     0     0     0
+## 2 Acidobacteria_Gp10     0      0      0     0     0     0     0     0
+## 3 Acidobacteria_Gp14     0      0      0     0     0     0     0     0
+## 4 Acidobacteria_Gp16     0      0      0     0     0     0     0     0
+## 5 Acidobacteria_Gp17     0      0      0     0     0     0     0     0
+## 6 Acidobacteria_Gp18     0      0      0     2     2     5     0    15
+##   T_3_2 T_3_3 T_3_5 T_4_3 T_4_4 T_4_5 T_4_6 T_4_7 T_5_2 T_5_3 T_5_4 T_5_5
+## 1     0     0     0     0     0     1     0     0     0     0     0     0
 ## 2     0     0     0     0     0     0     0     0     0     0     0     0
-## 3     0     0     1     0     0     0     0     0     0     0     0     0
+## 3     0     0     0     0     0     1     0     0     0     0     0     0
 ## 4     0     0     0     0     0     0     0     0     0     0     0     0
 ## 5     0     0     0     0     0     0     0     0     0     0     0     0
-## 6     0     1     0     0     0     0     1     0     0     0     0     1
-##   T_6_8 T_9_1 T_9_2 T_9_3 T_9_4 T_9_5 V_1_2 V_10_1 V_11_1 V_11_2 V_11_3
-## 1     0     0     0     0     0     0     0      0      0      0      0
-## 2     0     0     0     0     0     0     0      0      0      0      0
-## 3     0     0     0     0     0     0     0      0      0      0      0
-## 4     0     0     0     0     0     0     0      0      1      0      0
-## 5     0     0     0     0     0     0     0      0      1      0      0
-## 6     0     0     0     0     0     0     0      0      0      0      0
-##   V_12_1 V_12_2 V_13_1 V_13_2 V_14_1 V_14_2 V_14_3 V_15_1 V_15_2 V_15_3
+## 6     2     1     0     0     1     0     0     0     0     1     0     0
+##   T_6_2 T_6_5 T_6_7 T_6_8 T_9_1 T_9_2 T_9_3 T_9_4 T_9_5 V_1_2 V_10_1
+## 1     0     0     0     0     0     0     0     0     0     0      0
+## 2     0     0     0     0     0     0     0     0     0     0      0
+## 3     0     0     0     0     0     0     0     0     0     0      0
+## 4     0     0     0     0     0     0     0     0     0     0      0
+## 5     0     0     0     0     0     0     0     0     0     0      0
+## 6     0     0     1     0     0     0     0     0     0     0      0
+##   V_11_1 V_11_2 V_11_3 V_12_1 V_12_2 V_13_1 V_13_2 V_14_1 V_14_2 V_14_3
+## 1      0      0      0      0      0      0      0      0      0      0
+## 2      0      0      0      0      0      0      0      0      0      0
+## 3      0      0      0      0      0      0      0      0      0      0
+## 4      1      0      0      0      0      0      0      0      0      0
+## 5      1      0      0      0      0      0      0      0      0      0
+## 6      0      0      0      0      0      0      0      0      0      0
+##   V_15_1 V_15_2 V_15_3 V_16_1 V_16_2 V_17_1 V_17_2 V_18_1 V_18_2 V_18_3
 ## 1      0      0      0      0      0      0      0      0      0      0
 ## 2      0      0      0      0      0      0      0      0      0      0
 ## 3      0      0      0      0      0      0      0      0      0      0
 ## 4      0      0      0      0      0      0      0      0      0      0
 ## 5      0      0      0      0      0      0      0      0      0      0
 ## 6      0      0      0      0      0      0      0      0      0      0
-##   V_16_1 V_16_2 V_17_1 V_17_2 V_18_1 V_18_2 V_18_3 V_18_4 V_19_1 V_19_2
-## 1      0      0      0      0      0      0      0      0      0      0
-## 2      0      0      0      0      0      0      0      0      0      0
-## 3      0      0      0      0      0      0      0      0      0      0
-## 4      0      0      0      0      0      0      0      0      0      0
-## 5      0      0      0      0      0      0      0      0      0      0
-## 6      0      0      0      0      0      0      0      0      0      0
-##   V_19_3 V_2_1 V_2_2 V_2_3 V_20_1 V_21_1 V_21_4 V_22_1 V_22_3 V_22_4 V_3_1
-## 1      0     0     0     0      0      0      0      1      0      0     0
-## 2      0     0     0     0      0      0      0      3      0      0     0
-## 3      0     0     0     0      0      0      0      0      0      0     0
-## 4      0     0     0     0      0      0      0      0      0      0     0
-## 5      0     0     0     0      0      0      0      0      0      0     0
-## 6      0     0     0     0      0      0      0      0      0      0     0
-##   V_3_2 V_4_1 V_4_2 V_5_1 V_5_3 V_6_1 V_6_2 V_6_3 V_7_1 V_7_2 V_7_3 V_8_2
-## 1     0     0     0     0     0     0     0     0     0     1     7     0
-## 2     0     0     2     0     0     0     0     0     0     1     9     0
-## 3     0     0     0     0     0     0     0     0     0     0     1     0
-## 4     0     0     1     0     0     0     0     0     0     0     0     0
-## 5     0     0     0     0     0     0     0     0     0     0     0     0
-## 6     0     0     0     0     0     0     0     0     0     0     1     0
-##   V_9_1 V_9_2 V_9_3 V_9_4 total_OTUs
-## 1     0    18     0    38         66
-## 2     0     0     0     0         15
-## 3     0     0     0    17         19
-## 4     0     0     0     0          2
-## 5     0     0     0     0          1
-## 6     0     0     0     0         31
+##   V_18_4 V_19_1 V_19_2 V_19_3 V_2_1 V_2_2 V_2_3 V_20_1 V_21_1 V_21_4
+## 1      0      0      0      0     0     0     0      0      0      0
+## 2      0      0      0      0     0     0     0      0      0      0
+## 3      0      0      0      0     0     0     0      0      0      0
+## 4      0      0      0      0     0     0     0      0      0      0
+## 5      0      0      0      0     0     0     0      0      0      0
+## 6      0      0      0      0     0     0     0      0      0      0
+##   V_22_1 V_22_3 V_22_4 V_3_1 V_3_2 V_4_1 V_4_2 V_5_1 V_5_3 V_6_1 V_6_2
+## 1      1      0      0     0     0     0     0     0     0     0     0
+## 2      3      0      0     0     0     0     2     0     0     0     0
+## 3      0      0      0     0     0     0     0     0     0     0     0
+## 4      0      0      0     0     0     0     1     0     0     0     0
+## 5      0      0      0     0     0     0     0     0     0     0     0
+## 6      0      0      0     0     0     0     0     0     0     0     0
+##   V_6_3 V_7_1 V_7_2 V_7_3 V_8_2 V_9_1 V_9_2 V_9_3 V_9_4 total_OTUs
+## 1     0     0     1     7     0     0    18     0    38         66
+## 2     0     0     1     9     0     0     0     0     0         15
+## 3     0     0     0     1     0     0     0     0    17         19
+## 4     0     0     0     0     0     0     0     0     0          2
+## 5     0     0     0     0     0     0     0     0     0          1
+## 6     0     0     0     1     0     0     0     0     0         31
 ```
-Versus:
+Note that if I use `rowSums()` outside of another function (ie. not nested), I do not need to specify the data frame. In this case, the output is a vector and the rownames were preserved for the names of the vector elements.
 
 
 ```r
-#maintains answer in data frame
-dat %>% select(-Taxa) %>% transmute(total_OTUs = rowSums(.))
-```
-
-```
-##    total_OTUs
-## 1          66
-## 2          15
-## 3          19
-## 4           2
-## 5           1
-## 6          31
-## 7           9
-## 8           5
-## 9         162
-## 10         34
-## 11         11
-## 12        163
-## 13          1
-## 14          1
-## 15      40978
-## 16      33238
-## 17       1013
-## 18      26799
-## 19      55450
-## 20      27171
-## 21        600
-## 22          3
-## 23          1
-## 24         41
-## 25     277296
-## 26         60
-## 27          7
-## 28      12970
-## 29       2442
-## 30          5
-## 31      10441
-## 32         74
-## 33      40319
-## 34        871
-## 35      63588
-## 36         89
-## 37          3
-## 38         77
-## 39          1
-## 40          2
-## 41       5242
-## 42         46
-## 43        764
-## 44        533
-## 45      22049
-## 46       2069
-## 47          1
-## 48       3150
-## 49       2347
-## 50          1
-## 51          2
-## 52      57237
-```
-
-```r
-#answer is now a vector
-dat %>% select(-Taxa) %>% rowSums()
+#answer is now a vector (with rownames)
+dat %>% rowSums()
 ```
 
 ```
@@ -885,25 +981,107 @@ dat %>% select(-Taxa) %>% rowSums()
 ##                 57237
 ```
 
-You may have noticed that I included "." in the bracket for `rowSums()`. In this case, an error would be generated with empty brackets that argument 'x' is missing with no default. You need to specify your input if you are inside a nested function. Note that if I use `rowSums()` outside of another function, I do not need to specify the data frame.
 
-Note: it is up to you whether you want to keep your data in a data frame or switch to a vector if you are dealing with a single variable. Using a `dplyr` function will maintain your data in a data frame. Using non-dplyr functions will switch your data to a vector if you have a single variable.
-
-
-`dplyr` has one more super-useful function, `summarize()` which allows us to get summary statistics on data. I'll give one example and then we'll come back to this function once our data is in 'tidy' format. `n()` is a `dplyr` function to count the number of observations in a group - we are simply going to count the instances of a Taxa. We can arrange the results in descending order to see if there is more than one row per Taxa. Can anyone think of another way to see if there is more than one row per Taxa? 
+`transmute()` will also create a new variable, but it will drop the existing variables (it will give you a single column of your new variable). The output for `transmute()` is a data frame of one column. Rownames have been lost.
 
 
 ```r
-dat %>% group_by(Taxa) %>% summarize(n = n()) %>% arrange(desc(.))
+dat %>% transmute(total_OTUs = rowSums(.[ , -1]))
 ```
 
 ```
-## # A tibble: 2 x 2
-##   Taxa                   n
-##   <chr>              <int>
-## 1 Acidobacteria_Gp10     1
-## 2 Acidobacteria_Gp1      1
+##    total_OTUs
+## 1          66
+## 2          15
+## 3          19
+## 4           2
+## 5           1
+## 6          31
+## 7           9
+## 8           5
+## 9         162
+## 10         34
+## 11         11
+## 12        163
+## 13          1
+## 14          1
+## 15      40868
+## 16      33227
+## 17       1011
+## 18      26780
+## 19      53903
+## 20      27169
+## 21        600
+## 22          3
+## 23          1
+## 24         41
+## 25     271083
+## 26         60
+## 27          7
+## 28      12970
+## 29       2442
+## 30          5
+## 31      10008
+## 32         74
+## 33      40318
+## 34        871
+## 35      63565
+## 36         89
+## 37          3
+## 38         77
+## 39          1
+## 40          2
+## 41       5239
+## 42         46
+## 43        764
+## 44        533
+## 45      22047
+## 46       2007
+## 47          1
+## 48       3129
+## 49       2347
+## 50          1
+## 51          2
+## 52      56478
 ```
+
+
+
+It is up to you whether you want to keep your data in a data frame or switch to a vector if you are dealing with a single variable. Using a `dplyr` function will maintain your data in a data frame. Using non-dplyr functions will switch your data to a vector if you have a single variable.
+
+
+`dplyr` has one more super-useful function, `summarize()` which allows us to get summary statistics on data. I'll give one example and then we'll come back to this function once our data is in 'tidy' format. 
+
+`n()` is a `dplyr` function to count the number of observations in a group - we are simply going to count the instances of a Taxa. In order for R to know we want to count the instances of each Taxa (as opposed to say, each row), there is a function `group_by()` that we can use to group variables or sets of variables together. That way if we had more than one case of "Clostridia", they would be grouped together and when we counted the number of cases, the result would be greater than 1. `group_by()` is useful for calculations and plotting on subsets of your data without having to turn your variables into factors.
+
+We can arrange the results in descending order to see if there is more than one row per Taxa. What is the result if you don't use `group_by()`? Can anyone think of another way to see if there is more than one row per Taxa? 
+
+
+```r
+dat %>% 
+  rownames_to_column("Taxa") %>% 
+  group_by(Taxa) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n))
+```
+
+```
+## # A tibble: 52 x 2
+##    Taxa                   n
+##    <chr>              <int>
+##  1 Acidobacteria_Gp1      1
+##  2 Acidobacteria_Gp10     1
+##  3 Acidobacteria_Gp14     1
+##  4 Acidobacteria_Gp16     1
+##  5 Acidobacteria_Gp17     1
+##  6 Acidobacteria_Gp18     1
+##  7 Acidobacteria_Gp21     1
+##  8 Acidobacteria_Gp22     1
+##  9 Acidobacteria_Gp3      1
+## 10 Acidobacteria_Gp4      1
+## # ... with 42 more rows
+```
+
 
 
 
@@ -1011,24 +1189,24 @@ library(tidyverse)
 ```
 
 ```
-## ── Attaching packages ─────────────────────────────────────── tidyverse 1.2.1 ──
+## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 ```
 
 ```
-## ✔ ggplot2 2.2.1     ✔ readr   1.1.1
-## ✔ tibble  1.4.2     ✔ purrr   0.2.4
-## ✔ tidyr   0.8.0     ✔ stringr 1.3.0
-## ✔ ggplot2 2.2.1     ✔ forcats 0.2.0
+## ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
+## ✔ readr   1.1.1     ✔ forcats 0.3.0
 ```
 
 ```
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ```
 Note that 8 different packages are loaded, and that 2 functions from the `stats` package have been replaced by functions of the same name by `dplyr`. Note that you can still access the `stats` version of the function by calling it directly as `stats::filter()`. 
 
 We can use the `gather()` function to collect our columns. This will make our dataset 'long' instead of 'wide'. 
+
 We need to provide `gather()` with information on our new columns. The first argument is our data frame, the second argument is the __key__, which is our named variable. In this case we want the column names that represent our Sites. The next argument is the __value__, which are our measurements; relative abundance values or OTUs. The third argument is all of the columns that we need to gather. You can specify the columns by listing their names or positions. In this example "-" means every column except Taxa.
 
 
@@ -1039,13 +1217,13 @@ dat %>% gather(Site, OTUs, T_2_1:V_9_4) %>% head()
 ```
 
 ```
-##                 Taxa  Site OTUs
-## 1  Acidobacteria_Gp1 T_2_1    0
-## 2 Acidobacteria_Gp10 T_2_1    0
-## 3 Acidobacteria_Gp14 T_2_1    0
-## 4 Acidobacteria_Gp16 T_2_1    0
-## 5 Acidobacteria_Gp17 T_2_1    0
-## 6 Acidobacteria_Gp18 T_2_1    0
+##    Site OTUs
+## 1 T_2_1    0
+## 2 T_2_1    0
+## 3 T_2_1    0
+## 4 T_2_1    0
+## 5 T_2_1    0
+## 6 T_2_1    0
 ```
 
 
@@ -1070,37 +1248,7 @@ split_dat <- spread_dat %>% separate(Site, c("Country", "Latrine_Number", "Depth
 #equivalent to
 split_dat <- spread_dat %>% separate(Site, c("Country", "Latrine_Number", "Depth"), sep = "_", remove = TRUE)
 
-split_dat %>% separate(Taxa, c("Taxa", "Group"), sep = "_Gp") %>% head(20)
-```
-
-```
-## Warning: Expected 2 pieces. Missing pieces filled with `NA` in 3078 rows
-## [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
-## 33, 34, ...].
-```
-
-```
-##                   Taxa Group Country Latrine_Number Depth OTUs
-## 1        Acidobacteria     1       T              2     1    0
-## 2        Acidobacteria    10       T              2     1    0
-## 3        Acidobacteria    14       T              2     1    0
-## 4        Acidobacteria    16       T              2     1    0
-## 5        Acidobacteria    17       T              2     1    0
-## 6        Acidobacteria    18       T              2     1    0
-## 7        Acidobacteria    21       T              2     1    0
-## 8        Acidobacteria    22       T              2     1    0
-## 9        Acidobacteria     3       T              2     1    0
-## 10       Acidobacteria     4       T              2     1    0
-## 11       Acidobacteria     5       T              2     1    0
-## 12       Acidobacteria     6       T              2     1    0
-## 13       Acidobacteria     7       T              2     1    0
-## 14       Acidobacteria     9       T              2     1    0
-## 15      Actinobacteria  <NA>       T              2     1  110
-## 16 Alphaproteobacteria  <NA>       T              2     1   11
-## 17        Anaerolineae  <NA>       T              2     1    2
-## 18             Bacilli  <NA>       T              2     1   19
-## 19         Bacteroidia  <NA>       T              2     1 1547
-## 20  Betaproteobacteria  <NA>       T              2     1    2
+#split_dat %>% separate(Taxa, c("Taxa", "Group"), sep = "_Gp") %>% head(20)
 ```
 We get a warning from R that it has filled in 'NA' for the bacteria that did not have groups. Note that I chose to split Taxa using '_Gp' since I did not need 'Gp'. 
 
@@ -1130,8 +1278,7 @@ str(split_dat)
 ```
 
 ```
-## 'data.frame':	4212 obs. of  5 variables:
-##  $ Taxa          : chr  "Acidobacteria_Gp1" "Acidobacteria_Gp10" "Acidobacteria_Gp14" "Acidobacteria_Gp16" ...
+## 'data.frame':	4212 obs. of  4 variables:
 ##  $ Country       : chr  "T" "T" "T" "T" ...
 ##  $ Latrine_Number: chr  "2" "2" "2" "2" ...
 ##  $ Depth         : chr  "1" "1" "1" "1" ...
@@ -1143,8 +1290,7 @@ str(split_dat %>% group_by(Country, Depth))
 ```
 
 ```
-## Classes 'grouped_df', 'tbl_df', 'tbl' and 'data.frame':	4212 obs. of  5 variables:
-##  $ Taxa          : chr  "Acidobacteria_Gp1" "Acidobacteria_Gp10" "Acidobacteria_Gp14" "Acidobacteria_Gp16" ...
+## Classes 'grouped_df', 'tbl_df', 'tbl' and 'data.frame':	4212 obs. of  4 variables:
 ##  $ Country       : chr  "T" "T" "T" "T" ...
 ##  $ Latrine_Number: chr  "2" "2" "2" "2" ...
 ##  $ Depth         : chr  "1" "1" "1" "1" ...
@@ -1181,8 +1327,7 @@ str(split_dat %>% group_by(Country, Depth) %>% ungroup())
 ```
 
 ```
-## Classes 'tbl_df', 'tbl' and 'data.frame':	4212 obs. of  5 variables:
-##  $ Taxa          : chr  "Acidobacteria_Gp1" "Acidobacteria_Gp10" "Acidobacteria_Gp14" "Acidobacteria_Gp16" ...
+## Classes 'tbl_df', 'tbl' and 'data.frame':	4212 obs. of  4 variables:
 ##  $ Country       : chr  "T" "T" "T" "T" ...
 ##  $ Latrine_Number: chr  "2" "2" "2" "2" ...
 ##  $ Depth         : chr  "1" "1" "1" "1" ...
@@ -1204,8 +1349,8 @@ split_dat %>%
 ## # A tibble: 2 x 5
 ##   Country  mean median    sd maximum
 ##   <chr>   <dbl>  <dbl> <dbl>   <dbl>
-## 1 T         122      0   896   17471
-## 2 V         186      0   863   17572
+## 1 T        122.      0  896.   17471
+## 2 V        186.      0  863.   17572
 ```
 
 
@@ -1240,16 +1385,16 @@ split_dat %>%
 ## # A tibble: 22 x 2
 ##    Latrine_Number  mean
 ##    <chr>          <dbl>
-##  1 17               415
-##  2 16               403
-##  3 11               338
-##  4 20               335
-##  5 10               328
-##  6 8                236
-##  7 15               207
-##  8 3                206
-##  9 18               201
-## 10 12               188
+##  1 17              415.
+##  2 16              403.
+##  3 11              338.
+##  4 20              335.
+##  5 10              328.
+##  6 8               236.
+##  7 15              207.
+##  8 3               206.
+##  9 18              201.
+## 10 12              188.
 ## # ... with 12 more rows
 ```
 
@@ -1258,19 +1403,11 @@ Is there more Clostridia in Tanzania or Vietnam?
 
 
 ```r
-split_dat %>% 
-  filter(Taxa == "Clostridia") %>% 
-  group_by(Country) %>% 
-  summarise(sum = sum(OTUs)) %>% 
-  arrange(desc(sum))
-```
-
-```
-## # A tibble: 2 x 2
-##   Country    sum
-##   <chr>    <int>
-## 1 V       176079
-## 2 T       101217
+# split_dat %>% 
+#   filter(Taxa == "Clostridia") %>% 
+#   group_by(Country) %>% 
+#   summarise(sum = sum(OTUs)) %>% 
+#   arrange(desc(sum))
 ```
 
 Which site had the greatest number of bacteria? (Calculate the sum of and the mean of OTUs at for each combination of Country, Latrine_Number and Depth. Order the results by the highest sum, followed by the highest mean.)
@@ -1289,16 +1426,16 @@ split_dat %>%
 ## # Groups:   Country, Latrine_Number [28]
 ##    Country Latrine_Number Depth   sum  mean
 ##    <chr>   <chr>          <chr> <int> <dbl>
-##  1 V       11             1     26730   514
-##  2 T       2              9     24953   480
-##  3 V       16             2     23963   461
-##  4 V       3              1     23553   453
-##  5 V       11             3     23100   444
-##  6 V       3              2     22779   438
-##  7 V       17             1     22417   431
-##  8 V       17             2     20705   398
-##  9 V       16             1     17907   344
-## 10 V       20             1     17436   335
+##  1 V       11             1     26730  514.
+##  2 T       2              9     24953  480.
+##  3 V       16             2     23963  461.
+##  4 V       3              1     23553  453.
+##  5 V       11             3     23100  444.
+##  6 V       3              2     22779  438.
+##  7 V       17             1     22417  431.
+##  8 V       17             2     20705  398.
+##  9 V       16             1     17907  344.
+## 10 V       20             1     17436  335.
 ## # ... with 71 more rows
 ```
 
@@ -1624,8 +1761,7 @@ str(spread_dat)
 ```
 
 ```
-## 'data.frame':	4212 obs. of  3 variables:
-##  $ Taxa: chr  "Acidobacteria_Gp1" "Acidobacteria_Gp10" "Acidobacteria_Gp14" "Acidobacteria_Gp16" ...
+## 'data.frame':	4212 obs. of  2 variables:
 ##  $ Site: chr  "T_2_1" "T_2_1" "T_2_1" "T_2_1" ...
 ##  $ OTUs: int  0 0 0 0 0 0 0 0 0 0 ...
 ```
@@ -1670,25 +1806,25 @@ inner_join(ndat, jdat, by = c("Site" = "Samples"))
 ```
 
 ```
-##                   Taxa   Site  OTUs   pH Temp    TS
-## 1           Clostridia V_16_2 17572 6.26 16.3 24.00
-## 2           Clostridia  T_2_9 17471 7.60 25.0 46.87
-## 3           Clostridia V_17_2 13875 8.14 15.4 25.60
-## 4           Clostridia  T_2_6 12169 7.69 28.7 65.52
-## 5          Bacteroidia V_17_1 11392 7.39 15.7 25.30
-## 6           Clostridia V_10_1 11180 9.12 18.6 46.30
-## 7           Clostridia  T_2_3 10944 6.46 27.9 29.45
-## 8              Unknown  T_9_2 10624 7.86 28.5 13.56
-## 9           Clostridia  T_4_4 10545 7.84 26.3 28.85
-## 10          Clostridia V_16_1 10043 7.83 17.7 25.10
-## 11          Clostridia  T_5_3  8981 7.53 27.5 12.55
-## 12 Alphaproteobacteria  V_3_2  8660 8.08 20.7 52.00
-## 13          Clostridia V_15_1  8244 7.44 18.9 25.40
-## 14          Clostridia V_17_1  7722 7.39 15.7 25.30
-## 15          Clostridia V_18_1  7481 7.09 22.5 35.10
-## 16 Alphaproteobacteria  V_3_1  7322 8.90 22.4 56.20
-## 17          Clostridia V_18_4  6246 8.25 19.4 29.90
-## 18          Clostridia  T_2_1  6213 7.82 25.1 14.53
+##      Site  OTUs   pH Temp    TS
+## 1  V_16_2 17572 6.26 16.3 24.00
+## 2   T_2_9 17471 7.60 25.0 46.87
+## 3  V_17_2 13875 8.14 15.4 25.60
+## 4   T_2_6 12169 7.69 28.7 65.52
+## 5  V_17_1 11392 7.39 15.7 25.30
+## 6  V_10_1 11180 9.12 18.6 46.30
+## 7   T_2_3 10944 6.46 27.9 29.45
+## 8   T_9_2 10624 7.86 28.5 13.56
+## 9   T_4_4 10545 7.84 26.3 28.85
+## 10 V_16_1 10043 7.83 17.7 25.10
+## 11  T_5_3  8981 7.53 27.5 12.55
+## 12  V_3_2  8660 8.08 20.7 52.00
+## 13 V_15_1  8244 7.44 18.9 25.40
+## 14 V_17_1  7722 7.39 15.7 25.30
+## 15 V_18_1  7481 7.09 22.5 35.10
+## 16  V_3_1  7322 8.90 22.4 56.20
+## 17 V_18_4  6246 8.25 19.4 29.90
+## 18  T_2_1  6213 7.82 25.1 14.53
 ```
 
 We can see that there are 18 rows in the resulting data frame. and that columns from jdat have been added. Rows from ndat that did not have a matching site in jdat were removed.
@@ -1710,27 +1846,27 @@ left_join(ndat, jdat, by = c("Site" = "Samples"))
 ```
 
 ```
-##                   Taxa   Site  OTUs   pH Temp    TS
-## 1           Clostridia V_16_2 17572 6.26 16.3 24.00
-## 2           Clostridia  T_2_9 17471 7.60 25.0 46.87
-## 3           Clostridia V_17_2 13875 8.14 15.4 25.60
-## 4           Clostridia  T_2_6 12169 7.69 28.7 65.52
-## 5          Bacteroidia V_17_1 11392 7.39 15.7 25.30
-## 6           Clostridia V_10_1 11180 9.12 18.6 46.30
-## 7           Clostridia  T_2_3 10944 6.46 27.9 29.45
-## 8              Unknown  T_9_2 10624 7.86 28.5 13.56
-## 9           Clostridia  T_4_4 10545 7.84 26.3 28.85
-## 10          Clostridia V_16_1 10043 7.83 17.7 25.10
-## 11          Clostridia  T_2_2  8999   NA   NA    NA
-## 12          Clostridia  T_5_3  8981 7.53 27.5 12.55
-## 13 Alphaproteobacteria  V_3_2  8660 8.08 20.7 52.00
-## 14          Clostridia V_15_1  8244 7.44 18.9 25.40
-## 15          Clostridia V_17_1  7722 7.39 15.7 25.30
-## 16  Betaproteobacteria  T_4_3  7710   NA   NA    NA
-## 17          Clostridia V_18_1  7481 7.09 22.5 35.10
-## 18 Alphaproteobacteria  V_3_1  7322 8.90 22.4 56.20
-## 19          Clostridia V_18_4  6246 8.25 19.4 29.90
-## 20          Clostridia  T_2_1  6213 7.82 25.1 14.53
+##      Site  OTUs   pH Temp    TS
+## 1  V_16_2 17572 6.26 16.3 24.00
+## 2   T_2_9 17471 7.60 25.0 46.87
+## 3  V_17_2 13875 8.14 15.4 25.60
+## 4   T_2_6 12169 7.69 28.7 65.52
+## 5  V_17_1 11392 7.39 15.7 25.30
+## 6  V_10_1 11180 9.12 18.6 46.30
+## 7   T_2_3 10944 6.46 27.9 29.45
+## 8   T_9_2 10624 7.86 28.5 13.56
+## 9   T_4_4 10545 7.84 26.3 28.85
+## 10 V_16_1 10043 7.83 17.7 25.10
+## 11  T_2_2  8999   NA   NA    NA
+## 12  T_5_3  8981 7.53 27.5 12.55
+## 13  V_3_2  8660 8.08 20.7 52.00
+## 14 V_15_1  8244 7.44 18.9 25.40
+## 15 V_17_1  7722 7.39 15.7 25.30
+## 16  T_4_3  7710   NA   NA    NA
+## 17 V_18_1  7481 7.09 22.5 35.10
+## 18  V_3_1  7322 8.90 22.4 56.20
+## 19 V_18_4  6246 8.25 19.4 29.90
+## 20  T_2_1  6213 7.82 25.1 14.53
 ```
 That means that we will have our 20 rows from ndat, and any items that weren't found in jdat, in this case T_2_2 and T_4_3 will be filled with NA.
 
@@ -1742,84 +1878,84 @@ right_join(ndat, jdat, by = c("Site" = "Samples"))
 ```
 
 ```
-##                   Taxa   Site  OTUs    pH Temp    TS
-## 1           Clostridia  T_2_1  6213  7.82 25.1 14.53
-## 2                 <NA> T_2_10    NA  9.08 24.2 37.76
-## 3                 <NA> T_2_12    NA  8.84 25.1 71.11
-## 4           Clostridia  T_2_3 10944  6.46 27.9 29.45
-## 5           Clostridia  T_2_6 12169  7.69 28.7 65.52
-## 6           Clostridia  T_2_9 17471  7.60 25.0 46.87
-## 7                 <NA>  T_3_3    NA  7.68 28.9 14.65
-## 8                 <NA>  T_3_5    NA  7.69 28.7 14.87
-## 9           Clostridia  T_4_4 10545  7.84 26.3 28.85
-## 10                <NA>  T_4_5    NA  7.95 27.9 46.85
-## 11                <NA>  T_4_6    NA  7.58 30.1 38.38
-## 12                <NA>  T_4_7    NA  7.68 28.3 26.54
-## 13                <NA>  T_5_2    NA  7.58 29.5 12.48
-## 14          Clostridia  T_5_3  8981  7.53 27.5 12.55
-## 15                <NA>  T_5_4    NA  7.40 29.4 15.10
-## 16                <NA>  T_6_2    NA  7.77 27.9 46.87
-## 17                <NA>  T_6_7    NA  8.09 31.7 68.33
-## 18                <NA>  T_6_8    NA  8.26 29.7 64.90
-## 19                <NA>  T_9_1    NA  7.85 29.3  9.12
-## 20             Unknown  T_9_2 10624  7.86 28.5 13.56
-## 21                <NA>  T_9_3    NA  8.35 29.5 12.67
-## 22                <NA>  T_9_4    NA  8.43 29.5 58.76
-## 23                <NA>  T_9_5    NA  7.90 29.3 56.12
-## 24                <NA>  V_1_2    NA  6.67 29.2 43.30
-## 25          Clostridia V_10_1 11180  9.12 18.6 46.30
-## 26                <NA> V_11_1    NA  9.00 18.5 63.00
-## 27                <NA> V_11_2    NA  9.64 18.3 56.70
-## 28                <NA> V_11_3    NA  8.45 18.2 55.20
-## 29                <NA> V_12_1    NA  9.16 19.6 56.60
-## 30                <NA> V_12_2    NA  9.54 18.3 49.00
-## 31                <NA> V_13_1    NA  8.58 19.0 26.00
-## 32                <NA> V_13_2    NA  7.98 18.6 46.80
-## 33                <NA> V_14_1    NA  7.21 20.0 37.80
-## 34                <NA> V_14_2    NA  7.74 18.5 51.70
-## 35                <NA> V_14_3    NA  8.50 19.1 55.80
-## 36          Clostridia V_15_1  8244  7.44 18.9 25.40
-## 37                <NA> V_15_2    NA  8.36 17.9 32.80
-## 38                <NA> V_15_3    NA  8.15 18.8 31.80
-## 39          Clostridia V_16_1 10043  7.83 17.7 25.10
-## 40          Clostridia V_16_2 17572  6.26 16.3 24.00
-## 41         Bacteroidia V_17_1 11392  7.39 15.7 25.30
-## 42          Clostridia V_17_1  7722  7.39 15.7 25.30
-## 43          Clostridia V_17_2 13875  8.14 15.4 25.60
-## 44          Clostridia V_18_1  7481  7.09 22.5 35.10
-## 45                <NA> V_18_2    NA  8.54 24.9 34.90
-## 46                <NA> V_18_3    NA  8.37 21.4 35.50
-## 47          Clostridia V_18_4  6246  8.25 19.4 29.90
-## 48                <NA> V_19_1    NA  7.19 17.6 24.80
-## 49                <NA> V_19_2    NA  7.68 17.4 31.80
-## 50                <NA> V_19_3    NA  7.38 16.6 37.00
-## 51                <NA>  V_2_1    NA  9.42 21.3 63.40
-## 52                <NA>  V_2_2    NA  9.40 20.7 51.60
-## 53                <NA>  V_2_3    NA  9.15 20.8 44.20
-## 54                <NA> V_20_1    NA  9.04 17.0  9.60
-## 55                <NA> V_21_1    NA 10.09 17.7 65.30
-## 56                <NA> V_21_4    NA  9.58 17.1 40.10
-## 57                <NA> V_22_1    NA  7.14 16.8 58.10
-## 58                <NA> V_22_3    NA  6.67 17.1 84.40
-## 59                <NA> V_22_4    NA  6.79 15.9 80.60
-## 60 Alphaproteobacteria  V_3_1  7322  8.90 22.4 56.20
-## 61 Alphaproteobacteria  V_3_2  8660  8.08 20.7 52.00
-## 62                <NA>  V_4_1    NA  9.49 22.6 36.10
-## 63                <NA>  V_4_2    NA  7.81 20.9 47.20
-## 64                <NA>  V_5_1    NA  7.35 24.3 49.70
-## 65                <NA>  V_5_3    NA  9.47 20.7 63.60
-## 66                <NA>  V_6_1    NA  8.99 22.9 56.60
-## 67                <NA>  V_6_2    NA  8.46 24.2 58.90
-## 68                <NA>  V_6_3    NA  8.08 22.8 55.20
-## 69                <NA>  V_7_1    NA  7.85 25.8 60.60
-## 70                <NA>  V_7_2    NA  8.11 25.8 73.90
-## 71                <NA>  V_7_3    NA  7.41 23.7 59.40
-## 72                <NA>  V_8_2    NA  9.30 19.5 36.80
-## 73                <NA>  V_9_1    NA  7.30 18.8 31.30
-## 74                <NA>  V_9_2    NA  4.04 20.5 32.00
-## 75                <NA>  V_9_3    NA  4.36 19.9 92.60
-## 76                <NA>  V_9_4    NA  4.30 19.8 36.50
-## 77                <NA> V_2_10    NA  5.00  5.0  5.00
+##      Site  OTUs    pH Temp    TS
+## 1   T_2_1  6213  7.82 25.1 14.53
+## 2  T_2_10    NA  9.08 24.2 37.76
+## 3  T_2_12    NA  8.84 25.1 71.11
+## 4   T_2_3 10944  6.46 27.9 29.45
+## 5   T_2_6 12169  7.69 28.7 65.52
+## 6   T_2_9 17471  7.60 25.0 46.87
+## 7   T_3_3    NA  7.68 28.9 14.65
+## 8   T_3_5    NA  7.69 28.7 14.87
+## 9   T_4_4 10545  7.84 26.3 28.85
+## 10  T_4_5    NA  7.95 27.9 46.85
+## 11  T_4_6    NA  7.58 30.1 38.38
+## 12  T_4_7    NA  7.68 28.3 26.54
+## 13  T_5_2    NA  7.58 29.5 12.48
+## 14  T_5_3  8981  7.53 27.5 12.55
+## 15  T_5_4    NA  7.40 29.4 15.10
+## 16  T_6_2    NA  7.77 27.9 46.87
+## 17  T_6_7    NA  8.09 31.7 68.33
+## 18  T_6_8    NA  8.26 29.7 64.90
+## 19  T_9_1    NA  7.85 29.3  9.12
+## 20  T_9_2 10624  7.86 28.5 13.56
+## 21  T_9_3    NA  8.35 29.5 12.67
+## 22  T_9_4    NA  8.43 29.5 58.76
+## 23  T_9_5    NA  7.90 29.3 56.12
+## 24  V_1_2    NA  6.67 29.2 43.30
+## 25 V_10_1 11180  9.12 18.6 46.30
+## 26 V_11_1    NA  9.00 18.5 63.00
+## 27 V_11_2    NA  9.64 18.3 56.70
+## 28 V_11_3    NA  8.45 18.2 55.20
+## 29 V_12_1    NA  9.16 19.6 56.60
+## 30 V_12_2    NA  9.54 18.3 49.00
+## 31 V_13_1    NA  8.58 19.0 26.00
+## 32 V_13_2    NA  7.98 18.6 46.80
+## 33 V_14_1    NA  7.21 20.0 37.80
+## 34 V_14_2    NA  7.74 18.5 51.70
+## 35 V_14_3    NA  8.50 19.1 55.80
+## 36 V_15_1  8244  7.44 18.9 25.40
+## 37 V_15_2    NA  8.36 17.9 32.80
+## 38 V_15_3    NA  8.15 18.8 31.80
+## 39 V_16_1 10043  7.83 17.7 25.10
+## 40 V_16_2 17572  6.26 16.3 24.00
+## 41 V_17_1 11392  7.39 15.7 25.30
+## 42 V_17_1  7722  7.39 15.7 25.30
+## 43 V_17_2 13875  8.14 15.4 25.60
+## 44 V_18_1  7481  7.09 22.5 35.10
+## 45 V_18_2    NA  8.54 24.9 34.90
+## 46 V_18_3    NA  8.37 21.4 35.50
+## 47 V_18_4  6246  8.25 19.4 29.90
+## 48 V_19_1    NA  7.19 17.6 24.80
+## 49 V_19_2    NA  7.68 17.4 31.80
+## 50 V_19_3    NA  7.38 16.6 37.00
+## 51  V_2_1    NA  9.42 21.3 63.40
+## 52  V_2_2    NA  9.40 20.7 51.60
+## 53  V_2_3    NA  9.15 20.8 44.20
+## 54 V_20_1    NA  9.04 17.0  9.60
+## 55 V_21_1    NA 10.09 17.7 65.30
+## 56 V_21_4    NA  9.58 17.1 40.10
+## 57 V_22_1    NA  7.14 16.8 58.10
+## 58 V_22_3    NA  6.67 17.1 84.40
+## 59 V_22_4    NA  6.79 15.9 80.60
+## 60  V_3_1  7322  8.90 22.4 56.20
+## 61  V_3_2  8660  8.08 20.7 52.00
+## 62  V_4_1    NA  9.49 22.6 36.10
+## 63  V_4_2    NA  7.81 20.9 47.20
+## 64  V_5_1    NA  7.35 24.3 49.70
+## 65  V_5_3    NA  9.47 20.7 63.60
+## 66  V_6_1    NA  8.99 22.9 56.60
+## 67  V_6_2    NA  8.46 24.2 58.90
+## 68  V_6_3    NA  8.08 22.8 55.20
+## 69  V_7_1    NA  7.85 25.8 60.60
+## 70  V_7_2    NA  8.11 25.8 73.90
+## 71  V_7_3    NA  7.41 23.7 59.40
+## 72  V_8_2    NA  9.30 19.5 36.80
+## 73  V_9_1    NA  7.30 18.8 31.30
+## 74  V_9_2    NA  4.04 20.5 32.00
+## 75  V_9_3    NA  4.36 19.9 92.60
+## 76  V_9_4    NA  4.30 19.8 36.50
+## 77 V_2_10    NA  5.00  5.0  5.00
 ```
 
 That means that we will have our 75 rows from jdat, and any items that weren't found in ndat will be filled with NA. Since there are 76 rows in the final data frame, this means there must have been multiple rows matching from ndat. In other words, we had a duplicate key (Site) in ndat.
@@ -1842,12 +1978,12 @@ right_join(ndat, jdat, by = c("Site" = "Samples")) %>%
 ```
 
 ```
-## # A tibble: 2 x 6
+## # A tibble: 2 x 5
 ## # Groups:   Site [1]
-##   Taxa        Site    OTUs    pH  Temp    TS
-##   <chr>       <chr>  <int> <dbl> <dbl> <dbl>
-## 1 Bacteroidia V_17_1 11392  7.39  15.7  25.3
-## 2 Clostridia  V_17_1  7722  7.39  15.7  25.3
+##   Site    OTUs    pH  Temp    TS
+##   <chr>  <int> <dbl> <dbl> <dbl>
+## 1 V_17_1 11392  7.39  15.7  25.3
+## 2 V_17_1  7722  7.39  15.7  25.3
 ```
 
 Note that Bacteriodia and Clostridia have different OTUs (from ndat), but the same pH, Temp and TS (from jdat). 
@@ -1885,86 +2021,86 @@ full_join(ndat, jdat, by = c("Site" = "Samples"))
 ```
 
 ```
-##                   Taxa   Site  OTUs    pH Temp    TS
-## 1           Clostridia V_16_2 17572  6.26 16.3 24.00
-## 2           Clostridia  T_2_9 17471  7.60 25.0 46.87
-## 3           Clostridia V_17_2 13875  8.14 15.4 25.60
-## 4           Clostridia  T_2_6 12169  7.69 28.7 65.52
-## 5          Bacteroidia V_17_1 11392  7.39 15.7 25.30
-## 6           Clostridia V_10_1 11180  9.12 18.6 46.30
-## 7           Clostridia  T_2_3 10944  6.46 27.9 29.45
-## 8              Unknown  T_9_2 10624  7.86 28.5 13.56
-## 9           Clostridia  T_4_4 10545  7.84 26.3 28.85
-## 10          Clostridia V_16_1 10043  7.83 17.7 25.10
-## 11          Clostridia  T_2_2  8999    NA   NA    NA
-## 12          Clostridia  T_5_3  8981  7.53 27.5 12.55
-## 13 Alphaproteobacteria  V_3_2  8660  8.08 20.7 52.00
-## 14          Clostridia V_15_1  8244  7.44 18.9 25.40
-## 15          Clostridia V_17_1  7722  7.39 15.7 25.30
-## 16  Betaproteobacteria  T_4_3  7710    NA   NA    NA
-## 17          Clostridia V_18_1  7481  7.09 22.5 35.10
-## 18 Alphaproteobacteria  V_3_1  7322  8.90 22.4 56.20
-## 19          Clostridia V_18_4  6246  8.25 19.4 29.90
-## 20          Clostridia  T_2_1  6213  7.82 25.1 14.53
-## 21                <NA> T_2_10    NA  9.08 24.2 37.76
-## 22                <NA> T_2_12    NA  8.84 25.1 71.11
-## 23                <NA>  T_3_3    NA  7.68 28.9 14.65
-## 24                <NA>  T_3_5    NA  7.69 28.7 14.87
-## 25                <NA>  T_4_5    NA  7.95 27.9 46.85
-## 26                <NA>  T_4_6    NA  7.58 30.1 38.38
-## 27                <NA>  T_4_7    NA  7.68 28.3 26.54
-## 28                <NA>  T_5_2    NA  7.58 29.5 12.48
-## 29                <NA>  T_5_4    NA  7.40 29.4 15.10
-## 30                <NA>  T_6_2    NA  7.77 27.9 46.87
-## 31                <NA>  T_6_7    NA  8.09 31.7 68.33
-## 32                <NA>  T_6_8    NA  8.26 29.7 64.90
-## 33                <NA>  T_9_1    NA  7.85 29.3  9.12
-## 34                <NA>  T_9_3    NA  8.35 29.5 12.67
-## 35                <NA>  T_9_4    NA  8.43 29.5 58.76
-## 36                <NA>  T_9_5    NA  7.90 29.3 56.12
-## 37                <NA>  V_1_2    NA  6.67 29.2 43.30
-## 38                <NA> V_11_1    NA  9.00 18.5 63.00
-## 39                <NA> V_11_2    NA  9.64 18.3 56.70
-## 40                <NA> V_11_3    NA  8.45 18.2 55.20
-## 41                <NA> V_12_1    NA  9.16 19.6 56.60
-## 42                <NA> V_12_2    NA  9.54 18.3 49.00
-## 43                <NA> V_13_1    NA  8.58 19.0 26.00
-## 44                <NA> V_13_2    NA  7.98 18.6 46.80
-## 45                <NA> V_14_1    NA  7.21 20.0 37.80
-## 46                <NA> V_14_2    NA  7.74 18.5 51.70
-## 47                <NA> V_14_3    NA  8.50 19.1 55.80
-## 48                <NA> V_15_2    NA  8.36 17.9 32.80
-## 49                <NA> V_15_3    NA  8.15 18.8 31.80
-## 50                <NA> V_18_2    NA  8.54 24.9 34.90
-## 51                <NA> V_18_3    NA  8.37 21.4 35.50
-## 52                <NA> V_19_1    NA  7.19 17.6 24.80
-## 53                <NA> V_19_2    NA  7.68 17.4 31.80
-## 54                <NA> V_19_3    NA  7.38 16.6 37.00
-## 55                <NA>  V_2_1    NA  9.42 21.3 63.40
-## 56                <NA>  V_2_2    NA  9.40 20.7 51.60
-## 57                <NA>  V_2_3    NA  9.15 20.8 44.20
-## 58                <NA> V_20_1    NA  9.04 17.0  9.60
-## 59                <NA> V_21_1    NA 10.09 17.7 65.30
-## 60                <NA> V_21_4    NA  9.58 17.1 40.10
-## 61                <NA> V_22_1    NA  7.14 16.8 58.10
-## 62                <NA> V_22_3    NA  6.67 17.1 84.40
-## 63                <NA> V_22_4    NA  6.79 15.9 80.60
-## 64                <NA>  V_4_1    NA  9.49 22.6 36.10
-## 65                <NA>  V_4_2    NA  7.81 20.9 47.20
-## 66                <NA>  V_5_1    NA  7.35 24.3 49.70
-## 67                <NA>  V_5_3    NA  9.47 20.7 63.60
-## 68                <NA>  V_6_1    NA  8.99 22.9 56.60
-## 69                <NA>  V_6_2    NA  8.46 24.2 58.90
-## 70                <NA>  V_6_3    NA  8.08 22.8 55.20
-## 71                <NA>  V_7_1    NA  7.85 25.8 60.60
-## 72                <NA>  V_7_2    NA  8.11 25.8 73.90
-## 73                <NA>  V_7_3    NA  7.41 23.7 59.40
-## 74                <NA>  V_8_2    NA  9.30 19.5 36.80
-## 75                <NA>  V_9_1    NA  7.30 18.8 31.30
-## 76                <NA>  V_9_2    NA  4.04 20.5 32.00
-## 77                <NA>  V_9_3    NA  4.36 19.9 92.60
-## 78                <NA>  V_9_4    NA  4.30 19.8 36.50
-## 79                <NA> V_2_10    NA  5.00  5.0  5.00
+##      Site  OTUs    pH Temp    TS
+## 1  V_16_2 17572  6.26 16.3 24.00
+## 2   T_2_9 17471  7.60 25.0 46.87
+## 3  V_17_2 13875  8.14 15.4 25.60
+## 4   T_2_6 12169  7.69 28.7 65.52
+## 5  V_17_1 11392  7.39 15.7 25.30
+## 6  V_10_1 11180  9.12 18.6 46.30
+## 7   T_2_3 10944  6.46 27.9 29.45
+## 8   T_9_2 10624  7.86 28.5 13.56
+## 9   T_4_4 10545  7.84 26.3 28.85
+## 10 V_16_1 10043  7.83 17.7 25.10
+## 11  T_2_2  8999    NA   NA    NA
+## 12  T_5_3  8981  7.53 27.5 12.55
+## 13  V_3_2  8660  8.08 20.7 52.00
+## 14 V_15_1  8244  7.44 18.9 25.40
+## 15 V_17_1  7722  7.39 15.7 25.30
+## 16  T_4_3  7710    NA   NA    NA
+## 17 V_18_1  7481  7.09 22.5 35.10
+## 18  V_3_1  7322  8.90 22.4 56.20
+## 19 V_18_4  6246  8.25 19.4 29.90
+## 20  T_2_1  6213  7.82 25.1 14.53
+## 21 T_2_10    NA  9.08 24.2 37.76
+## 22 T_2_12    NA  8.84 25.1 71.11
+## 23  T_3_3    NA  7.68 28.9 14.65
+## 24  T_3_5    NA  7.69 28.7 14.87
+## 25  T_4_5    NA  7.95 27.9 46.85
+## 26  T_4_6    NA  7.58 30.1 38.38
+## 27  T_4_7    NA  7.68 28.3 26.54
+## 28  T_5_2    NA  7.58 29.5 12.48
+## 29  T_5_4    NA  7.40 29.4 15.10
+## 30  T_6_2    NA  7.77 27.9 46.87
+## 31  T_6_7    NA  8.09 31.7 68.33
+## 32  T_6_8    NA  8.26 29.7 64.90
+## 33  T_9_1    NA  7.85 29.3  9.12
+## 34  T_9_3    NA  8.35 29.5 12.67
+## 35  T_9_4    NA  8.43 29.5 58.76
+## 36  T_9_5    NA  7.90 29.3 56.12
+## 37  V_1_2    NA  6.67 29.2 43.30
+## 38 V_11_1    NA  9.00 18.5 63.00
+## 39 V_11_2    NA  9.64 18.3 56.70
+## 40 V_11_3    NA  8.45 18.2 55.20
+## 41 V_12_1    NA  9.16 19.6 56.60
+## 42 V_12_2    NA  9.54 18.3 49.00
+## 43 V_13_1    NA  8.58 19.0 26.00
+## 44 V_13_2    NA  7.98 18.6 46.80
+## 45 V_14_1    NA  7.21 20.0 37.80
+## 46 V_14_2    NA  7.74 18.5 51.70
+## 47 V_14_3    NA  8.50 19.1 55.80
+## 48 V_15_2    NA  8.36 17.9 32.80
+## 49 V_15_3    NA  8.15 18.8 31.80
+## 50 V_18_2    NA  8.54 24.9 34.90
+## 51 V_18_3    NA  8.37 21.4 35.50
+## 52 V_19_1    NA  7.19 17.6 24.80
+## 53 V_19_2    NA  7.68 17.4 31.80
+## 54 V_19_3    NA  7.38 16.6 37.00
+## 55  V_2_1    NA  9.42 21.3 63.40
+## 56  V_2_2    NA  9.40 20.7 51.60
+## 57  V_2_3    NA  9.15 20.8 44.20
+## 58 V_20_1    NA  9.04 17.0  9.60
+## 59 V_21_1    NA 10.09 17.7 65.30
+## 60 V_21_4    NA  9.58 17.1 40.10
+## 61 V_22_1    NA  7.14 16.8 58.10
+## 62 V_22_3    NA  6.67 17.1 84.40
+## 63 V_22_4    NA  6.79 15.9 80.60
+## 64  V_4_1    NA  9.49 22.6 36.10
+## 65  V_4_2    NA  7.81 20.9 47.20
+## 66  V_5_1    NA  7.35 24.3 49.70
+## 67  V_5_3    NA  9.47 20.7 63.60
+## 68  V_6_1    NA  8.99 22.9 56.60
+## 69  V_6_2    NA  8.46 24.2 58.90
+## 70  V_6_3    NA  8.08 22.8 55.20
+## 71  V_7_1    NA  7.85 25.8 60.60
+## 72  V_7_2    NA  8.11 25.8 73.90
+## 73  V_7_3    NA  7.41 23.7 59.40
+## 74  V_8_2    NA  9.30 19.5 36.80
+## 75  V_9_1    NA  7.30 18.8 31.30
+## 76  V_9_2    NA  4.04 20.5 32.00
+## 77  V_9_3    NA  4.36 19.9 92.60
+## 78  V_9_4    NA  4.30 19.8 36.50
+## 79 V_2_10    NA  5.00  5.0  5.00
 ```
 The full join returns all of the rows from both ndat and jdat - we have the 75 rows from jdat, plus the second V_17_1 as seen in the right_join and T_2_2 and T_4_3 that we present in ndat but NA in jdat for a total of 78 rows.
 
@@ -1978,25 +2114,25 @@ semi_join(ndat, jdat, by = c("Site" = "Samples"))
 ```
 
 ```
-##                   Taxa   Site  OTUs
-## 1           Clostridia V_16_2 17572
-## 2           Clostridia  T_2_9 17471
-## 3           Clostridia V_17_2 13875
-## 4           Clostridia  T_2_6 12169
-## 5          Bacteroidia V_17_1 11392
-## 6           Clostridia V_10_1 11180
-## 7           Clostridia  T_2_3 10944
-## 8              Unknown  T_9_2 10624
-## 9           Clostridia  T_4_4 10545
-## 10          Clostridia V_16_1 10043
-## 11          Clostridia  T_5_3  8981
-## 12 Alphaproteobacteria  V_3_2  8660
-## 13          Clostridia V_15_1  8244
-## 14          Clostridia V_17_1  7722
-## 15          Clostridia V_18_1  7481
-## 16 Alphaproteobacteria  V_3_1  7322
-## 17          Clostridia V_18_4  6246
-## 18          Clostridia  T_2_1  6213
+##      Site  OTUs
+## 1  V_16_2 17572
+## 2   T_2_9 17471
+## 3  V_17_2 13875
+## 4   T_2_6 12169
+## 5  V_17_1 11392
+## 6  V_10_1 11180
+## 7   T_2_3 10944
+## 8   T_9_2 10624
+## 9   T_4_4 10545
+## 10 V_16_1 10043
+## 11  T_5_3  8981
+## 12  V_3_2  8660
+## 13 V_15_1  8244
+## 14 V_17_1  7722
+## 15 V_18_1  7481
+## 16  V_3_1  7322
+## 17 V_18_4  6246
+## 18  T_2_1  6213
 ```
 `semi_join()` returns the 18 rows of ndat that have a Site match in jdat. Note that the columns from jdat have not been added.
 
@@ -2010,9 +2146,9 @@ anti_join(ndat, jdat, by = c("Site" = "Samples"))
 ```
 
 ```
-##                 Taxa  Site OTUs
-## 1         Clostridia T_2_2 8999
-## 2 Betaproteobacteria T_4_3 7710
+##    Site OTUs
+## 1 T_2_2 8999
+## 2 T_4_3 7710
 ```
 This returns our 2 rows in ndat that did not have a match in jdat. Note that the columns from jdat have not been added.
 

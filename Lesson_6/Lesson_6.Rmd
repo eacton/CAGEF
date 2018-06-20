@@ -342,7 +342,7 @@ I usually test to make sure it still works on something I expect it to when I ma
 ```{r error = TRUE}
 mean_func("Bacilli")
 
-mean_func(c("Clostridia", "Bacteriodia", "Bacilli"))
+mean_func(c("Clostridia", "Bacteroidia", "Bacilli"))
 
 ```
 My function is still working on expected input.
@@ -409,7 +409,7 @@ mean_func <- function(Taxa) {
 ```{r error = TRUE}
 mean_func("Bacilli")
 
-mean_func(c("Clostridia", "Bacteriodia", "Bacilli"))
+mean_func(c("Clostridia", "Bacteroidia", "Bacilli"))
 mean_func("Bacilllli")
 mean_func(NA)
 mean_func(210)
@@ -421,9 +421,103 @@ There are more of these helper functions to `assert_that()` which I encourage yo
 
 
 
+##Multiple Inputs
+
+So far, we have seen functions that can be reused for different inputs. What if we want to run the function for many inputs? What if I want the function to be able to take 20 Taxa? We need to be able to iterate over multiple inputs, one  at a time, in a controlled manner. Enter control statements. With control statements, an expression is set that if evaluated to be TRUE will continue proceed and if evaluated to be FALSE will not.
+
+For loops will iterate through a specified number of items.
+Starting with a simple loop to print the numbers 1 through 10. 
+This for statement will iterate through the vector of numbers 1:10.
+In this case i will be 1,2,3,4,5,6,7,8,9, then 10.
+
+```{r}
+for (i in 1:10){
+  print(i)
+}
+```
+Often, we want to iterate over the contents of a vector, rather than a number. This is really the same thing.
 
 
-tryCatch
+```{r}
+x <- c("rabbit", "dog", "llama") 
+
+for (i in x){
+  print(i)
+}
+
+```
+You can subset for the actual value.
+
+```{r}
+x <- c("rabbit", "dog", "llama") 
+
+for (i in 1:length(x)){
+  print(x[i])
+}
+```
+Or use numbers.
+
+```{r}
+x <- c("rabbit", "dog", "llama") 
+
+for (i in 1:length(x)){
+  print(i)
+}
+```
+
+Why use numbers?
+
+
+```{r}
+x <- c("rabbit", "dog", "llama") 
+
+for (i in 1:length(x)){
+  if (i < 3){
+  print(i)
+  }
+}
+```
+
+
+
+
+```{r}
+for (i in dat$Taxa){
+  print(i)
+  break
+}
+```
+
+
+
+
+```{r}
+for (i in 1:nrow(dat)){
+  print(dat[i,1])
+  break
+}
+```
+
+
+
+
+```{r}
+mean_func <- function(Taxa) {
+    for (i in Taxa){
+    summary <- filter(dat, Taxa == i) %>% 
+    summarize(mean = mean(OTUs), sd = sd(OTUs))
+    
+    print(paste('The mean for', i,'is', round(summary$mean,2)))
+    }
+    return(summary)
+
+
+}
+
+mean_func(c("Clostridia", "Bacteroidia", "Bacilli"))
+
+```
+
 
 
 
@@ -441,6 +535,36 @@ mean_func <- function(x, funs = list(mean = mean, sd = sd)) {
 ```
 
 
+```{r}
+#using sapply
+
+load_packages <-function(package_names){
+    new <- package_names[!package_names %in% installed.packages()[,"Package"]]
+    if (!package %in% installed.packages()[,"Package"]){
+       install.packages(new,repos="http://cran.utstat.utoronto.ca/", dependencies = TRUE)
+    }
+    sapply(package_names, require, character.only = TRUE, verbose = FALSE)
+}
+
+
+packages <- c("ggplot2", "plyr", "reshape2", "RColorBrewer", "scales", "grid")
+load_packages(packages)
+
+#using a for loop
+
+load_packages <-function(package_names){
+  for (package in package_names){
+    if (!package %in% installed.packages()[,"Package"]){
+       install.packages(package,repos="http://cran.utstat.utoronto.ca/", dependencies = TRUE)
+    }
+    library(package, character.only = TRUE, verbose=FALSE)
+  }
+}
+
+load_packages(c("foreach","MASS","doParallel"))
+
+
+```
 
 
 
@@ -467,6 +591,15 @@ _Basic Syntax of Functions in R_
 - sourcing functions
 - NAs in functions
 - return
+  
+_Control Structures_
+- if else
+- for
+- while
+- repeat
+- break
+- next
+  
   
 _Handling Errors_
 
@@ -523,6 +656,52 @@ __Challenge__
 </div>
 
 Write a function to read all .csv files in a directory into R and save each of them in a separate data frame.
+
+
+```{r}
+
+#Note: need to teach how to do with a for loop as well as apply
+
+
+
+path = "~/Desktop/R/"
+
+read_files <- function(path, logic){
+
+filenames <- list.files(path= path,
+                        pattern=".*csv")
+
+filelist <- lapply(paste0(path, filenames), read.csv, header = logic)
+
+#if necessary, assign names to data.frames
+names(filelist) <- gsub("\\.csv", "", filenames)
+
+lapply(names(filelist), function(x) assign(x,filelist[[x]],envir=.GlobalEnv))
+
+}
+
+
+read_files(path, FALSE)
+
+filelist <- list.files(path=path, pattern="*.csv") # create list of all .csv files in folder
+
+#if necessary, assign names to data.frames
+names(filelist) <- gsub("\\.csv", "", filelist)
+
+# read in each .csv file in file_list and create a data frame with the same name as the .csv file
+for (i in 1:length(filelist)){
+  assign(names(filelist)[i], 
+  read.csv(paste0(path, filelist[i]), header = F)
+  )}
+
+
+# read in each .csv file in file_list and rbind them into a data frame called data 
+data <- 
+  do.call("rbind", 
+          lapply(file_list, 
+                 function(x) 
+                 read.csv(paste0(path, x), stringsAsFactors = FALSE)))
+```
 
 
 </br>
