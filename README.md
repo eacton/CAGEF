@@ -1,16 +1,18 @@
-Centre for the Analysis of Genome Evolution & Function (CAGEF)
-_______________________________________________________________________________________
+![](CAGEF_new.png)
 
+CAGEF Training & Outreach Material by Erica Acton (erica.acton@utoronto.ca)
+
+***
 
 - [Bioinformatics Training & Outreach Material](#heading)
   * [The Intro to R Lesson Series](#sub-heading)
     + [Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R](#sub-sub-heading)
-    + [Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data](#sub-sub-heading-1)
+    + [Lesson 2 - Intro to Tidy Data: How to Transform and Manipulate your Data Efficiently](#sub-sub-heading-1)
     + [Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures](#sub-sub-heading-2)
-    + [Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions](#sub-sub-heading-3)
-    + [Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job](#sub-sub-heading-4)
+    + [Lesson 4 - Of Data Cleaning and Documentation - Conquer Regular Expressions, Use R markdown and knitr to make PDFs, and Challenge yourself with a 'Real' Dataset](#sub-sub-heading-3)
+    + [Lesson 5 - Linear Regression, Multiple Linear Regression, ANOVA, ANCOVA: Choosing the Best Model for the Job](#sub-sub-heading-4)
     + [Lesson 6 - Scaling up your Analyses: Writing Functions in R](#sub-sub-heading-5)
-  * [Resources](#resources)
+
     
 #Contents
 
@@ -29,6 +31,12 @@ This repository is part of the Centre for the Analysis of Genome Evolution & Fun
 ###The Intro to R Lesson Series
 
 ***
+
+This lesson series is intended as a beginner's introduction to R, with no previous experience required. It was created keeping in mind the scientist without a computer science background who wants the skills to analyze his or her own data. At the end of the 6-lesson series you will be able to import data from a .txt, .csv, .tsv, .xlsx or googlesheet worksheet, order, filter and reshape data, make exploratory plots, perform some basic statistical tests, run a regression model, and make reproducible documents (such as pdfs, word documents, or html) to share your results. 
+
+
+The structure of the class is a code-along style. It is hands on, and you are expected to bring a laptop with R and R-Studio installed. The lesson material and code are available for download at this repository (<https://github.com/eacton/CAGEF>), so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions as well as multiple choice questions on Socrative; a class key will be provided in class. 
+
 
 ####Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R
 __Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
@@ -56,6 +64,7 @@ _Quick Intro to R Data Structures_ - ie. vectors, matrices, data frames, lists
 - transpose a matrix, t()
 - how to do simple mathematical calculations (+, - , ^, *, /)
 - simple calculation using apply()
+- a primer on missing data
 
 _Installing and importing libraries_
 
@@ -68,131 +77,159 @@ _Reading in data & writing data_
 - corresponding write fxns
 
 ***
-####Lesson 2 - Intro to Tidy Data: How to Filter, Subset, Transform and Merge your Data 
+####Lesson 2 - Intro to Tidy Data: How to Transform and Manipulate your Data Efficiently
 
 
 __Objective:__ At the end of this session you will know the principles of tidy data, and be able to subset and transform your data, merge data frames, and perform simple calculations.
 
-_Why tidy data?_
-
-- Know the principles of tidy data and why it is useful to have your data in this format
-- Intro to the tidyverse
 
 _Data Manipulation_     
 
-- dplyr() 
-      + how to subset data
-      + how to order data
-      + filter(), select(), arrange(), glance()
-- tidyr() 
-      + transforming data from wide to long and back again (or reshape2())
-      + spread(), gather(), unite(), separate()
-- merging/adding data 
-      + join/merge functions
-      + binding functions with caveats
+- base R data manipulation
+- the dplyr package: 
+      + how to subset data with filter(), select()
+      + how to order data with arrange()
+      + using mutate(), transmute() for new data columns 
+      + using summarize() to get mean, median, modes, quantiles and standard deviations, variance, skew
+      + using group_by() to perform calculations on factored data 
       
-_Simple Statistics_
-  
-- how to perform simple calculations and store the results in new columns
-    + using summarize() to get mean, median, modes, quantiles and standard deviations, variance, skew
-    + using mutate() to add columns 
-    + using group_by() to perform calculations on factored data 
-    
-- revisitng the apply() function
+_Intro to tidy data_
 
-- performing t-tests in R
+- Know the principles of tidy data and why it is useful to have your data in this format
+- Intro to the tidyverse
+- the tidyr package:
+      + transforming data from wide to long and back again 
+      + spread(), gather(), unite(), separate()
+      
+_Merging data tables_ 
+
+- join functions!
+- binding functions with caveats
+      
         
 
 ***
 ####Lesson 3 - Plot all the things! From Data Exploration to Publication-Quality Figures
 
-__Objective:__ At the end of this session you will be able to use ggplot2() to make a ton of different types of plots with your data for both for data exploration and for publication-quality figures.   
+__Objective:__ At the end of this session you will be able to use ggplot2 to make a ton of different types of plots with your data for both for data exploration and for publication-quality figures.    
 
 _Intro to the Grammar of Graphics_
 
-- general structure of ggplot2 syntax()
-- dependence of ggplot2 on the tidy data format
+- general structure of ggplot syntax:
+      + aesthetics, geoms, scaling, statistical transformations, facetting
+- how ggplot makes use of the tidy data format
 
 _Data Exploration - plot all the things!_
 
-- dot plots, line graphs, scatter plots, bar graphs, violin plots, histograms, facetting
+- dot plots, line graphs, scatter plots, bar graphs, violin plots, histograms, density plots, bubble plots
 - emphasis on boxplots + explanation, beeswarm plots
 - heatmaps and correlation plots
+- regression lines and error bars
   
-_Making Figures_
+_Customization of Figures_
 
-- labels, scaling, ggsave(), regression lines, error bars, changing axis limits, rotating labels, adding text to data points, changing the legend, alpha, colors, shapes
-- forcats pkg: controlling categorical variable order in your legend
-- alternatives to pie charts
-- customize with ggthemes
+- attributes related to your data
+      + shapes, fill, color, opacity, size
+      + adding text to data points, labels
+      + controlling categorical variable order in your legend (forcats package)
+- color palettes (sequential, diverging, qualitative)
+- themes (attributes unrelated to your data)
+      + ie. axis, legend, panels, gridlines, backgrounds
+      + element_text, _line, _rect, _blank, _grob
+      + designer themes
+- saving plots
   
-_Taking it up a notch_ - Maybe preview these, and if time vote on one to look at in more detail
+  
+_Taking it up a notch_ 
 
 - Interactive graphics (d3heatmap, ggvis, plotly)
-- Network diagrams (DiagrammR, igraph)
-- dygraphs() - time series data, migest - circos plots
-- upset plots
-- geospatial data? interest?
-- phylogenetics data - ggtree, treeman, metacoder
-- genomics data - ggbio
+- Multiple plots on one page (ie. publication images) (ggpubr)
+- Upset plots (UpSetR) as alternative to venn diagrams
+- Preview:
+      + Network diagrams (visNetwork, DiagrammR, igraph)
+      + Time series data (dygraphs)
+      + Circos plots (migest)
+      + Geospatial data (geodataviz)
+      + Phylogenetics data (ggtree, treeman, phyloseq, metacoder)
+      + Genomics data (ggbio, GenVisR, GenomeGraphs)
    
 ***   
-####Lesson 4 - Data Cleaning/Stop Wrestling with Regular Expressions
+####Lesson 4 - Lesson 4 - Of Data Cleaning and Documentation - Conquer Regular Expressions, Use R markdown and knitr to make PDFs, and Challenge yourself with a 'Real' Dataset
 
 __Objective:__ At the end of this session you will be able to use regular expressions to 'clean' your data. You will also learn R markdown and be able to render your R code into slides, a pdf, html, a word document, or a notebook.
 
 _Intro to regular expressions_
 
-- escape characters, character classes, quantifiers and all that jazz
+- regex language
+      + matching by position
+      + quantifiers
+      + classes
+      + operators
+      + escape characters
+      
+_Data Cleaning_
 
-_Text manipulation with stringr/i_
+- data cleaning with base R & with stringr/i packages
+      + searching and replace patterns
+      + subset using character strings
+      + collapse and expand character vectors
+      + splitting/combining at a delimiter
+      + trimming whitespace
 
-- searching for a word/patterns, subset using character strings, collapse and expand character vectors, replacement, replacing NAs, splitting/combining at a delimiter
 
 _R markdown and knitr_
 
 - r markdown syntax
-    +  making things pretty: adding table of contents, images, hyperlinks, urls
-- knitr code chunk options
-    + suppressing pkg load warnings, eval = T/F, re-running some chunks while keeping others in memory
-    + tables in knitr
-- rendering to pdf, html, word documents (any interest in slides?)
-- sharing on Rpubs
+- working in Projects, .Rmd files, notebooks
+- adding hyperlinks, images, table of contents
+- knitr chunk options
+      + caching 
+      + kable tables
+- rendering to pdf, html, word documents
+- slides
+
 
 ***    
-####Lesson 5 - Linear and Non-Linear Regression: Choosing the Best Model for the Job
+####Lesson 5 - Linear Regression, Multiple Linear Regression, ANOVA, ANCOVA: Choosing the Best Model for the Job
 
-__Objective:__ At the end of this session you will be able to perform simple and multiple linear or non-linear regression on your dataset. You will be able to interpret the statistics that come out of this model, and use these statistics to select the best model for the job. 
+__Objective:__ At the end of this session you will be able to perform simple and multiple linear regression, one- and multiway analysis of variance (ANOVA) and analysis of covariance (ANCOVA). You will be able to interpret the statistics that come out of this model, be cognizant of the assumptions the model makes, and use an F-test to select the best model for the job. 
 
-_Commonly used statistics_
-
-- quick review: mean, median, mode, quantiles, sd, variance     
-- t-tests     
-- correlations     
-- explain parametric vs non-parametric data     
-
-_Models we will Consider_
-
-- Simple linear regression
-- Non-linear regression
-- Multiple linear regression
-- ANOVA
 
 _How we Evaluate which Model to Use_
 
-- Taking a moment to think about the question we are asking...
-- Assumptions of the model
-- Interpreting the output of our model
-- Assessing the performance of the model (feedback)
-    + Diagnostic plots (ie. residuals, Q-Q plots)
+- How do we describe our data?
+- What hypotheses are we testing?
+- What assumptions does our model have?
+- How do we test these assumptions?
+- How do we compare models?
+- How do we interpret the output of our model?
+- How do we make a prediction for new values?
+ 
 
+_Models we will Consider_
 
-_Running the Model_
+- T-tests
+- Simple linear regression
+- Multiple linear regression
+- One- and Multi-way Analysis of Variance (ANOVA)
+- Analysis of Covariance (ANCOVA)
 
-- Dealing with dummy variables/encoding categorical variables
-- Is it necessary to scale our data?
-- Using broom() to get a data frame of our result statistics
-- Predictors 
+_Important considerations_
+
+- Dummy variables: encoding categorical variables
+- Interaction terms
+- Multiple test correction
+
+_Prediction_
+
+- confidence vs prediction (narrow vs wide) intervals
+
+_Assessing the performance of the model (feedback)_
+
+- Checking residuals
+- Q-Q plots
+- Next steps (when assumptions fail)
+
 
 ******    
 ####Lesson 6 - Scaling up your Analyses: Writing Functions in R
@@ -203,38 +240,35 @@ __Objective:__ At the end of this session you will be able to write functions, m
 _Basic Syntax of Functions in R_
 
 - the structure of a function
-- understanding scoping
-- naming conventions
-- adding '...'
-- the output of your function
+- understanding lexical scoping
+- generalizing a function
+- setting default values
+- the '...' argument
 - sourcing functions
   
-_Handling Errors_
+_Control Structures_
 
-- stopifnot(), warning(), suppressWarnings(), tryCatch()
+- if else
+- for
+- while
+- repeat
+- break
+- next
+  
+_Scaling Up_
 
-_Testing Arguments and Validity of your Function_
+- using loops vs apply in functions
+- multiple inputs
+- running iterations in parallel
 
-- testthat() for formal unit testing
+_Defensive Programming_
+
+- handling errors & writing useful error messages
+- unit tests
+- assertions
+- NAs in functions
+
+
 
 ***
-###Resources
 
-https://github.com/patrickwalls/R-examples/blob/master/LinearAlgebraInR.Rmd     
-http://stat545.com/block002_hello-r-workspace-wd-project.html  
-http://stat545.com/block026_file-out-in.html     
-http://sisbid.github.io/Module1/
-http://seananderson.ca/2013/10/19/reshape.html     
-https://github.com/wmhall/tidyr_lesson/blob/master/tidyr_lesson.md     
-http://stat545.com/block009_dplyr-intro.html     
-http://stat545.com/block010_dplyr-end-single-table.html
-http://mazamascience.com/WorkingWithData/?p=912
-https://github.com/ttimbers/lm_and_glm/blob/master/lm_and_glm.Rmd     
-https://github.com/seananderson/glmm-course     
-http://michael.hahsler.net/SMU/EMIS7331/R/regression.html
-http://stat545.com/block028_character-data.html     
-http://r4ds.had.co.nz/strings.html
-https://github.com/jennybc/ggplot2-tutorial
-http://stat545.com/block011_write-your-own-function-01.html     
-http://stat545.com/block011_write-your-own-function-02.html     
-http://stat545.com/block011_write-your-own-function-03.html
