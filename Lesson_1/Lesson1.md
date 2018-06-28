@@ -28,22 +28,33 @@ This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis
 This lesson is the first in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
 
 
-![](img/data-science-explore.png)
+![R for Data Science (r4ds.had.co.nz)](img/data-science-explore.png)
 
 </br>
 
 How do we get there? Today we are going to be learning about the basic data structures in R, get cozy with the R environment, and learn how to get help when you are stuck. Because everyone gets stuck. A lot. Then you will learn how to get your data in and out of R. Next week we will learn how to tidy our data, subset and merge data and generate descriptive statistics. The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. After that, we will make all sorts of plots - from simple data exploration to interactive plots - this is always a fun lesson. And then lastly, we will learn to write some functions, which really can save you time and help scale up your analyses.
 
 
-![](img/spotify-howtobuildmvp.gif)
+![Henrik Kniberg, refurbished by blog.fastmonkeys.com](img/spotify-howtobuildmvp.gif)
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF> __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/GD3KJB9>), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF>, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/GD3KJB9>), it will help me further develop this course and would be greatly appreciated. 
 
 </br>
+
 
 ***
+####Highlighting
+
+`grey background` - a package, function(), code, command or directory      
+*italics* - an important term or concept or an individual file or folder     
+**bold** - heading or a term that is being defined      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink     
+
+
+***
+
 
 ####Data Files Used in This Lesson
 
@@ -54,13 +65,6 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_1/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
 
 
-***
-####Highlighting
-
-`grey background` - a package, function, code, command or directory      
-*italics* - an important term or concept or an individual file or folder     
-**bold** - heading or a term that is being defined      
-<span style="color:blue">blue text</span> - named or unnamed hyperlink     
 
 ***
 
@@ -115,20 +119,19 @@ If you have a problem with installing R or RStudio, please come 15 minutes befor
     
 ##A quick intro to  the R environment
 
-The "Comprehensive R Archive Network" (CRAN) is a collection of sites that have the same R and related R material (ie. new and previous versions of R software, documentation, packages and collections of R packages to download that might be useful in a particular field (CRAN Task Views), links to the R journal and R search sites, bug reports and fixes). Different sites (for example, we used http://cran.utstat.utoronto.ca/), are called a _mirrors_ because they reflect the content from the master site in Austria. There are mirrors worldwide to reduce the burden on the network. CRAN will be referred to here as a main repository for obtaining R packages.
+R is a language and an __environment__ because it has the tools and software for the storage, manipulation, statistical analysis, and graphical display for of data.  It comes with about 25 built-in 'packages' and uses a simple programming language ("S"). <https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf>
 
-To paraphrase the CRAN gurus:     
-<https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf>
+So...what are in these packages? A __package__ is a collection of functions, sometimes data, and compiled code. __Functions__ are the basic workhorses of R; they are the tools we use to analyze our data. Each function can be thought of as a unit that has a specific task. A function takes an input, evaluates an expression (ie. a calculation, plot, merge, etc.), and returns a value. (We will have an entire separate lesson to explore functions.)
 
-
-R is an __environment__ because it has the tools and software for the storage, manipulation, statistical analysis, and graphical display for of data.  It comes with about 25 built-in 'packages' and uses a simple programming language ("S"). Users have been encouraged to make there own packages... there are now over 12,000 packages on CRAN and about 1,500 on Bioconductor.
+Users have been encouraged to make there own packages... there are now over 12,000 packages on CRAN and about 1,500 on Bioconductor.
 
 ![](img/cran_pkg.png){width=600px}
 </br>
 
+The "Comprehensive R Archive Network" (CRAN) is a collection of sites that have the same R and related R material (ie. new and previous versions of R software, documentation, packages and collections of R packages to download that might be useful in a particular field (CRAN Task Views), links to the R journal and R search sites, bug reports and fixes). Different sites (for example, we used http://cran.utstat.utoronto.ca/), are called a _mirrors_ because they reflect the content from the master site in Austria. There are mirrors worldwide to reduce the burden on the network. CRAN will be referred to here as a main repository for obtaining R packages.
+
 Bioconductor is another repository for R packages (<https://www.bioconductor.org/>), but it specializes in tools for high-throughput genomics data. One nice thing about Bioconductor is that it has decent vignettes; a __vignette__ is the set of documentation for a package explaining its functions and usages in a tutorial-like format. 
 
-So...what are in these packages? A __package__ is a collection of functions, sometimes data, and compiled code. __Functions__ are the basic workhorses of R; they are the tools we use to analyze our data. Each function can be thought of as a unit that has a specific task. A function takes an input, evaluates an expression (ie. a calucation, plot, merge, etc.), and returns a value. (We will have an entire separate lesson to explore functions.)
 
 RStudio is an IDE (Integrated Development Environment) for R that provides a more user-friendly experience than using R in a terminal setting. It has 4 main areas or panes, which you can customize to some extent under `Tools > Global Options > Pane Layout`:
 
@@ -148,7 +151,7 @@ The __Source__ is where you are keeping the code and annotation that you want to
 To run your current line of code or a highlighted segment of code from the Source pane you can:      
      a) click the button `'Run' -> 'Run Selected Line(s)'`,      
      b) click `'Code' -> 'Run Selected Line(s)'` from the menu bar,      
-     c) use the keyboard shortcut `CTRL + ENTER` (recommended),      
+     c) use the keyboard shortcut `CTRL + ENTER` (Windows & Linux) `Command + ENTER` (Mac) (recommended),      
      d) copy and paste your code into the Console and hit `Enter` (not recommended).
      
 There are always many ways to do things in R, but the fastest way will always be the option that keeps your hands on the keyboard.
@@ -195,93 +198,6 @@ You may also want to change the `Appearance` of your code. I like the `RStudio t
 
 That whirlwind tour isn't everything the IDE can do, but it is enough to get started.
 
-##A quick note on directory structure
-
-This is an image of a possible directory. 
-
-![](img/unix_boys.jpg){width=500px}
-
-</br>
-
-In this hierarchy we will pretend to be _benedict_, and we are hanging out in our _Tables_ folder. R looks to read in your files from your __working directory__, which in this case would be _Tables_, so at this moment, R would have access to _proof.tsv_ and _genes.csv_. If I tried to open _paper.txt_ under _benedict_, R would tell me there is no such file in my current working directory.
-
-To get your working directory in R you would type in your Source pane: 
-
-```
-getwd()
-```
-You would then press `Enter` to execute the code in the Console. Technically, there is no reason to save this code and it could be typed and executed in the Console. However, to save some mental effort choosing which code to save or not (especially when starting out), let's type everything in the Source. You can always go back and choose what to delete, and harder to recreate what you didn't save.
-
-The output in your Console would be:
-
-```
-[1] "/home/benedict/Tables"
-```
-
-R will always tell you your __absolute directory__. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names differ in the path.
-
-
-To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"home/benedict"`). Therefore, our current location could also be denoted as `"~/Tables"`.
-
-To move to the directory _ewan_ we use a function that will set the working directory:
-
-```
-setwd("/home/ewan")
-#or 
-setwd("~/ewan")
-#or 
-setwd("../ewan")
-
-```
-A _relative directory_ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
-
-If I wanted to move back to _Tables_ using the _absolute path_, I would set a new working directory:
-
-```
-setwd("/home/benedict/Tables")
-#or
-setwd("~/benedict/Tables")
-```
-
-And the _relative path_ would be:
-
-```
-setwd("../benedict/Tables")
-```
-
-There is some talk over setting working directories within scripts. Obviously, not everyone has the same absolute path, so if must set a directory in your script, _it is best to have a relative path starting from the folder your script is in_. Keep in mind that others you share your script with might not have the same directory structure if you refer to subfolders. 
-
-You can set your working directory by:
-
-1. `setwd()`     
-2. `Session -> Set Working Directory` (3 Options)     
-3. `Files Window -> More (Gear Symbol) -> Set As Working Directory`     
-
-
-***
-__Challenge__ 
-
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/turtle_challenge.jpg){width=100px}
-</div>
-
-</br>
-
-Assume you are in the _Tables_ folder. Which is NOT a valid way to get to the _Thesis_ folder?
-
-- `setwd("../../ewan/Thesis")`
-- `setwd("~/ewan/Thesis")`
-- `setwd("../brad/../ewan/Thesis")`
-- `setwd("./../../ewan/Thesis")`
-- `setwd("/home/ewan/Thesis")`
-- They are all valid, stop messing with me.
-
-Follow-up: Which are the absolute paths?
-
-</br>
-
-***
-
 
 ##Making Life Easier
 
@@ -315,8 +231,8 @@ How do I start?
 
 _Keyboard shortcuts:_
 
-Comment/Uncomment lines `CTRL + SHIFT + C`     
-Reflow Comment (Wrap comments) `CTRL + SHIFT + /`
+Comment/Uncomment lines `CTRL + SHIFT + C` (Windows, Linux) / `Command + SHIFT + C` (Mac)         
+Reflow Comment (Wrap comments) `CTRL + SHIFT + /` (Windows, Linux) / `Command + SHIFT + /` (Mac)   
 
 
 ###Best Practices for Writing Scripts
@@ -410,12 +326,105 @@ _Asking a question_
 
 _Remember_ - everyone looks for help online ALL THE TIME. It is completely normal. Also, with programming there are multiple ways to come up with an answer. There are different packages that let you do the same thing, but with shortcuts. There are different levels of 'efficiency' and 'redundancy' in coding. You will work on refining these aspects of your code as you go along in this course, and in your coding career.
 
-Last but not least, to make life easier: under Help there is a _Cheatsheet of Keyboard Shortcuts_.
+Last but not least, to make life easier: under Help there is a _Cheatsheet of Keyboard Shortcuts_ or a browser list [here](file:///usr/lib/rstudio/www/docs/keyboard.htm).
+
+##A quick note on directory structure
+
+This is an image of a possible directory. 
+
+![](img/unix_boys.jpg){width=500px}
+
+</br>
+
+In this hierarchy we will pretend to be _benedict_, and we are hanging out in our _Tables_ folder. R looks to read in your files from your __working directory__, which in this case would be _Tables_, so at this moment, R would have access to _proof.tsv_ and _genes.csv_. If I tried to open _paper.txt_ under _benedict_, R would tell me there is no such file in my current working directory.
+
+To get your working directory in R you would type in your Source pane: 
+
+```
+getwd()
+```
+You would then press `Enter` to execute the code in the Console. Technically, there is no reason to save this code and it could be typed and executed in the Console. However, to save some mental effort choosing which code to save or not (especially when starting out), let's type everything in the Source. You can always go back and choose what to delete, and harder to recreate what you didn't save.
+
+The output in your Console would be:
+
+```
+[1] "/home/benedict/Tables"
+```
+
+R will always tell you your __absolute directory__. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names differ in the path.
 
 
+To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"home/benedict"`). Therefore, our current location could also be denoted as `"~/Tables"`.
+
+To move to the directory _ewan_ we use a function that will set the working directory:
+
+```
+setwd("/home/ewan")
+#or 
+setwd("~/ewan")
+#or 
+setwd("../ewan")
+
+```
+A __relative directory__ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
+
+If I wanted to move back to _Tables_ using the absolute _path_, I would set a new working directory:
+
+```
+setwd("/home/benedict/Tables")
+#or
+setwd("~/benedict/Tables")
+```
+
+And the _relative path_ would be:
+
+```
+setwd("../benedict/Tables")
+```
+
+There is some talk over setting working directories within scripts. Obviously, not everyone has the same absolute path, so if must set a directory in your script, _it is best to have a relative path starting from the folder your script is in_. Keep in mind that others you share your script with might not have the same directory structure if you refer to subfolders. 
+
+You can set your working directory by:
+
+1. `setwd()`     
+2. `Session -> Set Working Directory` (3 Options)     
+3. `Files Window -> More (Gear Symbol) -> Set As Working Directory`     
 
 
-##A quick intro to R data structures
+***
+__Challenge__ 
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/turtle_challenge.jpg){width=100px}
+</div>
+
+</br>
+
+Assume you are in the _Tables_ folder. Which is NOT a valid way to get to the _Thesis_ folder?
+
+- `setwd("../../ewan/Thesis")`
+- `setwd("~/ewan/Thesis")`
+- `setwd("../brad/../ewan/Thesis")`
+- `setwd("./../../ewan/Thesis")`
+- `setwd("/home/ewan/Thesis")`
+- They are all valid, stop messing with me.
+
+Follow-up: Which are the absolute paths?
+
+</br>
+
+***
+
+
+##A quick intro to R data types and data structures
+
+
+What do I mean by 'types' (flavours) of data?     
+
+- character - a#c$E 
+- numeric - 7.5
+- integer - 1
+- logical - TRUE, FALSE
 
 
 There are 5 types of data structures in R.
@@ -426,12 +435,6 @@ There are 5 types of data structures in R.
 4. data frames - 2D - holds multiple data types
 5. arrays - nD - holds one type of data
 
-What do I mean by 'type of data'?     
-
-- character - a#c$E 
-- numeric - 7.5
-- integer - 1
-- logical - TRUE, FALSE
 
 Let's make some data!! 
 
@@ -625,6 +628,15 @@ vec_char[2:3]
 #second and third element in the vector inclusive 
 #(this is not the same for all programming languages)
 
+#you can use negative indexing to select 'everything but'
+vec_char[-1]
+```
+
+```
+## [1] "virus"   "archaea"
+```
+
+```r
 vec_log["male"]
 ```
 
@@ -695,11 +707,10 @@ list_mix[[1]]
 ```
 
 ```r
-list_mix[[1]][2]
-```
+## list_mix$character
 
-```
-## [1] "virus"
+## list_mix[[1]][2]
+## list_mix$character[2]
 ```
 
 
@@ -711,6 +722,8 @@ Create a demo matrix.
 
 ```r
 mat <- matrix(c(rep(0, 10), rep(1,10)), nrow = 5, ncol = 5)
+#equivalent to
+mat <- matrix(c(rep(0:1, each = 10, times = 2)), nrow = 5, ncol = 5)
 mat
 ```
 
@@ -1361,7 +1374,7 @@ mat * 4
 ## [5,]    0    0    4    4    0
 ```
 
-So you can do math... on a data frame.
+So you can do math... on a data frame. Non-numeric (character) data will throw an error, while factors will give a warning message and populate the offending column with NAs. Logical data will be converted to numeric values and multiplied. Therefore be careful to specify your numeric data for mathematical operations.
 
 
 ```r
@@ -1618,7 +1631,7 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Create a function to get the counts to multiply all for each gene by 3.
+Use the `apply()` function to multiply the counts for each gene by 3.
 
 </br>
 </br>     
@@ -1685,7 +1698,8 @@ which(is.na(na_vec))
 ```
 
 ```r
-remove_na_vec <- na_vec[c(-3,-6)]
+idx <- which(is.na(na_vec))
+remove_na_vec <- na_vec[-idx]
 #equivalentish to 
 remove_na_vec <- na.omit(na_vec)
 remove_na_vec
@@ -1842,7 +1856,8 @@ There are a few different places you can install packages from R. Listed in orde
     + Guidelines for submission, reviewed. Where the majority of packages are.
 - GitHub
     + No formal review process, but peers can opens issues to highlight problems or suggest fixes.
-    + The is an increasing number of publibacteriaion-related packages.
+    + The is an increasing number of publication-related packages.
+    + Check to see the last time updates or comments were made to see if it is maintained by the developer.     
 - Joe's website
     + No review process. Not sure I trust that guy. 
     
@@ -1864,12 +1879,6 @@ Some packages _depend_ on previously developed packages and can only be installe
 install.packages('devtools', dependencies = TRUE)
 ```
 
-You can install more than one package at once.
-
-
-```r
-install.packages(c('dplyr', 'devtools', 'readxl'), dependencies = TRUE)
-```
 
 A package only has to be installed once. It is now in your _library_. To use a package, you must _load_ the package into memory. Unless this is one of the packages R loads automatically, you choose which packages to load every session. 
 
@@ -1879,12 +1888,8 @@ library(devtools)
 # or library('devtools')
 ```
 
-Likewise, you can load many packages at once:
+`library()` takes a single argument. We are going to write a function later in the course to load a character vector of packages. `library()` will throw an _error_ if you try to load a package that is not installed. You may see `require()` on help pages, which also loads packages. It is usually used inside functions (it gives a _warning_ instead of an error if a package is not installed). Errors will stop code from running while warnings allow code to run until an error is reached.
 
-
-```r
-library(c('dplyr', 'readxl'))
-```
 
 To install from Bioconductor you can either always use source to use biocLite...
 
@@ -1969,7 +1974,7 @@ meta <- read.table(file = "data/ENV_pitlatrine.csv")
 
 To see the result, we can look at 'meta' in the Environment pane and see that there are 82 observations of one variable. If we click on the arrow next to 'meta' we can now see that we have a column 'V1' and the variable type is a factor. We can also hover the mouse over the column name for this information. 
 
-We can click on 'meta' in the Environment pane or type `View(meta)` in the Console to open a spreadsheet-like view of 'meta' in a new tab. `head()` will show us the first 10 rows of our data frame. `tail()` would show the last 10 rows.
+We can click on 'meta' in the Environment pane or type `View(meta)` in the Console to open a spreadsheet-like view of 'meta' in a new tab. `head()` will show us the first 6 rows of our data frame. `tail()` would show the last 6 rows.
 
 
 ```r
@@ -2050,6 +2055,17 @@ str(meta)
 ```
 
 Don't forget! `str()` is still the best way to look at your data structure without taking your hands off the keyboard.
+
+This is as good a time as any to mention that you do not have to specify the name for every argument in a function. If unnamed, arguments are assumed to be input in the order they appear in the function documentation. You can place arguments out of order if they are named (`header = TRUE` is the second argument to `read.table()`, but can be placed in the 3rd position above due to being named). 
+
+Only leave out argument names that are fairly obvious. In the example below, we can easily assume what character string is supposed to be the file, but there are many TRUE/FALSE argument options and it is not obvious what `TRUE` is referring to without looking up the documentation. I would also retain `sep=` as there are other quoted argument options, and it is better to be explicitly obvious than implicitly so (ie. the file is a .csv so it is comma separated).  
+
+
+```r
+meta <- read.table("data/ENV_pitlatrine.csv", TRUE, ",", stringsAsFactors = FALSE)
+```
+
+
 
 ***
 __Challenge__ 
@@ -2315,7 +2331,7 @@ str(ex[[3]])
 ```
 
 ```r
-excel2 <- data.frame(ex[[2]])
+excel3 <- data.frame(ex[[3]])
 ```
 
 At this point, you will be able to use your excel worksheet as a normal data frame in R.
@@ -2324,7 +2340,8 @@ At this point, you will be able to use your excel worksheet as a normal data fra
 
 Googlesheets have a similar structure to excel workbooks, the only tricky thing is getting the name of your googlesheet to input.
 
-I have a googlesheet to share from my Google Drive: <https://docs.google.com/spreadsheets/d/1JTy5sCtQz8PmlpDrgvOnwZ1tB2pxOndxoNMTHQR_PrQ/edit?usp=sharing>. 
+I have a googlesheet to share from my Google Drive:     
+<https://docs.google.com/spreadsheets/d/1JTy5sCtQz8PmlpDrgvOnwZ1tB2pxOndxoNMTHQR_PrQ/edit?usp=sharing>. 
 
 Add the sheet to your own Google Drive. Then load googlesheets.
 
@@ -2342,20 +2359,20 @@ gs_ls()
 ```
 
 ```
-## # A tibble: 52 x 10
+## # A tibble: 59 x 10
 ##    sheet_title  author perm  version updated             sheet_key ws_feed
 ##    <chr>        <chr>  <chr> <chr>   <dttm>              <chr>     <chr>  
-##  1 CAGEF Time … "    … r     new     2018-05-24 18:03:18 1SdrZhSp… https:…
-##  2 "          … "  ac… rw    new     2018-05-24 18:02:25 1eiM1CJh… https:…
-##  3 "          … "  ac… rw    new     2018-05-24 17:53:51 1ctyHaqo… https:…
-##  4 "          … "  ac… rw    new     2018-05-24 17:47:11 1KChnoyH… https:…
-##  5 "          … "  ac… rw    new     2018-05-24 17:46:42 1y-Tf6Vn… https:…
-##  6 "          … "  ac… rw    new     2018-05-24 17:45:48 1k0qlncj… https:…
-##  7 "          … "  ac… rw    new     2018-05-24 17:42:41 1Votk4h1… https:…
-##  8 "          … "  ac… rw    new     2018-05-24 17:23:22 1t2TpXLg… https:…
-##  9 "          … "  ac… rw    new     2018-05-24 16:39:26 1iRB__yR… https:…
-## 10 "          … "  ac… rw    new     2018-05-24 16:38:19 1hXxP3RT… https:…
-## # ... with 42 more rows, and 3 more variables: alternate <chr>,
+##  1 "          … "  ac… rw    new     2018-06-28 15:15:54 1wvlq3Wv… https:…
+##  2 "          … "  ac… rw    new     2018-06-28 14:50:19 1P0LTHu7… https:…
+##  3 "          … "  ac… rw    new     2018-06-28 13:16:51 18fSMQsW… https:…
+##  4 "          … "  ac… rw    new     2018-06-28 13:15:27 1o1DeUf1… https:…
+##  5 "          … "  ac… rw    new     2018-06-28 13:12:16 1TknxXbj… https:…
+##  6 CAGEF Time … "    … r     new     2018-06-26 21:41:28 1SdrZhSp… https:…
+##  7 "          … direc… rw    new     2018-06-25 04:31:02 1-_Ol7Zt… https:…
+##  8 "         M… "    … rw    new     2018-06-12 22:08:51 1Q2MCGLw… https:…
+##  9 DSG Lab & G… "    … r     new     2018-06-12 13:09:53 1TMg95N3… https:…
+## 10 "          … "  ac… rw    new     2018-06-06 14:41:35 1ipLSQWH… https:…
+## # ... with 49 more rows, and 3 more variables: alternate <chr>,
 ## #   self <chr>, alt_key <chr>
 ```
 
@@ -2399,13 +2416,13 @@ str(books)
 
 ```
 ## List of 17
-##  $ sheet_key  : chr "1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4"
+##  $ sheet_key  : chr "1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8"
 ##  $ sheet_title: chr "books_alpha"
 ##  $ n_ws       : int 4
-##  $ ws_feed    : chr "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full"
-##  $ browser_url: chr "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/"
-##  $ updated    : POSIXct[1:1], format: "2018-05-24 18:12:01"
-##  $ reg_date   : POSIXct[1:1], format: "2018-05-24 18:12:03"
+##  $ ws_feed    : chr "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full"
+##  $ browser_url: chr "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/"
+##  $ updated    : POSIXct[1:1], format: "2018-06-28 15:30:25"
+##  $ reg_date   : POSIXct[1:1], format: "2018-06-28 15:30:28"
 ##  $ visibility : chr "private"
 ##  $ lookup     : logi TRUE
 ##  $ is_public  : logi FALSE
@@ -2416,20 +2433,20 @@ str(books)
 ##  $ links      :Classes 'tbl_df', 'tbl' and 'data.frame':	4 obs. of  3 variables:
 ##   ..$ rel : chr [1:4] "alternate" "http://schemas.google.com/g/2005#feed" "http://schemas.google.com/g/2005#post" "self"
 ##   ..$ type: chr [1:4] "application/atom+xml" "application/atom+xml" "application/atom+xml" "application/atom+xml"
-##   ..$ href: chr [1:4] "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/edit" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full"
+##   ..$ href: chr [1:4] "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/edit" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full"
 ##  $ ws         :Classes 'tbl_df', 'tbl' and 'data.frame':	4 obs. of  12 variables:
-##   ..$ ws_id           : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/ov230kd" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/ovi65it" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/oo6wqj2" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/olsyzkx"
-##   ..$ ws_key          : chr [1:4] "ov230kd" "ovi65it" "oo6wqj2" "olsyzkx"
+##   ..$ ws_id           : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/owovjwv" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/o1k54cj" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/otd25t6" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/o69t929"
+##   ..$ ws_key          : chr [1:4] "owovjwv" "o1k54cj" "otd25t6" "o69t929"
 ##   ..$ ws_title        : chr [1:4] "Lists" "All alphabetised" "Top titles" "dropoff"
 ##   ..$ row_extent      : int [1:4] 1000 2004 1000 1000
-##   ..$ col_extent      : int [1:4] 26 26 26 26
-##   ..$ gid             : chr [1:4] "1877951047" "1904971439" "1462793620" "1318451579"
-##   ..$ listfeed        : chr [1:4] "https://spreadsheets.google.com/feeds/list/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/ov230kd/private/full" "https://spreadsheets.google.com/feeds/list/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/ovi65it/private/full" "https://spreadsheets.google.com/feeds/list/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/oo6wqj2/private/full" "https://spreadsheets.google.com/feeds/list/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/olsyzkx/private/full"
-##   ..$ cellsfeed       : chr [1:4] "https://spreadsheets.google.com/feeds/cells/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/ov230kd/private/full" "https://spreadsheets.google.com/feeds/cells/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/ovi65it/private/full" "https://spreadsheets.google.com/feeds/cells/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/oo6wqj2/private/full" "https://spreadsheets.google.com/feeds/cells/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/olsyzkx/private/full"
-##   ..$ visualizationApi: chr [1:4] "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/gviz/tq?gid=1877951047" "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/gviz/tq?gid=1904971439" "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/gviz/tq?gid=1462793620" "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/gviz/tq?gid=1318451579"
-##   ..$ exportcsv       : chr [1:4] "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/export?gid=1877951047&format=csv" "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/export?gid=1904971439&format=csv" "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/export?gid=1462793620&format=csv" "https://docs.google.com/spreadsheets/d/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/export?gid=1318451579&format=csv"
-##   ..$ self            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/ov230kd" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/ovi65it" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/oo6wqj2" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/olsyzkx"
-##   ..$ edit            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/ov230kd/17puu5" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/ovi65it/upb972" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/oo6wqj2/ld5d1q" "https://spreadsheets.google.com/feeds/worksheets/1fuDa_-crl01Ms9tiGZWEQXqOSvE1rZ78zc7vDr5Z6i4/private/full/olsyzkx/vuj6yw"
+##   ..$ col_extent      : int [1:4] 26 20 26 26
+##   ..$ gid             : chr [1:4] "1976700757" "94297241" "1775455024" "379278843"
+##   ..$ listfeed        : chr [1:4] "https://spreadsheets.google.com/feeds/list/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/owovjwv/private/full" "https://spreadsheets.google.com/feeds/list/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/o1k54cj/private/full" "https://spreadsheets.google.com/feeds/list/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/otd25t6/private/full" "https://spreadsheets.google.com/feeds/list/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/o69t929/private/full"
+##   ..$ cellsfeed       : chr [1:4] "https://spreadsheets.google.com/feeds/cells/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/owovjwv/private/full" "https://spreadsheets.google.com/feeds/cells/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/o1k54cj/private/full" "https://spreadsheets.google.com/feeds/cells/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/otd25t6/private/full" "https://spreadsheets.google.com/feeds/cells/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/o69t929/private/full"
+##   ..$ visualizationApi: chr [1:4] "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/gviz/tq?gid=1976700757" "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/gviz/tq?gid=94297241" "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/gviz/tq?gid=1775455024" "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/gviz/tq?gid=379278843"
+##   ..$ exportcsv       : chr [1:4] "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/export?gid=1976700757&format=csv" "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/export?gid=94297241&format=csv" "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/export?gid=1775455024&format=csv" "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/export?gid=379278843&format=csv"
+##   ..$ self            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/owovjwv" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/o1k54cj" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/otd25t6" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/o69t929"
+##   ..$ edit            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/owovjwv/17puu5" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/o1k54cj/upb97m" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/otd25t6/ld5d1q" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/o69t929/vuj6yw"
 ##  $ alt_key    : chr NA
 ##  - attr(*, "class")= chr [1:2] "googlesheet" "list"
 ```
@@ -2516,7 +2533,7 @@ You can use `gs_download` to save this file to your computer as an excel workboo
 gs_download(gs_title("Books Everyone Should Read"), to = "books_alpha.xlsx", overwrite = TRUE)
 ```
 
-You can upload sheets you've made to googlesheets. This file is now in your google account online.
+You can upload sheets you've made on your computer to use in googlesheets. This file is now in your google account online.
 
 
 ```r
@@ -2566,7 +2583,8 @@ Try reading in one of your own datasets. Write it to a different file format.
 <https://stackoverflow.com/help/how-to-ask>     
 <https://www.r-project.org/posting-guide.html>     
 <https://github.com/jennybc/googlesheets>     
-<http://www.quantide.com/ramarro-chapter-07/>
+<http://www.quantide.com/ramarro-chapter-07/>     
+<file:///usr/lib/rstudio/www/docs/keyboard.htm>
 
 
 #Post-Lesson Assessment

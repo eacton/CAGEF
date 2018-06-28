@@ -28,18 +28,18 @@ This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis
 This lesson is the first in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
 
 
-![](img/data-science-explore.png)
+![R for Data Science (r4ds.had.co.nz)](img/data-science-explore.png)
 
 </br>
 
 How do we get there? Today we are going to be learning about the basic data structures in R, get cozy with the R environment, and learn how to get help when you are stuck. Because everyone gets stuck. A lot. Then you will learn how to get your data in and out of R. Next week we will learn how to tidy our data, subset and merge data and generate descriptive statistics. The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. After that, we will make all sorts of plots - from simple data exploration to interactive plots - this is always a fun lesson. And then lastly, we will learn to write some functions, which really can save you time and help scale up your analyses.
 
 
-![](img/spotify-howtobuildmvp.gif)
+![Henrik Kniberg, refurbished by blog.fastmonkeys.com](img/spotify-howtobuildmvp.gif)
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF> __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/GD3KJB9>), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF>, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/GD3KJB9>), it will help me further develop this course and would be greatly appreciated. 
 
 </br>
 
@@ -47,7 +47,7 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 ***
 ####Highlighting
 
-`grey background` - a package, function, code, command or directory      
+`grey background` - a package, function(), code, command or directory      
 *italics* - an important term or concept or an individual file or folder     
 **bold** - heading or a term that is being defined      
 <span style="color:blue">blue text</span> - named or unnamed hyperlink     
@@ -119,20 +119,19 @@ If you have a problem with installing R or RStudio, please come 15 minutes befor
     
 ##A quick intro to  the R environment
 
-The "Comprehensive R Archive Network" (CRAN) is a collection of sites that have the same R and related R material (ie. new and previous versions of R software, documentation, packages and collections of R packages to download that might be useful in a particular field (CRAN Task Views), links to the R journal and R search sites, bug reports and fixes). Different sites (for example, we used http://cran.utstat.utoronto.ca/), are called a _mirrors_ because they reflect the content from the master site in Austria. There are mirrors worldwide to reduce the burden on the network. CRAN will be referred to here as a main repository for obtaining R packages.
+R is a language and an __environment__ because it has the tools and software for the storage, manipulation, statistical analysis, and graphical display for of data.  It comes with about 25 built-in 'packages' and uses a simple programming language ("S"). <https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf>
 
-To paraphrase the CRAN gurus:     
-<https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf>
+So...what are in these packages? A __package__ is a collection of functions, sometimes data, and compiled code. __Functions__ are the basic workhorses of R; they are the tools we use to analyze our data. Each function can be thought of as a unit that has a specific task. A function takes an input, evaluates an expression (ie. a calculation, plot, merge, etc.), and returns a value. (We will have an entire separate lesson to explore functions.)
 
-
-R is an __environment__ because it has the tools and software for the storage, manipulation, statistical analysis, and graphical display for of data.  It comes with about 25 built-in 'packages' and uses a simple programming language ("S"). Users have been encouraged to make there own packages... there are now over 12,000 packages on CRAN and about 1,500 on Bioconductor.
+Users have been encouraged to make there own packages... there are now over 12,000 packages on CRAN and about 1,500 on Bioconductor.
 
 ![](img/cran_pkg.png){width=600px}
 </br>
 
+The "Comprehensive R Archive Network" (CRAN) is a collection of sites that have the same R and related R material (ie. new and previous versions of R software, documentation, packages and collections of R packages to download that might be useful in a particular field (CRAN Task Views), links to the R journal and R search sites, bug reports and fixes). Different sites (for example, we used http://cran.utstat.utoronto.ca/), are called a _mirrors_ because they reflect the content from the master site in Austria. There are mirrors worldwide to reduce the burden on the network. CRAN will be referred to here as a main repository for obtaining R packages.
+
 Bioconductor is another repository for R packages (<https://www.bioconductor.org/>), but it specializes in tools for high-throughput genomics data. One nice thing about Bioconductor is that it has decent vignettes; a __vignette__ is the set of documentation for a package explaining its functions and usages in a tutorial-like format. 
 
-So...what are in these packages? A __package__ is a collection of functions, sometimes data, and compiled code. __Functions__ are the basic workhorses of R; they are the tools we use to analyze our data. Each function can be thought of as a unit that has a specific task. A function takes an input, evaluates an expression (ie. a calucation, plot, merge, etc.), and returns a value. (We will have an entire separate lesson to explore functions.)
 
 RStudio is an IDE (Integrated Development Environment) for R that provides a more user-friendly experience than using R in a terminal setting. It has 4 main areas or panes, which you can customize to some extent under `Tools > Global Options > Pane Layout`:
 
@@ -198,93 +197,6 @@ For example, under `Code -> Editing` I have selected `Soft-wrap R source files` 
 You may also want to change the `Appearance` of your code. I like the `RStudio theme: Modern` and `Editor font: Ubuntu Mono`, but pick whatever you like! Again, you need to hit `Apply` to make changes.
 
 That whirlwind tour isn't everything the IDE can do, but it is enough to get started.
-
-##A quick note on directory structure
-
-This is an image of a possible directory. 
-
-![](img/unix_boys.jpg){width=500px}
-
-</br>
-
-In this hierarchy we will pretend to be _benedict_, and we are hanging out in our _Tables_ folder. R looks to read in your files from your __working directory__, which in this case would be _Tables_, so at this moment, R would have access to _proof.tsv_ and _genes.csv_. If I tried to open _paper.txt_ under _benedict_, R would tell me there is no such file in my current working directory.
-
-To get your working directory in R you would type in your Source pane: 
-
-```
-getwd()
-```
-You would then press `Enter` to execute the code in the Console. Technically, there is no reason to save this code and it could be typed and executed in the Console. However, to save some mental effort choosing which code to save or not (especially when starting out), let's type everything in the Source. You can always go back and choose what to delete, and harder to recreate what you didn't save.
-
-The output in your Console would be:
-
-```
-[1] "/home/benedict/Tables"
-```
-
-R will always tell you your __absolute directory__. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names differ in the path.
-
-
-To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"home/benedict"`). Therefore, our current location could also be denoted as `"~/Tables"`.
-
-To move to the directory _ewan_ we use a function that will set the working directory:
-
-```
-setwd("/home/ewan")
-#or 
-setwd("~/ewan")
-#or 
-setwd("../ewan")
-
-```
-A __relative directory__ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
-
-If I wanted to move back to _Tables_ using the absolute _path_, I would set a new working directory:
-
-```
-setwd("/home/benedict/Tables")
-#or
-setwd("~/benedict/Tables")
-```
-
-And the _relative path_ would be:
-
-```
-setwd("../benedict/Tables")
-```
-
-There is some talk over setting working directories within scripts. Obviously, not everyone has the same absolute path, so if must set a directory in your script, _it is best to have a relative path starting from the folder your script is in_. Keep in mind that others you share your script with might not have the same directory structure if you refer to subfolders. 
-
-You can set your working directory by:
-
-1. `setwd()`     
-2. `Session -> Set Working Directory` (3 Options)     
-3. `Files Window -> More (Gear Symbol) -> Set As Working Directory`     
-
-
-***
-__Challenge__ 
-
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/turtle_challenge.jpg){width=100px}
-</div>
-
-</br>
-
-Assume you are in the _Tables_ folder. Which is NOT a valid way to get to the _Thesis_ folder?
-
-- `setwd("../../ewan/Thesis")`
-- `setwd("~/ewan/Thesis")`
-- `setwd("../brad/../ewan/Thesis")`
-- `setwd("./../../ewan/Thesis")`
-- `setwd("/home/ewan/Thesis")`
-- They are all valid, stop messing with me.
-
-Follow-up: Which are the absolute paths?
-
-</br>
-
-***
 
 
 ##Making Life Easier
@@ -414,9 +326,94 @@ _Asking a question_
 
 _Remember_ - everyone looks for help online ALL THE TIME. It is completely normal. Also, with programming there are multiple ways to come up with an answer. There are different packages that let you do the same thing, but with shortcuts. There are different levels of 'efficiency' and 'redundancy' in coding. You will work on refining these aspects of your code as you go along in this course, and in your coding career.
 
-Last but not least, to make life easier: under Help there is a _Cheatsheet of Keyboard Shortcuts_ or a browser list [here]<file:///usr/lib/rstudio/www/docs/keyboard.htm>.
+Last but not least, to make life easier: under Help there is a _Cheatsheet of Keyboard Shortcuts_ or a browser list [here](file:///usr/lib/rstudio/www/docs/keyboard.htm).
+
+##A quick note on directory structure
+
+This is an image of a possible directory. 
+
+![](img/unix_boys.jpg){width=500px}
+
+</br>
+
+In this hierarchy we will pretend to be _benedict_, and we are hanging out in our _Tables_ folder. R looks to read in your files from your __working directory__, which in this case would be _Tables_, so at this moment, R would have access to _proof.tsv_ and _genes.csv_. If I tried to open _paper.txt_ under _benedict_, R would tell me there is no such file in my current working directory.
+
+To get your working directory in R you would type in your Source pane: 
+
+```
+getwd()
+```
+You would then press `Enter` to execute the code in the Console. Technically, there is no reason to save this code and it could be typed and executed in the Console. However, to save some mental effort choosing which code to save or not (especially when starting out), let's type everything in the Source. You can always go back and choose what to delete, and harder to recreate what you didn't save.
+
+The output in your Console would be:
+
+```
+[1] "/home/benedict/Tables"
+```
+
+R will always tell you your __absolute directory__. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names differ in the path.
 
 
+To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"home/benedict"`). Therefore, our current location could also be denoted as `"~/Tables"`.
+
+To move to the directory _ewan_ we use a function that will set the working directory:
+
+```
+setwd("/home/ewan")
+#or 
+setwd("~/ewan")
+#or 
+setwd("../ewan")
+
+```
+A __relative directory__ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
+
+If I wanted to move back to _Tables_ using the absolute _path_, I would set a new working directory:
+
+```
+setwd("/home/benedict/Tables")
+#or
+setwd("~/benedict/Tables")
+```
+
+And the _relative path_ would be:
+
+```
+setwd("../benedict/Tables")
+```
+
+There is some talk over setting working directories within scripts. Obviously, not everyone has the same absolute path, so if must set a directory in your script, _it is best to have a relative path starting from the folder your script is in_. Keep in mind that others you share your script with might not have the same directory structure if you refer to subfolders. 
+
+You can set your working directory by:
+
+1. `setwd()`     
+2. `Session -> Set Working Directory` (3 Options)     
+3. `Files Window -> More (Gear Symbol) -> Set As Working Directory`     
+
+
+***
+__Challenge__ 
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/turtle_challenge.jpg){width=100px}
+</div>
+
+</br>
+
+Assume you are in the _Tables_ folder. Which is NOT a valid way to get to the _Thesis_ folder?
+
+- `setwd("../../ewan/Thesis")`
+- `setwd("~/ewan/Thesis")`
+- `setwd("../brad/../ewan/Thesis")`
+- `setwd("./../../ewan/Thesis")`
+- `setwd("/home/ewan/Thesis")`
+- They are all valid, stop messing with me.
+
+Follow-up: Which are the absolute paths?
+
+</br>
+
+***
 
 
 ##A quick intro to R data types and data structures
@@ -1034,7 +1031,7 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Create a function to get the counts to multiply all for each gene by 3.
+Use the `apply()` function to multiply the counts for each gene by 3.
 
 </br>
 </br>     
