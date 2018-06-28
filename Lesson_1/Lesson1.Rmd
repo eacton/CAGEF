@@ -354,16 +354,14 @@ The output in your Console would be:
 R will always tell you your __absolute directory__. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names differ in the path.
 
 
-To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"home/benedict"`). Therefore, our current location could also be denoted as `"~/Tables"`.
+To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"/home/benedict"`). Therefore, our current location could also be denoted as `"~/Tables"`.
 
 To move to the directory _ewan_ we use a function that will set the working directory:
 
 ```
 setwd("/home/ewan")
 #or 
-setwd("~/ewan")
-#or 
-setwd("../ewan")
+setwd("../../ewan")
 
 ```
 A __relative directory__ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
@@ -373,7 +371,7 @@ If I wanted to move back to _Tables_ using the absolute _path_, I would set a ne
 ```
 setwd("/home/benedict/Tables")
 #or
-setwd("~/benedict/Tables")
+setwd("~/Tables")
 ```
 
 And the _relative path_ would be:

@@ -354,16 +354,14 @@ The output in your Console would be:
 R will always tell you your __absolute directory__. An absolute directory is a _path_ starting from your root `"/"`. The absolute directory can vary from computer to computer. My home directory and your home directory are not the same; our names differ in the path.
 
 
-To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"home/benedict"`). Therefore, our current location could also be denoted as `"~/Tables"`.
+To move directories, it is good to know a couple shortcuts. `'.'` is your current directory. `'..'` is up one directory level. `'~'` is your home directory (a shortcut for `"/home/benedict"`). Therefore, our current location could also be denoted as `"~/Tables"`.
 
 To move to the directory _ewan_ we use a function that will set the working directory:
 
 ```
 setwd("/home/ewan")
 #or 
-setwd("~/ewan")
-#or 
-setwd("../ewan")
+setwd("../../ewan")
 
 ```
 A __relative directory__ is a path starting from whereever your currently are (your working directory). This path could be the same on your computer and my computer if and only if we have the same directory structure. 
@@ -373,7 +371,7 @@ If I wanted to move back to _Tables_ using the absolute _path_, I would set a ne
 ```
 setwd("/home/benedict/Tables")
 #or
-setwd("~/benedict/Tables")
+setwd("~/Tables")
 ```
 
 And the _relative path_ would be:
@@ -2359,20 +2357,20 @@ gs_ls()
 ```
 
 ```
-## # A tibble: 59 x 10
+## # A tibble: 62 x 10
 ##    sheet_title  author perm  version updated             sheet_key ws_feed
 ##    <chr>        <chr>  <chr> <chr>   <dttm>              <chr>     <chr>  
-##  1 "          … "  ac… rw    new     2018-06-28 15:15:54 1wvlq3Wv… https:…
-##  2 "          … "  ac… rw    new     2018-06-28 14:50:19 1P0LTHu7… https:…
-##  3 "          … "  ac… rw    new     2018-06-28 13:16:51 18fSMQsW… https:…
-##  4 "          … "  ac… rw    new     2018-06-28 13:15:27 1o1DeUf1… https:…
-##  5 "          … "  ac… rw    new     2018-06-28 13:12:16 1TknxXbj… https:…
-##  6 CAGEF Time … "    … r     new     2018-06-26 21:41:28 1SdrZhSp… https:…
-##  7 "          … direc… rw    new     2018-06-25 04:31:02 1-_Ol7Zt… https:…
-##  8 "         M… "    … rw    new     2018-06-12 22:08:51 1Q2MCGLw… https:…
-##  9 DSG Lab & G… "    … r     new     2018-06-12 13:09:53 1TMg95N3… https:…
-## 10 "          … "  ac… rw    new     2018-06-06 14:41:35 1ipLSQWH… https:…
-## # ... with 49 more rows, and 3 more variables: alternate <chr>,
+##  1 "          … "  ac… rw    new     2018-06-28 18:11:40 1C8cYqxW… https:…
+##  2 "          … "  ac… rw    new     2018-06-28 18:10:33 1luM-Obe… https:…
+##  3 CAGEF Time … "    … r     new     2018-06-28 18:08:53 1SdrZhSp… https:…
+##  4 "          … "  ac… rw    new     2018-06-28 15:30:26 1H8F-E39… https:…
+##  5 "          … "  ac… rw    new     2018-06-28 15:15:54 1wvlq3Wv… https:…
+##  6 "          … "  ac… rw    new     2018-06-28 14:50:19 1P0LTHu7… https:…
+##  7 "          … "  ac… rw    new     2018-06-28 13:16:51 18fSMQsW… https:…
+##  8 "          … "  ac… rw    new     2018-06-28 13:15:27 1o1DeUf1… https:…
+##  9 "          … "  ac… rw    new     2018-06-28 13:12:16 1TknxXbj… https:…
+## 10 "          … direc… rw    new     2018-06-25 04:31:02 1-_Ol7Zt… https:…
+## # ... with 52 more rows, and 3 more variables: alternate <chr>,
 ## #   self <chr>, alt_key <chr>
 ```
 
@@ -2416,13 +2414,13 @@ str(books)
 
 ```
 ## List of 17
-##  $ sheet_key  : chr "1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8"
+##  $ sheet_key  : chr "1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE"
 ##  $ sheet_title: chr "books_alpha"
 ##  $ n_ws       : int 4
-##  $ ws_feed    : chr "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full"
-##  $ browser_url: chr "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/"
-##  $ updated    : POSIXct[1:1], format: "2018-06-28 15:30:25"
-##  $ reg_date   : POSIXct[1:1], format: "2018-06-28 15:30:28"
+##  $ ws_feed    : chr "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full"
+##  $ browser_url: chr "https://docs.google.com/spreadsheets/d/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/"
+##  $ updated    : POSIXct[1:1], format: "2018-06-28 18:12:02"
+##  $ reg_date   : POSIXct[1:1], format: "2018-06-28 18:12:04"
 ##  $ visibility : chr "private"
 ##  $ lookup     : logi TRUE
 ##  $ is_public  : logi FALSE
@@ -2433,20 +2431,20 @@ str(books)
 ##  $ links      :Classes 'tbl_df', 'tbl' and 'data.frame':	4 obs. of  3 variables:
 ##   ..$ rel : chr [1:4] "alternate" "http://schemas.google.com/g/2005#feed" "http://schemas.google.com/g/2005#post" "self"
 ##   ..$ type: chr [1:4] "application/atom+xml" "application/atom+xml" "application/atom+xml" "application/atom+xml"
-##   ..$ href: chr [1:4] "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/edit" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full"
+##   ..$ href: chr [1:4] "https://docs.google.com/spreadsheets/d/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/edit" "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full" "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full" "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full"
 ##  $ ws         :Classes 'tbl_df', 'tbl' and 'data.frame':	4 obs. of  12 variables:
-##   ..$ ws_id           : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/owovjwv" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/o1k54cj" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/otd25t6" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/o69t929"
-##   ..$ ws_key          : chr [1:4] "owovjwv" "o1k54cj" "otd25t6" "o69t929"
+##   ..$ ws_id           : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full/ov73zlf" "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full/o14a3s" "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full/ovpm1h5" "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full/oknlk8h"
+##   ..$ ws_key          : chr [1:4] "ov73zlf" "o14a3s" "ovpm1h5" "oknlk8h"
 ##   ..$ ws_title        : chr [1:4] "Lists" "All alphabetised" "Top titles" "dropoff"
 ##   ..$ row_extent      : int [1:4] 1000 2004 1000 1000
 ##   ..$ col_extent      : int [1:4] 26 20 26 26
-##   ..$ gid             : chr [1:4] "1976700757" "94297241" "1775455024" "379278843"
-##   ..$ listfeed        : chr [1:4] "https://spreadsheets.google.com/feeds/list/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/owovjwv/private/full" "https://spreadsheets.google.com/feeds/list/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/o1k54cj/private/full" "https://spreadsheets.google.com/feeds/list/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/otd25t6/private/full" "https://spreadsheets.google.com/feeds/list/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/o69t929/private/full"
-##   ..$ cellsfeed       : chr [1:4] "https://spreadsheets.google.com/feeds/cells/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/owovjwv/private/full" "https://spreadsheets.google.com/feeds/cells/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/o1k54cj/private/full" "https://spreadsheets.google.com/feeds/cells/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/otd25t6/private/full" "https://spreadsheets.google.com/feeds/cells/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/o69t929/private/full"
-##   ..$ visualizationApi: chr [1:4] "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/gviz/tq?gid=1976700757" "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/gviz/tq?gid=94297241" "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/gviz/tq?gid=1775455024" "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/gviz/tq?gid=379278843"
-##   ..$ exportcsv       : chr [1:4] "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/export?gid=1976700757&format=csv" "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/export?gid=94297241&format=csv" "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/export?gid=1775455024&format=csv" "https://docs.google.com/spreadsheets/d/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/export?gid=379278843&format=csv"
-##   ..$ self            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/owovjwv" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/o1k54cj" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/otd25t6" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/o69t929"
-##   ..$ edit            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/owovjwv/17puu5" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/o1k54cj/upb97m" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/otd25t6/ld5d1q" "https://spreadsheets.google.com/feeds/worksheets/1H8F-E39i0dA2r8o6rsxOFATof0IOEVYCMBVttsdOrJ8/private/full/o69t929/vuj6yw"
+##   ..$ gid             : chr [1:4] "1886394409" "1879282" "1917469731" "1248960875"
+##   ..$ listfeed        : chr [1:4] "https://spreadsheets.google.com/feeds/list/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/ov73zlf/private/full" "https://spreadsheets.google.com/feeds/list/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/o14a3s/private/full" "https://spreadsheets.google.com/feeds/list/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/ovpm1h5/private/full" "https://spreadsheets.google.com/feeds/list/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/oknlk8h/private/full"
+##   ..$ cellsfeed       : chr [1:4] "https://spreadsheets.google.com/feeds/cells/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/ov73zlf/private/full" "https://spreadsheets.google.com/feeds/cells/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/o14a3s/private/full" "https://spreadsheets.google.com/feeds/cells/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/ovpm1h5/private/full" "https://spreadsheets.google.com/feeds/cells/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/oknlk8h/private/full"
+##   ..$ visualizationApi: chr [1:4] "https://docs.google.com/spreadsheets/d/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/gviz/tq?gid=1886394409" "https://docs.google.com/spreadsheets/d/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/gviz/tq?gid=1879282" "https://docs.google.com/spreadsheets/d/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/gviz/tq?gid=1917469731" "https://docs.google.com/spreadsheets/d/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/gviz/tq?gid=1248960875"
+##   ..$ exportcsv       : chr [1:4] "https://docs.google.com/spreadsheets/d/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/export?gid=1886394409&format=csv" "https://docs.google.com/spreadsheets/d/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/export?gid=1879282&format=csv" "https://docs.google.com/spreadsheets/d/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/export?gid=1917469731&format=csv" "https://docs.google.com/spreadsheets/d/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/export?gid=1248960875&format=csv"
+##   ..$ self            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full/ov73zlf" "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full/o14a3s" "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full/ovpm1h5" "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full/oknlk8h"
+##   ..$ edit            : chr [1:4] "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full/ov73zlf/17puu5" "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full/o14a3s/upb97m" "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full/ovpm1h5/ld5d1q" "https://spreadsheets.google.com/feeds/worksheets/1wzHKaL75jPmWyappW5QuRVQ3Hl8mx7mMrXVhDWVcRiE/private/full/oknlk8h/vuj6yw"
 ##  $ alt_key    : chr NA
 ##  - attr(*, "class")= chr [1:2] "googlesheet" "list"
 ```
