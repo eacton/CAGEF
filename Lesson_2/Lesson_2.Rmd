@@ -26,18 +26,18 @@ This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis
 This lesson is the second in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
 
 
-![](img/data-science-explore.png)
+![img borrowed from r4ds.had.co.nz](img/data-science-explore.png)
 
 </br>
 
 How do we get there? Today we are going to be learning about how to subset and filter our data and perform all of the manipulations one has to do in daily coding life. We will learn about tidy data and how it makes data analysis less of a pain. We will perform some basic statistics on our newly transformed dataset. Next week we will learn how to tidy our data, subset and merge data and generate descriptive statistics. The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. After that, we will make all sorts of plots - from simple data exploration to interactive plots - this is always a fun lesson. And then lastly, we will learn to write some functions, which really can save you time and help scale up your analyses.
 
 
-![](img/spotify-howtobuildmvp.gif)
+![Henrik Kniberg, refurbished by blog.fastmonkeys.com](img/spotify-howtobuildmvp.gif)
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF> __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/SMGKMCS>), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF>, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/SMGKMCS>), it will help me further develop this course and would be greatly appreciated. 
 
 </br>
 
@@ -105,8 +105,9 @@ In this lesson we want to answer 3 simple questions:
 
    
     - Which latrine depth has the greatest mean number of OTUs?
+      (remember the Country_LatrineNo_Depth site encoding)
     - Is there more Clostridia in Tanzania or Vietnam?
-    - Which site had the greatest number of bacteria?
+    - Which site had the greatest number of Taxa represented?
 
 
 To help us be able to answer these questions, we are going to learn how to manipulate our data.
@@ -228,8 +229,6 @@ Try changing the output to show only the first 5 rows of your data frame.
 head(dat,5)
 #subsetting
 dat[1:5,]
-#technically, but fallible, not obvious if following code, and so much typing
-dat[dat$Taxa == "Acidobacteria_Gp1" | dat$Taxa == "Acidobacteria_Gp10" | dat$Taxa == "Acidobacteria_Gp14" | dat$Taxa == "Acidobacteria_Gp16" |dat$Taxa == "Acidobacteria_Gp17", ]
 ```
 
 
@@ -247,8 +246,9 @@ head(dat[order(dat$T_2_12, dat$T_2_9, decreasing = TRUE), 1:10], 10)
 Now that we have some basic data-wrangling skills:
 
     - Which latrine depth has the greatest mean number of OTUs?
+      (remember the Country_LatrineNo_Depth site encoding)
     - Is there more Clostridia in Tanzania or Vietnam?
-    - Which site had the greatest number of bacteria?
+    - Which site had the greatest number of Taxa represented?
 
 
 How easy is it to answer these questions with the data in this 'messy' format?
@@ -270,6 +270,31 @@ Answer our 3 questions using the base R.
 </br>
 
 ***
+
+```{r include = FALSE}
+#which latrine depth has the greatest mean number of otus?
+mean_otus_sites <- apply(dat[,-1], 2, mean)
+mean_otus_sites[order(mean_otus_sites, decreasing = TRUE)]
+#end of abilities shown...based on descending order, probably 1cm? 
+
+
+#more clostridia or tanzania in vietnam?
+tan <- dat[, 1:30]
+viet <- dat[, c(1, 31:82)]
+
+tan <- tan[dat$Taxa == "Clostridia",]
+viet <- viet[dat$Taxa == "Clostridia",]
+
+sum(tan[,-1]) > sum(viet[, -1])
+sum(tan[,-1])/(length(tan)-1) > sum(viet[, -1])/(length(viet)-1)
+
+#which site had the greatest number of Taxa represented?
+sum_otus_sites <- apply(dat[,-1], 2, function(x) ifelse(x !=0, 1, 0))
+sum_otus_sites <- apply(sum_otus_sites, 2, sum)
+sum_otus_sites[order(sum_otus_sites, decreasing = TRUE)]
+
+```
+
 
 ##A quick intro to the dplyr package
 
@@ -311,9 +336,14 @@ The `column_to_rownames()` function is used here to move our character data, Tax
 
 
 ```{r}
-dat <- dat %>% column_to_rownames("Taxa") 
+taxa_rownames_dat <- dat %>% column_to_rownames("Taxa") 
 ```
 
+We can use the reverse function `rownames_to_column` to recreate the Taxa column from rownames.
+
+```{r}
+taxa_colnames_dat <- taxa_rownames_dat %>% rownames_to_column("Taxa")
+```
 
 Continuing, with our previous base R subsetting examples, to get only Taxa that had OTUs at sites T_2_1 and T_2_10 using `dplyr`, you can use the following filter:
 
@@ -321,23 +351,23 @@ Continuing, with our previous base R subsetting examples, to get only Taxa that 
 dat %>% filter(., T_2_10 != 0 & T_2_1 != 0)
 ```
 
-You can subset columns by using the `select()` function. You can also reorder columns using this function. I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. In this case, before using `select()`, we need the rownames to be back as a 'Taxa' column. We can use the reverse function `rownames_to_column` to recreate Taxa. `head()` and `tail()` can also be used with pipes to look at the output.
+You can subset columns by using the `select()` function. You can also reorder columns using this function. I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. `head()` and `tail()` can also be used with pipes to look at the output.
 
 ```{r}
-dat %>% rownames_to_column("Taxa") %>% select(T_2_9, T_2_10, Taxa) %>% head()
+dat %>% select(T_2_9, T_2_10, Taxa) %>% head()
 ```
 
 `dplyr` also includes some helper functions that allow you to select variables based on their names. For example, if we only wanted the samples from Vietnam, we could use `starts_with()`. 
 
 ```{r}
-dat %>% select(starts_with("V")) %>% head()
+dat %>% select(Taxa, starts_with("V")) %>% head()
 
 ```
 
 Or all latrines with depths of 4 cm using `ends_with()`.
 
 ```{r}
-dat %>% select(ends_with("4")) %>% head()
+dat %>% select(Taxa, ends_with("4")) %>% head()
 
 ```
 
@@ -352,14 +382,14 @@ __Challenge__
 
 </div>
 
-Check out 'select_helpers' in the help menu. Grab all of the columns that contain depths for Well 2, whether it is from Vietnam or Tanzania.
+Check out 'select_helpers' in the help menu. Grab all of the columns that contain depths for Well 2, whether it is from Vietnam or Tanzania. Retain Taxa either as rownames or in a column.
 
 ```{r include = FALSE}
-dat %>% select(contains("_2_")) 
+dat %>% select(Taxa, contains("_2_")) 
 
-dat %>% select(matches("_2_")) 
+dat %>% select(Taxa, matches("_2_")) 
 
-dat %>% select(starts_with("T_2_"), starts_with("V_2_")) 
+dat %>% select(Taxa, starts_with("T_2_"), starts_with("V_2_")) 
 
 ```
 
@@ -370,15 +400,14 @@ dat %>% select(starts_with("T_2_"), starts_with("V_2_"))
 
 ***
 
-The `arrange()` function helps you to sort your data. The default is ordered from smallest to largest (or a-z for character data). You can switch the order by specifying `desc` as shown below. 
+The `arrange()` function helps you to sort your data. The default is ordered from smallest to largest (or a-z for character data). You can switch the order by specifying `desc` (descending) as shown below. 
 
-I have added a few extra lines of code to show you how we can start building code that passes a result to the next function instead of creating a bunch of new variables to store data in between functions being exectuted. However, if you get more than 2 pipes `%>%` it gets hard to follow for a reader (or yourself after 5 minutes). Starting a new line after each pipe, allows a reader to easily see which function is operating and makes it easier to follow your logic.
+I have added a few extra lines of code to show you how we can start building code that passes a result to the next function instead of creating a bunch of new variables to store data in between functions being exectuted. However, if you get more than 2 pipes `%>%` it gets hard to follow for a reader (or yourself). Starting a new line after each pipe, allows a reader to easily see which function is operating and makes it easier to follow your logic.
 
 ```{r eval = c(3:8)}
-dat %>% rownames_to_column("Taxa") %>% select(Taxa, T_2_1) %>% arrange(desc(T_2_1)) %>% filter(T_2_1 !=0) %>% filter(Taxa != "Unknown") %>% unique()
+dat %>% select(Taxa, T_2_1) %>% arrange(desc(T_2_1)) %>% filter(T_2_1 !=0) %>% filter(Taxa != "Unknown") %>% unique()
 #equivalent to
 dat %>% 
-  rownames_to_column("Taxa") %>%
   select(Taxa, T_2_1) %>% 
   arrange(desc(T_2_1)) %>% 
   filter(T_2_1 !=0) %>%
@@ -387,33 +416,37 @@ dat %>%
 
 ```
 
-`unique()` is a function that removes duplicate rows. How many rows did it remove in this case?
+`unique()` is a function that removes duplicate rows. How many rows did it remove in this case? How do you know?
 
 ```{r include = FALSE}
 #Trick question. None. I just wanted to include the `unique()` function in the lesson.
-
+#number of rows before and after the unique call are the same
 ```
 
 
 `mutate()` is a function to create new column, most often the product of a calculation. For example, let's calculate the total number of OTUs for each Taxa using `rowSums()`. You must specify a column name for the column you are creating. 
 
-An annoying part of `dplyr` is that it will drop rownames with most functions (ie. `mutate()`, `filter()` and `arrange()`, but not `select()`). It doesn't make much sense to take row sums if we can't tell what the rows are, so I will add back Taxa as a column. However, to do the `rowSums()` calculation we cannot have character data in our rows. Therefore `.[ , -1]` is everything but our character data, which was added back as our first column.
+An annoying part of `dplyr` is that it will drop rownames with most functions (ie. `mutate()`, `filter()` and `arrange()`, but not `select()`). It doesn't make much sense to take row sums if we can't tell what the rows are. However, to do the `rowSums()` calculation we cannot have character data in our rows. Therefore `.[ , -1]` is everything but our character data (which is our first column).
 
 You may have noticed that I included the dot (`.`) in the bracket for `rowSums()`. This is because it is inside a nested function (`mutate()` is a function and `rowSums()` is inside it). Without an argument to `rowSums()` an error would be generated that "argument 'x' is missing with no default". 
 
 ```{r}
-dat %>% rownames_to_column("Taxa") %>% mutate(total_OTUs = rowSums(.[,-1])) %>% head()
+dat %>% mutate(total_OTUs = rowSums(.[,-1])) %>% head()
 
 ```
-Note that if I use `rowSums()` outside of another function (ie. not nested), I do not need to specify the data frame. In this case, the output is a vector and the rownames were preserved for the names of the vector elements.
+Note that if I use `rowSums()` outside of another function (ie. not nested), I do not need to specify the data frame. While mutate creates a new column for the result of the `rowSums()` function, using `rowSums()` alone produces an output in vector format of the length of the number of rows in the data frame.
 
 ```{r}
-#answer is now a vector (with rownames)
-dat %>% rowSums()
+dat[, -1] %>% rowSums()
+```
+If instead, the dataframe where the Taxa column was converted to rownames, the output is a named vector; the rownames were preserved for the names of the vector elements.
+
+```{r}
+taxa_rownames_dat %>% rowSums()
 ```
 
 
-`transmute()` will also create a new variable, but it will drop the existing variables (it will give you a single column of your new variable). The output for `transmute()` is a data frame of one column. Rownames have been lost.
+`transmute()` will also create a new variable, but it will drop the existing variables (it will give you a single column of your new variable). The output for `transmute()` is a data frame of one column.
 
 ```{r}
 dat %>% transmute(total_OTUs = rowSums(.[ , -1]))
@@ -422,41 +455,116 @@ dat %>% transmute(total_OTUs = rowSums(.[ , -1]))
 
 
 
-It is up to you whether you want to keep your data in a data frame or switch to a vector if you are dealing with a single variable. Using a `dplyr` function will maintain your data in a data frame. Using non-dplyr functions will switch your data to a vector if you have a single variable.
+It is up to you whether you want to keep your data in a data frame or switch to a vector if you are dealing with a single variable. Using a `dplyr` function will maintain your data in a data frame. Using non-dplyr functions will switch your data to a vector if you have a 1-dimensional output.
 
 
 `dplyr` has one more super-useful function, `summarize()` which allows us to get summary statistics on data. I'll give one example and then we'll come back to this function once our data is in 'tidy' format. 
 
 `n()` is a `dplyr` function to count the number of observations in a group - we are simply going to count the instances of a Taxa. In order for R to know we want to count the instances of each Taxa (as opposed to say, each row), there is a function `group_by()` that we can use to group variables or sets of variables together. That way if we had more than one case of "Clostridia", they would be grouped together and when we counted the number of cases, the result would be greater than 1. `group_by()` is useful for calculations and plotting on subsets of your data without having to turn your variables into factors.
 
-We can arrange the results in descending order to see if there is more than one row per Taxa. What is the result if you don't use `group_by()`? Can anyone think of another way to see if there is more than one row per Taxa? 
+We can arrange the results in descending order to see if there is more than one row per Taxa. 
 
 ```{r}
 dat %>% 
-  rownames_to_column("Taxa") %>% 
   group_by(Taxa) %>%
   summarize(n = n()) %>%
   arrange(desc(n))
 ```
+What is the result if you don't use `group_by()`? Can anyone think of another way to see if there is more than one row per Taxa? 
+
 ```{r include = FALSE}
 #using mutate
 dat %>% 
-  rownames_to_column("Taxa") %>% 
   group_by(Taxa) %>%
   mutate(n = n()) %>%
   arrange(desc(n))
 #using transmute
 dat %>% 
-  rownames_to_column("Taxa") %>% 
   group_by(Taxa) %>%
   transmute(n = n()) %>%
   arrange(desc(n))
 #unique - total number of unique Taxa equal to number of rows
+nrow(dat)
+#should be equal to:
 dat %>% 
-  rownames_to_column("Taxa") %>% 
   select(Taxa) %>%
   unique() %>%
   summarize(n()) #or nrow(.)
+
+```
+
+Now that we have some new tools, let's try to answer our questions again.
+
+    - Which latrine depth has the greatest mean number of OTUs?
+      (remember the Country_LatrineNo_Depth site encoding)
+    - Is there more Clostridia in Tanzania or Vietnam?
+    - Which site had the greatest number of Taxa represented?
+
+
+
+
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=150px}
+
+</div>
+
+Answer our 3 questions using the `dplyr`.
+
+</br>
+</br>
+</br>
+
+***
+
+```{r include = FALSE}
+#which latrine depth has the greatest mean number of otus?
+#this doesn't get much better until we get our tidy data format
+#we could grab otu depths that match and add them together...
+mean_otus_sites <- apply(dat[,-1], 2, mean)
+mean_otus_sites[order(mean_otus_sites, decreasing = TRUE)]
+#end of abilities shown...based on descending order, probably 1cm? 
+
+
+#more clostridia or tanzania in vietnam?
+#now we can use helper functions to select by name rather than counting our columns
+#total
+tan <- dat %>%
+  select(starts_with("T")) %>% 
+  filter(Taxa == "Clostridia") %>% 
+  transmute(sum_clostridia = sum(.[,-1]))
+
+#or can use summarize
+viet <- dat %>%
+  select(Taxa, starts_with("V")) %>% 
+  filter(Taxa == "Clostridia") %>% 
+  summarize(sum_clostridia = sum(.[,-1]))
+
+tan$sum_clostridia > viet$sum_clostridia
+#don't really need to use transmute here, but good practice
+
+#per site
+tan <- dat %>%
+  select(starts_with("T")) %>% 
+  filter(Taxa == "Clostridia") %>% 
+  transmute(sum_clostridia = sum(.[,-1])/(ncol(.)-1))
+
+viet <- dat %>%
+  select(Taxa, starts_with("V")) %>% 
+  filter(Taxa == "Clostridia") %>% 
+  summarize(sum_clostridia = as.numeric(mean(.[,-1])))
+
+tan$sum_clostridia > viet$sum_clostridia 
+
+#which site had the greatest number of Taxa represented?
+#this doesn't get much better until we get our tidy data format
+sum_otus_sites <- apply(dat[,-1], 2, function(x) ifelse(x !=0, 1, 0))
+sum_otus_sites <- apply(sum_otus_sites, 2, sum)
+sum_otus_sites[order(sum_otus_sites, decreasing = TRUE)]
+
 
 ```
 
@@ -510,29 +618,6 @@ Hadley has a large fan-base. Someone even made a plot of Hadley using his own pa
 
 Back to the normalverse...
 
-    - Which latrine depth has the greatest mean number of OTUs?
-    - Is there more Clostridia in Tanzania or Vietnam?
-    - Which site had the greatest number of bacteria?
-
-
-How easy is it to answer these questions with the data in its 'messy' format?
-
-***
-__Challenge__ 
-
-
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/pug_challenge1.jpeg){width=150px}
-
-</div>
-
-Answer our 3 questions using the `dplyr`.
-
-</br>
-</br>
-</br>
-
-***
 
 ###Assessing our data frame
 
@@ -542,7 +627,7 @@ At first glance we can see that the column names are actually 3 different variab
 
 We could keep the column names as the sample names (as they are meaningful to the researcher) and add the extra variable columns, or we could make up sample names (ie. Sample_1) knowing that the information is not being lost, but rather stored in a more useful format.
 
-Some of the Taxa also appear to have an additional variable of information (ie. _Gp1), but not all taxa have this information. We can also make a separate column for this information.
+Some of the Taxa also appear to have an additional variable of information (ie. _Gp1), but not all taxa have this information. We could also make a separate column for this information.
 
 Each result is the same observational unit (ie. relative abundances of bacteria), so having one table is fine.
 
@@ -562,15 +647,14 @@ First let's load our library. Loading `tidyverse` will include the `tidyr` packa
 ```{r}
 library(tidyverse)
 ```
+
 Note that 8 different packages are loaded, and that 2 functions from the `stats` package have been replaced by functions of the same name by `dplyr`. Note that you can still access the `stats` version of the function by calling it directly as `stats::filter()`. 
 
 We can use the `gather()` function to collect our columns. This will make our dataset 'long' instead of 'wide'. 
 
-We need to provide `gather()` with information on our new columns. The first argument is our data frame, the second argument is the __key__, which is our named variable. In this case we want the column names that represent our Sites. The next argument is the __value__, which are our measurements; relative abundance values or OTUs. The third argument is all of the columns that we need to gather. You can specify the columns by listing their names or positions. In this example "-" means every column except Taxa.
+We need to provide `gather()` with information on our new columns. The first argument is our data frame, the second argument is the __key__, which is the name for the variable we want to gather (a set of column names). In this case our columns represent latrine sites, so we can assign the name 'Sites' to our key. The next argument is the __value__, which is the name for the measurements (usually numeric or integer) we have. In this case our values are Operational Taxonomic Units, so we can assign the name 'OTUs' to our value. The third argument is all of the columns that we want to gather. You can specify the columns by listing their names or positions. 
 
 ```{r }
-spread_dat <- gather(dat, Site, OTUs, T_2_1:V_9_4)
-
 dat %>% gather(Site, OTUs, T_2_1:V_9_4) %>% head()
 ```
 
@@ -578,12 +662,18 @@ dat %>% gather(Site, OTUs, T_2_1:V_9_4) %>% head()
 #equivalent to
 dat %>% gather(Site, OTUs, 2:82) %>% head()
 #equivalent to
-dat %>% gather(Site, OTUs, -Taxa) %>% head()
-#equivalent to
 dat %>% gather(Site, OTUs, -1) %>% head()
+#equivalent to
+dat %>% gather(Site, OTUs, -Taxa) %>% head()
 ```
+In the above examples "-" means gather every column except the 1st, or gather every column except Taxa. Taxa would still be retained as a column but its elements are not grouped in with 'Sites' (ie. we do not want 'V_9_4', 'T_2_9', and 'Clostridia' gathered into the same column). 
 
 
+Let's save the last variation into a data frame called spread_dat.
+
+```{r}
+spread_dat <- datt %>% gather(dat, Site, -Taxa)
+```
 
 Note how the dimensions of your dataframe have changed. spread_dat is now in a long format instead of wide.
 
@@ -645,8 +735,9 @@ split_dat %>%
 Now that we have tidy data, let's answer our questions:
 
     - Which latrine depth has the greatest mean number of OTUs?
+      (remember the Country_LatrineNo_Depth site encoding)
     - Is there more Clostridia in Tanzania or Vietnam?
-    - Which site had the greatest number of bacteria?
+    - Which site had the greatest number of Taxa represented?
 
 
 __Okay, Go!__
@@ -718,7 +809,7 @@ __Challenge__
 
 Collapse Country, Latrine_Number and Depth back into one variable, 'Site', using the `unite()` function. Store the output in a data frame called unite_dat.
 
-```{r include = FALSE}
+```{r include = FALSE, eval = TRUE}
 unite_dat <- split_dat %>% 
   unite("Site", c("Country", "Latrine_Number", "Depth"), sep = "_") 
 ```
@@ -831,18 +922,15 @@ If you give `bind_rows()` the correct column information in vector format, it wi
 bind_rows(jdat, c(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
 ```
 
-A _sanity check_ is making sure things are turning out as you expect them to - it is a way of checking your (or others') assumptions. It is particularly useful in the data exploration stage when you are getting familiar with your data set before you try to run any type of model. However, it is also good to make sure a function is behaving as you expect it to, or trouble-shooting odd behaviours. Let's check what I just said about being able to add a character vector as long as it matches the data frame data type.  
-
-If we coerce the entire data frame to character type (using our dangerous rbind + vector syntax), we can now use `bind_rows()` since our the vector will be coerced to a character type AND the data frame matches this type in every column.
+A _sanity check_ is making sure things are turning out as you expect them to - it is a way of checking your (or others') assumptions. It is particularly useful in the data exploration stage when you are getting familiar with your data set before you try to run any type of model. However, it is also good to make sure a function is behaving as you expect it to, or trouble-shooting odd behaviours. A list allows us to add the data we can't add in vector format, by retaining the data types that match the data frame columns.
 
 ```{r}
-jdat2 <- rbind(jdat, c("V_2_10", rep(5, 3))) 
+bind_rows(jdat, list(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
 
-bind_rows(jdat2, c(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
 ```
 
 
-If you give `bind_rows()` the correct column information in list format, it will add your row. Here is a sanity check on switching the order of the columns again.
+If you give `bind_rows()` the correct column information in list format, it will add your row. Here is a sanity check on switching the order of the columns again (pH is changed to a 6 to trace its position).
 
 ```{r}
 
@@ -930,7 +1018,7 @@ In these examples we are joining 2 dataframes: x and y.
 __Inner join__ is a mutating join.  Inner join returns all rows from x where there are matching values in y, and all columns from x and y. If there are multiple matches between x and y, all combination of the matches are returned.
 
 A set of graphics from _'R for Data Science'_ makes the description clearer:
-![](img/join-inner.png){width=500px}  
+![img borrowed from r4ds.had.co.nz](img/join-inner.png){width=500px}  
 
 
 ```{r}
@@ -946,7 +1034,7 @@ We can see that there are 18 rows in the resulting data frame. and that columns 
 __Outer joins__ are a set of mutating joins. There are 3 outer joins: left, right, and full.
 
 
-![](img/join-outer.png){width=500px}
+![img borrowed from r4ds.had.co.nz](img/join-outer.png){width=500px}
 </br>
 
 __Left join__ returns all rows from x, and all columns from x and y. Rows in x with no match in y will have NA values in the new columns. If there are multiple matches between x and y, all combinations of the matches are returned.
@@ -971,7 +1059,7 @@ That means that we will have our 75 rows from jdat, and any items that weren't f
 
 </br>
 
-![](img/join-one-to-many.png){width=500px}
+![img borrowed from r4ds.had.co.nz](img/join-one-to-many.png){width=500px}
 
 </br>
 
@@ -1008,7 +1096,7 @@ Note that if both of our data frames had duplicated keys, all possible matches w
 
 </br>
 
-![](img/join-many-to-many.png){width=500px}
+![img borrowed from r4ds.had.co.nz](img/join-many-to-many.png){width=500px}
 
 </br>
 
