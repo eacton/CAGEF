@@ -660,7 +660,7 @@ dat %>% gather(Site, OTUs, T_2_1:V_9_4) %>% head()
 
 ```{r eval=FALSE}
 #equivalent to
-dat %>% gather(Site, OTUs, 2:82) %>% head()
+dat %>% gather(key = Site, value = OTUs, 2:82) %>% head()
 #equivalent to
 dat %>% gather(Site, OTUs, -1) %>% head()
 #equivalent to
@@ -672,20 +672,25 @@ In the above examples "-" means gather every column except the 1st, or gather ev
 Let's save the last variation into a data frame called spread_dat.
 
 ```{r}
-spread_dat <- datt %>% gather(dat, Site, -Taxa)
+spread_dat <- dat %>% gather(Site, OTUs, -Taxa)
 ```
 
-Note how the dimensions of your dataframe have changed. spread_dat is now in a long format instead of wide.
+Note how the dimensions of your dataframe have changed relative to dat. spread_dat is now in a long format instead of wide.
 
-Next, we can use the `separate()` function to get the Country, Latrine_Number, and Depth information from our Site column. `separate()` takes in your dataframe, the name of the column to be split, the name of your new columns, and the character that you want to split the columns by (in this case an underscore). Note that the default is to remove your original column - if you want to keep it, you can add the additional argument `remove = FALSE`, keeping in mind that you now have redundant data. We may also want to do this for the 'Group' of Acidobacteria. Try the code, but do not save the answer in a variable.
+Next, we can use the `separate()` function to get the Country, Latrine_Number, and Depth information from our Site column. `separate()` takes in your dataframe, the name of the column to be split, the names of your new columns, and the character that you want to split the columns by (in this case an underscore). Note that the default is to remove your original column - if you want to keep it, you can add the additional argument `remove = FALSE`, keeping in mind that you now have redundant data. 
 
-```{r}
+```{r eval=1}
 split_dat <- spread_dat %>% separate(Site, c("Country", "Latrine_Number", "Depth"), sep = "_")
 #equivalent to
 split_dat <- spread_dat %>% separate(Site, c("Country", "Latrine_Number", "Depth"), sep = "_", remove = TRUE)
-
-#split_dat %>% separate(Taxa, c("Taxa", "Group"), sep = "_Gp") %>% head(20)
 ```
+
+We may also want to do this for the 'Group' of Acidobacteria. Try the code, but do not save the answer in a variable.
+
+```{r}
+split_dat %>% separate(Taxa, c("Taxa", "Group"), sep = "_Gp") %>% head(20)
+```
+
 We get a warning from R that it has filled in 'NA' for the bacteria that did not have groups. Note that I chose to split Taxa using '_Gp' since I did not need 'Gp'. 
 
 
@@ -698,7 +703,7 @@ __Challenge__
 
 </div>
 
-Use the `glimpse()` function to look  at the type of each variable in our new data frame. Are those the types you expected? Why or why not? How is `glimpse()` different from the `str()` function?
+Use the `glimpse()` function to look  at the type of each variable in our new data frame, split_dat. Are those the types you expected? Why or why not? How is `glimpse()` different from the `str()` function?
 
 </br>
 </br>
@@ -706,7 +711,13 @@ Use the `glimpse()` function to look  at the type of each variable in our new da
 
 ***
 
-There is a useful function `group_by()` that you can use to group variables or sets of variables together. This is useful for calculations and plotting on subsets of your data without having to turn your variables into factors. Say I wanted to look at a combination of Country and Well Depth. While visually, you wouldn't notice any changes to your data frame, if you look at the structure it will now be a 'grouped_df'. There are 15 groupings resulting from Country and Depth. After I have performed my desired operation, I can return my data frame to its original structure by calling `ungroup()`. We will see an example of this in action with `summarize()`. 
+```{r include = FALSE}
+#Latrine_Number and Depth are characters, not numeric or integer because they were derived from a character string
+#glimpse is customized for tibbles and data frames and shows as much data as possible
+```
+
+
+There is a useful function `group_by()` that you can use to group variables or sets of variables together. This is useful for calculations and plotting on subsets of your data without having to turn your variables into factors. Say I wanted to look at a combination of Country and Well Depth. While visually, you wouldn't notice any changes to your data frame, if you look at the structure it will now be a 'grouped_df'. There are 15 groupings resulting from Country and Depth. After I have performed my desired operation, I can return my data frame to its original structure by calling `ungroup()`. First we will examine the structure of grouped and ungrouped output without any additional operations.  
 
 ```{r}
 str(split_dat)
@@ -714,12 +725,11 @@ str(split_dat)
 str(split_dat %>% group_by(Country, Depth))
 
 str(split_dat %>% group_by(Country, Depth) %>% ungroup())
-
 ```
 
 
 
-Going back to `summarize()`, summary statistics can easily calculated for groups of data. Whereas in our messy data frame it was difficult to do calculations based on Country, Well Number or Latrine Depth, this is now an easy task. Let's get the mean, median, standard deviation and maximum for the number of OTUs collected in Tanzania vs Vietnam.
+Now we can see an example of how `grouped_by` in action with `summarize()`, can easily calculate summary statistics for groups of data. Whereas in our messy data frame it was difficult to do calculations based on Country, Well Number or Latrine Depth, this is now an easy task. Let's get the mean, median, standard deviation and maximum for the number of OTUs collected in Tanzania vs Vietnam.
 
 ```{r}
 split_dat %>% 
@@ -728,7 +738,7 @@ split_dat %>%
 
 ```
 
-
+In dealing with grouped data, we no longer have to grab a Country by subsetting or using helper functions to grab letters from their names. Group by recognizes that we have 2 countries and will perform calculations for both of them.
 
 
 ***
@@ -750,36 +760,39 @@ Which latrine depth has the greatest mean number of OTUs?
 
 
 ```{r}
-
 split_dat %>% 
   group_by(Latrine_Number) %>% 
   summarize(mean = mean(OTUs)) %>% 
   arrange(desc(mean))
 
 ```
-
+Without data being in 'tidy' format - with all variables that were mashed together into a Site (Country_LatrineNo_Depth)  having their own columns - this is a difficult question to answer. Once Latrine_Number is a variable, we can simply group our data to perform our mean calculation and get an answer.
 
 Is there more Clostridia in Tanzania or Vietnam?
 
 ```{r}
-# split_dat %>% 
-#   filter(Taxa == "Clostridia") %>% 
-#   group_by(Country) %>% 
-#   summarise(sum = sum(OTUs)) %>% 
-#   arrange(desc(sum))
+split_dat %>%
+  filter(Taxa == "Clostridia") %>%
+  group_by(Country) %>%
+  summarise(sum = sum(OTUs), mean = mean(OTUs)) %>%
+  arrange(desc(sum))
 
 ```
+Again, being able to filter by Taxa and group by Country (as an isolated variable) helps a lot. With `dplyr` syntax we can perform all data manipulations and calculations in a code block that is readable. 
 
-Which site had the greatest number of bacteria? (Calculate the sum of and the mean of OTUs at for each combination of Country, Latrine_Number and Depth. Order the results by the highest sum, followed by the highest mean.)
 
+Which site had the greatest number of Taxa represented? 
 
 ```{r}
 split_dat %>% 
   group_by(Country, Latrine_Number, Depth) %>% 
-  summarize(sum = sum(OTUs), mean = mean(OTUs)) %>% 
-  arrange(desc(sum), desc(mean))
+  filter(OTUs != 0) %>%
+  summarize(count = n()) %>% 
+  arrange(desc(count))
 
 ```
+
+Since we can group by the 3 variables that were in the Site name, there is no disadvantage to having our data in tidy format compared to our original wide data frame. However now we are able to filter for non-zero OTUs, which was impossible in the wide format. Since we know from earlier in the lesson that each Taxa is only represented once for each site, we only have to count and order the number of observations to get our answer. 
 
 </br>
 
@@ -869,6 +882,10 @@ IF YOU ADD A VECTOR TO YOUR DATA FRAME `rbind()` does not check to make sure you
 rbind(jdat, c("V_2_10", rep(5, 3))) %>% tail()
 
 ```
+
+
+
+
 However, if I had created a vector that was too short, the vector would be recycled to match the number of columns in the data frame. We can see that the sample name has been recycled in the TS column.
 
 ```{r}
@@ -892,17 +909,47 @@ This is the incorrect column information. Note that the row is added regardless.
 ```{r}
 rbind(jdat, c(Turtles = "V_2_10", pH = 5, Volatility = 5, TS = 5)) %>% tail()
 ```
-This will not happen if you USE A LIST with `rbind()`, because lists can hold multiple types of data. USING A LIST `rbind()` will warn us appropriately if our row is of an inappropriate length.
+This will not happen if you USE A LIST with `rbind()`, because lists can hold multiple types of data. USING A LIST `rbind()` treats each item of the list as matching to a data frame column. The code below throws an error because the a data frame each row must only have one entry per column. "V_2_10" is put into the Sample column, next it tries to add `rep(5, 16)` to the pH column, but it can't because there are 16 elements. 
 
 ```{r error = TRUE}
 rbind(jdat, list("V_2_10", rep(5, 16))) %>% tail()
 ```
-And it will warn us when our names do not match.
+Therefore, the code below will work because one value will be added to each column (extra values are ignored).
+
+```{r}
+rbind(jdat, list("V_2_10", 1, 2, 3, 4)) %>% tail()
+```
+But a vector greater than length one cannot be added into a row.
+
+```{r error = TRUE}
+rbind(jdat, list("V_2_10", c(1, 2, 3, 4))) %>% tail()
+```
+
+
+With named lists, R will warn us when our names do not match.
 
 ```{r error = TRUE}
 rbind(jdat, list(Turtles = "V_2_10", pH = 5, Volatility = 5, TS = 5)) %>% tail()
 ```
 This is a lesson in using correct data structures.
+
+***
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pause.jpg){width=100px}
+
+</div>
+Why doesn't jdat change after all these operations?
+
+</br>
+
+</br>
+
+```{r include=FALSE}
+#This is just a reminder that if you want to retain the addition of a row from 'rbind()' you need to save it into a variable. You can reassign the data frame object that you have (jdat) or create a new data frame object.
+#ie. new_dat <- rbind(jdat, c(Samples = "V_2_10", Temp = 5, pH = 6, TS = 5))
+```
+
 
 ***
 
@@ -959,11 +1006,11 @@ __Challenge__
 Make a column and add it to jdat using the base R function `cbind()` and the `dplyr` function `bind_cols()`. Do you forsee any problems in using either of these functions?
 
 
-```{r include = FALSE}
+```{r include = FALSE, eval=FALSE}
 pdat <- cbind(jdat, Turtles = c(rep(5, 75)))
 pdat <- bind_cols(jdat, Turtles = c(rep(5, 75)))
 
-#these don't match row by identity, safter to use a join 
+#these don't match row by identity, safer to use a join 
 ```
 
 </br>
@@ -994,7 +1041,7 @@ __Challenge__
 
 </div>
 
-Filter spread_dat to remove all non-zero values, and store it in an object ndat. How many rows in spread_dat had the value of zero? Sort ndat to keep the top 20 rows with the highest OTUs.
+Filter unite_dat to remove all non-zero values, and store it in an object ndat. How many rows in unite_dat had the value of zero? Sort ndat to keep the top 20 rows with the highest OTUs.
 
 </br>
 </br>
@@ -1004,7 +1051,7 @@ Filter spread_dat to remove all non-zero values, and store it in an object ndat.
 
 ```{r eval=TRUE, echo=FALSE}
 
-ndat <-  spread_dat %>% filter(OTUs!=0) %>% arrange(desc(OTUs)) %>% .[1:20, ]
+ndat <- unite_dat %>% filter(OTUs!=0) %>% arrange(desc(OTUs)) %>% .[1:20, ]
 ```
 
 
@@ -1055,7 +1102,7 @@ right_join(ndat, jdat, by = c("Site" = "Samples"))
 
 ```
 
-That means that we will have our 75 rows from jdat, and any items that weren't found in ndat will be filled with NA. Since there are 76 rows in the final data frame, this means there must have been multiple rows matching from ndat. In other words, we had a duplicate key (Site) in ndat.
+That means that we will have our 75 rows from jdat, and any items that weren't found in ndat will be filled with NA. Since there are 77 rows in the final data frame, this means there must have been multiple rows matching from ndat. In other words, we had a duplicate key (Site) in ndat.
 
 </br>
 
@@ -1108,7 +1155,7 @@ __Full join__ returns all rows and all columns from both x and y. Where there ar
 full_join(ndat, jdat, by = c("Site" = "Samples"))
 
 ```
-The full join returns all of the rows from both ndat and jdat - we have the 75 rows from jdat, plus the second V_17_1 as seen in the right_join and T_2_2 and T_4_3 that we present in ndat but NA in jdat for a total of 78 rows.
+The full join returns all of the rows from both ndat and jdat - we have the 75 rows from jdat, plus the second V_17_1 as seen in the right_join and T_2_2 and T_4_3 that we present in ndat but NA in jdat for a total of 79 rows.
 
 Lastly, we have the 2 filtering joins. These will not add columns, but rather filter the rows based on what is present in the second data frame.
 
