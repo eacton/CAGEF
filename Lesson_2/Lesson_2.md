@@ -77,7 +77,7 @@ These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Le
 
 
 
-__Objective:__ At the end of this session you will know the principles of tidy data, and be able to subset and transform your data, merge data frames, and perform simple calculations.
+__Objective:__ At the end of this session you will know the principles of tidy data, and be able to subset and transform your data to perform simple calculations.
 
 ***
 
@@ -1213,7 +1213,7 @@ library(tidyverse)
 ```
 
 ```
-## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 ```
 
 ```
@@ -1223,7 +1223,7 @@ library(tidyverse)
 ```
 
 ```
-## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ```
@@ -1568,7 +1568,7 @@ __Challenge__
 
 </div>
 
-Use the `spread()` function to turn unite_dat into the wide shape of our original dataset. 
+Use the `spread()` function to turn unite_dat into the wide shape of our original dataset. Save the output into a data frame called 'spread_dat'.
 
 
 
@@ -1580,198 +1580,26 @@ Use the `spread()` function to turn unite_dat into the wide shape of our origina
 
 ##Adding rows and columns to data frames
 
-We are going to use a subset of a second data frame from the same study to use in our join lesson. We are going to add and remove some observations so the names of the samples we are working with are not exactly equal.
+We are going to use a subset of the collected environmental data from the study to practice adding rows and columns to a data frame. We can use our pipe while reading in our data to do this subsetting.
 
 
 ```r
-jdat <- read.csv("data/ENV_pitlatrine.csv", stringsAsFactors = FALSE)
+jdat <- read.csv("data/ENV_pitlatrine.csv", stringsAsFactors = FALSE) %>% select(1:4)
 
 str(jdat)
 ```
 
 ```
-## 'data.frame':	81 obs. of  12 variables:
-##  $ Samples   : chr  "T_2_1" "T_2_10" "T_2_12" "T_2_2" ...
-##  $ pH        : num  7.82 9.08 8.84 6.49 6.46 7.69 7.48 7.6 7.55 7.68 ...
-##  $ Temp      : num  25.1 24.2 25.1 29.6 27.9 28.7 29.8 25 28.8 28.9 ...
-##  $ TS        : num  14.5 37.8 71.1 13.9 29.4 ...
-##  $ VS        : num  71.33 31.52 5.94 64.93 26.85 ...
-##  $ VFA       : num  71 2 1 3.7 27.5 1.5 1.1 1.1 30.9 24.2 ...
-##  $ CODt      : int  874 102 35 389 161 57 107 62 384 372 ...
-##  $ CODs      : int  311 9 4 180 35 3 9 8 57 57 ...
-##  $ perCODsbyt: int  36 9 10 46 22 6 8 13 15 15 ...
-##  $ NH4       : num  3.3 1.2 0.5 6.2 2.4 0.8 0.7 0.9 21.6 20.4 ...
-##  $ Prot      : num  35.4 18.4 0 29.3 19.4 0 14.1 7.6 33.1 44.5 ...
-##  $ Carbo     : num  22 43 17 25 31 14 28 28 47 48 ...
+## 'data.frame':	81 obs. of  4 variables:
+##  $ Samples: chr  "T_2_1" "T_2_10" "T_2_12" "T_2_2" ...
+##  $ pH     : num  7.82 9.08 8.84 6.49 6.46 7.69 7.48 7.6 7.55 7.68 ...
+##  $ Temp   : num  25.1 24.2 25.1 29.6 27.9 28.7 29.8 25 28.8 28.9 ...
+##  $ TS     : num  14.5 37.8 71.1 13.9 29.4 ...
 ```
 
-To remove some observations and variables, we can specify which rows/columns we do/do not want to keep.
+There is a function from `dplyr`, `bind_rows()`, which tries to save you from errors when joining a row of observations to a data frame by ensuring that your column names match. If you do not give column names, whether you are trying to add a vector or a list, it will not add your row to the frame. This is a much 'safer' function than base R's `rbind()` which lets you add unnamed values and assumes proper ordering.
 
-
-```r
-jdat <- jdat[-c(4,7,9,12,20,22) , 1:4]
-```
-To add an observation, we need to add a row of data. `rbind()` is a base R function that will add a row to the end of a data frame. 
-
-![](img/pause.jpg){width=100px}
-
-###A lesson in data structures
-
-IF YOU ADD A VECTOR TO YOUR DATA FRAME `rbind()` does not check to make sure your value belongs to a column and will not throw an error if the length of the added row is longer or shorter than your data frame. For example, I want to add an extra row to my data frame which has 4 columns. If I use a vector it should have a length of 4 to match the number of columns in my data frame. Here, I have simply created a vector with a new sample name, and then have used the `rep()` function to repeat the value 5, 3 times. This is added to the data frame jdat.
-
-
-```r
-rbind(jdat, c("V_2_10", rep(5, 3))) %>% tail()
-```
-
-```
-##     Samples   pH Temp   TS
-## 77    V_8_2  9.3 19.5 36.8
-## 78    V_9_1  7.3 18.8 31.3
-## 79    V_9_2 4.04 20.5   32
-## 80    V_9_3 4.36 19.9 92.6
-## 81    V_9_4  4.3 19.8 36.5
-## 761  V_2_10    5    5    5
-```
-
-
-
-
-However, if I had created a vector that was too short, the vector would be recycled to match the number of columns in the data frame. We can see that the sample name has been recycled in the TS column.
-
-
-```r
-rbind(jdat, c("V_2_10", rep(5, 2))) %>% tail()
-```
-
-```
-##     Samples   pH Temp     TS
-## 77    V_8_2  9.3 19.5   36.8
-## 78    V_9_1  7.3 18.8   31.3
-## 79    V_9_2 4.04 20.5     32
-## 80    V_9_3 4.36 19.9   92.6
-## 81    V_9_4  4.3 19.8   36.5
-## 761  V_2_10    5    5 V_2_10
-```
-
-If the vector is too long, it will simply be truncated to the match the number of columns in the data frame.
-
-```r
-rbind(jdat, c("V_2_10", rep(5, 16))) %>% tail()
-```
-
-```
-##     Samples   pH Temp   TS
-## 77    V_8_2  9.3 19.5 36.8
-## 78    V_9_1  7.3 18.8 31.3
-## 79    V_9_2 4.04 20.5   32
-## 80    V_9_3 4.36 19.9 92.6
-## 81    V_9_4  4.3 19.8 36.5
-## 761  V_2_10    5    5    5
-```
-
-
-If you give `rbind()` your column information AS A VECTOR, it ignores it. This is the correct column information with the order of the columns altered. Note that the number 6 ends up in the Temp column despite being labelled pH.
-
-
-```r
-rbind(jdat, c(Samples = "V_2_10", Temp = 5, pH = 6, TS = 5)) %>% tail()
-```
-
-```
-##     Samples   pH Temp   TS
-## 77    V_8_2  9.3 19.5 36.8
-## 78    V_9_1  7.3 18.8 31.3
-## 79    V_9_2 4.04 20.5   32
-## 80    V_9_3 4.36 19.9 92.6
-## 81    V_9_4  4.3 19.8 36.5
-## 761  V_2_10    5    6    5
-```
-
-This is the incorrect column information. Note that the row is added regardless. Also, because vectors must be coerced to one data type our added vector was a character vector. We started with both character and numeric data in jdat. In adding a vector, the entire data frame (think of each column as a vector) has been coerced to character data.
-
-
-```r
-rbind(jdat, c(Turtles = "V_2_10", pH = 5, Volatility = 5, TS = 5)) %>% tail()
-```
-
-```
-##     Samples   pH Temp   TS
-## 77    V_8_2  9.3 19.5 36.8
-## 78    V_9_1  7.3 18.8 31.3
-## 79    V_9_2 4.04 20.5   32
-## 80    V_9_3 4.36 19.9 92.6
-## 81    V_9_4  4.3 19.8 36.5
-## 761  V_2_10    5    5    5
-```
-This will not happen if you USE A LIST with `rbind()`, because lists can hold multiple types of data. USING A LIST `rbind()` treats each item of the list as matching to a data frame column. The code below throws an error because the a data frame each row must only have one entry per column. "V_2_10" is put into the Sample column, next it tries to add `rep(5, 16)` to the pH column, but it can't because there are 16 elements. 
-
-
-```r
-rbind(jdat, list("V_2_10", rep(5, 16))) %>% tail()
-```
-
-```
-## Error in rbind(deparse.level, ...): invalid list argument: all variables should have the same length
-```
-Therefore, the code below will work because one value will be added to each column (extra values are ignored).
-
-
-```r
-rbind(jdat, list("V_2_10", 1, 2, 3, 4)) %>% tail()
-```
-
-```
-##     Samples   pH Temp   TS
-## 77    V_8_2 9.30 19.5 36.8
-## 78    V_9_1 7.30 18.8 31.3
-## 79    V_9_2 4.04 20.5 32.0
-## 80    V_9_3 4.36 19.9 92.6
-## 81    V_9_4 4.30 19.8 36.5
-## 761  V_2_10 1.00  2.0  3.0
-```
-But a vector greater than length one cannot be added into a row.
-
-
-```r
-rbind(jdat, list("V_2_10", c(1, 2, 3, 4))) %>% tail()
-```
-
-```
-## Error in rbind(deparse.level, ...): invalid list argument: all variables should have the same length
-```
-
-
-With named lists, R will warn us when our names do not match.
-
-
-```r
-rbind(jdat, list(Turtles = "V_2_10", pH = 5, Volatility = 5, TS = 5)) %>% tail()
-```
-
-```
-## Error in match.names(clabs, nmi): names do not match previous names
-```
-This is a lesson in using correct data structures.
-
-***
-
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/pause.jpg){width=100px}
-
-</div>
-Why doesn't jdat change after all these operations?
-
-</br>
-
-</br>
-
-
-
-
-***
-
-There is an equivalent function from `dplyr`, `bind_rows()`, which tries to save you from errors by ensuring that your column identifiers match. If you do not give column identifiers, whether you are trying to add a vector or a list, it will not add your row to the frame.
+What data structure should you be using to add a row to a data frame?
 
 
 ```r
@@ -1802,7 +1630,7 @@ bind_rows(jdat, c(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
 ## Error in bind_rows_(x, .id): Column `pH` can't be converted from numeric to character
 ```
 
-A _sanity check_ is making sure things are turning out as you expect them to - it is a way of checking your (or others') assumptions. It is particularly useful in the data exploration stage when you are getting familiar with your data set before you try to run any type of model. However, it is also good to make sure a function is behaving as you expect it to, or trouble-shooting odd behaviours. A list allows us to add the data we can't add in vector format, by retaining the data types that match the data frame columns.
+A list allows us to add the data we can't add in vector format, by retaining the data types that match the data frame columns.
 
 
 ```r
@@ -1811,16 +1639,19 @@ bind_rows(jdat, list(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
 
 ```
 ##    Samples   pH Temp   TS
-## 71   V_8_2 9.30 19.5 36.8
-## 72   V_9_1 7.30 18.8 31.3
-## 73   V_9_2 4.04 20.5 32.0
-## 74   V_9_3 4.36 19.9 92.6
-## 75   V_9_4 4.30 19.8 36.5
-## 76  V_2_10 5.00  5.0  5.0
+## 77   V_8_2 9.30 19.5 36.8
+## 78   V_9_1 7.30 18.8 31.3
+## 79   V_9_2 4.04 20.5 32.0
+## 80   V_9_3 4.36 19.9 92.6
+## 81   V_9_4 4.30 19.8 36.5
+## 82  V_2_10 5.00  5.0  5.0
 ```
 
+If you give `bind_rows()` the correct column information in list format, it will add your row. 
 
-If you give `bind_rows()` the correct column information in list format, it will add your row. Here is a sanity check on switching the order of the columns again (pH is changed to a 6 to trace its position).
+A _sanity check_ is making sure things are turning out as you expect them to - it is a way of checking your (or others') assumptions. It is particularly useful in the data exploration stage when you are getting familiar with your data set before you try to run any type of model. However, it is also good to make sure a function is behaving as you expect it to, or trouble-shooting odd behaviours
+
+Here is a sanity check on switching the order of the columns (pH is changed to a 6 to trace its position).
 
 
 ```r
@@ -1829,15 +1660,45 @@ bind_rows(jdat, list(Samples = "V_2_10", Temp = 5, pH = 6, TS = 5)) %>% tail()
 
 ```
 ##    Samples   pH Temp   TS
-## 71   V_8_2 9.30 19.5 36.8
-## 72   V_9_1 7.30 18.8 31.3
-## 73   V_9_2 4.04 20.5 32.0
-## 74   V_9_3 4.36 19.9 92.6
-## 75   V_9_4 4.30 19.8 36.5
-## 76  V_2_10 6.00  5.0  5.0
+## 77   V_8_2 9.30 19.5 36.8
+## 78   V_9_1 7.30 18.8 31.3
+## 79   V_9_2 4.04 20.5 32.0
+## 80   V_9_3 4.36 19.9 92.6
+## 81   V_9_4 4.30 19.8 36.5
+## 82  V_2_10 6.00  5.0  5.0
 ```
 
-`bind_rows()` has a different behaviour than `rbind()` when column names do not match. It will match your columns as much as possible, and then create new columns for the data that does not fit at the end of your data frame. Note that 'NA's will be created for all missing data.
+Since we have named our values, `bind_rows()` will add the value to the appropriate column. 
+
+You could also add your data in the format of a data frame of 1 row and 4 columns.
+
+
+```r
+bind_rows(jdat, data.frame(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
+```
+
+```
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+```
+
+```
+##    Samples   pH Temp   TS
+## 77   V_8_2 9.30 19.5 36.8
+## 78   V_9_1 7.30 18.8 31.3
+## 79   V_9_2 4.04 20.5 32.0
+## 80   V_9_3 4.36 19.9 92.6
+## 81   V_9_4 4.30 19.8 36.5
+## 82  V_2_10 5.00  5.0  5.0
+```
+
+
+
+
+
+
+
+What happens if column name do not match? `bind_rows()` will match your columns as much as possible, and then create new columns for the data that does not fit at the end of your data frame. Note that 'NA's will be created for all missing data.
 
 
 ```r
@@ -1846,13 +1707,35 @@ bind_rows(jdat, list(Turtles = "V_2_10", pH = 5, Volatility = 5, TS = 5)) %>% ta
 
 ```
 ##    Samples   pH Temp   TS Turtles Volatility
-## 71   V_8_2 9.30 19.5 36.8    <NA>         NA
-## 72   V_9_1 7.30 18.8 31.3    <NA>         NA
-## 73   V_9_2 4.04 20.5 32.0    <NA>         NA
-## 74   V_9_3 4.36 19.9 92.6    <NA>         NA
-## 75   V_9_4 4.30 19.8 36.5    <NA>         NA
-## 76    <NA> 5.00   NA  5.0  V_2_10          5
+## 77   V_8_2 9.30 19.5 36.8    <NA>         NA
+## 78   V_9_1 7.30 18.8 31.3    <NA>         NA
+## 79   V_9_2 4.04 20.5 32.0    <NA>         NA
+## 80   V_9_3 4.36 19.9 92.6    <NA>         NA
+## 81   V_9_4 4.30 19.8 36.5    <NA>         NA
+## 82    <NA> 5.00   NA  5.0  V_2_10          5
 ```
+
+
+
+***
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pause.jpg){width=100px}
+
+</div>
+Why doesn't jdat change after all these operations?
+
+</br>
+
+</br>
+
+
+
+
+***
+
+
+
 Whenever you are adding rows or columns, I strongly advise checking to see that the dimensions of the resulting data frame are what you expect. 
 
 ```r
@@ -1861,10 +1744,14 @@ dim(jdat)
 ```
 
 ```
-## [1] 76  4
+## [1] 82  4
 ```
 
+
+
+
 ***
+
 __Challenge__ 
 
 
@@ -1872,524 +1759,10 @@ __Challenge__
 ![](img/pug_challenge1.jpeg){width=150px}
 </div>
 
-Make a column and add it to jdat using the base R function `cbind()` and the `dplyr` function `bind_cols()`. Do you forsee any problems in using either of these functions?
+Make a column and add it to jdat using the `dplyr` function `bind_cols()`. Do you forsee any problems in using this function?
 
 
 
-
-</br>
-</br>
-</br>
-
-***
-
-
-##All of the joins
-
-Often we have more than one data table that shares a common attribute. For example, with our current dataset, we have other variables (such as pH) for a sample, as well as our OTU table, both of which have site IDs (ie. T_2_9). We want to merge these into one table.
-
-
-Joins can be tricky, so we are going to use a subset of our tidy data such that we can easily observe the output of our join.
-
-
-```r
-str(spread_dat)
-```
-
-```
-## 'data.frame':	52 obs. of  82 variables:
-##  $ Taxa  : chr  "Acidobacteria_Gp1" "Acidobacteria_Gp10" "Acidobacteria_Gp14" "Acidobacteria_Gp16" ...
-##  $ T_2_1 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_2_10: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_2_12: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_2_2 : int  0 0 0 0 0 2 0 0 0 0 ...
-##  $ T_2_3 : int  0 0 0 0 0 2 0 0 0 0 ...
-##  $ T_2_6 : int  0 0 0 0 0 5 0 0 0 1 ...
-##  $ T_2_7 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_2_9 : int  0 0 0 0 0 15 0 0 0 0 ...
-##  $ T_3_2 : int  0 0 0 0 0 2 0 0 0 0 ...
-##  $ T_3_3 : int  0 0 0 0 0 1 0 0 0 0 ...
-##  $ T_3_5 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_4_3 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_4_4 : int  0 0 0 0 0 1 0 0 0 0 ...
-##  $ T_4_5 : int  1 0 1 0 0 0 0 0 32 0 ...
-##  $ T_4_6 : int  0 0 0 0 0 0 0 0 2 1 ...
-##  $ T_4_7 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_5_2 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_5_3 : int  0 0 0 0 0 1 0 0 0 0 ...
-##  $ T_5_4 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_5_5 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_6_2 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_6_5 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_6_7 : int  0 0 0 0 0 1 0 0 1 1 ...
-##  $ T_6_8 : int  0 0 0 0 0 0 0 0 0 1 ...
-##  $ T_9_1 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_9_2 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_9_3 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_9_4 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ T_9_5 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_1_2 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_10_1: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_11_1: int  0 0 0 1 1 0 0 0 1 7 ...
-##  $ V_11_2: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_11_3: int  0 0 0 0 0 0 0 0 1 3 ...
-##  $ V_12_1: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_12_2: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_13_1: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_13_2: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_14_1: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_14_2: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_14_3: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_15_1: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_15_2: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_15_3: int  0 0 0 0 0 0 0 0 2 0 ...
-##  $ V_16_1: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_16_2: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_17_1: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_17_2: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_18_1: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_18_2: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_18_3: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_18_4: int  0 0 0 0 0 0 0 0 10 0 ...
-##  $ V_19_1: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_19_2: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_19_3: int  0 0 0 0 0 0 0 0 9 0 ...
-##  $ V_2_1 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_2_2 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_2_3 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_20_1: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_21_1: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_21_4: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_22_1: int  1 3 0 0 0 0 0 1 2 7 ...
-##  $ V_22_3: int  0 0 0 0 0 0 0 0 0 1 ...
-##  $ V_22_4: int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_3_1 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_3_2 : int  0 0 0 0 0 0 3 0 0 0 ...
-##  $ V_4_1 : int  0 0 0 0 0 0 0 0 0 1 ...
-##  $ V_4_2 : int  0 2 0 1 0 0 2 0 3 2 ...
-##  $ V_5_1 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_5_3 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_6_1 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_6_2 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_6_3 : int  0 0 0 0 0 0 0 0 11 1 ...
-##  $ V_7_1 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_7_2 : int  1 1 0 0 0 0 1 0 1 0 ...
-##  $ V_7_3 : int  7 9 1 0 0 1 3 4 68 8 ...
-##  $ V_8_2 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_9_1 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_9_2 : int  18 0 0 0 0 0 0 0 0 0 ...
-##  $ V_9_3 : int  0 0 0 0 0 0 0 0 0 0 ...
-##  $ V_9_4 : int  38 0 17 0 0 0 0 0 19 0 ...
-```
-Joins use a 'key' by which we can match up our data frames. When we look at our data frames we can see that they have matching information in 'Samples'.  We are going to reduce our dataset by only keeping non-zero values so we can see how the join functions work a bit more easily. We have already removed some observations from jdat and added a row, just so our key columns don't match perfectly.
-
-***
-__Challenge__ 
-
-
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/pug_challenge1.jpeg){width=150px}
-
-</div>
-
-Filter unite_dat to remove all non-zero values, and store it in an object ndat. How many rows in unite_dat had the value of zero? Sort ndat to keep the top 20 rows with the highest OTUs.
-
-</br>
-</br>
-</br>
-
-***
-
-
-
-
-There are 2 types of joins:
-
-1. _mutating joins_ - uses a key to match observations and combines variables from 2 tables (adding columns and potentially rows)
-2. _filtering joins_ - uses a key to match observations, to subset observations (rows)
-
-In these examples we are joining 2 dataframes: x and y.
-
-__Inner join__ is a mutating join.  Inner join returns all rows from x where there are matching values in y, and all columns from x and y. If there are multiple matches between x and y, all combination of the matches are returned.
-
-A set of graphics from _'R for Data Science'_ makes the description clearer:
-![img borrowed from r4ds.had.co.nz](img/join-inner.png){width=500px}  
-
-
-
-```r
-inner_join(ndat, jdat, by = c("Site" = "Samples"))
-```
-
-```
-##                   Taxa   Site  OTUs   pH Temp    TS
-## 1           Clostridia V_16_2 17572 6.26 16.3 24.00
-## 2           Clostridia  T_2_9 17471 7.60 25.0 46.87
-## 3           Clostridia V_17_2 13875 8.14 15.4 25.60
-## 4           Clostridia  T_2_6 12169 7.69 28.7 65.52
-## 5          Bacteroidia V_17_1 11392 7.39 15.7 25.30
-## 6           Clostridia V_10_1 11180 9.12 18.6 46.30
-## 7           Clostridia  T_2_3 10944 6.46 27.9 29.45
-## 8              Unknown  T_9_2 10624 7.86 28.5 13.56
-## 9           Clostridia  T_4_4 10545 7.84 26.3 28.85
-## 10          Clostridia V_16_1 10043 7.83 17.7 25.10
-## 11          Clostridia  T_5_3  8981 7.53 27.5 12.55
-## 12 Alphaproteobacteria  V_3_2  8660 8.08 20.7 52.00
-## 13          Clostridia V_15_1  8244 7.44 18.9 25.40
-## 14          Clostridia V_17_1  7722 7.39 15.7 25.30
-## 15          Clostridia V_18_1  7481 7.09 22.5 35.10
-## 16 Alphaproteobacteria  V_3_1  7322 8.90 22.4 56.20
-## 17          Clostridia V_18_4  6246 8.25 19.4 29.90
-## 18          Clostridia  T_2_1  6213 7.82 25.1 14.53
-```
-
-We can see that there are 18 rows in the resulting data frame. and that columns from jdat have been added. Rows from ndat that did not have a matching site in jdat were removed.
-
-</br>
-
-__Outer joins__ are a set of mutating joins. There are 3 outer joins: left, right, and full.
-
-
-![img borrowed from r4ds.had.co.nz](img/join-outer.png){width=500px}
-</br>
-
-__Left join__ returns all rows from x, and all columns from x and y. Rows in x with no match in y will have NA values in the new columns. If there are multiple matches between x and y, all combinations of the matches are returned.
-
-
-
-```r
-left_join(ndat, jdat, by = c("Site" = "Samples"))
-```
-
-```
-##                   Taxa   Site  OTUs   pH Temp    TS
-## 1           Clostridia V_16_2 17572 6.26 16.3 24.00
-## 2           Clostridia  T_2_9 17471 7.60 25.0 46.87
-## 3           Clostridia V_17_2 13875 8.14 15.4 25.60
-## 4           Clostridia  T_2_6 12169 7.69 28.7 65.52
-## 5          Bacteroidia V_17_1 11392 7.39 15.7 25.30
-## 6           Clostridia V_10_1 11180 9.12 18.6 46.30
-## 7           Clostridia  T_2_3 10944 6.46 27.9 29.45
-## 8              Unknown  T_9_2 10624 7.86 28.5 13.56
-## 9           Clostridia  T_4_4 10545 7.84 26.3 28.85
-## 10          Clostridia V_16_1 10043 7.83 17.7 25.10
-## 11          Clostridia  T_2_2  8999   NA   NA    NA
-## 12          Clostridia  T_5_3  8981 7.53 27.5 12.55
-## 13 Alphaproteobacteria  V_3_2  8660 8.08 20.7 52.00
-## 14          Clostridia V_15_1  8244 7.44 18.9 25.40
-## 15          Clostridia V_17_1  7722 7.39 15.7 25.30
-## 16  Betaproteobacteria  T_4_3  7710   NA   NA    NA
-## 17          Clostridia V_18_1  7481 7.09 22.5 35.10
-## 18 Alphaproteobacteria  V_3_1  7322 8.90 22.4 56.20
-## 19          Clostridia V_18_4  6246 8.25 19.4 29.90
-## 20          Clostridia  T_2_1  6213 7.82 25.1 14.53
-```
-That means that we will have our 20 rows from ndat, and any items that weren't found in jdat, in this case T_2_2 and T_4_3 will be filled with NA.
-
-__Right join__ returns all rows from y, and all columns from x and y. Rows in y with no match in x will have NA values in the new columns. If there are multiple matches between x and y, all combinations of the matches are returned.
-
-
-```r
-right_join(ndat, jdat, by = c("Site" = "Samples"))
-```
-
-```
-##                   Taxa   Site  OTUs    pH Temp    TS
-## 1           Clostridia  T_2_1  6213  7.82 25.1 14.53
-## 2                 <NA> T_2_10    NA  9.08 24.2 37.76
-## 3                 <NA> T_2_12    NA  8.84 25.1 71.11
-## 4           Clostridia  T_2_3 10944  6.46 27.9 29.45
-## 5           Clostridia  T_2_6 12169  7.69 28.7 65.52
-## 6           Clostridia  T_2_9 17471  7.60 25.0 46.87
-## 7                 <NA>  T_3_3    NA  7.68 28.9 14.65
-## 8                 <NA>  T_3_5    NA  7.69 28.7 14.87
-## 9           Clostridia  T_4_4 10545  7.84 26.3 28.85
-## 10                <NA>  T_4_5    NA  7.95 27.9 46.85
-## 11                <NA>  T_4_6    NA  7.58 30.1 38.38
-## 12                <NA>  T_4_7    NA  7.68 28.3 26.54
-## 13                <NA>  T_5_2    NA  7.58 29.5 12.48
-## 14          Clostridia  T_5_3  8981  7.53 27.5 12.55
-## 15                <NA>  T_5_4    NA  7.40 29.4 15.10
-## 16                <NA>  T_6_2    NA  7.77 27.9 46.87
-## 17                <NA>  T_6_7    NA  8.09 31.7 68.33
-## 18                <NA>  T_6_8    NA  8.26 29.7 64.90
-## 19                <NA>  T_9_1    NA  7.85 29.3  9.12
-## 20             Unknown  T_9_2 10624  7.86 28.5 13.56
-## 21                <NA>  T_9_3    NA  8.35 29.5 12.67
-## 22                <NA>  T_9_4    NA  8.43 29.5 58.76
-## 23                <NA>  T_9_5    NA  7.90 29.3 56.12
-## 24                <NA>  V_1_2    NA  6.67 29.2 43.30
-## 25          Clostridia V_10_1 11180  9.12 18.6 46.30
-## 26                <NA> V_11_1    NA  9.00 18.5 63.00
-## 27                <NA> V_11_2    NA  9.64 18.3 56.70
-## 28                <NA> V_11_3    NA  8.45 18.2 55.20
-## 29                <NA> V_12_1    NA  9.16 19.6 56.60
-## 30                <NA> V_12_2    NA  9.54 18.3 49.00
-## 31                <NA> V_13_1    NA  8.58 19.0 26.00
-## 32                <NA> V_13_2    NA  7.98 18.6 46.80
-## 33                <NA> V_14_1    NA  7.21 20.0 37.80
-## 34                <NA> V_14_2    NA  7.74 18.5 51.70
-## 35                <NA> V_14_3    NA  8.50 19.1 55.80
-## 36          Clostridia V_15_1  8244  7.44 18.9 25.40
-## 37                <NA> V_15_2    NA  8.36 17.9 32.80
-## 38                <NA> V_15_3    NA  8.15 18.8 31.80
-## 39          Clostridia V_16_1 10043  7.83 17.7 25.10
-## 40          Clostridia V_16_2 17572  6.26 16.3 24.00
-## 41         Bacteroidia V_17_1 11392  7.39 15.7 25.30
-## 42          Clostridia V_17_1  7722  7.39 15.7 25.30
-## 43          Clostridia V_17_2 13875  8.14 15.4 25.60
-## 44          Clostridia V_18_1  7481  7.09 22.5 35.10
-## 45                <NA> V_18_2    NA  8.54 24.9 34.90
-## 46                <NA> V_18_3    NA  8.37 21.4 35.50
-## 47          Clostridia V_18_4  6246  8.25 19.4 29.90
-## 48                <NA> V_19_1    NA  7.19 17.6 24.80
-## 49                <NA> V_19_2    NA  7.68 17.4 31.80
-## 50                <NA> V_19_3    NA  7.38 16.6 37.00
-## 51                <NA>  V_2_1    NA  9.42 21.3 63.40
-## 52                <NA>  V_2_2    NA  9.40 20.7 51.60
-## 53                <NA>  V_2_3    NA  9.15 20.8 44.20
-## 54                <NA> V_20_1    NA  9.04 17.0  9.60
-## 55                <NA> V_21_1    NA 10.09 17.7 65.30
-## 56                <NA> V_21_4    NA  9.58 17.1 40.10
-## 57                <NA> V_22_1    NA  7.14 16.8 58.10
-## 58                <NA> V_22_3    NA  6.67 17.1 84.40
-## 59                <NA> V_22_4    NA  6.79 15.9 80.60
-## 60 Alphaproteobacteria  V_3_1  7322  8.90 22.4 56.20
-## 61 Alphaproteobacteria  V_3_2  8660  8.08 20.7 52.00
-## 62                <NA>  V_4_1    NA  9.49 22.6 36.10
-## 63                <NA>  V_4_2    NA  7.81 20.9 47.20
-## 64                <NA>  V_5_1    NA  7.35 24.3 49.70
-## 65                <NA>  V_5_3    NA  9.47 20.7 63.60
-## 66                <NA>  V_6_1    NA  8.99 22.9 56.60
-## 67                <NA>  V_6_2    NA  8.46 24.2 58.90
-## 68                <NA>  V_6_3    NA  8.08 22.8 55.20
-## 69                <NA>  V_7_1    NA  7.85 25.8 60.60
-## 70                <NA>  V_7_2    NA  8.11 25.8 73.90
-## 71                <NA>  V_7_3    NA  7.41 23.7 59.40
-## 72                <NA>  V_8_2    NA  9.30 19.5 36.80
-## 73                <NA>  V_9_1    NA  7.30 18.8 31.30
-## 74                <NA>  V_9_2    NA  4.04 20.5 32.00
-## 75                <NA>  V_9_3    NA  4.36 19.9 92.60
-## 76                <NA>  V_9_4    NA  4.30 19.8 36.50
-## 77                <NA> V_2_10    NA  5.00  5.0  5.00
-```
-
-That means that we will have our 75 rows from jdat, and any items that weren't found in ndat will be filled with NA. Since there are 77 rows in the final data frame, this means there must have been multiple rows matching from ndat. In other words, we had a duplicate key (Site) in ndat.
-
-</br>
-
-![img borrowed from r4ds.had.co.nz](img/join-one-to-many.png){width=500px}
-
-</br>
-
-</br>
-
-Let's try to find which Site was duplicated by using `n()`.
-
-
-```r
-right_join(ndat, jdat, by = c("Site" = "Samples")) %>% 
-  group_by(Site) %>% 
-  filter(n()>1)
-```
-
-```
-## # A tibble: 2 x 6
-## # Groups:   Site [1]
-##   Taxa        Site    OTUs    pH  Temp    TS
-##   <chr>       <chr>  <int> <dbl> <dbl> <dbl>
-## 1 Bacteroidia V_17_1 11392  7.39  15.7  25.3
-## 2 Clostridia  V_17_1  7722  7.39  15.7  25.3
-```
-
-Note that Bacteriodia and Clostridia have different OTUs (from ndat), but the same pH, Temp and TS (from jdat). 
-
-
-***
-__Challenge__
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/pug_challenge1.jpeg){width=150px}
-
-</div>
-
-Use a function other than `filter()` with `n()` to find the duplicated Site.
-
-</br>
-</br>
-</br>
-
-***
-
-Note that if both of our data frames had duplicated keys, all possible matches would be retruned.
-
-</br>
-
-![img borrowed from r4ds.had.co.nz](img/join-many-to-many.png){width=500px}
-
-</br>
-
-__Full join__ returns all rows and all columns from both x and y. Where there are not matching values, returns NA for the one missing.
-
-
-
-```r
-full_join(ndat, jdat, by = c("Site" = "Samples"))
-```
-
-```
-##                   Taxa   Site  OTUs    pH Temp    TS
-## 1           Clostridia V_16_2 17572  6.26 16.3 24.00
-## 2           Clostridia  T_2_9 17471  7.60 25.0 46.87
-## 3           Clostridia V_17_2 13875  8.14 15.4 25.60
-## 4           Clostridia  T_2_6 12169  7.69 28.7 65.52
-## 5          Bacteroidia V_17_1 11392  7.39 15.7 25.30
-## 6           Clostridia V_10_1 11180  9.12 18.6 46.30
-## 7           Clostridia  T_2_3 10944  6.46 27.9 29.45
-## 8              Unknown  T_9_2 10624  7.86 28.5 13.56
-## 9           Clostridia  T_4_4 10545  7.84 26.3 28.85
-## 10          Clostridia V_16_1 10043  7.83 17.7 25.10
-## 11          Clostridia  T_2_2  8999    NA   NA    NA
-## 12          Clostridia  T_5_3  8981  7.53 27.5 12.55
-## 13 Alphaproteobacteria  V_3_2  8660  8.08 20.7 52.00
-## 14          Clostridia V_15_1  8244  7.44 18.9 25.40
-## 15          Clostridia V_17_1  7722  7.39 15.7 25.30
-## 16  Betaproteobacteria  T_4_3  7710    NA   NA    NA
-## 17          Clostridia V_18_1  7481  7.09 22.5 35.10
-## 18 Alphaproteobacteria  V_3_1  7322  8.90 22.4 56.20
-## 19          Clostridia V_18_4  6246  8.25 19.4 29.90
-## 20          Clostridia  T_2_1  6213  7.82 25.1 14.53
-## 21                <NA> T_2_10    NA  9.08 24.2 37.76
-## 22                <NA> T_2_12    NA  8.84 25.1 71.11
-## 23                <NA>  T_3_3    NA  7.68 28.9 14.65
-## 24                <NA>  T_3_5    NA  7.69 28.7 14.87
-## 25                <NA>  T_4_5    NA  7.95 27.9 46.85
-## 26                <NA>  T_4_6    NA  7.58 30.1 38.38
-## 27                <NA>  T_4_7    NA  7.68 28.3 26.54
-## 28                <NA>  T_5_2    NA  7.58 29.5 12.48
-## 29                <NA>  T_5_4    NA  7.40 29.4 15.10
-## 30                <NA>  T_6_2    NA  7.77 27.9 46.87
-## 31                <NA>  T_6_7    NA  8.09 31.7 68.33
-## 32                <NA>  T_6_8    NA  8.26 29.7 64.90
-## 33                <NA>  T_9_1    NA  7.85 29.3  9.12
-## 34                <NA>  T_9_3    NA  8.35 29.5 12.67
-## 35                <NA>  T_9_4    NA  8.43 29.5 58.76
-## 36                <NA>  T_9_5    NA  7.90 29.3 56.12
-## 37                <NA>  V_1_2    NA  6.67 29.2 43.30
-## 38                <NA> V_11_1    NA  9.00 18.5 63.00
-## 39                <NA> V_11_2    NA  9.64 18.3 56.70
-## 40                <NA> V_11_3    NA  8.45 18.2 55.20
-## 41                <NA> V_12_1    NA  9.16 19.6 56.60
-## 42                <NA> V_12_2    NA  9.54 18.3 49.00
-## 43                <NA> V_13_1    NA  8.58 19.0 26.00
-## 44                <NA> V_13_2    NA  7.98 18.6 46.80
-## 45                <NA> V_14_1    NA  7.21 20.0 37.80
-## 46                <NA> V_14_2    NA  7.74 18.5 51.70
-## 47                <NA> V_14_3    NA  8.50 19.1 55.80
-## 48                <NA> V_15_2    NA  8.36 17.9 32.80
-## 49                <NA> V_15_3    NA  8.15 18.8 31.80
-## 50                <NA> V_18_2    NA  8.54 24.9 34.90
-## 51                <NA> V_18_3    NA  8.37 21.4 35.50
-## 52                <NA> V_19_1    NA  7.19 17.6 24.80
-## 53                <NA> V_19_2    NA  7.68 17.4 31.80
-## 54                <NA> V_19_3    NA  7.38 16.6 37.00
-## 55                <NA>  V_2_1    NA  9.42 21.3 63.40
-## 56                <NA>  V_2_2    NA  9.40 20.7 51.60
-## 57                <NA>  V_2_3    NA  9.15 20.8 44.20
-## 58                <NA> V_20_1    NA  9.04 17.0  9.60
-## 59                <NA> V_21_1    NA 10.09 17.7 65.30
-## 60                <NA> V_21_4    NA  9.58 17.1 40.10
-## 61                <NA> V_22_1    NA  7.14 16.8 58.10
-## 62                <NA> V_22_3    NA  6.67 17.1 84.40
-## 63                <NA> V_22_4    NA  6.79 15.9 80.60
-## 64                <NA>  V_4_1    NA  9.49 22.6 36.10
-## 65                <NA>  V_4_2    NA  7.81 20.9 47.20
-## 66                <NA>  V_5_1    NA  7.35 24.3 49.70
-## 67                <NA>  V_5_3    NA  9.47 20.7 63.60
-## 68                <NA>  V_6_1    NA  8.99 22.9 56.60
-## 69                <NA>  V_6_2    NA  8.46 24.2 58.90
-## 70                <NA>  V_6_3    NA  8.08 22.8 55.20
-## 71                <NA>  V_7_1    NA  7.85 25.8 60.60
-## 72                <NA>  V_7_2    NA  8.11 25.8 73.90
-## 73                <NA>  V_7_3    NA  7.41 23.7 59.40
-## 74                <NA>  V_8_2    NA  9.30 19.5 36.80
-## 75                <NA>  V_9_1    NA  7.30 18.8 31.30
-## 76                <NA>  V_9_2    NA  4.04 20.5 32.00
-## 77                <NA>  V_9_3    NA  4.36 19.9 92.60
-## 78                <NA>  V_9_4    NA  4.30 19.8 36.50
-## 79                <NA> V_2_10    NA  5.00  5.0  5.00
-```
-The full join returns all of the rows from both ndat and jdat - we have the 75 rows from jdat, plus the second V_17_1 as seen in the right_join and T_2_2 and T_4_3 that we present in ndat but NA in jdat for a total of 79 rows.
-
-Lastly, we have the 2 filtering joins. These will not add columns, but rather filter the rows based on what is present in the second data frame.
-
-__Semi join__ returns all rows from x where there are matching values in y, keeping just columns from x. A semi join differs from an inner join because an inner join will return one row of x for each matching row of y, where a semi join will never duplicate rows of x.
-
-
-```r
-semi_join(ndat, jdat, by = c("Site" = "Samples"))
-```
-
-```
-##                   Taxa   Site  OTUs
-## 1           Clostridia V_16_2 17572
-## 2           Clostridia  T_2_9 17471
-## 3           Clostridia V_17_2 13875
-## 4           Clostridia  T_2_6 12169
-## 5          Bacteroidia V_17_1 11392
-## 6           Clostridia V_10_1 11180
-## 7           Clostridia  T_2_3 10944
-## 8              Unknown  T_9_2 10624
-## 9           Clostridia  T_4_4 10545
-## 10          Clostridia V_16_1 10043
-## 11          Clostridia  T_5_3  8981
-## 12 Alphaproteobacteria  V_3_2  8660
-## 13          Clostridia V_15_1  8244
-## 14          Clostridia V_17_1  7722
-## 15          Clostridia V_18_1  7481
-## 16 Alphaproteobacteria  V_3_1  7322
-## 17          Clostridia V_18_4  6246
-## 18          Clostridia  T_2_1  6213
-```
-`semi_join()` returns the 18 rows of ndat that have a Site match in jdat. Note that the columns from jdat have not been added.
-
-</br>
-
-__Anti join__ returns all rows from x where there are not matching values in y, keeping just columns from x.
-
-
-```r
-anti_join(ndat, jdat, by = c("Site" = "Samples"))
-```
-
-```
-##                 Taxa  Site OTUs
-## 1         Clostridia T_2_2 8999
-## 2 Betaproteobacteria T_4_3 7710
-```
-This returns our 2 rows in ndat that did not have a match in jdat. Note that the columns from jdat have not been added.
-
-***
-__Challenge__
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/pug_challenge1.jpeg){width=150px}
-
-</div>
-
-Given the definitions for the inner_, left_, right_, full_, semi_ and anti_joins, what would you expect the resulting data frame to be if jdat and ndat were reversed? Write down the number of rows and columns you would expect the data frame to have, then run the code. Did you find any surprises?
-
-</br>
-</br>
-</br>
-
-***
-
-__Challenge__
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/pug_challenge1.jpeg){width=150px}
-
-</div>
-
-Base R has a function that does join operations called `merge()`. What would be the code equivalent to the left_join of ndat and jdat? 
 
 </br>
 </br>
@@ -2414,7 +1787,7 @@ Read in the gapminder_wide.csv. What rules of tidy data does it break? Tidy this
         
 
   
-#Resources:  
+#Resources  
 https://github.com/wmhall/tidyr_lesson/blob/master/tidyr_lesson.md          
 http://stat545.com/block009_dplyr-intro.html          
 http://stat545.com/block010_dplyr-end-single-table.html     
@@ -2422,7 +1795,6 @@ http://vita.had.co.nz/papers/tidy-data.pdf
 https://thinkr.fr/tidyverse-hadleyverse/     
 http://stat545.com/bit001_dplyr-cheatsheet.html     
 http://dplyr.tidyverse.org/articles/two-table.html     
-http://r4ds.had.co.nz/relational-data.html#join-problems
 
 
 #Post-Lesson Assessment
