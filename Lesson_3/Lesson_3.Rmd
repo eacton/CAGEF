@@ -36,7 +36,7 @@ How do we get there? Today we are going to be learning how to make all sorts of 
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/VNQZ3KS), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF>, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/VNQZ3KS>), it will help me further develop this course and would be greatly appreciated. 
 
 ***
 
@@ -95,9 +95,7 @@ __Objective:__ At the end of this session you will be able to use `ggplot2` to m
 
 **Grammar of graphics:** a language to be able to communicate about what we are plotting programatically
 
-* The **aesthetics** are what you can see. For example, the data being plotted or represented by a shape or colour.
-This data could be presented in multiple ways. Data is mapped to aesthetics. A plot can have multiple layers (for example,
-a scatterplot with a regression line).
+* The **aesthetics** are how the data is mapped visual properties. For example, the data being plotted or represented by a shape or colour. This data could be represented in multiple ways. A plot can have multiple layers (for example, a scatterplot with a regression line).
 
 * Lines, bars, and points are examples of **geometric objects (geoms)** that could be used to present the data.
 
@@ -141,7 +139,7 @@ I have saved a version of the OTU table in tidy format (which we created in Less
 ```
 
 
-Let's read our data tables in and also load `ggplot2`. We will be using a variety of packages today that are grouped in `tidyverse`, so let's load `tidyverse`. You can see in the package startup message that `ggplot2` is one of the attached packages. You will also see in the 'Conflicts' section that `dplyr::filter()` and `dplyr::lag()` mask functions that are named the same thing from the stats package. This just means that if you call `filter()` it will by default be from `dplyr`. You can still call the masked function by explicitly using the version from the masked package, `stats::filter()`.
+Let's read our data tables in and also load `ggplot2`. We will be using a variety of packages today that are grouped in `tidyverse`, so let's load `tidyverse`. You can see in the package startup message that `ggplot2` is one of the attached packages. 
 
 
 ```{r, suppressPackageStartupMessages()}
@@ -197,9 +195,21 @@ Some of our data points seem to be crushed near the x-axis. We can **scale** the
 
 ```{r}
 ggplot(ndat, aes(x=TS, y=CODt, colour = Country)) + 
-  geom_point(alpha = 0.3) + 
+  geom_point() + 
   scale_y_log10()
 ```
+
+Keep in mind that scaling does not change the data, but rather the representation of the data. The y-axis has been scaled. This is different than taking the log10 of the y data.
+
+```{r}
+ggplot(ndat, aes(x=TS, y=log10(CODt), colour = Country)) + 
+  geom_point() 
+
+```
+
+
+The placement of the points looks the same, but the first graph is scaling the axis while the second graph has changed the data to a log10 scale.
+
 
 ####Faceting
 
@@ -227,22 +237,12 @@ If we really wanted to we could add another variable to the plot by changing the
 ggplot(ndat, aes(x=TS, y=CODt, colour = Temp, shape = Country)) + 
   geom_point() +
   scale_y_log10() +
-  facet_wrap(~Depth, scales = "free_y")
+  facet_wrap(~Depth)
 
 ```
 
 We can now note that only Tanzania had sampling greater than 4cm of depth. There are single latrines for 4 samples. There was no latrine at a depth of 11cm. Lack of replication and a bias towards Tanzania for the higher depths is something we should keep in mind while looking at this data. Depending on the question we are trying to answer, we may want to remove some of this data. 
 
-We can also note that our numbers are being ordered as if they were characters. In the last lesson we created Depth by splitting a sample name. We can change Depth to numeric type, and the numbers will be ordered properly.
-
-```{r}
-ndat$Depth <- as.numeric(ndat$Depth)
-
-ggplot(ndat, aes(x=TS, y=CODt, colour = Temp, shape = Country)) + 
-  geom_point() +
-  scale_y_log10() +
-  facet_wrap(~Depth)
-```
 
 One thing that is not necessary in this case - but good to know about - is the ability to allow each grid to have its own independent axis scale. In our example, wells of Depths from 1-4cm have up to 1000 CODt, while the other wells barely have values past 100 CODt. This can be changed, but keep in mind most people will assume all grids have the same scale, so take extra care to point that the scales are different when presenting or publishing. 
 
@@ -832,9 +832,9 @@ I have simply taken the 2 qualitative palettes that each have a length of 12, pu
 palette1 <- brewer.pal(12, "Paired")
 palette2 <- brewer.pal(12, "Set3")
 
-length(unique(c(palette1, palette2)))
-
 custom <- c(palette1, palette2)
+
+length(unique(custom))
 
 p + scale_fill_manual(values = custom)
 ```
@@ -959,27 +959,13 @@ It isn't necessary to remember all of this syntax, I frequently find myself back
 As mentioned the last call to `theme()` will override previous calls that conflict. Therefore, if we want to start with `theme_minimal()` as our base, it has to be in our code BEFORE the other modifications. 
 
 ```{r warning = FALSE}
-ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs, fill = Taxa)) + 
-  geom_boxplot(outlier.colour = "red") + 
+p + 
   theme_minimal() +
-  theme(axis.text.x = element_text(angle =90, hjust=1), 
-        panel.border = element_rect(fill = NA), 
-        strip.text.x = element_text(face = "bold", size = 16), 
-        plot.title = element_text(hjust=0.5, size = 18), 
-        axis.ticks.y = element_line()) + 
-  scale_y_log10() + 
-  facet_grid(~Country, labeller = labeller(Country = labels)) +
-  ggtitle("Abundance of Taxa by Country") +
-  xlab(NULL) +
-  ylab("log(OTUs)") + 
-  guides(fill=FALSE)
-
-# p+theme_minimal()+
-#   theme(axis.text.x = element_text(angle = 90, hjust = 1),
-#         panel.border = element_rect(fill=NA),
-#         strip.text.x = element_text(face = "bold", size = 16),
-#         plot.title = element_text(hjust=0.5, size = 18),
-#         axis.ticks.y = element_line())
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        panel.border = element_rect(fill=NA),
+        strip.text.x = element_text(face = "bold", size = 16),
+        plot.title = element_text(hjust=0.5, size = 18),
+        axis.ticks.y = element_line())
 
 ```
 
@@ -1266,7 +1252,7 @@ ggarrange(bub, hist,
           ncol = 2, nrow = 1)
 ```
 
-Next we will add in the boxplot. Imagine a square with 4 boxes. We are going to put our boxplot in the left top and bottom boxes, the histogram in the top right box, and the bubble plot in the bottom right box.  To do this, we are arranging 2 columns (one with the boxplot and one with the histogram + boxplot, `ncol = 2`) and we are arranging 2 rows (one with the histogram and one with the boxplot, `nrow = 2`).
+Next we will add in the boxplot. Imagine a square with 4 boxes. We are going to put our boxplot in the left top and bottom boxes, the histogram in the top right box, and the bubble plot in the bottom right box.  To do this, we are arranging 2 columns (one with the boxplot and one with the histogram + bubble plot, `ncol = 2`) and we are arranging 2 rows (one with the histogram and one with the bubble plot, `nrow = 2`).
 
 ```{r warning = FALSE}
 box <- ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
@@ -1282,7 +1268,7 @@ ggarrange(box, ggarrange(hist, bub,
 
 ```
 
-The y-axis lines for the histogram and boxplot are not aligned, but this can be fixed with a call to `align="v"`.
+The y-axis lines for the histogram and bubble plot are not aligned, but this can be fixed with a call to `align="v"`.
 
 
 ```{r warning = FALSE}
@@ -1471,28 +1457,28 @@ Wickham, Hadley. (2010). A Layered Grammar of Graphics. Journal of Computational
 Wilkinson, L. (2005), The Grammar of Graphics (2nd ed.). Statistics and Computing, New York: Springer. [14, 18]  
 Tufte, Edward R. The Visual Display of Quantitative Information.
 
-http://www.cookbook-r.com/Graphs/     
-https://github.com/jennybc/ggplot2-tutorial     
-http://stcorp.nl/R_course/tutorial_ggplot2.html     
-http://ggplot2.tidyverse.org/reference/theme.html
-http://joeystanley.com/blog/custom-themes-in-ggplot2
-https://github.com/jrnold/ggthemes
-https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/colorPaletteCheatsheet.pdf
-https://cran.r-project.org/web/packages/ggrepel/vignettes/ggrepel.html
-http://www.cookbook-r.com/Graphs/Legends_(ggplot2)/
-https://github.com/eclarke/ggbeeswarm
-https://cran.r-project.org/web/packages/ggsci/vignettes/ggsci.html
-http://www.sthda.com/english/rpkgs/ggpubr/
-https://rpubs.com/drsong/9575     
-http://elpub.bib.uni-wuppertal.de/edocs/dokumente/fbb/wirtschaftswissenschaft/sdp/sdp15/sdp15006.pdf     
-http://www.sthda.com/english/articles/24-ggpubr-publication-ready-plots/81-ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page/     
-https://rdpeng.github.io/Biostat776/notes/pdf/grdevices.pdf     
+<http://www.cookbook-r.com/Graphs/>          
+<https://github.com/jennybc/ggplot2-tutorial>          
+<http://stcorp.nl/R_course/tutorial_ggplot2.html>          
+<http://ggplot2.tidyverse.org/reference/theme.html>     
+<http://joeystanley.com/blog/custom-themes-in-ggplot2>     
+<https://github.com/jrnold/ggthemes>     
+<https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/colorPaletteCheatsheet.pdf>     
+<https://cran.r-project.org/web/packages/ggrepel/vignettes/ggrepel.html>      
+<http://www.cookbook-r.com/Graphs/Legends_(ggplot2)/>     
+<https://github.com/eclarke/ggbeeswarm>     
+<https://cran.r-project.org/web/packages/ggsci/vignettes/ggsci.html>     
+<http://www.sthda.com/english/rpkgs/ggpubr/>      
+<https://rpubs.com/drsong/9575>          
+<http://elpub.bib.uni-wuppertal.de/edocs/dokumente/fbb/wirtschaftswissenschaft/sdp/sdp15/sdp15006.pdf>          
+<http://www.sthda.com/english/articles/24-ggpubr-publication-ready-plots/81-ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page/>          
+<https://rdpeng.github.io/Biostat776/notes/pdf/grdevices.pdf>          
 
 #Post-Lesson Assessment
 ***
 
 Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
-https://www.surveymonkey.com/r/VNQZ3KS
+<https://www.surveymonkey.com/r/VNQZ3KS>
 
 </br>
 
