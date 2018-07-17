@@ -1,0 +1,341 @@
+---
+title: "Wellcome Trust Data Cleaning"
+author: "EA"
+date: "April 18, 2018"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+</br>
+
+
+***
+
+The purpose of this script is to clean the Wellcome Trust dataset and answer the associated Challenge questions from Lesson 4. I have added a section looking at the range of the data, removing an outlier, and looking at missing data. This is outside the scope of Lesson 4 but illustrates the data cleaning process.
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(readxl)
+```
+
+##Inspect your dataset. Are the data types what you expect?
+
+Read in the Wellcome Trust APC (article processing charge) dataset. 
+
+Take a look at the entire dataset before removing \`Article title\'. The backticks around Article title allow for selecting a column name with a space present - we will get rid of these spaces shortly). I am removing the Article title column because a) we don't need it to answer our questions and b) there are some Greek letters make it so we would have to install another package to make our document render to pdf.
+
+```{r}
+#dat <- read_xlsx("data/University returns_for_figshare_FINAL.xlsx") 
+dat <- read_xlsx("data/University returns_for_figshare_FINAL.xlsx") %>%
+  select(-`Article title`)
+
+glimpse(dat)
+```
+
+I expect the publisher, journal and article titles to be characters, and cost to be numeric. The PMID/PMCID might be numeric or character if the different ids were split into separate columns and the prefix id types were removed.
+
+##Identify any immediate problems.
+
+###Question 1: List 3 problems with this dataset that require data cleaning.
+
+```{r}
+head(dat)
+```
+
+</br>
+
+1. There is no structured vocabulary and as a consequence many publisher and Journal titles have multiple entries (abbreviations vs full names, spelling errors) instead of one journal or publisher.
+1. There are multiple variables in one column for different ids (PMID, PMCID) where each should have a separate column.
+1. Horrible column names ie.'COST (£) charged to Wellcome (inc VAT when charged).
+1. There are newline characters in our cells. 
+
+
+##Clean up column names.
+
+First of all let's change the column names to not have spaces and weird characters in them. I am also going to convert them to lowercase. I am not too concerned about including the units for cost as it is referenced in the README for the dataset. 
+
+```{r}
+colnames(dat) <- gsub("/", "_", colnames(dat))
+colnames(dat) <- gsub(" .*", "", colnames(dat))
+colnames(dat) <-tolower(colnames(dat))
+```
+
+##Investigate the range of your data.
+
+
+Let's find the least expensive publication.
+
+```{r}
+dat %>% arrange(cost) %>% head()
+
+```
+
+There is a very low value (45.9) and it is possible other funders contributed to this publication (as mentioned in the README). Let's see if there are any other publications by this publisher to tell us if this is reasonable for the publisher.
+
+```{r}
+dat %>% arrange(cost) %>% filter(publisher == "American Society for Nutrition")
+
+```
+
+Since there is only one entry from this publisher, let's check its value in relation to the mean and standard deviation of the dataset as a whole.
+
+```{r}
+dat %>% summarize(sd = sd(cost), mean = mean(cost))
+```
+
+The mean less the lowest cost divided by the standard deviation tells us that the point is 2.2 standard deviations from the mean.
+```{r}
+(1826-45.9)/807
+
+```
+
+Since there is only one entry from this publisher, and its cost is less than 3 standard deviations from the mean, we will keep it in our dataset.
+
+Let's find the most expensive publication.
+
+```{r}
+dat %>% arrange(desc(cost)) %>% head()
+
+```
+
+It looks like the most expensive publication is not a journal, but a book. It also appears to be more than twice as expensive as our next most expensive cost. The book is obviously an outlier as a value (greater than 3 standard deviations from the mean) and for a fair comparison of cost (books vs journal articles). We will remove it from the dataset.  
+
+
+##Do you have missing data?
+
+While we are removing the book from our dataset, we should check if there are any other cases where journal is *NA*? We can look for 'incomplete' entries in the journal column. It is probably a good idea to look for incomplete entries in the entire dataset as well.
+
+```{r}
+dat[!complete.cases(dat$journal),]
+
+dat[!complete.cases(dat),]
+```
+
+What is going on? We know that there is a case where journal is *NA* and there are <NA> values in the id column. It appears that in data collection "*NA*" was entered as a character string instead of simply being an empty entry like with the identifiers. This was likely due to a rule that 'something' had to be entered into the journal field. We can then remove it from our dataset using the `filter` function.
+
+```{r}
+dat <- dat %>% filter(journal != "NA")
+```
+
+We are not concerned with PMIDs as <NA> for today as we do not need this column to answer any of our questions.
+
+##Data-Cleaning
+
+Okay! Let's do some data cleaning! For this dataset we are ONLY going to clean the **publisher** column. We will answer questions about the journal column using `grep` to grab the information we want without cleaning the entire column.
+
+This will illustrate how easy our questions will be to answer once we have the data in the appropriate format, and how the majority of our time is spent data cleaning.
+
+First let's look at the publishers we have. We can see how many different publishers there are by looking at the number of factor levels. You could instead look to see which values of publisher are unique. Grouping by factor levels is convenient in this case to see the names alphabetically. 
+
+```{r}
+levels(as.factor(dat$publisher))
+length(levels(as.factor(dat$publisher)))
+```
+There appears to be 280 publishers, however we can see that many are duplicated through inconsistencies in data collection. For example I would guess that 'Sage', 'SAGE', 'Sage Publications', 'SAGE Publications', 'Sage Publications Inc', 'Sage Publications Ltd', 'Sage publishers' and 'Sage Publishing' are all the same publisher.
+
+The first thing I am going to do is change everything to lowercase and look at how many matches were case-dependant.
+
+```{r}
+dat$publisher <- tolower(dat$publisher)
+
+length(levels(as.factor(dat$publisher)))
+```
+There are now 255 publishers instead of 279.
+
+
+We can also see some typos in here that can be corrected.
+
+```{r}
+dat$publisher <- str_replace_all(dat$publisher, "darmouth.*", "dartmouth")
+dat$publisher <- str_replace_all(dat$publisher, "wliey.*", "wiley")
+dat$publisher <- str_replace_all(dat$publisher, "endrocrine", "endocrine")
+dat$publisher <- str_replace_all(dat$publisher, "biolgists", "biologists")
+dat$publisher <- str_replace_all(dat$publisher, "socety", "society")
+dat$publisher <- str_replace_all(dat$publisher, "genermal", "general")
+dat$publisher <- str_replace_all(dat$publisher, "neuro\\s?science[s]?", "neuroscience")
+dat$publisher <- str_replace_all(dat$publisher, "elseveier.*", "elsevier")
+dat$publisher <- str_replace_all(dat$publisher, "of neuroscience", "for neuroscience")
+dat$publisher <- str_replace_all(dat$publisher, "habour", "harbor")
+dat$publisher <- str_replace_all(dat$publisher, "landes biosciences", "landes bioscience")
+dat$publisher <- str_replace_all(dat$publisher, "biolgy", "biology")
+dat$publisher <- str_replace_all(dat$publisher, "soc\\b", "society")
+dat$publisher <- str_replace_all(dat$publisher, "hamatology|haematology", "hematology")
+dat$publisher <- str_replace_all(dat$publisher, "cadmus", "camdus")
+dat$publisher <- str_replace_all(dat$publisher, "benthan", "bentham")
+dat$publisher <- str_replace_all(dat$publisher, "berhahn books", "berghahn")
+dat$publisher <- str_replace_all(dat$publisher, "byophysical", "biophysical")
+dat$publisher <- str_replace_all(dat$publisher, "asbmc.*", "asbmb")
+dat$publisher <- str_replace_all(dat$publisher, "endocrinolog", "endocrinology")
+dat$publisher <- str_replace_all(dat$publisher, "clearace", "clearance")
+```
+
+Next, I am going to shorten several publishers to their 'base' name. For example, everything above to do with Sage will be under 'sage'. Everything to do with Wiley will be 'wiley'. 
+
+```{r}
+#anything before or after wiley will be removed
+dat$publisher <- str_replace_all(dat$publisher, ".*wiley.*", "wiley")
+dat$publisher <- str_replace_all(dat$publisher, ".*elsevier.*", "elsevier")
+dat$publisher <- str_replace_all(dat$publisher, ".*pnas.*", "pnas")
+dat$publisher <- str_replace_all(dat$publisher, ".*royal college of psychiatrists.*", 
+                                 "royal college of psychiatrists")
+dat$publisher <- str_replace_all(dat$publisher, ".*jove.*", "jove")
+dat$publisher <- str_replace_all(dat$publisher, ".*faseb.*", "faseb")
+dat$publisher <- str_replace_all(dat$publisher, ".*?company of biologists.*", 
+                                 "the company of biologists")
+#anything after the name will be removed
+dat$publisher <- str_replace_all(dat$publisher, "sage.*", "sage")
+dat$publisher <- str_replace_all(dat$publisher, "wolters kluwer.*", "wolters kluwer")
+dat$publisher <- str_replace_all(dat$publisher, "springer.*", "springer")
+dat$publisher <- str_replace_all(dat$publisher, "nature.*", "nature")
+dat$publisher <- str_replace_all(dat$publisher, "bmj.*", "bmj")
+dat$publisher <- str_replace_all(dat$publisher, "cold spring harbor.*", "cold spring harbor")
+dat$publisher <- str_replace_all(dat$publisher, "acs.*", "acs")
+dat$publisher <- str_replace_all(dat$publisher, "asbmb.*", "asbmb")
+dat$publisher <- str_replace_all(dat$publisher, "dartmouth.*", "dartmouth")
+dat$publisher <- str_replace_all(dat$publisher, "cambridge.*", "cambridge")
+dat$publisher <- str_replace_all(dat$publisher, "oxford.*", "oxford")
+dat$publisher <- str_replace_all(dat$publisher, "plos.*", "plos")
+dat$publisher <- str_replace_all(dat$publisher, "rsc.*", "rsc")
+dat$publisher <- str_replace_all(dat$publisher, "portland.*", "portland")
+dat$publisher <- str_replace_all(dat$publisher, "&", "and")
+dat$publisher <- str_replace_all(dat$publisher, "taylor and francis.*", "taylor and francis")
+dat$publisher <- str_replace_all(dat$publisher, "bentham.*", "bentham")
+dat$publisher <- str_replace_all(dat$publisher, "national academy of sciences.*", 
+                                 "national academy of sciences")
+dat$publisher <- str_replace_all(dat$publisher, "camdus.*", "camdus")
+dat$publisher <- str_replace_all(dat$publisher, "cenveo.*", "cenveo")
+dat$publisher <- str_replace_all(dat$publisher, "mary ann liebert.*", "mary ann liebert")
+dat$publisher <- str_replace_all(dat$publisher, "impact.*", "impact")
+dat$publisher <- str_replace_all(dat$publisher, "frontiers.*", "frontiers")
+dat$publisher <- str_replace_all(dat$publisher, "future medicine.*", "future science")
+dat$publisher <- str_replace_all(dat$publisher, "hindawi.*", "hindawi")
+dat$publisher <- str_replace_all(dat$publisher, "informa healthcare.*", "informa healthcare")
+dat$publisher <- str_replace_all(dat$publisher, "mit press.*", "mit press")
+dat$publisher <- str_replace_all(dat$publisher, "humana press.*", "humana press")
+dat$publisher <- str_replace_all(dat$publisher, "pubmed.*", "pubmed")
+```
+
+There will also be some name corrections - for example npg is 'nature publishing group' and so should be under 'nature'.
+
+```{r}
+dat$publisher <- str_replace_all(dat$publisher, "npg.*", "nature")
+dat$publisher <- str_replace_all(dat$publisher, "oup.*", "oxford")
+dat$publisher <- str_replace_all(dat$publisher, ".*royal society.*", "rsc")
+dat$publisher <- str_replace_all(dat$publisher, "public library of science.*", "plos")
+dat$publisher <- str_replace_all(dat$publisher, 
+                                 ".*american society for biochemistry and molecular biology.*",
+                                 "asbmb")
+dat$publisher <- str_replace_all(dat$publisher, 
+                                 "federation of american societies for experimental biology.*",
+                                 "faseb")
+dat$publisher <- str_replace_all(dat$publisher,
+                                 "federation of american society of experimental biology.*", "faseb")
+dat$publisher <- str_replace_all(dat$publisher, "american chemical society.*", "acs")
+dat$publisher <- str_replace_all(dat$publisher, "tandf", "taylor and francis")
+dat$publisher <- str_replace_all(dat$publisher, "international union of crystallography.*", "iucr")
+dat$publisher <- str_replace_all(dat$publisher, ".*american society for microbiology.*", "asm")
+dat$publisher <- str_replace_all(dat$publisher, "biomed central.*", "bmc")
+dat$publisher <- str_replace_all(dat$publisher, "british medical journal", "bmj")
+dat$publisher <- str_replace_all(dat$publisher, ".*american society of microbiology.*", "asm")
+dat$publisher <- str_replace_all(dat$publisher, "of general microbiology", "for general microbiology")
+dat$publisher <- str_replace_all(dat$publisher, "of leukocyte", "for leukocyte")
+dat$publisher <- str_replace_all(dat$publisher, "publisher society", "society")
+dat$publisher <- str_replace_all(dat$publisher, "company of biologist$", "company of biologists")
+dat$publisher <- str_replace_all(dat$publisher, "american psychiatric publishing", 
+                                 "american psychiatric association")
+dat$publisher <- str_replace_all(dat$publisher, "institute of physics", "iop publishing")
+
+```
+
+
+Remove newline characters.
+
+```{r}
+dat$publisher <- str_remove_all(dat$publisher, "\r\n")
+dat$publisher <- str_trim(dat$publisher, side = "both")
+dat$publisher <- str_remove_all(dat$publisher, "the ")
+```
+
+
+Let's see what we have.
+
+```{r}
+levels(as.factor(dat$publisher))
+length(levels(as.factor(dat$publisher)))
+```
+
+We now have 99 publishers. I am going to call this 'good enough' to move on.
+
+###Question 2: What is the mean cost of publishing for the top 3 most popular publishers? 
+
+
+Which publishers are the most popular to publish with?
+
+```{r}
+dat %>% group_by(publisher) %>% summarize(mean = mean(cost), n=n()) %>% arrange(desc(n))
+```
+
+What is the mean cost of publishing for the top 3 most popular publishers? 
+
+```{r}
+dat %>% 
+  filter(publisher == "elsevier"| publisher == "plos"| publisher == "wiley") %>%
+  summarize(mean = mean(cost))
+```
+
+
+###Question 3: What is the number of publications by PLOS One in this dataset?
+
+Let's start by converting the journal titles to lowercase. Then we can grab everything with plos to see what we are dealing with.
+
+```{r}
+dat$journal <- tolower(dat$journal)
+
+filter(dat, grepl("plos", dat$journal)) %>%
+  select(journal)
+```
+
+We should probably check for 'public library of science one' listed. Looks like there is 1.
+
+```{r}
+filter(dat, grepl("public", dat$journal)) %>%
+  select(journal) %>%
+  tail()
+```
+
+
+
+It looks like our variations are "plos one", "plos  one", plosone", "public library of science one" and "plos 1". Instead of doing data-cleaning for the journal column, we are just going to grab all of the rows in our data frame that contain one of these versions of PLOS One, and then count the number of those rows. It's regex time!! 
+
+
+```{r}
+filter(dat, grepl("p(los[[:space:]]*(one|1)|ublic library of science one)", dat$journal)) %>% 
+  nrow(.)
+```
+
+Another, less clunky way.
+
+```{r}
+filter(dat, grepl("[^b]\\s?(1|one)$", dat$journal)) %>% select(journal)%>% nrow(.)
+```
+
+That is our answer!
+
+
+###Question 4: Convert sterling to CAD. What is the median cost of publishing with Elsevier in CAD?
+
+```{r}
+dat %>% 
+  filter(publisher == "elsevier") %>% 
+  summarize(median_cad = median(cost)*1.79)
+```
+
+
+###Question 5: Annotate your data cleaning efforts and answers to these questions in an .Rmd file. Knit your final answers to pdf.
+
+Congratulate yourself of how professional your document looks.
