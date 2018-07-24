@@ -483,7 +483,7 @@ ggplot(dat, aes(x = Depth, y = OTUs)) +
 Knowing this, we could ignore the warning, or add +1 to each OTU (negligable on a log scale).
 
 ```{r}
-ggplot(dat, aes(x = Depth, y = (OTUs+1))) +
+ggplot(dat, aes(x = Depth, y = OTUs+1)) +
   geom_point() +
   scale_y_log10() 
 ```
@@ -491,7 +491,7 @@ ggplot(dat, aes(x = Depth, y = (OTUs+1))) +
 In order to see the points a little better, we can 'jitter' them. Jittering spreads out our data points while keeping them in the same area of the plot so we can get an idea of density.
 
 ```{r}
-ggplot(dat, aes(x = Depth, y = (OTUs+1))) +
+ggplot(dat, aes(x = Depth, y = OTUs+1)) +
   geom_point(position = "jitter") +
   scale_y_log10() +
   facet_wrap(~Country)
@@ -612,54 +612,22 @@ ggplot(dat, aes(x = Taxa, y = OTUs)) +
   scale_y_log10()
 ```
 
-We could also clean this plot up a bit by removing those taxa with 1 or fewer OTUs as well as the condition that a taxa must be present in more than 1 sample.
+For now, let's just keep the Taxa that are common to both countries and have greater than 1 OTU. To do this we can filter for rows with greater than or equal to 2 OTUs. We then group by Country and Taxa to get Country-specific information about Taxa, and count the number of entries, keeping only Taxa that are shown to appear in more than one sample. We then need to `ungroup()` to select our final list or we will end up with a grouped object. We use the `duplicated()` function to retain those Taxa that were found twice (ie. in both countries).
 
-```{r warning = FALSE}
+The `%in%` function returns a logical vector of whether there is a match or not for its first argument in its second argument. It is useful for subsetting.
 
-keep <- dat %>%
-  filter(OTUs>=2) %>%
-  group_by(Taxa) %>%
-  summarize(n = n()) %>%
-  filter(n > 1) %>%
-  select(Taxa)
-
-ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs)) +
-  geom_boxplot() +
-  theme(axis.text.x = element_text(angle=90, hjust=1)) +
-  scale_y_log10()
-```
-
-If we facet by country we can see that Acidobacteria_Gp1, for example, is only found in Vietnam and not Tanzania. 
-
-```{r warning = FALSE}
-ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs)) + 
-  geom_boxplot() + 
-  theme(axis.text.x = element_text(angle=90, hjust=1)) + 
-  scale_y_log10() + 
-  facet_grid(~Country)
-```
-
-For now, let's just keep the Taxa that are common to both countries.
+We can facet our plot by Country to verify we have only commonly appearing OTUs.
 
 ```{r warning = FALSE}
 keep <- dat %>% 
   filter(OTUs>=2) %>% 
   group_by(Country, Taxa) %>% 
   summarize(n = n()) %>% 
-  filter(n > 1) 
+  filter(n > 1) %>%
+  ungroup() %>%
+  select(Taxa)
 
-keep <- unique(keep[duplicated(keep$Taxa),"Taxa"])
-
-# keep <- dat %>% 
-#   filter(OTUs >=2) %>% 
-#   group_by(Country, Taxa) %>% 
-#   summarize(n = n()) %>% 
-#   filter(n >1) %>% 
-#   ungroup() %>%
-#   select(Taxa) %>%
-#   .[duplicated(.),] %>%
-#   unique()
-  
+keep <- keep[duplicated(keep$Taxa),]
 
 ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs)) + 
   geom_boxplot() + 
@@ -673,26 +641,20 @@ We will be using this graph as a base for customization later in the lesson.
 
 ###Beeswarm Plots
 
-Even though boxplots give us summary statistics on our data, it is useful to be able to see where our data points are. Adding the data as another layer using `geom_point()` plots our data in the form of a stripplot on top of our boxplots. It would be nice to see how many points we have at each OTU value, but there are a lot of points overlapping here. I have subset the data to 4 Taxa and 1 Country so that we can see the differences in the next geom options a bit better.
+Even though boxplots give us summary statistics on our data, it is useful to be able to see where our individual data points are. We can add the data as another layer using `geom_point()`to place dots on top of our boxplot, or use `geom_jitter()` to spread our points out a bit. However, a **beeswarm plot** places data points that are overlapping next to each other, so we can get a better picture of the distribution of our data.
+
+I have subset the data to make a boxplot with 3 Taxa and 1 Country so that we can see the differences in geom options a bit better.
 
 An option with `ggplot2` is to save your plot into a *ggplot object*. This works well if you know you are only changing one or two elements of your plot, and you do not want to keep retyping code. What we are going to vary here is how the data points are displayed.
 
 ```{r warning = FALSE}
-b <- ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
+b <- ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
   geom_boxplot() +
   theme(axis.text.x = element_text(angle=90, hjust=1)) + 
   scale_y_log10()
-
-b + geom_point()
 ```
 
-Jittering the points gives a general idea of the distribution, but is a bit too widely dispersed to give a good sense of the data.
-
-```{r warning = FALSE}
-b + geom_jitter()
-```
-
-A beeswarm plot places data points that were overlapping next to each other, so we can get a better picture of the distribution of points. We simply overlay the points with `geom_beeswarm()`.
+We can simply overlay the points with `geom_beeswarm()`.
 
 ```{r warning = FALSE}
 library(ggbeeswarm)
@@ -978,7 +940,7 @@ __Challenge__
 
 </div>
 
-Change the colour of the plot background. Add minor gridlines, and make the major gridlines black. Increase the spacing in between the panels.
+Change the colour of the plot background. Add minor gridlines, and make the major gridlines black. 
 
 
 </br>
@@ -1053,63 +1015,24 @@ If this looks a little jarring to you compared to 'normal' heatmaps, it is proba
 ```{r}
 distance <- dist(cdat)
 clust <- hclust(distance)
-cdat <- cdat[clust$order, clust$order]
-
-clong <- as.data.frame(cdat) %>% 
-  rownames_to_column("Site1") %>% 
-  gather(key = "Site2", value = "correlation", -Site1)
-
-
-
-# cdat <- read.csv("SPE_pitlatrine.csv", row.names=1)
-# cdat <- cor(cdat, method = "pearson", use = "complete.obs")
-# 
-# clevels <- rownames(cdat)
-# 
-# 
-# clong <- as.data.frame(cdat) %>% 
-#   rownames_to_column("Site1") %>% 
-#   gather(key = "Site2", value = "correlation", -Site1)
-# 
-# clong$Site1 <- factor(clong$Site1, levels = clevels, labels = clevels)
-# clong$Site2 <- factor(clong$Site2, levels = clevels, labels = clevels)
-# 
-# ggplot(clong, aes(Site1, Site2, fill = correlation)) +
-#          geom_tile() +
-#          xlab(NULL) +
-#          ylab(NULL) +
-#         scale_fill_gradient(name= "Pearson\nCorrelation", low = "red", high = "yellow")+
-#         theme(axis.text.x = element_text(angle = 90, hjust = 1))
-#         
-# distance <- dist(cdat)
-# clust <- hclust(distance)
-# fdat <- cdat[clust$order, clust$order]
-# 
-# levels <- rownames(fdat)
-# 
-# flong <- as.data.frame(fdat) %>% 
-#   rownames_to_column("Site1") %>% 
-#   gather(key = "Site2", value = "correlation", -Site1)
-# 
-# flong$Site1 <- factor(flong$Site1, levels = levels, labels = levels)
-# flong$Site2 <- factor(flong$Site2, levels = levels, labels = levels)
-# 
-# ggplot(flong, aes(Site1, Site2, fill = correlation)) +
-#   geom_tile() +
-#   xlab(NULL) +
-#   ylab(NULL) +
-#   scale_fill_gradient(name= "Pearson\nCorrelation", low = "red", high = "yellow")+
-#   theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-
+fdat <- cdat[clust$order, clust$order]
+ 
+levels <- rownames(fdat)
+ 
+flong <- as.data.frame(fdat) %>% 
+   rownames_to_column("Site1") %>% 
+   gather(key = "Site2", value = "correlation", -Site1)
+ 
+flong$Site1 <- factor(flong$Site1, levels = levels, labels = levels)
+flong$Site2 <- factor(flong$Site2, levels = levels, labels = levels)
 ```
 
 
-To have a different colour scheme that for example, goes from red to yellow, you can use `scale_fill_gradient()` and specify what you want the diverging colours to be. Note that your legend title now derives from this gradient. 
+To have a different colour scheme that for example, goes from red to yellow, you can use `scale_fill_gradient()` and specify what you want the diverging colours to be. Note that your legend title now derives from this gradient. We can also adjust the text size such that our labels do not overlap. 
 
 
 ```{r}
-ggplot(clong, aes(Site1, Site2, fill = correlation)) + geom_tile() +
+ggplot(flong, aes(Site1, Site2, fill = correlation)) + geom_tile() +
   scale_fill_gradient(name = "Pearson\nCorrelation", low = "red", high = "yellow") +
   xlab(NULL) +
   ylab(NULL)+
@@ -1147,9 +1070,9 @@ In this example I have just taken a scatterplot that we made earlier, and made i
 ```{r warning = FALSE, message = FALSE}
 library(ggvis)
 
-p <- ggvis(ndat, x= ~TS, y= ~CODt) 
+gg <- ggvis(ndat, x= ~TS, y= ~CODt) 
   
-layer_points(p) %>% add_tooltip(function(x) c(paste0("TS=", x$TS, ", CODT=", x$CODt)))
+layer_points(gg) %>% add_tooltip(function(x) c(paste0("TS=", x$TS, ", CODT=", x$CODt)))
 
 ```
 
@@ -1255,7 +1178,7 @@ ggarrange(bub, hist,
 Next we will add in the boxplot. Imagine a square with 4 boxes. We are going to put our boxplot in the left top and bottom boxes, the histogram in the top right box, and the bubble plot in the bottom right box.  To do this, we are arranging 2 columns (one with the boxplot and one with the histogram + bubble plot, `ncol = 2`) and we are arranging 2 rows (one with the histogram and one with the bubble plot, `nrow = 2`).
 
 ```{r warning = FALSE}
-box <- ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Gammaproteobacteria" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
+box <- ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
   geom_boxplot() + 
   geom_point() +
   theme(axis.text.x = element_text(angle=90, hjust=1)) + 
@@ -1423,7 +1346,7 @@ ggbio:
 - http://www.bioconductor.org/packages/2.11/bioc/vignettes/ggbio/inst/doc/ggbio.pdf
 
 GenVisR:
-- https://bioconductor.org/packages/release/bioc/vignettes/GenVisR/inst/doc/GenVisR_intro.html
+- https://bioconductor.org/packages/release/bioc/vignettes/GenVisR/inst/doc/Intro.html
 
 GenomeGraphs:
 - https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-10-2
