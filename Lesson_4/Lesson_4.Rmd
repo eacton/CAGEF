@@ -36,7 +36,7 @@ How do we get there? Today we are going to be learning data cleaning and string 
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF __(Note: repo is private until approved)__, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/PVHDKDB), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/PVHDKDB), it will help me further develop this course and would be greatly appreciated. 
 
 ***
 
@@ -168,6 +168,9 @@ What I would like to get across it that it is okay to google and use resources e
 </br>
 </br>
 
+</br>
+</br>
+
 __What does the language look like?__ 
 
 The language is based on _meta-characters_ which have a special meaning rather than their literal meaning. For example, '$' is used to match the end of a string, and this use supercedes its use as a character in a string (ie 'Joe paid \$2.99 for chips.'). 
@@ -268,7 +271,7 @@ While you can always refer back to this lesson for making your regular expressio
 </br>
 
 
-##Data Cleaning with Base R (AKA What is Elon Musk up to anyways?)
+##Data Cleaning with stringr/stringi (AKA What is Elon Musk up to anyways?)
 
 Let's take this cacaphony of characters we've just learned about and perform some basic data cleaning tasks with an actual messy data set. I have scraped Elon Musk's latest tweets from Twitter. The code to do this is in the Lesson 4 file [twitter_scrape.R](https://github.com/eacton/CAGEF/blob/master/Lesson_4/twitter_scrape.R) if you are curious or want to creep someone on Twitter.
 
@@ -286,6 +289,7 @@ str(elon_tweets_df)
 ```
 
 Our end goal is going to be to look at the top 50 words in Elon Musk's tweets and make a wordcloud. I don't want urls, hastags, or other tags. I also don't want punctuation or spaces. I just want to extract the words from tweets. It might be fun to look at the top favorite tweets while we are data cleaning, so let's use `tidyverse` functions to keep the text tweets and order them by the favorited counts.
+
 ```{r}
 elon_tweets_df <- elon_tweets_df %>% 
   select(text, favoriteCount) %>%
@@ -294,105 +298,97 @@ elon_tweets_df <- elon_tweets_df %>%
 elon_tweets_df$text[1:5]
 ```
 
+The `stringr` and `stringi` functions are the tidyverse solution to regular expressions. Functions can be found using `str_` + `Tab`. The order of arguments are switched in `stringr` relative to the base functions. The first argument will be the character string we are searching, and the second argument will be the pattern we are matching.
+
 First, I want to remove the tags from the beginning of words. I am going to save my regex expression into an object - so we can use them again later.
 
-What this expression says is that I want to find matches for a hastag OR an asperand ('at' symbol) followed by at least one word character. `grep` is a function that allows us to match our pattern (our expression) to a character vector. It is a good idea to do a visual inspection of your result to make sure your matches or substitutions are working the way you expected.
+What this expression says is that I want to find matches for a hastag OR an asperand ('at' symbol) followed by at least one word character. `str_extract` will return the index of the match, as well as the match. Note that the match is extracted rather than the entire string. It is a good idea to do a visual inspection of your result to make sure your matches or substitutions are working the way you expected.
 
 ```{r}
 tags <- "#|@\\w+"
 
-grep(pattern = tags, x = elon_tweets_df$text)
+str_extract(string = elon_tweets_df$text, pattern = tags) %>% head(100)
 
 ```
-We can see that `grep` returns the index of the match. We have a number of entries that include tags. We also have a number of warnings that we will return to. 
 
-If we want to return the tweet itself instead of the index, we can use the argument `value = TRUE`.  In this case, it looks like each tweet matched does have a tag. (You will have a warning here too, I didn't print it here.)
-
-```{r warning = FALSE}
-grep(tags, elon_tweets_df$text, value = TRUE) %>% head()
-
-```
-We can then use `gsub` to replace that pattern (our tags) with nothing (an empty string).
-```{r}
-elon_tweets_df$text <- gsub(pattern = tags, replacement = "", elon_tweets_df$text)
-```
-
-Back to the warnings about strings being 'invalid in this locale'. Let's take a look at these strings by subsetting for the indices given.
+`str_detect` returns TRUE or FALSE if a match is or isn't found, respectively.
 
 ```{r}
-elon_tweets_df$text[c(10,118, 156, 219, 224)]
+str_detect(elon_tweets_df$text, tags) %>% head(100)
 
 ```
-
-From context, it looks like these character strings have emojis in them, which have their own character codes. Why would this give us an error? Tweets are _encoded_ in UTF-16 and converted to UTF-8 when read into R. Things that have character codes get encoded differently. Here is an example of [emoji encoding](https://raw.githubusercontent.com/today-is-a-good-day/Emoticons/master/emDict.csv). Since we are going to remove anything with special character codes (ie. an apostrophe or emoji), we are going to use the `iconv` function to substitute encoded character codes that need converting with nothing (again, an empty character string). This is not something you will have to deal with on a daily basis, but character encoding is something to be aware of, especially when scraping data from the web.  
+You could use this to subset, for example, all tweets that refer to @SpaceX.
 
 ```{r}
-elon_tweets_df$text <- iconv(elon_tweets_df$text, "UTF-8", "ASCII", sub = "")
-
-elon_tweets_df$text[c(10,118, 156, 219, 224)]
+elon_tweets_df %>% filter(str_detect(.$text, "@SpaceX")) 
 ```
 
-Looking back at our problematic strings, you can see that the emojis have been removed as well as quotation marks. Our hastag and asperand would also have been encoded characters had we not already removed them.
 
 
-Our next step would be to remove urls. This is a bit tricky. We could be looking for http:// or https:// followed by we don't know what (some combination of letters, numbers and forward slashes). 
+I haven't yet removed the tags. With the `str_replace` function we can specify our pattern and replacement, in this case we can replace the tags with an empty character string. We can see in the result that the tags have been replaced.
 
-We can check out which tweets have urls using `grep` as we did previously to see if we managed to match urls.
+```{r}
+str_replace_all(elon_tweets_df$text[1:50], pattern = tags, replacement = "")
+elon_tweets_df$text <- str_replace_all(elon_tweets_df$text, pattern = tags, replacement = "")
+```
 
-We are going to continue our pattern of using `gsub` to substitute what we don't want with an empty character string.
+
+It looks like there are a bunch of shared urls in these tweets we need to remove. This is a bit tricky. We could be looking for http:// or https:// followed by we don't know what (some combination of letters, numbers and forward slashes). 
+
+`str_remove` is similar to `str_replace`, but it has the default replacement set to an empty character string. Check to see if your regular expression is optimized on a large portion of your data before saving your cleaned output. 
+
 
 ```{r}
 url <- "http[s]?://[[:alnum:].\\/]+"
 
-grep(url, elon_tweets_df$text, value = TRUE) %>% head()
+str_remove_all(elon_tweets_df$text, pattern = url) %>% head(50)
 
-elon_tweets_df$text <- gsub(pattern = "http[s]?://[[:alnum:].\\/]+", replacement = "", elon_tweets_df$text)
+elon_tweets_df$text <- str_remove_all(elon_tweets_df$text, pattern = url)
 
 ```
 
-We can also use `grepl` to get a logical reponse for whether a tweet has a url or not. That way, if you wanted to grab all of the urls that Elon Musk suggests to visit, you can filter with `grepl` to select all of the tweets where it is TRUE that a url is present.
+We are going to get rid of numbers and punctuation all at the same time. 
+```{r}
+trail <- "[[:punct:][0-9]]*"
+
+str_remove_all(elon_tweets_df$text, trail) %>% head(10)
+
+elon_tweets_df$text <- str_remove_all(elon_tweets_df$text, trail)
+```
+Emojis are special characters. To get rid of emojis in unicode (the most extensive character set which attempts to be comprehensive for all languages and symbols), we use `\\p{So}` which gets rid of 'other symbols'. `\\p` represents a category of character and `{So}` represents symbols that are not math, currency or modifier symbols.
 
 ```{r}
-grepl(url, elon_tweets_df$text) %>% head()
+str_remove_all(elon_tweets_df$text, '\\p{So}') %>% head(10)
 
-elon_urls <- elon_tweets_df %>% filter(grepl(url, elon_tweets_df$text))
+elon_tweets_df$text <- str_remove_all(elon_tweets_df$text, '\\p{So}')
 ```
 
 
-Lastly, we are going to get rid of trailing spaces, numbers, and punctuation all at the same time. You can find trailing spaces at the very end of our tweet string from removing the urls.
+
+We still have trailing spaces at the very end of our tweet string from removing the urls, as well as at the beginning of a tweet if it started with a handle or hashtag.
+
+Whitespace characters include spaces, newline characters, and tabs. `stringr` has its own function for trimming whitespace, `str_trim`, which you can use to specify whether you want leading or trailing whitespace trimmed, or both.
 
 ```{r}
-trail <- "[ ]+$|[0-9]*|[[:punct:]]"
+elon_tweets_df$text <- str_trim(elon_tweets_df$text, side = "both")
 
-grep(trail, elon_tweets_df$text, value = TRUE) %>% head()
-
+elon_tweets_df$text[1:10]
 ```
-We can check to see that we are picking up strings with punctutation, numbers and trailing spaces, and then we can remove them and compare our output.
+
+See how we have a couple extra spaces in the middle of some of our first string? `str_squish` will take care of that for us, leaving only a single (white)space between words. 
 
 ```{r}
-elon_tweets_df$text <- gsub(pattern = trail, replacement = "", elon_tweets_df$text)
+elon_tweets_df$text <- str_squish(elon_tweets_df$text)
 
-elon_tweets_df$text[1:5]
+elon_tweets_df$text[1:100]
 ```
 
-It looks like everything worked except there are extra spaces from whenever a number was removed. Let's take all of the places where there are 2 or more spaces created and substitute them with just one space. 
+Lastly, let's convert all of our worder to lowercase with the `tolower()` function.
 
 ```{r}
-space <- "\\s{2,}"
-
-grep(space, elon_tweets_df$text, value = TRUE) %>% head()
-
-```
-Again, we can check to see that we are picking up strings with extra spaces, and then replace those spaces with a single space.
-
-
-```{r}
-elon_tweets_df$text <- gsub(pattern = space, replacement = " ", elon_tweets_df$text)
-
-elon_tweets_df$text[1:5]
+elon_tweets_df$text <- tolower(elon_tweets_df$text)
 ```
 
-It worked! 
 
 ***
 __Challenge__ 
@@ -403,7 +399,7 @@ __Challenge__
 
 </div>
 
-We also have a leading whitespace where we removed a number. How would we remove that whitespace? Can you think of more than one way to do this?
+Come up with a regex expression that would replace all tags, urls, punctuation and numbers at once. Read in the tweets data frame again and save under a different name. Test your expression. Did it work as you expected?
 
 
 </br>
@@ -413,21 +409,11 @@ We also have a leading whitespace where we removed a number. How would we remove
 
 ***
 
-```{r include = FALSE}
-extra <- "^[ ]"
-
-grep(extra, elon_tweets_df$text, value = TRUE) %>% head()
-
-elon_tweets_df$text <- gsub(pattern = extra, replacement = "", elon_tweets_df$text)
-
-elon_tweets_df$text[1:5]
-```
-
 Onwards!! Let's break the tweets down into individual words, so we can see what the most common words used are. We can use the base R function `strsplit` to do this; in this case we want to split our tweets into words using spaces. 
 
 
 ```{r}
-strsplit(elon_tweets_df$text, split = " ") %>% head()
+str_split(elon_tweets_df$text, pattern = " ") %>% head()
 
 ```
 Note that the output of this function is some horrible nested list object. 
@@ -444,12 +430,11 @@ words <- unlist(strsplit(elon_tweets_df$text, split = " "))
 Our output is now a long character vector. This will make it much easier to count words. 
 
 ```{r}
-str(unlist(strsplit(elon_tweets_df$text, split = " ")))
+str(words)
 ```
 
 Let's take a peak at the words.
 ```{r}
-head(words)
 tail(words)
 ```
 
@@ -541,71 +526,51 @@ words[2:51,] %>%
 
 ***
 
-##Data Cleaning with stringr/stringi (AKA What is Trump up to anyways?)
+...another challenge question on how to do this all at once?
 
-We are going to go through the same data cleaning process with the `stringr` package using Trump's tweets. The syntax is a little different, but it is pretty intuitive once you get started. All `stringr` functions can be found using `str_` + `Tab`. Again, we will start by loading the dataset and looking at the top 5 favorite tweets. We will remove all encoded character codes right away.
-
-```{r}
-trump_tweets_df <- read.delim("data/trump_tweets_df.txt", sep = "\t", stringsAsFactors = FALSE)
-trump_tweets_df$text <- iconv(trump_tweets_df$text, "UTF-8", "ASCII", sub = "")
-
-trump_tweets_df <- trump_tweets_df %>% select(text, favoriteCount) %>% arrange(desc(favoriteCount)) 
-trump_tweets_df$text[1:5]
-```
-
-The first thing that we did was look for tags. The order of arguments are switched in `stringr` relative to the base functions. The first argument will be the character string we are searching, and the second argument will be the pattern we are matching. `str_extract` will return the index of the match, as well as the match. This is similar to `grep` when `value = TRUE`. Note that the match is extracted rather than the entire string.
+Let's be ambitious and try to remove tags, numbers and punctuation characters and numbers all in one go. `str_remove` automatically replaces the match with an empty character string. It turns out the `@` and `#` are punctuation characters, so removing them is taken care of using `[[:punct:]]`. We also want to remove the metacharacter `$` (which is not considered punctuation. We aren't sure what order the numbers and punctuation might come in and square brackets allow ANY characters inside the brackets to be matched. We are not sure if there will be zero, one, or many of our target characters in a tweet, however `str_remove_all()` will remove every instance of this pattern (otherwise we would use the `*` outside the brackets to indicate 0 or more times). Looking at the output, we can see that the numbers and punctuation and dollar signs are indeed removed.
 
 ```{r}
-str_extract(string = trump_tweets_df$text, pattern = tags) %>% head(100)
-
-```
-
-`str_detect` is similar to `grepl` returning TRUE or FALSE if a match is or isn't found, respectively.
-
-```{r}
-str_detect(trump_tweets_df$text, tags)
-
-```
-Let's remove our urls as before. With the `str_replace` function we can specify our pattern and replacement, in this case an empty character string. We can see in the result that the urls have been replaced.
-
-```{r}
-str_replace_all(trump_tweets_df$text[1:10], pattern = url, replacement = "")
-trump_tweets_df$text <- str_replace_all(trump_tweets_df$text, pattern = url, replacement = "")
-```
-
-Let's be ambitious and try to remove tags, numbers and punctuation characters and numbers all in one go. `str_remove` automatically replaces the match with an empty character string. It turns out the `@` and `#` are punctuation characters, so removing them is taken care of using `[[:punct:]]`. We are not sure if there will be a number or punctuation in a tweet, and so use the `?` to indicate that it may occur 0 or 1 times. Looking at the output, we can see that the numbers and punctuation are indeed removed.
-
-```{r}
-clean_all <- "[0-9]?[[:punct:]]?"
+clean_all <- "[[0-9][[:punct:]]\\$]*"
 
 trump_tweets_df$text <- str_remove_all(trump_tweets_df$text, pattern = clean_all)
 
 trump_tweets_df$text[1:10]
 
 ```
-As expected, we still have trailing spaces. Whitespace characters are not visible, but take up space. Newline characters, tabs and spaces are a form of whitespace. `stringr` has its own function for trimming whitespace, `str_trim`, which you can use to specify whether you want leading or trailing whitespace trimmed, or both.
 
-```{r}
+
+
+
+
+
+
+
+```{r include = FALSE, eval = FALSE}
+#read in data and removed encoded character codes
+trump_tweets_df <- read.delim("data/trump_tweets_df.txt", sep = "\t", stringsAsFactors = FALSE)
+trump_tweets_df$text <- iconv(trump_tweets_df$text, "UTF-8", "ASCII", sub = "")
+
+#make a data frame of favourite tweets and their counts
+trump_tweets_df <- trump_tweets_df %>% select(text, favoriteCount) %>% arrange(desc(favoriteCount)) 
+
+#remove urls
+trump_tweets_df$text <- str_replace_all(trump_tweets_df$text, pattern = url, replacement = "")
+
+#remove tags, numbers and punctuation characters
+clean_all <- "[[0-9][[:punct:]]\\$]*"
+trump_tweets_df$text <- str_remove_all(trump_tweets_df$text, pattern = clean_all)
+
+#trim whitespace, use squish to get rid of extra internal whitespace
 trump_tweets_df$text <- str_trim(trump_tweets_df$text, side = "both")
+trump_tweets_df$squish <- str_squish(trump_tweets_df$text)
 
-trump_tweets_df$text[1:10]
-```
-
-See how we have a couple extra spaces in the middle of some of our strings? `str_squish` will take care of that for us, leaving only a single space between words.
-
-```{r}
-trump_tweets_df$text <- str_squish(trump_tweets_df$text)
-
-trump_tweets_df$text[1:10]
-```
-
-All that's left is to convert all characters to lowercase, and then we can see the top Trump words!
-
-```{r}
+#convert to lowercase
 trump_tweets_df$text <- tolower(trump_tweets_df$text)
-
 trump_tweets_df$text[1:10]
 ```
+
+
 
 To get our tweets into a word list we use `str_split`, a similar function to `strsplit`, still splitting by the spaces between words. The argument `simplify = FALSE` returns a list of character vectors which we then unlist.
 
@@ -681,7 +646,7 @@ words[2:51,] %>%
 
 ***
 __Challenge__ 
-
+$
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
 ![](img/maxresdefault.jpg){width=200px}
@@ -1046,7 +1011,7 @@ The value for 'correlation' in this table was really the output of 'r cor(cars\$
 
 ####Kable tables in knitr
 
-In this lesson we are going to focus on nice looking `kable` tables, which are easily customizable throught the [kableExtra](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#getting_started) package. The summary stats from cars is a table. However, it doesn't look very good. Here is a reminder of the default output. 
+In this lesson we are going to focus on nice looking `kable` tables, which are easily customizable through the [kableExtra](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#getting_started) package. The summary stats from cars is a table. However, it doesn't look very good. Here is a reminder of the default output. 
 
 ```{r}
 summary(cars)
@@ -1288,6 +1253,7 @@ __Resources:__
 <https://regex101.com/>     
 <https://regexr.com/>     
 <https://www.regular-expressions.info/backref.html>     
+<https://www.regular-expressions.info/unicode.html>     
 <https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf>     
 <https://raw.githubusercontent.com/today-is-a-good-day/Emoticons/master/emDict.csv>     
 <http://rmarkdown.rstudio.com>     
