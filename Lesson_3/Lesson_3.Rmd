@@ -29,7 +29,7 @@ This lesson is the third in a 6-part series. The idea is that at the end of the 
 
 </br>
 
-How do we get there? Today we are going to be learning how to make all sorts of plots - from simple data exploration to interactive plots.The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. Then we will learn how to do t-tests and perform regression and modeling in R. And lastly, we will learn to write some functions, which really can save you time and help scale up your analyses.
+How do we get there? Today we are going to be learning how to make all sorts of plots - from simple data exploration to customized plots.The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. Then we will learn how to do t-tests and perform regression and modeling in R. And lastly, we will learn to write some functions, which really can save you time and help scale up your analyses.
 
 
 ![](img/spotify-howtobuildmvp.gif)
@@ -61,8 +61,6 @@ The following packages are used in this lesson:
 `ggrepel`     
 `ggbeeswarm`     
 `ggthemes`     
-`plotly`     
-`ggvis`     
 `ggpubr`     
 `UpSetR`     
 
@@ -963,7 +961,7 @@ p+theme_minimal()+
 ***
 ##Taking it up a notch
 
-There are many fantastic R packages to analyze and visualize your data. As a group, we are likely working in a variety of specialized areas. The plots we have made so far today should be useful for data exploration for many different kinds of data. In the next section we are going to preview some more complex visualization types, but since these take more time to go through and not everyone may be interested in network diagrams, time-series analysis, or geospatial data, we will not be plotting all of these together. We will, however do an interactive heatmap and also an upset plot.  If you are interested in a tutorial on one of these other visualization types, please indicate that in the comments area of the lesson survey (https://www.surveymonkey.com/r/VNQZ3KS). 
+There are many fantastic R packages to analyze and visualize your data. As a group, we are likely working in a variety of specialized areas. The plots we have made so far today should be useful for data exploration for many different kinds of data. In the next section we are going to preview some more complex visualization types, but since these take more time to go through and not everyone may be interested in interactive graphics, network diagrams, time-series analysis, or geospatial data, we will not be plotting all of these together. We will, however do a heatmap and also an upset plot.  If you are interested in a tutorial on one of these other visualization types, please indicate that in the comments area of the lesson survey (https://www.surveymonkey.com/r/VNQZ3KS). 
 
 
 ###Interactive graphics 
@@ -1040,41 +1038,11 @@ ggplot(flong, aes(Site1, Site2, fill = correlation)) + geom_tile() +
 
 ```
 
-We can now see that there is a patch of dark red samples with low correlation. It is difficult to see which sites these are as the names are a bit small. 
+We can now see that there is a patch of dark red samples with low correlation. 
 
-Enter the interactive heatmap! `Plotly` allows for interactive plots in a variety of languages, and allows the creation of sharable links (if you are interested sign up for a free account to get API (Application Programming Interface) credentials https://plot.ly/r/getting-started/). They have created a package, which, luckily for us, interfaces seamlessly with `ggplot2`. We only need to save our plot and call the function `ggplotly()` to have an interactive graph! 
-
-The response of plotly to manipulations other than hovering can be a bit slow if not using the API and may freeze/crash R, so I recommend saving your code before trying it.  
-
-
-```{r warning = FALSE, message = FALSE}
-library(plotly)
-p <- ggplot(clong, aes(Site1, Site2, fill = correlation)) + geom_tile() +
-  scale_fill_gradient(name = "Pearson\nCorrelation", low = "red", high = "yellow") +
-  xlab(NULL) +
-  ylab(NULL)+
-  theme(axis.text.x = element_text(angle =90, hjust=1), legend.title = element_text(size=10)) 
-
-ggplotly(p)
-
-```
 
 </br>
 
-Hovering will highlight the variables and values relating to a specific data point, and areas can be zoomed in on. We can now see the names of the low correlation samples. While they are all from Tanzania, they do not appear to all be from the same Latrine_Number or Depth. 
-
-`ggvis` is a Bioconductor package allowing interactive graphics in R (http://ggvis.rstudio.com/). It is founded on the grammar of graphics and the syntax is similar, but not identical to `ggplot2`. It is good for interactive scatterplots, bar graphs, line graphs and histograms (although not heatmaps at this point in time). The nature of the interactiveness is highly customizable: you can hover, add slider bars, checkboxes or radiobuttons (it uses Shiny's reactive programming for anyone who might be familiar).
-
-In this example I have just taken a scatterplot that we made earlier, and made it possible to hover over a point and see the underlying data. Don't worry about the function and syntax too much. I just wanted to show you another option for interactive visualization that hopefully isn't too intimidating. The call  to `ggvis` is selecting our data and aesthetics to plot, after which `layer_points()` adds our geom, and `add_tooltip()` is selecting what to show when the data is hovered over.
-
-```{r warning = FALSE, message = FALSE}
-library(ggvis)
-
-gg <- ggvis(ndat, x= ~TS, y= ~CODt) 
-  
-layer_points(gg) %>% add_tooltip(function(x) c(paste0("TS=", x$TS, ", CODT=", x$CODt)))
-
-```
 
 ###Saving your Figures
 
