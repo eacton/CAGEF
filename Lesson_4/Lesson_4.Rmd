@@ -325,17 +325,32 @@ elon_tweets_df %>% filter(str_detect(.$text, "@SpaceX"))
 
 
 
-I haven't yet removed the tags. With the `str_replace` function we can specify our pattern and replacement, in this case we can replace the tags with an empty character string. We can see in the result that the tags have been replaced.
+With the `str_replace` function we can specify our pattern and replacement. To show how this function works, we are going to replace upper or lowercase 'a's with a dash. We can see in the result that the tags have been replaced.
 
 ```{r}
-str_replace_all(elon_tweets_df$text[1:50], pattern = tags, replacement = "")
+str_replace(elon_tweets_df$text[1:10], pattern = "[Aa]", replacement = "-")
+```
+You'll notice that only the first instance of an 'a' (or 'A') is replaced for each string. This isn't the fault of the regex pattern we input (add a '*' outside the square brackets if you want to convince yourself). You can use `str_replace_all()` to perform multiple replacements of the same pattern.
+
+```{r}
+str_replace_all(elon_tweets_df$text[1:10], pattern = "[Aa]", replacement = "-")
+```
+You can use `str_replace_all()` to perform multiple replacements of different patterns in the form `pattern = replacement`.
+
+```{r}
+str_replace_all(elon_tweets_df$text[1:10], c("a"= "-", "e" = "*"))
+```
+Okay! We are ready to replace all instances of the tags with an empty character string.
+
+```{r}
 elon_tweets_df$text <- str_replace_all(elon_tweets_df$text, pattern = tags, replacement = "")
+elon_tweets_df$text[1:50]
 ```
 
 
 It looks like there are a bunch of shared urls in these tweets we need to remove. This is a bit tricky. We could be looking for http:// or https:// followed by we don't know what (some combination of letters, numbers and forward slashes). 
 
-`str_remove` is similar to `str_replace`, but it has the default replacement set to an empty character string. Check to see if your regular expression is optimized on a large portion of your data before saving your cleaned output. 
+`str_remove` is similar to `str_replace`, but it has the default replacement set to an empty character string. You can similarly use `str_replace_all` to replace multiple instances of your pattern. Check to see if your regular expression is optimized on a large portion of your data before saving your cleaned output. 
 
 
 ```{r}
@@ -349,12 +364,13 @@ elon_tweets_df$text <- str_remove_all(elon_tweets_df$text, pattern = url)
 
 We are going to get rid of numbers and punctuation all at the same time. 
 ```{r}
-trail <- "[[:punct:][0-9]]*"
+trail <- "[[:punct:]=<>[0-9]]*"
 
 str_remove_all(elon_tweets_df$text, trail) %>% head(10)
 
 elon_tweets_df$text <- str_remove_all(elon_tweets_df$text, trail)
 ```
+
 Emojis are special characters. To get rid of emojis in unicode (the most extensive character set which attempts to be comprehensive for all languages and symbols), we use `\\p{So}` which gets rid of 'other symbols'. `\\p` represents a category of character and `{So}` represents symbols that are not math, currency or modifier symbols.
 
 ```{r}
@@ -409,7 +425,23 @@ Come up with a regex expression that would replace all tags, urls, punctuation a
 
 ***
 
-Onwards!! Let's break the tweets down into individual words, so we can see what the most common words used are. We can use the base R function `strsplit` to do this; in this case we want to split our tweets into words using spaces. 
+```{r include = FALSE, eval = FALSE}
+ # It turns out the `@` and `#` are punctuation characters, so removing them is taken care of using `[[:punct:]]`. We also want to remove the metacharacter `$` (which is not considered punctuation. We aren't sure what order the numbers and punctuation might come in and square brackets allow ANY characters inside the brackets to be matched. We are not sure if there will be zero, one, or many of our target characters in a tweet, however `str_remove_all()` will remove every instance of this pattern (otherwise we would use the `*` outside the brackets to indicate 0 or more times). The url can be http followed by anything followed by a word boundary. The url can appear 0 or more times.. Looking at the output, we can see that the numbers and punctuation and dollar signs and urls are indeed removed.
+
+elon <- read.delim("data/elon_tweets_df.txt", sep = "\t", stringsAsFactors = F)
+
+clean_all <- "([[0-9][:punct:]=<>\\$]*)((http.*)\\b)*"
+
+elon$text <- str_remove_all(elon$text, pattern = clean_all)
+
+elon$text[1:10]
+
+```
+
+
+
+
+Onwards!! Let's break the tweets down into individual words, so we can see what the most common words used are. We can use the base R function `str_split` to do this; in this case we want to split our tweets into words using spaces. 
 
 
 ```{r}
@@ -418,12 +450,12 @@ str_split(elon_tweets_df$text, pattern = " ") %>% head()
 ```
 Note that the output of this function is some horrible nested list object. 
 
-Luckily there is an `unlist` function which recursively will go through lists to simplify their elements into a vector. Let's try it and check the structure of our output. We will save this to an object called 'words'.
+Luckily there is an `unlist` function which recursively will go through lists to simplify their elements into one giant vector. Let's try it and check the structure of our output. We will save this to an object called 'words'.
 
 ```{r}
-unlist(strsplit(elon_tweets_df$text, split = " ")) %>% head(20)
+unlist(str_split(elon_tweets_df$text, pattern = " ")) %>% head(20)
 
-words <- unlist(strsplit(elon_tweets_df$text, split = " "))
+words <- unlist(str_split(elon_tweets_df$text, pattern = " "))
 
 ```
 
@@ -435,41 +467,10 @@ str(words)
 
 Let's take a peak at the words.
 ```{r}
-tail(words)
-```
-
-
-
-Great! But... we missed some `\n` (newline) and `\t` (tab) characters. These are not punctuation characters.
-
-
-
-***
-__Challenge__ 
-
-
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/maxresdefault.jpg){width=200px}
-
-</div>
-
-Newline and tab characters are separating 2 words. Split these words apart and get rid of the newline character. Convert all of our character strings to lowercase (I haven't shown you how to do this, but I believe in your google-fu). Check the first and last 50 words to see if anything else is amiss.
-
-
-</br>
-</br>
-</br>
-
-***
-
-```{r include = FALSE}
-words <- tolower(unlist(strsplit(words, "\\n|\\t")))
-#equivalent to
-words <- casefold(unlist(strsplit(words, "\\n|\\t")), upper = FALSE)
-
-words[1:50]
+head(words, 50)
 tail(words, 50)
 ```
+
 
 There are still a few problems with words cutoff like 'solv', or 'flamethrower' and 'flamethrowers' being the same word, or 'north' and 'korea' belonging together for context. If we were serious about this dataset we would need to resolve these issues. We also have some html and twitter-specific tags that we will deal with shortly. 
 
@@ -500,7 +501,7 @@ stop_words <- bind_rows(stop_words, add_stop)
 ```
 
 
-To remove these stop words from our list of words from tweets, we perform an anti-join (from Lesson 3).
+To remove these stop words from our list of words from tweets, we perform an anti-join. Joins will be covered in more advanced lesson - for now just be content that we are removing stop words from our list by taking only those words in our word vector that are not contained in the stop_words data frame.
 
 ```{r warning = FALSE}
 words <- anti_join(data.frame(words), stop_words, by=c("words" = "word"))
@@ -517,39 +518,38 @@ words <- words %>% count(words) %>% arrange(desc(n))
 
 'boring', 'falcon', 'tesla', 'rocket', 'launch','flamethrower', 'cars', 'spacex', 'tunnels', and 'mars' and 'ai' are a bit further down the list. There are a few words that look like they should be added to the 'stop words' list (dont, doesnt, didnt, im), but we'll work with this for now.
 
-We can make a word cloud out of the top 50 words, which will be sized according to their frequency. I am starting with the first word after Elon Musk's twitter handle. The default color is black, but we can use our `viridis` package (Lesson 3) to have a pleasing color palette. It is okay if this code gives you a warning that not all words can be fit on the page, this can be changed by adjusting the `scale` argument.
+We can make a word cloud out of the top 50 words, which will be sized according to their frequency. I am starting with the first word after Elon Musk's twitter handle. The default color is black, but we can use our `viridis` package (Lesson 3) to have a pleasing color palette. It is okay if this code gives you a warning that not all words can be fit on the page, this can be changed by adjusting the `scale` argument. I used the first 50 words after his twitter handle, 'elonmusk'.
 
 ```{r warning = FALSE}
 words[2:51,] %>%
-    with(wordcloud(words, n, ordered.colors = TRUE, colors = viridis(50), use.r.layout = TRUE))
+    with(wordcloud(words, n, ordered.colors = TRUE, colors = viridis(50)))
 ```
 
 ***
+__Challenge__ 
+$
 
-...another challenge question on how to do this all at once?
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/maxresdefault.jpg){width=200px}
 
-Let's be ambitious and try to remove tags, numbers and punctuation characters and numbers all in one go. `str_remove` automatically replaces the match with an empty character string. It turns out the `@` and `#` are punctuation characters, so removing them is taken care of using `[[:punct:]]`. We also want to remove the metacharacter `$` (which is not considered punctuation. We aren't sure what order the numbers and punctuation might come in and square brackets allow ANY characters inside the brackets to be matched. We are not sure if there will be zero, one, or many of our target characters in a tweet, however `str_remove_all()` will remove every instance of this pattern (otherwise we would use the `*` outside the brackets to indicate 0 or more times). Looking at the output, we can see that the numbers and punctuation and dollar signs are indeed removed.
+</div>
 
-```{r}
-clean_all <- "[[0-9][[:punct:]]\\$]*"
+Pick one of the other tweet data sets: 
 
-trump_tweets_df$text <- str_remove_all(trump_tweets_df$text, pattern = clean_all)
-
-trump_tweets_df$text[1:10]
-
-```
-
+  
+  [Trump](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/trump_tweets_df.txt), [Bill Nye](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/nye_tweets_df.txt), [Justin Trudeau](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/jt_tweets_df.txt), [The Daily Show](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/daily_tweets_df.txt), [Katy Perry](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/katy_tweets_df.txt), [Jimmy Fallon](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/jimmy_tweets_df.txt), [Stephen Colbert](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/colbert_tweets_df.txt).      
 
 
+Clean it. Remove all of the stop words. Were there any other challenges compared to the previous datasets? Did you have to create new stop words or do extra regex? Make a wordcloud of the top 50 words.
 
 
+</br>
 
-
-
+***
 ```{r include = FALSE, eval = FALSE}
 #read in data and removed encoded character codes
 trump_tweets_df <- read.delim("data/trump_tweets_df.txt", sep = "\t", stringsAsFactors = FALSE)
-trump_tweets_df$text <- iconv(trump_tweets_df$text, "UTF-8", "ASCII", sub = "")
+#trump_tweets_df$text <- iconv(trump_tweets_df$text, "UTF-8", "ASCII", sub = "")
 
 #make a data frame of favourite tweets and their counts
 trump_tweets_df <- trump_tweets_df %>% select(text, favoriteCount) %>% arrange(desc(favoriteCount)) 
@@ -558,7 +558,7 @@ trump_tweets_df <- trump_tweets_df %>% select(text, favoriteCount) %>% arrange(d
 trump_tweets_df$text <- str_replace_all(trump_tweets_df$text, pattern = url, replacement = "")
 
 #remove tags, numbers and punctuation characters
-clean_all <- "[[0-9][[:punct:]]\\$]*"
+clean_all <- "[[0-9][[:punct:]]=><\\t\\$]*(.*na)*"
 trump_tweets_df$text <- str_remove_all(trump_tweets_df$text, pattern = clean_all)
 
 #trim whitespace, use squish to get rid of extra internal whitespace
@@ -568,31 +568,29 @@ trump_tweets_df$squish <- str_squish(trump_tweets_df$text)
 #convert to lowercase
 trump_tweets_df$text <- tolower(trump_tweets_df$text)
 trump_tweets_df$text[1:10]
-```
 
-
-
-To get our tweets into a word list we use `str_split`, a similar function to `strsplit`, still splitting by the spaces between words. The argument `simplify = FALSE` returns a list of character vectors which we then unlist.
-
-
-```{r}
 words <- unlist(str_split(trump_tweets_df$text, pattern = " ", simplify = FALSE))
-str(words)
-```
-
-We can now do our `anti_join` to remove 'stop words', and tally our remaining words and order them by descending counts.
-
-
-```{r warning = FALSE}
 words <- anti_join(data.frame(words), stop_words, by=c("words" = "word"))
-
-words %>% count(words) %>% arrange(desc(n)) 
-
 words <- words %>% count(words) %>% arrange(desc(n))
 
+add_stop <- data.frame(word = c("amp", "dont", "downloadipad", "ipad"), 
+                       lexicon = "custom", stringsAsFactors = FALSE)
+
+
+stop_words <- bind_rows(stop_words, add_stop)
+words <- anti_join(data.frame(words), stop_words, by=c("words" = "word"))
+
+words[2:51,] %>%
+    with(wordcloud(words, n, ordered.colors = TRUE, c(3,.5),colors = viridis(50), use.r.layout = TRUE))
+
+#'president', 'people', 'fake', 'news', 'daca', democrats', 'jobs', 'obama', 'border', 'fbi', 'collusion', 'russia', 'wall', 'mexico' and further down is 'crooked' and 'hillary'. 
 ```
 
-Hmmm... it looks like we have those html tags in a different format. It's interesting to note these little variations because no matter how much you try to automate your analysis there is always going to be something from your new dataset that didn't fit with your old dataset. This is why we need these data wrangling skills. Even though some packages may have been created to help us on our way, they can't possibly cover every case. 
+
+
+
+
+It's interesting to note these little variations because no matter how much you try to automate your analysis there is always going to be something from your new dataset that didn't fit with your old dataset. This is why we need these data wrangling skills. Even though some packages may have been created to help us on our way, they can't possibly cover every case. 
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
 ![](img/1467481_240434926124232_550310772_n.jpg){width=500px}
@@ -619,51 +617,10 @@ Hmmm... it looks like we have those html tags in a different format. It's intere
 
 
 
-We could go back and get rid of some of characters such as `<`, however we don't want to lose sight that these are html tags and not words (the tweet was from an ipad or iphone, the 'word' isn't being mentioned). We will instead add these to our stop words list.
 
-```{r}
-add_stop <- data.frame(word = c("rel=nofollow>twitter", "href=", "iphone<a>", "<a","dont", "$", "href=downloadipad", "ipad<a>" ), 
-                       lexicon = "custom", stringsAsFactors = FALSE)
-
-
-stop_words <- bind_rows(stop_words, add_stop)
-
-```
-
-We then perform an `anti_join` with our new list and view the updated version. (`words` was already sorted and so we do not need to do that again.)
-
-```{r warning = FALSE}
-words <- anti_join(data.frame(words), stop_words, by=c("words" = "word"))
-words[1:50,]
-```
-'president', 'people', 'fake', 'news', 'daca', democrats', 'jobs', 'obama', 'border', 'fbi', 'collusion', 'russia', 'wall', 'mexico' and further down is 'crooked' and 'hillary'. 
-
-Trump's wordcloud minus his twitter handle.
-```{r}
-words[2:51,] %>%
-    with(wordcloud(words, n, ordered.colors = TRUE, c(3,.5),colors = viridis(50), use.r.layout = TRUE))
-```
 
 ***
-__Challenge__ 
-$
 
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/maxresdefault.jpg){width=200px}
-
-</div>
-
-Pick one of the other tweet data sets: 
-
-  [Bill Nye](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/nye_tweets_df.txt), [Justin Trudeau](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/jt_tweets_df.txt), [The Daily Show](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/daily_tweets_df.txt), [Katy Perry](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/katy_tweets_df.txt), [Jimmy Fallon](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/jimmy_tweets_df.txt), [Stephen Colbert](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/colbert_tweets_df.txt).      
-
-
-Clean it. Remove all of the stop words. Were there any other challenges compared to the previous datasets? Did you have to create new stop words or do extra regex? Make a wordcloud of the top 50 words.
-
-
-</br>
-
-***
 
 
 ##Rmarkdown and knitr
