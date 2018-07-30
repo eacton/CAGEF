@@ -146,30 +146,9 @@ Regex testers:
 <https://regex101.com/>     
 <https://regexr.com/>
 
-What I would like to get across it that it is okay to google and use resources early on for regex, and that even experts still use these resources.  
 
 
-</br>
 
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/80170c11996bd58e422dbb6631b73c4b.jpg){width=350px} 
-</div>
-
-<div style="float:right;margin:0 10px 10px 0" markdown="1">
-![](img/regexbytrialanderror-big-smaller.png){width=350px} 
-</div>
-
-</br>
-
-</br>
-
-</br>
-
-</br>
-</br>
-
-</br>
-</br>
 
 __What does the language look like?__ 
 
@@ -269,7 +248,52 @@ Trouble-shooting with escaping meta-characters means adding backslashes until so
 While you can always refer back to this lesson for making your regular expressions, you can also use this [regex cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf).
 
 </br>
+</br>
 
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/80170c11996bd58e422dbb6631b73c4b.jpg){width=350px} 
+</div>
+
+<div style="float:right;margin:0 10px 10px 0" markdown="1">
+![](img/regexbytrialanderror-big-smaller.png){width=350px} 
+</div>
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+</br>
+
+</br>
+</br>
+
+
+</br>
+
+</br>
+
+</br>
+</br>
+
+</br>
+</br>
+
+</br>
+
+</br>
+
+</br>
+</br>
+
+</br>
+</br>
+
+What I would like to get across it that it is okay to google and use resources early on for regex, and that even experts still use these resources.  
+
+***
 
 ##Data Cleaning with stringr/stringi (AKA What is Elon Musk up to anyways?)
 
@@ -320,7 +344,7 @@ str_detect(elon_tweets_df$text, tags) %>% head(100)
 You could use this to subset, for example, all tweets that refer to @SpaceX.
 
 ```{r}
-elon_tweets_df %>% filter(str_detect(.$text, "@SpaceX")) 
+elon_tweets_df %>% filter(str_detect(.$text, "@SpaceX")) %>% select(text) %>% head()
 ```
 
 
@@ -396,7 +420,7 @@ See how we have a couple extra spaces in the middle of some of our first string?
 ```{r}
 elon_tweets_df$text <- str_squish(elon_tweets_df$text)
 
-elon_tweets_df$text[1:100]
+elon_tweets_df$text[1:50]
 ```
 
 Lastly, let's convert all of our worder to lowercase with the `tolower()` function.
@@ -660,7 +684,7 @@ Let's look at how markdown is rendered in our html file. We can see that to **bo
 
 You can insert a url by typing the url inside of arrow brackets <<http://rmarkdown.rstudio.com>>. If you want the link to be named 'rmarkdown' can format it like this [rmarkdown] (http://rmarkdown.rstudio.com) without the space inbetween the name and the url. Replace the url with the named version and click knit to see the difference in the output.
 
-The other emphasized text in this document has a grey background. This is achieved by flanking the text with \``backticks`\`. The code in the 'cars' chunk has a grey background and the evaluated output is in white. This is standard in the R community for the code to be grey and the output to be white and commented. Inline code can be written by using `{r 2+2}` and it will also have a grey background. 
+The other emphasized text in this document has a grey background. This is achieved by flanking the text with \``backticks`\`. The code in the 'cars' chunk has a grey background and the evaluated output is in white. This is standard in the R community for the code to be grey and the output to be white and commented. Inline code can be written by using r 2+2 flanked with backticks  and the output will be evaluated ie. `r 2+2`. 
 
 
 *Rmarkdown*
@@ -731,7 +755,7 @@ If ever your text
 is clumping together
 when you do not expect it to,
 remember that you need 5 spaces at at the end of a line
-for a new line to start.
+to start a new line.
 
 *Rmarkdown*
 
@@ -812,7 +836,7 @@ __Challenge__
 </div>
 
 
-For the code chunk containing `plot(pressure)`: How would you show just the code (not the plot) and not run the code?  How would you show just the code and have the output run but not show it? How would you change the background color to something other than gray? You can use help pages, Google, or the knitr documentation found here: <https://yihui.name/knitr/options/#chunk_options>
+For the code chunk containing `plot(pressure)`: How would you show just the code (not the plot) and not run the code?  How would you run the code but not show it? How would you change the background color to something other than gray? You can use help pages, Google, or the knitr documentation found here: <https://yihui.name/knitr/options/#chunk_options>
 
 </br>
 </br>
@@ -830,7 +854,6 @@ This is a simplified explanation of caching and more details can be found in the
 
 __Playing with Caching__
 
-__Note to David: These caching scenarios will partly be on Socrative. There will be multiple choice answers about the output and students vote on which is correct. This will allow me to track comprehension across the series. Therefore this text will be in the online version of the notes.__
 
 __Scenario 1__
 
@@ -853,7 +876,7 @@ Now let's put a chunk _before_ our cached chunk called 'new row'.  Add a point t
 cars <- dplyr::bind_rows(cars, c(speed = 50, dist = 200))
 ```
 
-This point is an outlier, and the change can be seen on the output of our plot. However, our summary also depends on the cars dataset and has not been updated (ie. the maximum distance is still 120 km). If the code of the cached chunk does not change, the chunk is not rerun.
+Knit the document again! We see that this point is an outlier, and the change can be seen on the output of our plot. However, our summary also depends on the cars dataset and has not been updated (ie. the maximum distance is still 120 km). If the code of the cached chunk does not change, the chunk is not rerun.
 
 __Scenario 2__
 
@@ -868,79 +891,9 @@ summary(cars)
 Since the code in the cache changed, its values were recalculated and the max distance in the summary has changed to 300 km. Changes in the the cached chunk are evaluated and passed on to the next code block. The previous cache values are deleted and replaced with the current values. The plot, which depends on the cars dataset, now has a point at dist = 300 km AND dist = 200 km.
 
 
-__Scenario 3__
+__After Scenario's 1 & 2 questions will be on Socrative.__
 
 
-If I change cars (with the outlier point) in the 'new row' chunk back to cars (without the outlier point) and knit the document, what do you expect to happen?
-
-`{r new row}`
-```{r new row}
-cars <- cars
-```
-
-Since the code for our cached chunk doesn't change its values are loaded from the cache. This includes the cars dataset, and so the plot, downstream of our cache, does not reflect the change to the 'new row' chunk.
-
-
-__Scenario 4__
-
-What if we instead comment the outlier point in the cached chunk and keep the extra point from the first chunk? 
-
-`{r new row}`
-```{r }
-cars <- cars
-cars <- dplyr::bind_rows(cars, c(speed = 50, dist = 200))
-```
-
-
-`{r cars, message = FALSE, cache = TRUE}`
-```{r message = FALSE, cache = TRUE, eval = FALSE}
-#cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
-summary(cars)
-```
-
-The code in the cache changed and so the summary was recalcuated using the earlier chunk. Both the summary and the plot show the 200 km distance value.
-
-__Scenario 5__
-
-What do you expect to happen if both outlier points are commented out and we restart the R session and knit the document? What is the max dist value in the summary table? What about the plot - does it contain the outlier?
-
-`{r new row}`
-```{r }
-cars <- cars
-#cars <- dplyr::bind_rows(cars, c(speed = 50, dist = 200))
-```
-
-`{r cars, message = FALSE, cache = TRUE}`
-```{r message = FALSE, cache = TRUE}
-#cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
-summary(cars)
-```
-
-Since the code in the cached chunk did not changed, it accesses the summary from the cached data, which has 200 km as the maximum value. However, the plot needs to be created from scratch and uses cars from the first chunk so has a max of 120 km.
-
-__Scenario 6__
-
-What if we remove `cache=TRUE` from our code chunk?
-
-`{r cars, message = FALSE}`
-```{r message = FALSE, eval = FALSE}
-#cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
-summary(cars)
-```
-
-The cache is no longer accessed. The summary table and the plot reflect the original cars dataset with a max of 120 km.
-
-__Scenario 7__
-
-What if we add `cache=TRUE` to our code chunk again?
-
-`{r cars, message = FALSE, cache = TRUE}`
-```{r message = FALSE, cache = TRUE, eval = FALSE}
-#cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
-summary(cars)
-```
-
-The cache files are kept on the computer. The summary table reflects the previously cached value of 200 km, the plot is calculated from the first chunk and has a max of 120 km. The cache will stay this value until it is updated. To start with a fresh cache in the same directory you need to delete your cached files. 
 
 ###Tables
 
@@ -986,6 +939,9 @@ Here, a simple call to `kable` creates a table styled similar to the above markd
 ```{r}
 kable(dat)
 ```
+
+</br>
+
 
 A variety of styles are offered with simple syntax. Here we have striped rows which highlight when you hover over them, the table width iis the length of the longest text and not across the whole page, and the table is left-aligned.
 
@@ -1137,18 +1093,22 @@ If you are interested in a separate tutorial on making and customizing ioslides 
 I looked for a messy dataset for data cleaning and found it in a blog titled:     
 ["Biologists: this is why bioinformaticians hate you..."](http://www.opiniomics.org/biologists-this-is-why-bioinformaticians-hate-you/) 
      
+     
+__Challenge:__      
+
+This is [Wellcome Trust APC dataset](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/University%20returns_for_figshare_FINAL.xlsx) on the costs of open access publishing by providing article processing charge (APC) data. 
+
+https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054     
+     
+     
 The main and common issue with this dataset is that when data entry was done there was no _structured vocabulary_; people could type whatever they wanted into free text answer boxes instead of using dropdown menus with limited options, giving an error if something is formatted incorrectly, or stipulating some rules (ie. must be all lowercase, uppercase, no numbers, spacing, etc). 
 
 I must admit I have been guilty of messing with people who have made databases without rules. For example, giving an emergency contact, there was a line to input 'Relationship', which could easily have been a dropdown menu: 'parent, partner, friend, other'. Instead I was allowed to write in a free text box 'lifelong kindred spirit, soulmate and doggy-daddy'. I don't think anyone here was trying to be a nuisance, this messy data is just a consequence of poor data collection. 
 
     
 
+</br>
 
-__Challenge:__      
-
-This is [Wellcome Trust APC dataset](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/University%20returns_for_figshare_FINAL.xlsx) on the costs of open access publishing by providing article processing charge (APC) data. 
-
-https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054
 
 <div style="float:right;margin:0 10px 10px 0" markdown="1">
 ![](img/yougotthis.jpg){width=200px}
