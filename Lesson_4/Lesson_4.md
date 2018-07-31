@@ -401,7 +401,7 @@ What I would like to get across it that it is okay to google and use resources e
 
 ***
 
-##Data Cleaning with stringr/stringi (AKA What is Elon Musk up to anyways?)
+##Data Cleaning with stringr (AKA What is Elon Musk up to anyways?)
 
 Let's take this cacaphony of characters we've just learned about and perform some basic data cleaning tasks with an actual messy data set. I have scraped Elon Musk's latest tweets from Twitter. The code to do this is in the Lesson 4 file [twitter_scrape.R](https://github.com/eacton/CAGEF/blob/master/Lesson_4/twitter_scrape.R) if you are curious or want to creep someone on Twitter.
 
@@ -463,7 +463,7 @@ elon_tweets_df$text[1:5]
 ## [5] "Ok, who leaked my selfie!? https://t.co/fYKXbix8jw"
 ```
 
-The `stringr` and `stringi` functions are the tidyverse solution to regular expressions. Functions can be found using `str_` + `Tab`. The order of arguments are switched in `stringr` relative to the base functions. The first argument will be the character string we are searching, and the second argument will be the pattern we are matching.
+The `stringr` functions are the tidyverse solution to regular expressions. Functions can be found using `str_` + `Tab`. The order of arguments are switched in `stringr` relative to the base functions. The first argument will be the character string we are searching, and the second argument will be the pattern we are matching.
 
 First, I want to remove the tags from the beginning of words. I am going to save my regex expression into an object - so we can use them again later.
 
@@ -613,7 +613,7 @@ Okay! We are ready to replace all instances of the tags with an empty character 
 
 ```r
 elon_tweets_df$text <- str_replace_all(elon_tweets_df$text, pattern = tags, replacement = "")
-elon_tweets_df$text[1:50]
+elon_tweets_df$text[1:30]
 ```
 
 ```
@@ -646,27 +646,7 @@ elon_tweets_df$text[1:50]
 ## [27] " Do it"                                                                                                                                          
 ## [28] "Unless you like fun"                                                                                                                             
 ## [29] "Customs problem solved! https://t.co/6D0Fbm8NFI"                                                                                                 
-## [30] "Adjusting The Boring Company plan: all tunnels &amp; Hyperloop will prioritize pedestrians &amp; cyclists over cars"                             
-## [31] "Falcon Heavy hold-down firing this morning was good. Generated quite a thunderhead of steam. Launching in a week or… https://t.co/2e6EEIKZw4"    
-## [32] "Thanks! https://t.co/dr3cFPSXje"                                                                                                                 
-## [33] "Important news in a few hours …"                                                                                                                 
-## [34] "Flight profile FalconHeavy SpaceX https://t.co/LlfWXqUaLP"                                                                                       
-## [35] "From my Mom: every time I use irony, I lose a friend"                                                                                            
-## [36] "https://t.co/nhB3gd0Gm6"                                                                                                                         
-## [37] "It can transform into a robot, fight aliens and make one hell of a latte https://t.co/8h9vvWu4f5"                                                
-## [38] "Today’s Falcon launch carries 2 SpaceX test satellites for global broadband. If successful, Starlink constellation will serve least served."     
-## [39] "New Boring Company merch coming soon. Lifesize LEGO-like interlocking bricks made from tunneling rock that you can… https://t.co/wr97P3OICT"     
-## [40] "After 50k hats, we will start selling The Boring Company flamethrower"                                                                           
-## [41] "It is high time that humanity went beyond Earth. Should have a moon base by now and sent astronauts to Mars. The fu… https://t.co/Kzvu6jcAdR"    
-## [42] "Falcon 9 flight 50 launches tonight, carrying Hispasat for Spain. At 6 metric tons and almost the size of a city bu… https://t.co/ACEhpZfQTY"    
-## [43] "Love seeing the scars of the rocket https://t.co/y5FQrLcV9B"                                                                                     
-## [44] "I’m sure it’s parked around here somewhere …\nhttps://t.co/cq4LEhu4qD"                                                                           
-## [45] " I don’t get the little ship thing. You can’t show up at Mars in something the size of a rowboat. What if t… https://t.co/Aj0zv8Lwdf"            
-## [46] "Falcon Heavy launch simulation almost ready. Will be set to Bowie’s Life on Mars."                                                               
-## [47] "I think last night might have been the biggest Rorschach test ever"                                                                              
-## [48] "Aiming for first flight of Falcon Heavy on Feb 6 from Apollo launchpad 39A at Cape Kennedy. Easy viewing from the public causeway."              
-## [49] "Launch auto-sequence initiated (aka the holy mouse-click) for 3:45 liftoff FalconHeavy"                                                          
-## [50] "Should clarify that this is the base model performance. There will be a special option package that takes it to the next level."
+## [30] "Adjusting The Boring Company plan: all tunnels &amp; Hyperloop will prioritize pedestrians &amp; cyclists over cars"
 ```
 
 
@@ -679,60 +659,40 @@ It looks like there are a bunch of shared urls in these tweets we need to remove
 ```r
 url <- "http[s]?://[[:alnum:].\\/]+"
 
-str_remove_all(elon_tweets_df$text, pattern = url) %>% head(50)
+str_remove_all(elon_tweets_df$text, pattern = url) %>% head(30)
 ```
 
 ```
-##  [1] "0 to 100 km/h in 1.9 sec "                                                                                                                  
-##  [2] "Apparently, some customs agencies are saying they won’t allow shipment of anything called a “Flamethrower”. To solv… "                      
-##  [3] "The rumor that I’m secretly creating a zombie apocalypse to generate demand for flamethrowers is completely false"                          
-##  [4] "Nuclear alien UFO from North Korea "                                                                                                        
-##  [5] "Ok, who leaked my selfie!? "                                                                                                                
-##  [6] "\\If one day, my words are against science, choose science.\\\nMustafa Kemal Atatürk"                                                       
-##  [7] "I love Twitter"                                                                                                                             
-##  [8] ""                                                                                                                                           
-##  [9] "Flamethrowers sold out"                                                                                                                     
-## [10] "I just realized there is a jazz hands emoji ������"                                                                                         
-## [11] "When the zombie apocalypse happens, you’ll be glad you bought a flamethrower. Works against hordes of the undead or your money back!"       
-## [12] "Falcon Heavy at the Cape "                                                                                                                  
-## [13] "Tesla Goes Bankrupt\nPalo Alto, California, April 1, 2018 -- Despite intense efforts to raise money, including a las… "                     
-## [14] "If you liked tonight’s launch, you will really like Falcon Heavy next month: 3 rocket cores &amp; 3X thrust. 2 cores re… "                  
-## [15] "All flamethrowers will ship with a complimentary boring fire extinguisher"                                                                  
-## [16] "Tesla Semi "                                                                                                                                
-## [17] "Tesla Semi Truck unveil to be webcast live on Thursday at 8pm! This will blow your mind clear out of your skull and… "                      
-## [18] "You’d need millions of zombies for a so-called “apocalypse” anyway. Where would I even get a factory big enough to make so many!?"          
-## [19] "Having a sinking feeling that most people actually do think it was aliens …"                                                                
-## [20] "Obviously, a flamethrower is a super terrible idea. Definitely don’t buy one."                                                              
-## [21] "Atatürk Anıtkabir "                                                                                                                         
-## [22] "But wait, there’s more: the flamethrower is sentient, its safe word is “cryptocurrency” and it comes with a free blockchain"                
-## [23] "Better video coming soon, but it would look a bit like this: "                                                                              
-## [24] "Elon was found passed out against a Tesla Model 3, surrounded by \\Teslaquilla\\ bottles, the tracks of dried tears s… "                    
-## [25] "Or maybe “Temperature Enhancement Device”"                                                                                                  
-## [26] "Turns out joking about being a “rock” star because of digging tunnels (through, uh, rock — hello??) is deeply underappreciated"             
-## [27] " Do it"                                                                                                                                     
-## [28] "Unless you like fun"                                                                                                                        
-## [29] "Customs problem solved! "                                                                                                                   
-## [30] "Adjusting The Boring Company plan: all tunnels &amp; Hyperloop will prioritize pedestrians &amp; cyclists over cars"                        
-## [31] "Falcon Heavy hold-down firing this morning was good. Generated quite a thunderhead of steam. Launching in a week or… "                      
-## [32] "Thanks! "                                                                                                                                   
-## [33] "Important news in a few hours …"                                                                                                            
-## [34] "Flight profile FalconHeavy SpaceX "                                                                                                         
-## [35] "From my Mom: every time I use irony, I lose a friend"                                                                                       
-## [36] ""                                                                                                                                           
-## [37] "It can transform into a robot, fight aliens and make one hell of a latte "                                                                  
-## [38] "Today’s Falcon launch carries 2 SpaceX test satellites for global broadband. If successful, Starlink constellation will serve least served."
-## [39] "New Boring Company merch coming soon. Lifesize LEGO-like interlocking bricks made from tunneling rock that you can… "                       
-## [40] "After 50k hats, we will start selling The Boring Company flamethrower"                                                                      
-## [41] "It is high time that humanity went beyond Earth. Should have a moon base by now and sent astronauts to Mars. The fu… "                      
-## [42] "Falcon 9 flight 50 launches tonight, carrying Hispasat for Spain. At 6 metric tons and almost the size of a city bu… "                      
-## [43] "Love seeing the scars of the rocket "                                                                                                       
-## [44] "I’m sure it’s parked around here somewhere …\n"                                                                                             
-## [45] " I don’t get the little ship thing. You can’t show up at Mars in something the size of a rowboat. What if t… "                              
-## [46] "Falcon Heavy launch simulation almost ready. Will be set to Bowie’s Life on Mars."                                                          
-## [47] "I think last night might have been the biggest Rorschach test ever"                                                                         
-## [48] "Aiming for first flight of Falcon Heavy on Feb 6 from Apollo launchpad 39A at Cape Kennedy. Easy viewing from the public causeway."         
-## [49] "Launch auto-sequence initiated (aka the holy mouse-click) for 3:45 liftoff FalconHeavy"                                                     
-## [50] "Should clarify that this is the base model performance. There will be a special option package that takes it to the next level."
+##  [1] "0 to 100 km/h in 1.9 sec "                                                                                                           
+##  [2] "Apparently, some customs agencies are saying they won’t allow shipment of anything called a “Flamethrower”. To solv… "               
+##  [3] "The rumor that I’m secretly creating a zombie apocalypse to generate demand for flamethrowers is completely false"                   
+##  [4] "Nuclear alien UFO from North Korea "                                                                                                 
+##  [5] "Ok, who leaked my selfie!? "                                                                                                         
+##  [6] "\\If one day, my words are against science, choose science.\\\nMustafa Kemal Atatürk"                                                
+##  [7] "I love Twitter"                                                                                                                      
+##  [8] ""                                                                                                                                    
+##  [9] "Flamethrowers sold out"                                                                                                              
+## [10] "I just realized there is a jazz hands emoji ������"                                                                                  
+## [11] "When the zombie apocalypse happens, you’ll be glad you bought a flamethrower. Works against hordes of the undead or your money back!"
+## [12] "Falcon Heavy at the Cape "                                                                                                           
+## [13] "Tesla Goes Bankrupt\nPalo Alto, California, April 1, 2018 -- Despite intense efforts to raise money, including a las… "              
+## [14] "If you liked tonight’s launch, you will really like Falcon Heavy next month: 3 rocket cores &amp; 3X thrust. 2 cores re… "           
+## [15] "All flamethrowers will ship with a complimentary boring fire extinguisher"                                                           
+## [16] "Tesla Semi "                                                                                                                         
+## [17] "Tesla Semi Truck unveil to be webcast live on Thursday at 8pm! This will blow your mind clear out of your skull and… "               
+## [18] "You’d need millions of zombies for a so-called “apocalypse” anyway. Where would I even get a factory big enough to make so many!?"   
+## [19] "Having a sinking feeling that most people actually do think it was aliens …"                                                         
+## [20] "Obviously, a flamethrower is a super terrible idea. Definitely don’t buy one."                                                       
+## [21] "Atatürk Anıtkabir "                                                                                                                  
+## [22] "But wait, there’s more: the flamethrower is sentient, its safe word is “cryptocurrency” and it comes with a free blockchain"         
+## [23] "Better video coming soon, but it would look a bit like this: "                                                                       
+## [24] "Elon was found passed out against a Tesla Model 3, surrounded by \\Teslaquilla\\ bottles, the tracks of dried tears s… "             
+## [25] "Or maybe “Temperature Enhancement Device”"                                                                                           
+## [26] "Turns out joking about being a “rock” star because of digging tunnels (through, uh, rock — hello??) is deeply underappreciated"      
+## [27] " Do it"                                                                                                                              
+## [28] "Unless you like fun"                                                                                                                 
+## [29] "Customs problem solved! "                                                                                                            
+## [30] "Adjusting The Boring Company plan: all tunnels &amp; Hyperloop will prioritize pedestrians &amp; cyclists over cars"
 ```
 
 ```r
@@ -820,60 +780,40 @@ See how we have a couple extra spaces in the middle of some of our first string?
 ```r
 elon_tweets_df$text <- str_squish(elon_tweets_df$text)
 
-elon_tweets_df$text[1:50]
+elon_tweets_df$text[1:30]
 ```
 
 ```
-##  [1] "to kmh in sec"                                                                                                                        
-##  [2] "Apparently some customs agencies are saying they wont allow shipment of anything called a Flamethrower To solv"                       
-##  [3] "The rumor that Im secretly creating a zombie apocalypse to generate demand for flamethrowers is completely false"                     
-##  [4] "Nuclear alien UFO from North Korea"                                                                                                   
-##  [5] "Ok who leaked my selfie"                                                                                                              
-##  [6] "If one day my words are against science choose science Mustafa Kemal Atatürk"                                                         
-##  [7] "I love Twitter"                                                                                                                       
-##  [8] ""                                                                                                                                     
-##  [9] "Flamethrowers sold out"                                                                                                               
-## [10] "I just realized there is a jazz hands emoji"                                                                                          
-## [11] "When the zombie apocalypse happens youll be glad you bought a flamethrower Works against hordes of the undead or your money back"     
-## [12] "Falcon Heavy at the Cape"                                                                                                             
-## [13] "Tesla Goes Bankrupt Palo Alto California April Despite intense efforts to raise money including a las"                                
-## [14] "If you liked tonights launch you will really like Falcon Heavy next month rocket cores amp X thrust cores re"                         
-## [15] "All flamethrowers will ship with a complimentary boring fire extinguisher"                                                            
-## [16] "Tesla Semi"                                                                                                                           
-## [17] "Tesla Semi Truck unveil to be webcast live on Thursday at pm This will blow your mind clear out of your skull and"                    
-## [18] "Youd need millions of zombies for a socalled apocalypse anyway Where would I even get a factory big enough to make so many"           
-## [19] "Having a sinking feeling that most people actually do think it was aliens"                                                            
-## [20] "Obviously a flamethrower is a super terrible idea Definitely dont buy one"                                                            
-## [21] "Atatürk Anıtkabir"                                                                                                                    
-## [22] "But wait theres more the flamethrower is sentient its safe word is cryptocurrency and it comes with a free blockchain"                
-## [23] "Better video coming soon but it would look a bit like this"                                                                           
-## [24] "Elon was found passed out against a Tesla Model surrounded by Teslaquilla bottles the tracks of dried tears s"                        
-## [25] "Or maybe Temperature Enhancement Device"                                                                                              
-## [26] "Turns out joking about being a rock star because of digging tunnels through uh rock hello is deeply underappreciated"                 
-## [27] "Do it"                                                                                                                                
-## [28] "Unless you like fun"                                                                                                                  
-## [29] "Customs problem solved"                                                                                                               
-## [30] "Adjusting The Boring Company plan all tunnels amp Hyperloop will prioritize pedestrians amp cyclists over cars"                       
-## [31] "Falcon Heavy holddown firing this morning was good Generated quite a thunderhead of steam Launching in a week or"                     
-## [32] "Thanks"                                                                                                                               
-## [33] "Important news in a few hours"                                                                                                        
-## [34] "Flight profile FalconHeavy SpaceX"                                                                                                    
-## [35] "From my Mom every time I use irony I lose a friend"                                                                                   
-## [36] ""                                                                                                                                     
-## [37] "It can transform into a robot fight aliens and make one hell of a latte"                                                              
-## [38] "Todays Falcon launch carries SpaceX test satellites for global broadband If successful Starlink constellation will serve least served"
-## [39] "New Boring Company merch coming soon Lifesize LEGOlike interlocking bricks made from tunneling rock that you can"                     
-## [40] "After k hats we will start selling The Boring Company flamethrower"                                                                   
-## [41] "It is high time that humanity went beyond Earth Should have a moon base by now and sent astronauts to Mars The fu"                    
-## [42] "Falcon flight launches tonight carrying Hispasat for Spain At metric tons and almost the size of a city bu"                           
-## [43] "Love seeing the scars of the rocket"                                                                                                  
-## [44] "Im sure its parked around here somewhere"                                                                                             
-## [45] "I dont get the little ship thing You cant show up at Mars in something the size of a rowboat What if t"                               
-## [46] "Falcon Heavy launch simulation almost ready Will be set to Bowies Life on Mars"                                                       
-## [47] "I think last night might have been the biggest Rorschach test ever"                                                                   
-## [48] "Aiming for first flight of Falcon Heavy on Feb from Apollo launchpad A at Cape Kennedy Easy viewing from the public causeway"         
-## [49] "Launch autosequence initiated aka the holy mouseclick for liftoff FalconHeavy"                                                        
-## [50] "Should clarify that this is the base model performance There will be a special option package that takes it to the next level"
+##  [1] "to kmh in sec"                                                                                                                   
+##  [2] "Apparently some customs agencies are saying they wont allow shipment of anything called a Flamethrower To solv"                  
+##  [3] "The rumor that Im secretly creating a zombie apocalypse to generate demand for flamethrowers is completely false"                
+##  [4] "Nuclear alien UFO from North Korea"                                                                                              
+##  [5] "Ok who leaked my selfie"                                                                                                         
+##  [6] "If one day my words are against science choose science Mustafa Kemal Atatürk"                                                    
+##  [7] "I love Twitter"                                                                                                                  
+##  [8] ""                                                                                                                                
+##  [9] "Flamethrowers sold out"                                                                                                          
+## [10] "I just realized there is a jazz hands emoji"                                                                                     
+## [11] "When the zombie apocalypse happens youll be glad you bought a flamethrower Works against hordes of the undead or your money back"
+## [12] "Falcon Heavy at the Cape"                                                                                                        
+## [13] "Tesla Goes Bankrupt Palo Alto California April Despite intense efforts to raise money including a las"                           
+## [14] "If you liked tonights launch you will really like Falcon Heavy next month rocket cores amp X thrust cores re"                    
+## [15] "All flamethrowers will ship with a complimentary boring fire extinguisher"                                                       
+## [16] "Tesla Semi"                                                                                                                      
+## [17] "Tesla Semi Truck unveil to be webcast live on Thursday at pm This will blow your mind clear out of your skull and"               
+## [18] "Youd need millions of zombies for a socalled apocalypse anyway Where would I even get a factory big enough to make so many"      
+## [19] "Having a sinking feeling that most people actually do think it was aliens"                                                       
+## [20] "Obviously a flamethrower is a super terrible idea Definitely dont buy one"                                                       
+## [21] "Atatürk Anıtkabir"                                                                                                               
+## [22] "But wait theres more the flamethrower is sentient its safe word is cryptocurrency and it comes with a free blockchain"           
+## [23] "Better video coming soon but it would look a bit like this"                                                                      
+## [24] "Elon was found passed out against a Tesla Model surrounded by Teslaquilla bottles the tracks of dried tears s"                   
+## [25] "Or maybe Temperature Enhancement Device"                                                                                         
+## [26] "Turns out joking about being a rock star because of digging tunnels through uh rock hello is deeply underappreciated"            
+## [27] "Do it"                                                                                                                           
+## [28] "Unless you like fun"                                                                                                             
+## [29] "Customs problem solved"                                                                                                          
+## [30] "Adjusting The Boring Company plan all tunnels amp Hyperloop will prioritize pedestrians amp cyclists over cars"
 ```
 
 Lastly, let's convert all of our worder to lowercase with the `tolower()` function.
@@ -893,7 +833,7 @@ __Challenge__
 
 </div>
 
-Come up with a regex expression that would replace all tags, urls, punctuation and numbers at once. Read in the tweets data frame again and save under a different name. Test your expression. Did it work as you expected?
+Create a regex expression that would replace all tags, urls, punctuation and numbers at once. Read in the tweets data frame again and save under a different name. Test your expression. Did it work as you expected?
 
 
 </br>
@@ -976,7 +916,7 @@ str(words)
 ##  chr [1:6398] "to" "kmh" "in" "sec" "apparently" "some" "customs" ...
 ```
 
-Let's take a peak at the words.
+Let's take a peek at the words.
 
 ```r
 head(words, 50)
@@ -1451,6 +1391,8 @@ For the code chunk containing `plot(pressure)`: How would you show just the code
 
 In the 'Run' dropdown menu (found in the top right of the source pane), there are various options for running your current chunk - `CTRL+SHIFT+ENTER`, the next chunk - `CTRL+ALT+N`, all chunks above - `CTRL+ALT+P`, all chunks below, and another few options. This allows you to assess the upstream and downstream consequences of a change in your code. `knitr` also has the option to _cache_ the output of code chunks by setting the option `cache = TRUE`. A folder will be created that saves the output of your chunk in a data file. `knitr` accesses the cache and loads the result from the last time the chunk was run without recalculating values.   This can be very useful if the code in a particular chunk takes awhile to run and you are assessing changes unrelated to that code,  or changes after that code. 
 
+If the code in the cache changed, the its values were recalculated. Changes in the the cached chunk are evaluated and passed on to the next code block. The previous cache values are deleted and replaced with the current values.
+
 For example, if your document isn't knitting because of an error at line 200 and your time intensive code runs at line 100, you can cache the line 100 chunk and troubleshoot the line 200 code without having to wait for this earlier chunk to run again. The caching caveat is that changing anything in earlier code (at line 50 in this example) that your cached chunk depends on would not be appropriately updated (ie. the code at line 100 would still not change). Therefore it is important to be conscious of what you are caching and where changes are occurring in your script. You should uncache your code chunk for the final rendering to make sure there haven't been any unforseen changes to your document. 
 
 This is a simplified explanation of caching and more details can be found in the [knitr manual](https://www.cs.bham.ac.uk/~axj/pub/teaching/2016-7/stats/knitr-manual.pdf) and its [cache demo](https://yihui.name/knitr/demo/cache/).
@@ -1483,21 +1425,8 @@ cars <- dplyr::bind_rows(cars, c(speed = 50, dist = 200))
 
 Knit the document again! We see that this point is an outlier, and the change can be seen on the output of our plot. However, our summary also depends on the cars dataset and has not been updated (ie. the maximum distance is still 120 km). If the code of the cached chunk does not change, the chunk is not rerun.
 
-__Scenario 2__
 
-If I change the cached chunk, say, by adding another outlier data point - what do you think will happen? Add this point and knit again.
-
-`{r cars, message = FALSE, cache = TRUE}`
-
-```r
-cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
-summary(cars)
-```
-
-Since the code in the cache changed, its values were recalculated and the max distance in the summary has changed to 300 km. Changes in the the cached chunk are evaluated and passed on to the next code block. The previous cache values are deleted and replaced with the current values. The plot, which depends on the cars dataset, now has a point at dist = 300 km AND dist = 200 km.
-
-
-__After Scenario's 1 & 2 questions will be on Socrative.__
+__After Scenario 1 questions will be on Socrative.__
 
 
 
@@ -1685,7 +1614,7 @@ kable(dat, "html", escape = F)  %>%
 </table>
 
 
-<img src="Lesson_4_files/figure-html/unnamed-chunk-50-1.png" width="50%" height="50%" />
+<img src="Lesson_4_files/figure-html/unnamed-chunk-49-1.png" width="50%" height="50%" />
 
 
 In this case, I shrank the plot using `out.width` and `out.height` so that it would fit beside our table.
@@ -1758,11 +1687,12 @@ kable(dat, "html") %>%
 
 Footnotes can be added to a table using symbols or alphabet markers for flags. 
 
-This is a good time to learn more useful data cleaning functions `paste` and `paste0`. These are made to join or 'paste' string characters together. In this case we want to take a character string (the title of each column of our data frame) and add a footnote symbol to it to denote units. Can you tell what the difference is between the 2 functions by the output?
+This is a good time to learn another useful data cleaning function, `str_c`. `str_c` is used to collapse or 'paste' string characters together. In this case we want to take a character string (the title of each column of our data frame) and add a footnote symbol to it to denote units. 
+
 
 ```r
-colnames(dat)[1] <- paste("car_", colnames(dat)[1], footnote_marker_symbol(1))
-colnames(dat)[2] <- paste0("car_", colnames(dat)[2], footnote_marker_alphabet(1))
+colnames(dat)[1] <- str_c("car_", colnames(dat)[1], footnote_marker_symbol(1))
+colnames(dat)[2] <- str_c("car_", colnames(dat)[2], footnote_marker_alphabet(1))
 ```
 Escape has been changed to FALSE so that the html encoding of our superscript is not escaped. The legend for the footnote symbol or character below the table is also added in out `kable` call.
 
@@ -1777,7 +1707,7 @@ kable(dat, "html", escape = FALSE) %>%
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
  <thead>
   <tr>
-   <th style="text-align:left;"> car_ speed <sup>*</sup> </th>
+   <th style="text-align:left;"> car_speed<sup>*</sup> </th>
    <th style="text-align:left;"> car_distance<sup>a</sup> </th>
   </tr>
  </thead>
@@ -1832,7 +1762,7 @@ Minimum syntax to add an image (no caption, default image size):
 
 ###Table of contents
 
-This is the yaml header including the table of contents (toc) for the lessson. It is as simple as writing `toc = TRUE` under the output for the document type you are using and then specifying what level of headers (remember our hashtags) you would like to include in the toc. I am keeping 1st, 2nd, and 3rd level headers in this example. If I had a 4th level header, it would still be larger than my text, but it will not show up in my table of contents. The toc creates a hyperlink to each section for the user to navigate the document. `CTRL+SHIFT+O` opens the document outline which allows navigation to these sections while coding.  
+This is the yaml header including the table of contents (toc) for the lessson. It is as simple as writing `toc = TRUE` under the output for the document type you are using and then specifying what level of headers (remember our hashtags) you would like to include in the toc. I am keeping 1st, 2nd, and 3rd level headers in this example. If I had a 4th level header, it would still be larger than my text, but it will not show up in my table of contents. The toc creates a hyperlink to each section for the user to navigate the document.  
 
 
     ---

@@ -295,7 +295,7 @@ What I would like to get across it that it is okay to google and use resources e
 
 ***
 
-##Data Cleaning with stringr/stringi (AKA What is Elon Musk up to anyways?)
+##Data Cleaning with stringr (AKA What is Elon Musk up to anyways?)
 
 Let's take this cacaphony of characters we've just learned about and perform some basic data cleaning tasks with an actual messy data set. I have scraped Elon Musk's latest tweets from Twitter. The code to do this is in the Lesson 4 file [twitter_scrape.R](https://github.com/eacton/CAGEF/blob/master/Lesson_4/twitter_scrape.R) if you are curious or want to creep someone on Twitter.
 
@@ -322,7 +322,7 @@ elon_tweets_df <- elon_tweets_df %>%
 elon_tweets_df$text[1:5]
 ```
 
-The `stringr` and `stringi` functions are the tidyverse solution to regular expressions. Functions can be found using `str_` + `Tab`. The order of arguments are switched in `stringr` relative to the base functions. The first argument will be the character string we are searching, and the second argument will be the pattern we are matching.
+The `stringr` functions are the tidyverse solution to regular expressions. Functions can be found using `str_` + `Tab`. The order of arguments are switched in `stringr` relative to the base functions. The first argument will be the character string we are searching, and the second argument will be the pattern we are matching.
 
 First, I want to remove the tags from the beginning of words. I am going to save my regex expression into an object - so we can use them again later.
 
@@ -368,7 +368,7 @@ Okay! We are ready to replace all instances of the tags with an empty character 
 
 ```{r}
 elon_tweets_df$text <- str_replace_all(elon_tweets_df$text, pattern = tags, replacement = "")
-elon_tweets_df$text[1:50]
+elon_tweets_df$text[1:30]
 ```
 
 
@@ -380,7 +380,7 @@ It looks like there are a bunch of shared urls in these tweets we need to remove
 ```{r}
 url <- "http[s]?://[[:alnum:].\\/]+"
 
-str_remove_all(elon_tweets_df$text, pattern = url) %>% head(50)
+str_remove_all(elon_tweets_df$text, pattern = url) %>% head(30)
 
 elon_tweets_df$text <- str_remove_all(elon_tweets_df$text, pattern = url)
 
@@ -420,7 +420,7 @@ See how we have a couple extra spaces in the middle of some of our first string?
 ```{r}
 elon_tweets_df$text <- str_squish(elon_tweets_df$text)
 
-elon_tweets_df$text[1:50]
+elon_tweets_df$text[1:30]
 ```
 
 Lastly, let's convert all of our worder to lowercase with the `tolower()` function.
@@ -439,7 +439,7 @@ __Challenge__
 
 </div>
 
-Come up with a regex expression that would replace all tags, urls, punctuation and numbers at once. Read in the tweets data frame again and save under a different name. Test your expression. Did it work as you expected?
+Create a regex expression that would replace all tags, urls, punctuation and numbers at once. Read in the tweets data frame again and save under a different name. Test your expression. Did it work as you expected?
 
 
 </br>
@@ -450,7 +450,7 @@ Come up with a regex expression that would replace all tags, urls, punctuation a
 ***
 
 ```{r include = FALSE, eval = FALSE}
- # It turns out the `@` and `#` are punctuation characters, so removing them is taken care of using `[[:punct:]]`. We also want to remove the metacharacter `$` (which is not considered punctuation. We aren't sure what order the numbers and punctuation might come in and square brackets allow ANY characters inside the brackets to be matched. We are not sure if there will be zero, one, or many of our target characters in a tweet, however `str_remove_all()` will remove every instance of this pattern (otherwise we would use the `*` outside the brackets to indicate 0 or more times). The url can be http followed by anything followed by a word boundary. The url can appear 0 or more times.. Looking at the output, we can see that the numbers and punctuation and dollar signs and urls are indeed removed.
+ # It turns out the `@` and `#` are punctuation characters, so removing them is taken care of using `[[:punct:]]`. We also want to remove the metacharacter `$` (which is not considered punctuation. We aren't sure what order the numbers and punctuation might come in and square brackets allow ANY characters inside the brackets to be matched. We are not sure if there will be zero, one, or many of our target characters in a tweet, however `str_remove_all()` will remove every instance of this pattern (otherwise we would use the `*` outside the brackets to indicate 0 or more times). The url can be http followed by anything followed by a word boundary. The url can appear 0 or more times. Looking at the output, we can see that the numbers and punctuation and dollar signs and urls are indeed removed.
 
 elon <- read.delim("data/elon_tweets_df.txt", sep = "\t", stringsAsFactors = F)
 
@@ -489,7 +489,7 @@ Our output is now a long character vector. This will make it much easier to coun
 str(words)
 ```
 
-Let's take a peak at the words.
+Let's take a peek at the words.
 ```{r}
 head(words, 50)
 tail(words, 50)
@@ -848,6 +848,8 @@ For the code chunk containing `plot(pressure)`: How would you show just the code
 
 In the 'Run' dropdown menu (found in the top right of the source pane), there are various options for running your current chunk - `CTRL+SHIFT+ENTER`, the next chunk - `CTRL+ALT+N`, all chunks above - `CTRL+ALT+P`, all chunks below, and another few options. This allows you to assess the upstream and downstream consequences of a change in your code. `knitr` also has the option to _cache_ the output of code chunks by setting the option `cache = TRUE`. A folder will be created that saves the output of your chunk in a data file. `knitr` accesses the cache and loads the result from the last time the chunk was run without recalculating values.   This can be very useful if the code in a particular chunk takes awhile to run and you are assessing changes unrelated to that code,  or changes after that code. 
 
+If the code in the cache changed, the its values were recalculated. Changes in the the cached chunk are evaluated and passed on to the next code block. The previous cache values are deleted and replaced with the current values.
+
 For example, if your document isn't knitting because of an error at line 200 and your time intensive code runs at line 100, you can cache the line 100 chunk and troubleshoot the line 200 code without having to wait for this earlier chunk to run again. The caching caveat is that changing anything in earlier code (at line 50 in this example) that your cached chunk depends on would not be appropriately updated (ie. the code at line 100 would still not change). Therefore it is important to be conscious of what you are caching and where changes are occurring in your script. You should uncache your code chunk for the final rendering to make sure there haven't been any unforseen changes to your document. 
 
 This is a simplified explanation of caching and more details can be found in the [knitr manual](https://www.cs.bham.ac.uk/~axj/pub/teaching/2016-7/stats/knitr-manual.pdf) and its [cache demo](https://yihui.name/knitr/demo/cache/).
@@ -878,20 +880,8 @@ cars <- dplyr::bind_rows(cars, c(speed = 50, dist = 200))
 
 Knit the document again! We see that this point is an outlier, and the change can be seen on the output of our plot. However, our summary also depends on the cars dataset and has not been updated (ie. the maximum distance is still 120 km). If the code of the cached chunk does not change, the chunk is not rerun.
 
-__Scenario 2__
 
-If I change the cached chunk, say, by adding another outlier data point - what do you think will happen? Add this point and knit again.
-
-`{r cars, message = FALSE, cache = TRUE}`
-```{r message = FALSE, cache = TRUE, eval = FALSE}
-cars <- dplyr::bind_rows(cars, c(speed = 100, dist = 300))
-summary(cars)
-```
-
-Since the code in the cache changed, its values were recalculated and the max distance in the summary has changed to 300 km. Changes in the the cached chunk are evaluated and passed on to the next code block. The previous cache values are deleted and replaced with the current values. The plot, which depends on the cars dataset, now has a point at dist = 300 km AND dist = 200 km.
-
-
-__After Scenario's 1 & 2 questions will be on Socrative.__
+__After Scenario 1 questions will be on Socrative.__
 
 
 
@@ -1000,10 +990,11 @@ kable(dat, "html") %>%
 
 Footnotes can be added to a table using symbols or alphabet markers for flags. 
 
-This is a good time to learn more useful data cleaning functions `paste` and `paste0`. These are made to join or 'paste' string characters together. In this case we want to take a character string (the title of each column of our data frame) and add a footnote symbol to it to denote units. Can you tell what the difference is between the 2 functions by the output?
+This is a good time to learn another useful data cleaning function, `str_c`. `str_c` is used to collapse or 'paste' string characters together. In this case we want to take a character string (the title of each column of our data frame) and add a footnote symbol to it to denote units. 
+
 ```{r message = FALSE}
-colnames(dat)[1] <- paste("car_", colnames(dat)[1], footnote_marker_symbol(1))
-colnames(dat)[2] <- paste0("car_", colnames(dat)[2], footnote_marker_alphabet(1))
+colnames(dat)[1] <- str_c("car_", colnames(dat)[1], footnote_marker_symbol(1))
+colnames(dat)[2] <- str_c("car_", colnames(dat)[2], footnote_marker_alphabet(1))
 
 ```
 Escape has been changed to FALSE so that the html encoding of our superscript is not escaped. The legend for the footnote symbol or character below the table is also added in out `kable` call.
@@ -1032,7 +1023,7 @@ Minimum syntax to add an image (no caption, default image size):
 
 ###Table of contents
 
-This is the yaml header including the table of contents (toc) for the lessson. It is as simple as writing `toc = TRUE` under the output for the document type you are using and then specifying what level of headers (remember our hashtags) you would like to include in the toc. I am keeping 1st, 2nd, and 3rd level headers in this example. If I had a 4th level header, it would still be larger than my text, but it will not show up in my table of contents. The toc creates a hyperlink to each section for the user to navigate the document. `CTRL+SHIFT+O` opens the document outline which allows navigation to these sections while coding.  
+This is the yaml header including the table of contents (toc) for the lessson. It is as simple as writing `toc = TRUE` under the output for the document type you are using and then specifying what level of headers (remember our hashtags) you would like to include in the toc. I am keeping 1st, 2nd, and 3rd level headers in this example. If I had a 4th level header, it would still be larger than my text, but it will not show up in my table of contents. The toc creates a hyperlink to each section for the user to navigate the document.  
 
 
     ---
