@@ -293,6 +293,192 @@ What I would like to get across it that it is okay to google and use resources e
 
 ***
 
+##Intro to string manipulation with stringr
+
+Common uses of string manipulation are: searching, replacing or removing (making substitutions), and splitting and combining substrings.
+
+As an example, we are going to play with a string of DNA. 
+
+```{r}
+dino <-">DinoDNA from Crichton JURASSIC PARK  p. 103 nt 1-1200 GCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAAAATCGACGCGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCTCCCTCGTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGAAGCGTGGCTGCTCACGCTGTACCTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGGGCTGTGTGCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACCCGGTAAAGTAGGACAGGTGCCGGCAGCGCTCTGGGTCATTTTCGGCGAGGACCGCTTTCGCTGGAGATCGGCCTGTCGCTTGCGGTATTCGGAATCTTGCACGCCCTCGCTCAAGCCTTCGTCACTCCAAACGTTTCGGCGAGAAGCAGGCCATTATCGCCGGCATGGCGGCCGACGCGCTGGGCTGGCGTTCGCGACGCGAGGCTGGATGGCCTTCCCCATTATGATTCTTCTCGCTTCCGGCGGCCCGCGTTGCAGGCCATGCTGTCCAGGCAGGTAGATGACGACCATCAGGGACAGCTTCAACGGCTCTTACCAGCCTAACTTCGATCACTGGACCGCTGATCGTCACGGCGATTTATGCCGCACATGGACGCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAACAAGTCAGAGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCGCTCTCCTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGCTTTCTCAATGCTCACGCTGTAGGTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGACGAACCCCCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACACGACTTAACGGGTTGGCATGGATTGTAGGCGCCGCCCTATACCTTGTCTGCCTCCCCGCGGTGCATGGAGCCGGGCCACCTCGACCTGAATGGAAGCCGGCGGCACCTCGCTAACGGCCAAGAATTGGAGCCAATCAATTCTTGCGGAGAACTGTGAATGCGCAAACCAACCCTTGGCCATCGCGTCCGCCATCTCCAGCAGCCGCACGCGGCGCATCTCGGGCAGCGTTGGGTCCT"
+
+```
+
+
+This piece of DNA is from the book Jurassic park, and was supposed to be dinosaur DNA, but is actually just a cloning vector. Bummer.
+
+(picture of trex and cloning vector side by side.
+
+
+Removing:
+
+This string is in FASTA format, but we don't want the header - we just want to deal with the DNA sequence. The header begins with '>' and ends with a number, '1200', and a space. Let's practice capturing each of these parts of a string, and then we'll make a regular expression to remove the entire header. 
+
+All `stringr` functions take in as arguments the string you are manipulating and the pattern you are capturing. `str_remove` replaces the matched pattern with an empty character string `""`. In our first search we remove '>' from our string, dino.
+
+```{r}
+str_remove(string = dino, pattern = ">") 
+```
+Next we can search for numbers. The expression '[0-9]' is looking for any number. Always make sure to check that the pattern you are using gives you the output you expect.
+
+```{r}
+str_remove(string = dino, pattern = "[0-9]") 
+```
+
+Why aren't all of the numbers replaced? `str_remove` only replaces the first match in a character string. Switching to `str_remove_all` replaces all instances of numbers in the character string.
+
+```{r}
+str_remove_all(string = dino, pattern = "[0-9]") 
+```
+
+How do we capture spaces? The pattern '\s' replaces a space. However, for the backslash to not be used as an escape character (its special function), we need to add another backslash, making our pattern '\\s'.
+
+```{r}
+str_remove_all(string = dino, pattern = "\\s") 
+```
+
+To remove the entire header, we need to combine these patterns. The header is everything in between '>' and the number '1200' followed by a space. The operator `.` captures any single character and the quantifier `*` is any number of times (including zero). 
+
+```{r}
+str_remove(string = dino, pattern = ">.*[0-9]\\s")
+```
+
+You may have noticed that we also have a number followed by a space earlier in the header, '103 '. Why didn't the replacement end at that first match? The first instance is an example of _greedy_ matching - it will take the longest possible string. To curtail this behaviour and use _lazy_ matching - the shortest possible string, you can add the `?` quantifier.
+
+
+
+
+```{r}
+str_remove(string = dino, pattern = ">.*?[0-9]\\s")
+```
+In this case, we want the greedy matching to replace the entire header. Let's save the dna into its own object.
+
+```{r}
+dna <- str_remove(string = dino, pattern = ">.*[0-9]\\s")
+```
+
+Extracting:
+
+We may also want to retain our header in a separate string. `str_extract` will retain the string that matches our pattern instead of removing it. We can save this in an object called header (I removed the final space from our expresssion).
+
+
+```{r}
+header <- str_extract(string = dino, pattern = ">.*[0-9]")
+header
+```
+
+
+Searching:
+
+Does this DNA have balanced GC content? We can use `str_extract_all` to capture every character that is either a G or a C.
+
+```{r}
+str_extract_all(dino, pattern = "G|C")
+```
+
+The output is a list object in which is stored an entry for each G or C extracted. We count the number of these entries and divide by the total number of characters in our string to get the %GC content. 
+
+
+```{r}
+length(str_extract_all(dna, pattern = "G|C")[[1]])/nchar(dna) * 100
+```
+
+
+
+Let's translate this into mRNA!
+
+Replacement:
+
+```{r}
+mrna <- str_replace_all(dna, c("G" = "C", "C" = "G", "A" = "U", "T" = "A"))
+  
+```
+
+
+Searching:
+
+Is there even a start codon in this thing? `str_detect` can be used to get a local (TRUE or FALSE) answer to whether or not a match is found.
+
+```{r}
+str_detect(mrna, "AUG")
+
+```
+
+To get the position of a possible start codon we can use `str_locate` which will return the indices of where the start and end of our substring occurs (`str_locate_all` can be used to find the all possible locations).
+
+
+```{r}
+str_locate(mrna, "AUG")
+```
+
+
+Splitting:
+
+Let's split this string into substrings of codons, starting at the position of our start codon. We have the position of our start codon from `str_locate`. We can use `str_sub` to subset the string by position (we will just go to the end of the string for now).
+
+```{r}
+str_sub(mrna, 21, 1200)
+#is equivalent to
+mrna <- str_sub(mrna, str_locate(mrna, "AUG")[1])
+
+```
+
+We can get codons by extracting groups of 3 nucleotides/characters in our reading frame.
+
+```{r}
+str_extract_all(mrna, "...")
+
+```
+The codons are extracted into a list, but we can get our character substrings using `unlist`. 
+
+```{r}
+codons <- unlist(str_extract_all(mrna, "..."))
+```
+
+We now have a vector with `r length(codons)` codons.
+
+Do we have a stop codon in our reading frame? Let's check with `str_detect`. We can use round brackets `( )` to separately group the different stop codons.
+
+```{r}
+str_detect(codons, "(UAG)|(UGA)|(UAA)")
+```
+Looks like we have many matches. We can subset the codons using `str_detect` (instances where the presence of a stop codon is TRUE) to see which ones we have. 
+
+
+```{r}
+codons[str_detect(codons, "(UAG)|(UGA)|(UAA)")]
+```
+
+Let's subset by the position 
+
+```{r}
+str_sub(codons, 
+```
+
+
+
+Replacing:
+
+Translating to protein.
+
+
+```{r}
+
+```
+
+
+Combining:
+
+What is our final protein string?
+
+```{r}
+
+```
+
+
+
+***
+
 ##Data Cleaning with stringr (AKA What is Elon Musk up to anyways?)
 
 Let's take this cacaphony of characters we've just learned about and perform some basic data cleaning tasks with an actual messy data set. I have scraped Elon Musk's latest tweets from Twitter. The code to do this is in the Lesson 4 file [twitter_scrape.R](https://github.com/eacton/CAGEF/blob/master/Lesson_4/twitter_scrape.R) if you are curious or want to creep someone on Twitter.
