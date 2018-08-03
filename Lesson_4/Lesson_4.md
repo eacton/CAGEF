@@ -1,5 +1,5 @@
 ---
-title: "Lesson 4 - Of Data Cleaning and Documentation - Conquer Regular Expressions, Use R markdown and knitr to make PDFs, and Challenge yourself with a 'Real' Dataset"
+title: "Lesson 4 - Of Data Cleaning and Documentation - Conquer Regular Expressions and Challenge yourself with a 'Real' Dataset"
 output: 
   html_document:
           keep_md: yes
@@ -22,14 +22,14 @@ This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis
 
 
 
-This lesson is the fourth in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
+This lesson is the fourth in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, and test a regression model. 
 
 
 ![](img/data-science-explore.png)
 
 </br>
 
-How do we get there? Today we are going to be learning data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. We will also be learning r markdown so that we can easily annotate our code and share it with others in reproducible documents. In the next lesson we will learn how to do t-tests and perform regression and modeling in R. And lastly, we will learn to write some functions, which really can save you time and help scale up your analyses.
+How do we get there? Today we are going to be learning data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. In the next lesson we will learn how to do t-tests and perform regression and modeling in R. 
 
 
 ![](img/spotify-howtobuildmvp.gif)
@@ -49,8 +49,6 @@ The following packages are used in this lesson:
 (`httr`)\*     
 `tidytext`     
 `viridis`     
-`knitr`     
-`kableExtra`     
 `wordcloud`     
 
 *Used to generate the tweet tables used in this lesson. It is not necessary for you to install this - you can work from the tables. If you want to create these files - the code is here  - [twitter scrape](https://github.com/eacton/CAGEF/blob/master/Lesson_4/twitter_scrape.R).    
@@ -67,13 +65,13 @@ Please install and load these packages for the lesson. In this document I will l
 <span style="color:blue">blue text</span> - named or unnamed hyperlink     
 
 ***
-__Objective:__ At the end of this session you will be able to use regular expressions to 'clean' your data. You will also learn R markdown and be able to render your R code into slides, a pdf, html, a word document, or a notebook.
+__Objective:__ At the end of this session you will be able to use regular expressions to 'clean' your data. 
 
 ***
 
 ####Load libraries
 
-Since we are moving along in the world, we are now going to start loading our libraries at the start of our script. This is a 'best practice' and makes it much easier for someone to reproduce your work efficiently by knowing exactly what packages they need to run your code. We will learn how to do this with a function in Lesson 6!
+Since we are moving along in the world, we are now going to start loading our libraries at the start of our script. This is a 'best practice' and makes it much easier for someone to reproduce your work efficiently by knowing exactly what packages they need to run your code. 
 
 
 ```r
@@ -398,6 +396,459 @@ While you can always refer back to this lesson for making your regular expressio
 </br>
 
 What I would like to get across it that it is okay to google and use resources early on for regex, and that even experts still use these resources.  
+
+***
+
+##Intro to string manipulation with stringr
+
+Common uses of string manipulation are: searching, replacing or removing (making substitutions), and splitting and combining substrings.
+
+As an example, we are going to play with a string of DNA. 
+
+
+```r
+dino <-">DinoDNA from Crichton JURASSIC PARK  p. 103 nt 1-1200 GCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAAAATCGACGCGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCTCCCTCGTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGAAGCGTGGCTGCTCACGCTGTACCTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGGGCTGTGTGCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACCCGGTAAAGTAGGACAGGTGCCGGCAGCGCTCTGGGTCATTTTCGGCGAGGACCGCTTTCGCTGGAGATCGGCCTGTCGCTTGCGGTATTCGGAATCTTGCACGCCCTCGCTCAAGCCTTCGTCACTCCAAACGTTTCGGCGAGAAGCAGGCCATTATCGCCGGCATGGCGGCCGACGCGCTGGGCTGGCGTTCGCGACGCGAGGCTGGATGGCCTTCCCCATTATGATTCTTCTCGCTTCCGGCGGCCCGCGTTGCAGGCCATGCTGTCCAGGCAGGTAGATGACGACCATCAGGGACAGCTTCAACGGCTCTTACCAGCCTAACTTCGATCACTGGACCGCTGATCGTCACGGCGATTTATGCCGCACATGGACGCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAACAAGTCAGAGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCGCTCTCCTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGCTTTCTCAATGCTCACGCTGTAGGTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGACGAACCCCCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACACGACTTAACGGGTTGGCATGGATTGTAGGCGCCGCCCTATACCTTGTCTGCCTCCCCGCGGTGCATGGAGCCGGGCCACCTCGACCTGAATGGAAGCCGGCGGCACCTCGCTAACGGCCAAGAATTGGAGCCAATCAATTCTTGCGGAGAACTGTGAATGCGCAAACCAACCCTTGGCCATCGCGTCCGCCATCTCCAGCAGCCGCACGCGGCGCATCTCGGGCAGCGTTGGGTCCT"
+```
+
+
+This piece of DNA is from the book Jurassic park, and was supposed to be dinosaur DNA, but is actually just a cloning vector. Bummer.
+
+</br>
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![nope](img/jurassicpark-trex-statue-photo1-700x376.jpg){width=450px} 
+</div>
+
+<div style="float:right;margin:0 10px 10px 0" markdown="1">
+![yep](img/pBR328.png){width=300px} 
+</div>
+</br>
+
+</br>
+
+</br>
+</br>
+
+</br>
+</br>
+
+</br>
+
+</br>
+
+</br>
+</br>
+
+</br>
+</br>
+
+
+__Removing:__
+
+This string is in FASTA format, but we don't need the header - we just want to deal with the DNA sequence. The header begins with '>' and ends with a number, '1200', with a space between the header and the sequence. Let's practice capturing each of these parts of a string, and then we'll make a regular expression to remove the entire header. 
+
+All `stringr` functions take in as arguments the __string__ you are manipulating and the __pattern__ you are capturing. `str_remove` replaces the matched pattern with an empty character string "". In our first search we remove '>' from our string, dino.
+
+
+```r
+str_remove(string = dino, pattern = ">") 
+```
+
+```
+## [1] "DinoDNA from Crichton JURASSIC PARK  p. 103 nt 1-1200 GCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAAAATCGACGCGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCTCCCTCGTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGAAGCGTGGCTGCTCACGCTGTACCTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGGGCTGTGTGCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACCCGGTAAAGTAGGACAGGTGCCGGCAGCGCTCTGGGTCATTTTCGGCGAGGACCGCTTTCGCTGGAGATCGGCCTGTCGCTTGCGGTATTCGGAATCTTGCACGCCCTCGCTCAAGCCTTCGTCACTCCAAACGTTTCGGCGAGAAGCAGGCCATTATCGCCGGCATGGCGGCCGACGCGCTGGGCTGGCGTTCGCGACGCGAGGCTGGATGGCCTTCCCCATTATGATTCTTCTCGCTTCCGGCGGCCCGCGTTGCAGGCCATGCTGTCCAGGCAGGTAGATGACGACCATCAGGGACAGCTTCAACGGCTCTTACCAGCCTAACTTCGATCACTGGACCGCTGATCGTCACGGCGATTTATGCCGCACATGGACGCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAACAAGTCAGAGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCGCTCTCCTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGCTTTCTCAATGCTCACGCTGTAGGTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGACGAACCCCCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACACGACTTAACGGGTTGGCATGGATTGTAGGCGCCGCCCTATACCTTGTCTGCCTCCCCGCGGTGCATGGAGCCGGGCCACCTCGACCTGAATGGAAGCCGGCGGCACCTCGCTAACGGCCAAGAATTGGAGCCAATCAATTCTTGCGGAGAACTGTGAATGCGCAAACCAACCCTTGGCCATCGCGTCCGCCATCTCCAGCAGCCGCACGCGGCGCATCTCGGGCAGCGTTGGGTCCT"
+```
+Next we can search for numbers. The expression '[0-9]' is looking for any number. Always make sure to check that the pattern you are using gives you the output you expect.
+
+
+```r
+str_remove(string = dino, pattern = "[0-9]") 
+```
+
+```
+## [1] ">DinoDNA from Crichton JURASSIC PARK  p. 03 nt 1-1200 GCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAAAATCGACGCGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCTCCCTCGTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGAAGCGTGGCTGCTCACGCTGTACCTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGGGCTGTGTGCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACCCGGTAAAGTAGGACAGGTGCCGGCAGCGCTCTGGGTCATTTTCGGCGAGGACCGCTTTCGCTGGAGATCGGCCTGTCGCTTGCGGTATTCGGAATCTTGCACGCCCTCGCTCAAGCCTTCGTCACTCCAAACGTTTCGGCGAGAAGCAGGCCATTATCGCCGGCATGGCGGCCGACGCGCTGGGCTGGCGTTCGCGACGCGAGGCTGGATGGCCTTCCCCATTATGATTCTTCTCGCTTCCGGCGGCCCGCGTTGCAGGCCATGCTGTCCAGGCAGGTAGATGACGACCATCAGGGACAGCTTCAACGGCTCTTACCAGCCTAACTTCGATCACTGGACCGCTGATCGTCACGGCGATTTATGCCGCACATGGACGCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAACAAGTCAGAGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCGCTCTCCTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGCTTTCTCAATGCTCACGCTGTAGGTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGACGAACCCCCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACACGACTTAACGGGTTGGCATGGATTGTAGGCGCCGCCCTATACCTTGTCTGCCTCCCCGCGGTGCATGGAGCCGGGCCACCTCGACCTGAATGGAAGCCGGCGGCACCTCGCTAACGGCCAAGAATTGGAGCCAATCAATTCTTGCGGAGAACTGTGAATGCGCAAACCAACCCTTGGCCATCGCGTCCGCCATCTCCAGCAGCCGCACGCGGCGCATCTCGGGCAGCGTTGGGTCCT"
+```
+
+Why aren't all of the numbers replaced? `str_remove` only replaces the first match in a character string. Switching to `str_remove_all` replaces all instances of numbers in the character string.
+
+
+```r
+str_remove_all(string = dino, pattern = "[0-9]") 
+```
+
+```
+## [1] ">DinoDNA from Crichton JURASSIC PARK  p.  nt - GCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAAAATCGACGCGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCTCCCTCGTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGAAGCGTGGCTGCTCACGCTGTACCTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGGGCTGTGTGCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACCCGGTAAAGTAGGACAGGTGCCGGCAGCGCTCTGGGTCATTTTCGGCGAGGACCGCTTTCGCTGGAGATCGGCCTGTCGCTTGCGGTATTCGGAATCTTGCACGCCCTCGCTCAAGCCTTCGTCACTCCAAACGTTTCGGCGAGAAGCAGGCCATTATCGCCGGCATGGCGGCCGACGCGCTGGGCTGGCGTTCGCGACGCGAGGCTGGATGGCCTTCCCCATTATGATTCTTCTCGCTTCCGGCGGCCCGCGTTGCAGGCCATGCTGTCCAGGCAGGTAGATGACGACCATCAGGGACAGCTTCAACGGCTCTTACCAGCCTAACTTCGATCACTGGACCGCTGATCGTCACGGCGATTTATGCCGCACATGGACGCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAACAAGTCAGAGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCGCTCTCCTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGCTTTCTCAATGCTCACGCTGTAGGTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGACGAACCCCCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACACGACTTAACGGGTTGGCATGGATTGTAGGCGCCGCCCTATACCTTGTCTGCCTCCCCGCGGTGCATGGAGCCGGGCCACCTCGACCTGAATGGAAGCCGGCGGCACCTCGCTAACGGCCAAGAATTGGAGCCAATCAATTCTTGCGGAGAACTGTGAATGCGCAAACCAACCCTTGGCCATCGCGTCCGCCATCTCCAGCAGCCGCACGCGGCGCATCTCGGGCAGCGTTGGGTCCT"
+```
+
+How do we capture spaces? The pattern '\\s' replaces a space. However, for the backslash to not be used as an escape character (its special function), we need to add another backslash, making our pattern '\\\\s'.
+
+
+```r
+str_remove_all(string = dino, pattern = "\\s") 
+```
+
+```
+## [1] ">DinoDNAfromCrichtonJURASSICPARKp.103nt1-1200GCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAAAATCGACGCGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCTCCCTCGTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGAAGCGTGGCTGCTCACGCTGTACCTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGGGCTGTGTGCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACCCGGTAAAGTAGGACAGGTGCCGGCAGCGCTCTGGGTCATTTTCGGCGAGGACCGCTTTCGCTGGAGATCGGCCTGTCGCTTGCGGTATTCGGAATCTTGCACGCCCTCGCTCAAGCCTTCGTCACTCCAAACGTTTCGGCGAGAAGCAGGCCATTATCGCCGGCATGGCGGCCGACGCGCTGGGCTGGCGTTCGCGACGCGAGGCTGGATGGCCTTCCCCATTATGATTCTTCTCGCTTCCGGCGGCCCGCGTTGCAGGCCATGCTGTCCAGGCAGGTAGATGACGACCATCAGGGACAGCTTCAACGGCTCTTACCAGCCTAACTTCGATCACTGGACCGCTGATCGTCACGGCGATTTATGCCGCACATGGACGCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAACAAGTCAGAGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCGCTCTCCTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGCTTTCTCAATGCTCACGCTGTAGGTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGACGAACCCCCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACACGACTTAACGGGTTGGCATGGATTGTAGGCGCCGCCCTATACCTTGTCTGCCTCCCCGCGGTGCATGGAGCCGGGCCACCTCGACCTGAATGGAAGCCGGCGGCACCTCGCTAACGGCCAAGAATTGGAGCCAATCAATTCTTGCGGAGAACTGTGAATGCGCAAACCAACCCTTGGCCATCGCGTCCGCCATCTCCAGCAGCCGCACGCGGCGCATCTCGGGCAGCGTTGGGTCCT"
+```
+
+To remove the entire header, we need to combine these patterns. The header is everything in between '>' and the number '1200' followed by a space. The operator `.` captures any single character and the quantifier `*` is any number of times (including zero). 
+
+
+```r
+str_remove(string = dino, pattern = ">.*[0-9]\\s")
+```
+
+```
+## [1] "GCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAAAATCGACGCGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCTCCCTCGTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGAAGCGTGGCTGCTCACGCTGTACCTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGGGCTGTGTGCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACCCGGTAAAGTAGGACAGGTGCCGGCAGCGCTCTGGGTCATTTTCGGCGAGGACCGCTTTCGCTGGAGATCGGCCTGTCGCTTGCGGTATTCGGAATCTTGCACGCCCTCGCTCAAGCCTTCGTCACTCCAAACGTTTCGGCGAGAAGCAGGCCATTATCGCCGGCATGGCGGCCGACGCGCTGGGCTGGCGTTCGCGACGCGAGGCTGGATGGCCTTCCCCATTATGATTCTTCTCGCTTCCGGCGGCCCGCGTTGCAGGCCATGCTGTCCAGGCAGGTAGATGACGACCATCAGGGACAGCTTCAACGGCTCTTACCAGCCTAACTTCGATCACTGGACCGCTGATCGTCACGGCGATTTATGCCGCACATGGACGCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAACAAGTCAGAGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCGCTCTCCTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGCTTTCTCAATGCTCACGCTGTAGGTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGACGAACCCCCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACACGACTTAACGGGTTGGCATGGATTGTAGGCGCCGCCCTATACCTTGTCTGCCTCCCCGCGGTGCATGGAGCCGGGCCACCTCGACCTGAATGGAAGCCGGCGGCACCTCGCTAACGGCCAAGAATTGGAGCCAATCAATTCTTGCGGAGAACTGTGAATGCGCAAACCAACCCTTGGCCATCGCGTCCGCCATCTCCAGCAGCCGCACGCGGCGCATCTCGGGCAGCGTTGGGTCCT"
+```
+
+You may have noticed that we also have a number followed by a space earlier in the header, '103 '. Why didn't the replacement end at that first match? The first instance is an example of _greedy_ matching - it will take the longest possible string. To curtail this behaviour and use _lazy_ matching - the shortest possible string - you can add the `?` quantifier.
+
+
+
+
+
+```r
+str_remove(string = dino, pattern = ">.*?[0-9]\\s")
+```
+
+```
+## [1] "nt 1-1200 GCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAAAATCGACGCGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCTCCCTCGTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGAAGCGTGGCTGCTCACGCTGTACCTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGGGCTGTGTGCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACCCGGTAAAGTAGGACAGGTGCCGGCAGCGCTCTGGGTCATTTTCGGCGAGGACCGCTTTCGCTGGAGATCGGCCTGTCGCTTGCGGTATTCGGAATCTTGCACGCCCTCGCTCAAGCCTTCGTCACTCCAAACGTTTCGGCGAGAAGCAGGCCATTATCGCCGGCATGGCGGCCGACGCGCTGGGCTGGCGTTCGCGACGCGAGGCTGGATGGCCTTCCCCATTATGATTCTTCTCGCTTCCGGCGGCCCGCGTTGCAGGCCATGCTGTCCAGGCAGGTAGATGACGACCATCAGGGACAGCTTCAACGGCTCTTACCAGCCTAACTTCGATCACTGGACCGCTGATCGTCACGGCGATTTATGCCGCACATGGACGCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAACAAGTCAGAGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCGCTCTCCTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGCTTTCTCAATGCTCACGCTGTAGGTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGACGAACCCCCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACACGACTTAACGGGTTGGCATGGATTGTAGGCGCCGCCCTATACCTTGTCTGCCTCCCCGCGGTGCATGGAGCCGGGCCACCTCGACCTGAATGGAAGCCGGCGGCACCTCGCTAACGGCCAAGAATTGGAGCCAATCAATTCTTGCGGAGAACTGTGAATGCGCAAACCAACCCTTGGCCATCGCGTCCGCCATCTCCAGCAGCCGCACGCGGCGCATCTCGGGCAGCGTTGGGTCCT"
+```
+In this case, we want the greedy matching to replace the entire header. Let's save the dna into its own object.
+
+
+```r
+dna <- str_remove(string = dino, pattern = ">.*[0-9]\\s")
+```
+
+__Extracting:__
+
+We may also want to retain our header in a separate string. `str_extract` will retain the string that matches our pattern instead of removing it. We can save this in an object called header (I removed the final space from our expresssion).
+
+
+
+```r
+header <- str_extract(string = dino, pattern = ">.*[0-9]")
+header
+```
+
+```
+## [1] ">DinoDNA from Crichton JURASSIC PARK  p. 103 nt 1-1200"
+```
+
+
+__Searching:__
+
+Now we can look for patterns in our (dino) DNA!
+
+Does this DNA have balanced GC content? We can use `str_extract_all` to capture every character that is either a G or a C.
+
+
+```r
+str_extract_all(dino, pattern = "G|C")
+```
+
+```
+## [[1]]
+##   [1] "C" "C" "G" "C" "G" "G" "C" "G" "G" "C" "G" "C" "C" "G" "G" "C" "C"
+##  [18] "C" "G" "C" "C" "C" "C" "C" "C" "G" "C" "G" "G" "C" "C" "C" "C" "G"
+##  [35] "C" "G" "C" "G" "G" "G" "G" "C" "G" "C" "C" "C" "G" "C" "G" "G" "C"
+##  [52] "G" "C" "C" "G" "G" "C" "G" "C" "C" "C" "C" "C" "G" "G" "G" "C" "C"
+##  [69] "C" "C" "C" "G" "G" "C" "C" "G" "C" "C" "C" "G" "C" "C" "G" "C" "C"
+##  [86] "C" "G" "G" "C" "C" "G" "C" "C" "G" "C" "C" "C" "C" "C" "C" "C" "G"
+## [103] "G" "G" "G" "C" "G" "G" "G" "C" "G" "C" "C" "C" "G" "C" "G" "C" "C"
+## [120] "C" "C" "G" "C" "G" "G" "G" "G" "G" "C" "G" "C" "G" "C" "C" "C" "G"
+## [137] "C" "G" "G" "G" "C" "G" "G" "G" "C" "C" "G" "C" "G" "C" "C" "C" "G"
+## [154] "C" "C" "G" "C" "G" "C" "G" "C" "C" "C" "C" "G" "G" "C" "C" "G" "C"
+## [171] "G" "G" "C" "C" "C" "C" "C" "G" "G" "G" "G" "G" "C" "G" "G" "G" "C"
+## [188] "C" "G" "G" "C" "G" "C" "G" "C" "C" "G" "G" "G" "C" "C" "G" "G" "C"
+## [205] "G" "G" "G" "C" "C" "G" "C" "C" "G" "C" "G" "G" "G" "C" "G" "G" "C"
+## [222] "C" "G" "C" "G" "C" "G" "C" "G" "G" "C" "G" "G" "C" "G" "C" "C" "G"
+## [239] "C" "C" "C" "C" "G" "C" "C" "G" "C" "C" "C" "G" "C" "C" "C" "C" "C"
+## [256] "G" "C" "G" "G" "C" "G" "G" "G" "C" "G" "G" "C" "C" "C" "G" "C" "C"
+## [273] "G" "G" "C" "G" "G" "C" "G" "G" "C" "C" "G" "C" "G" "C" "G" "C" "G"
+## [290] "G" "G" "C" "G" "G" "C" "G" "C" "G" "C" "G" "C" "G" "C" "G" "G" "G"
+## [307] "C" "G" "G" "G" "G" "C" "C" "C" "C" "C" "C" "G" "C" "C" "C" "G" "C"
+## [324] "C" "C" "G" "G" "C" "G" "G" "C" "C" "C" "G" "C" "G" "G" "C" "G" "G"
+## [341] "C" "C" "G" "C" "G" "C" "C" "G" "G" "C" "G" "G" "G" "G" "C" "G" "C"
+## [358] "C" "C" "G" "G" "G" "C" "G" "C" "C" "C" "G" "G" "C" "C" "C" "C" "G"
+## [375] "C" "C" "C" "C" "G" "C" "C" "G" "G" "C" "C" "G" "C" "G" "C" "G" "C"
+## [392] "C" "G" "G" "C" "G" "G" "C" "C" "G" "C" "C" "G" "G" "C" "G" "C" "G"
+## [409] "G" "C" "G" "G" "C" "G" "C" "C" "G" "G" "C" "C" "C" "G" "C" "C" "C"
+## [426] "C" "C" "C" "G" "C" "G" "G" "C" "C" "C" "C" "G" "C" "G" "G" "G" "G"
+## [443] "G" "C" "G" "C" "C" "C" "G" "C" "G" "G" "C" "G" "C" "C" "G" "G" "C"
+## [460] "G" "C" "C" "C" "C" "C" "G" "G" "G" "C" "G" "C" "C" "C" "C" "G" "C"
+## [477] "C" "G" "C" "C" "C" "G" "C" "C" "G" "C" "C" "C" "G" "G" "C" "C" "G"
+## [494] "C" "C" "G" "C" "C" "C" "C" "C" "C" "C" "G" "G" "G" "C" "C" "C" "G"
+## [511] "C" "C" "C" "G" "C" "G" "G" "G" "C" "C" "G" "C" "G" "G" "G" "G" "G"
+## [528] "C" "G" "C" "G" "C" "C" "C" "G" "C" "G" "C" "G" "C" "C" "C" "C" "C"
+## [545] "C" "G" "C" "G" "C" "C" "C" "G" "C" "C" "G" "C" "G" "C" "G" "C" "C"
+## [562] "C" "C" "G" "G" "C" "C" "G" "C" "G" "G" "C" "C" "C" "C" "G" "C" "C"
+## [579] "G" "G" "G" "G" "G" "C" "G" "G" "G" "G" "G" "C" "G" "C" "C" "G" "C"
+## [596] "C" "C" "C" "C" "G" "C" "G" "C" "C" "C" "C" "C" "C" "G" "C" "G" "G"
+## [613] "G" "C" "G" "G" "G" "C" "C" "G" "G" "G" "C" "C" "C" "C" "C" "G" "C"
+## [630] "C" "G" "G" "G" "G" "C" "C" "G" "G" "C" "G" "G" "C" "C" "C" "C" "G"
+## [647] "C" "C" "G" "G" "C" "C" "G" "G" "G" "G" "C" "C" "C" "C" "G" "C" "G"
+## [664] "G" "G" "C" "G" "G" "G" "C" "G" "C" "C" "C" "C" "C" "C" "G" "G" "C"
+## [681] "C" "C" "G" "C" "G" "C" "C" "G" "C" "C" "C" "C" "C" "G" "C" "G" "C"
+## [698] "C" "G" "C" "C" "G" "C" "G" "G" "C" "G" "C" "C" "C" "G" "G" "G" "C"
+## [715] "G" "C" "G" "G" "G" "G" "C" "C"
+```
+
+The output is a list object in which is stored an entry for each G or C extracted. We count the number of these entries and divide by the total number of characters in our string to get the %GC content. 
+
+
+
+```r
+length(str_extract_all(dna, pattern = "G|C")[[1]])/nchar(dna) * 100
+```
+
+```
+## [1] 60
+```
+
+
+
+Let's translate this into mRNA! 
+
+__Replacement:__
+
+To replace multiple patterns at once, a character vector is supplied to `str_replace_all` of patterns and their matched replacements. This allows us to perform multiple replacements multiple times.
+
+
+```r
+mrna <- str_replace_all(dna, c("G" = "C", "C" = "G", "A" = "U", "T" = "A"))
+```
+
+
+__More Searching:__
+
+Is there even a start codon in this thing? `str_detect` can be used to get a local (TRUE or FALSE) answer to whether or not a match is found.
+
+
+```r
+str_detect(mrna, "AUG")
+```
+
+```
+## [1] TRUE
+```
+
+To get the position of a possible start codon we can use `str_locate` which will return the indices of where the start and end of our substring occurs (`str_locate_all` can be used to find the all possible locations).
+
+
+
+```r
+str_locate(mrna, "AUG")
+```
+
+```
+##      start end
+## [1,]    21  23
+```
+
+
+__Splitting:__
+
+Let's split this string into substrings of codons, starting at the position of our start codon. We have the position of our start codon from `str_locate`. We can use `str_sub` to subset the string by position (we will just go to the end of the string for now).
+
+
+```r
+str_sub(mrna, 21, 1200)
+```
+
+```
+## [1] "AUGGGAGGGGGGGGGAGUGGUGGUAGUGUUUUUAGGUGGGGGAGGGGUUUGGGGUGUGGUGAUAUUUGUAUGGUGGGGAAAGGGGGAGGUUGGAGGGAGGAGAAGGGUGGGAGGGGGAAUGGGGUAUGGAGAGGGGGAAAGAGGGAAGGGGUUGGGAGGGAGGAGUGGGAGAUGGAUAGAGUGAAGGGAGAUGGAGGAAGGGAGGUUGGAGGGGAGAGAGGGGAAGUGGGGGUGGGGAGGGGGAAUAGGGGAUUGAUAGGAGAAGUGAGGUUGGGGGAUUUGAUGGUGUGGAGGGGGGUGGGGAGAGGGAGUAAAAGGGGGUGGUGGGGAAAGGGAGGUGUAGGGGGAGAGGGAAGGGGAUAAGGGUUAGAAGGUGGGGGAGGGAGUUGGGAAGGAGUGAGGUUUGGAAAGGGGGUGUUGGUGGGGUAAUAGGGGGGGUAGGGGGGGGUGGGGGAGGGGAGGGGAAGGGGUGGGGUGGGAGGUAGGGGAAGGGGUAAUAGUAAGAAGAGGGAAGGGGGGGGGGGGGAAGGUGGGGUAGGAGAGGUGGGUGGAUGUAGUGGUGGUAGUGGGUGUGGAAGUUGGGGAGAAUGGUGGGAUUGAAGGUAGUGAGGUGGGGAGUAGGAGUGGGGGUAAAUAGGGGGUGUAGGUGGGGAAGGAGGGGAAAAAGGUAUGGGAGGGGGGGGGAGUGGUGGUAGUGUUUGUUGAGUGUGGAGGGGUUUGGGGUGUGGUGAUAUUUGUAUGGUGGGGAAAGGGGGAGGUUGGGGAGAGGAGAAGGGUGGGAGGGGGAAUGGGGUAUGGAGAGGGGGAAAGAGGGAAGGGGGAAAGAGUUAGGAGUGGGAGAUGGAUAGAGUGAAGGGAGAUGGAGGAAGGGAGGUUGGAGUGGUUGGGGGGGAAGUGGGGGUGGGGAGGGGGAAUAGGGGAUUGAUAGGAGAAGUGAGGUUGUGGUGAAUUGGGGAAGGGUAGGUAAGAUGGGGGGGGGGAUAUGGAAGAGAGGGAGGGGGGGGAGGUAGGUGGGGGGGGUGGAGGUGGAGUUAGGUUGGGGGGGGGUGGAGGGAUUGGGGGUUGUUAAGGUGGGUUAGUUAAGAAGGGGUGUUGAGAGUUAGGGGUUUGGUUGGGAAGGGGUAGGGGAGGGGGUAGAGGUGGUGGGGGUGGGGGGGGUAGAGGGGGUGGGAAGGGAGGA"
+```
+
+```r
+#is equivalent to
+mrna <- str_sub(mrna, str_locate(mrna, "AUG")[1])
+```
+
+We can get codons by extracting groups of (any) 3 nucleotides/characters in our reading frame.
+
+
+```r
+str_extract_all(mrna, "...")
+```
+
+```
+## [[1]]
+##   [1] "AUG" "GGA" "GGG" "GGG" "GGG" "AGU" "GGU" "GGU" "AGU" "GUU" "UUU"
+##  [12] "AGG" "UGG" "GGG" "AGG" "GGU" "UUG" "GGG" "UGU" "GGU" "GAU" "AUU"
+##  [23] "UGU" "AUG" "GUG" "GGG" "AAA" "GGG" "GGA" "GGU" "UGG" "AGG" "GAG"
+##  [34] "GAG" "AAG" "GGU" "GGG" "AGG" "GGG" "AAU" "GGG" "GUA" "UGG" "AGA"
+##  [45] "GGG" "GGA" "AAG" "AGG" "GAA" "GGG" "GUU" "GGG" "AGG" "GAG" "GAG"
+##  [56] "UGG" "GAG" "AUG" "GAU" "AGA" "GUG" "AAG" "GGA" "GAU" "GGA" "GGA"
+##  [67] "AGG" "GAG" "GUU" "GGA" "GGG" "GAG" "AGA" "GGG" "GAA" "GUG" "GGG"
+##  [78] "GUG" "GGG" "AGG" "GGG" "AAU" "AGG" "GGA" "UUG" "AUA" "GGA" "GAA"
+##  [89] "GUG" "AGG" "UUG" "GGG" "GAU" "UUG" "AUG" "GUG" "UGG" "AGG" "GGG"
+## [100] "GUG" "GGG" "AGA" "GGG" "AGU" "AAA" "AGG" "GGG" "UGG" "UGG" "GGA"
+## [111] "AAG" "GGA" "GGU" "GUA" "GGG" "GGA" "GAG" "GGA" "AGG" "GGA" "UAA"
+## [122] "GGG" "UUA" "GAA" "GGU" "GGG" "GGA" "GGG" "AGU" "UGG" "GAA" "GGA"
+## [133] "GUG" "AGG" "UUU" "GGA" "AAG" "GGG" "GUG" "UUG" "GUG" "GGG" "UAA"
+## [144] "UAG" "GGG" "GGG" "UAG" "GGG" "GGG" "GUG" "GGG" "GAG" "GGG" "AGG"
+## [155] "GGA" "AGG" "GGU" "GGG" "GUG" "GGA" "GGU" "AGG" "GGA" "AGG" "GGU"
+## [166] "AAU" "AGU" "AAG" "AAG" "AGG" "GAA" "GGG" "GGG" "GGG" "GGG" "GAA"
+## [177] "GGU" "GGG" "GUA" "GGA" "GAG" "GUG" "GGU" "GGA" "UGU" "AGU" "GGU"
+## [188] "GGU" "AGU" "GGG" "UGU" "GGA" "AGU" "UGG" "GGA" "GAA" "UGG" "UGG"
+## [199] "GAU" "UGA" "AGG" "UAG" "UGA" "GGU" "GGG" "GAG" "UAG" "GAG" "UGG"
+## [210] "GGG" "UAA" "AUA" "GGG" "GGU" "GUA" "GGU" "GGG" "GAA" "GGA" "GGG"
+## [221] "GAA" "AAA" "GGU" "AUG" "GGA" "GGG" "GGG" "GGG" "AGU" "GGU" "GGU"
+## [232] "AGU" "GUU" "UGU" "UGA" "GUG" "UGG" "AGG" "GGU" "UUG" "GGG" "UGU"
+## [243] "GGU" "GAU" "AUU" "UGU" "AUG" "GUG" "GGG" "AAA" "GGG" "GGA" "GGU"
+## [254] "UGG" "GGA" "GAG" "GAG" "AAG" "GGU" "GGG" "AGG" "GGG" "AAU" "GGG"
+## [265] "GUA" "UGG" "AGA" "GGG" "GGA" "AAG" "AGG" "GAA" "GGG" "GGA" "AAG"
+## [276] "AGU" "UAG" "GAG" "UGG" "GAG" "AUG" "GAU" "AGA" "GUG" "AAG" "GGA"
+## [287] "GAU" "GGA" "GGA" "AGG" "GAG" "GUU" "GGA" "GUG" "GUU" "GGG" "GGG"
+## [298] "GAA" "GUG" "GGG" "GUG" "GGG" "AGG" "GGG" "AAU" "AGG" "GGA" "UUG"
+## [309] "AUA" "GGA" "GAA" "GUG" "AGG" "UUG" "UGG" "UGA" "AUU" "GGG" "GAA"
+## [320] "GGG" "UAG" "GUA" "AGA" "UGG" "GGG" "GGG" "GGA" "UAU" "GGA" "AGA"
+## [331] "GAG" "GGA" "GGG" "GGG" "GGA" "GGU" "AGG" "UGG" "GGG" "GGG" "UGG"
+## [342] "AGG" "UGG" "AGU" "UAG" "GUU" "GGG" "GGG" "GGG" "UGG" "AGG" "GAU"
+## [353] "UGG" "GGG" "UUG" "UUA" "AGG" "UGG" "GUU" "AGU" "UAA" "GAA" "GGG"
+## [364] "GUG" "UUG" "AGA" "GUU" "AGG" "GGU" "UUG" "GUU" "GGG" "AAG" "GGG"
+## [375] "UAG" "GGG" "AGG" "GGG" "UAG" "AGG" "UGG" "UGG" "GGG" "UGG" "GGG"
+## [386] "GGG" "UAG" "AGG" "GGG" "UGG" "GAA" "GGG" "AGG"
+```
+The codons are extracted into a list, but we can get our character substrings using `unlist`. 
+
+
+```r
+codons <- unlist(str_extract_all(mrna, "..."))
+```
+
+We now have a vector with 393 codons.
+
+Do we have a stop codon in our reading frame? Let's check with `str_detect`. We can use round brackets `( )` to separately group the different stop codons.
+
+
+```r
+str_detect(codons, "(UAG)|(UGA)|(UAA)")
+```
+
+```
+##   [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [12] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [23] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [34] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [45] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [56] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [67] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [78] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [89] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [100] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [111] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
+## [122] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [133] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
+## [144]  TRUE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [155] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [166] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [177] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [188] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [199] FALSE  TRUE FALSE  TRUE  TRUE FALSE FALSE FALSE  TRUE FALSE FALSE
+## [210] FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [221] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [232] FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [243] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [254] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [265] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [276] FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [287] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [298] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [309] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE
+## [320] FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [331] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [342] FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [353] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE
+## [364] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [375]  TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+## [386] FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+```
+Looks like we have many matches. We can subset the codons using `str_detect` (instances where the presence of a stop codon is equal to TRUE) to see which stop codons are represented. We can use the `which` function to find the which indices the stop codons are positioned at.
+
+
+```r
+which(str_detect(codons, "(UAG)|(UGA)|(UAA)") == TRUE)
+```
+
+```
+##  [1] 121 143 144 147 200 202 203 207 211 235 277 316 321 345 361 375 379
+## [18] 387
+```
+
+Let's subset our codon strings to end at the first stop codon. 
+
+
+```r
+translation <- codons[1:121]
+
+#equivalent to 
+translation <- codons[1:which(str_detect(codons, "(UAG)|(UGA)|(UAA)") == TRUE)[1]]
+```
+
+
+
+__More Replacing:__
+
+After finding our unique codons, we can translate codons into their respective proteins by using `str_replace_all` using multiple patterns and replacements as before.
+
+
+
+```r
+unique(translation)
+```
+
+```
+##  [1] "AUG" "GGA" "GGG" "AGU" "GGU" "GUU" "UUU" "AGG" "UGG" "UUG" "UGU"
+## [12] "GAU" "AUU" "GUG" "AAA" "GAG" "AAG" "AAU" "GUA" "AGA" "GAA" "AUA"
+## [23] "UAA"
+```
+
+```r
+translation <- str_replace_all(translation, c("AUG"="M", "GGA" = "G",  "GGG" = "G",  "AGU" = "S",  "GGU" = "G",  "GUU" = "V",  "UUU" = "F", "AGG" = "R", "UGG" = "W",  "UUG" = "L", "UGU" = "C",  "GAU" = "D", "AUU" = "I",  "GUG" = "V", "AAA"="K",  "GAG" = "E",  "AAG" = "K",  "AAU" = "N",  "GUA" = "V", "AGA" = "R", "GAA" = "E", "AUA" = "M", "UAA" = ""))
+
+translation
+```
+
+```
+##   [1] "M" "G" "G" "G" "G" "S" "G" "G" "S" "V" "F" "R" "W" "G" "R" "G" "L"
+##  [18] "G" "C" "G" "D" "I" "C" "M" "V" "G" "K" "G" "G" "G" "W" "R" "E" "E"
+##  [35] "K" "G" "G" "R" "G" "N" "G" "V" "W" "R" "G" "G" "K" "R" "E" "G" "V"
+##  [52] "G" "R" "E" "E" "W" "E" "M" "D" "R" "V" "K" "G" "D" "G" "G" "R" "E"
+##  [69] "V" "G" "G" "E" "R" "G" "E" "V" "G" "V" "G" "R" "G" "N" "R" "G" "L"
+##  [86] "M" "G" "E" "V" "R" "L" "G" "D" "L" "M" "V" "W" "R" "G" "V" "G" "R"
+## [103] "G" "S" "K" "R" "G" "W" "W" "G" "K" "G" "G" "V" "G" "G" "E" "G" "R"
+## [120] "G" ""
+```
+
+
+__Combining:__
+
+What is our final protein string? `str_flatten` allows us to collapse our individual protein strings into one long string.
+
+
+```r
+translation <- str_flatten(translation)
+translation
+```
+
+```
+## [1] "MGGGGSGGSVFRWGRGLGCGDICMVGKGGGWREEKGGRGNGVWRGGKREGVGREEWEMDRVKGDGGREVGGERGEVGVGRGNRGLMGEVRLGDLMVWRGVGRGSKRGWWGKGGVGGEGRG"
+```
+
+We can add our header back using `str_c`, which allows us to combine strings. We can use a space to separate our original strings.
+
+
+```r
+str_c(header, translation, sep = " ")
+```
+
+```
+## [1] ">DinoDNA from Crichton JURASSIC PARK  p. 103 nt 1-1200 MGGGGSGGSVFRWGRGLGCGDICMVGKGGGWREEKGGRGNGVWRGGKREGVGREEWEMDRVKGDGGREVGGERGEVGVGRGNRGLMGEVRLGDLMVWRGVGRGSKRGWWGKGGVGGEGRG"
+```
+
 
 ***
 
@@ -1063,7 +1514,7 @@ words[2:51,] %>%
     with(wordcloud(words, n, ordered.colors = TRUE, colors = viridis(50)))
 ```
 
-![](Lesson_4_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
+![](Lesson_4_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
 
 ***
 __Challenge__ 
@@ -1117,715 +1568,6 @@ It's interesting to note these little variations because no matter how much you 
 </br>
 </br>
 
-
-
-
-
-***
-
-
-
-##Rmarkdown and knitr
-
-Markdown is a plain text formatting syntax. It allows one to easily add headings, lists, links, highlighting, bullets, images, equations, tables and text styling. R has a modified version of markdown (R markdown) where you can embed code _chunks_ into a document. Combined with the `knitr` package, this allows us to make reproducible documents. The awesomeness of this combination allows us to annotate our code while we work in a format that is immediately presentable. With the click of a button our script (or notebook) can be converted into a word document, a pdf, or a shareable html hyperlink. Other formats such as slides are also possible. This means that you only have to do your work once - you don't have to have your code, generate images, paste them into powerpoint or word - get asked to change something, rerun the code, get the figure, change your powerpoint... everything is all in one place - you make your change, knit your document and you are done - you don't have to leave RStudio.
-
-Markdown and `knitr` can also save us time scrolling through our code - a table of contents can be added, code chunks can be named - both of which allow us to jump around and navigate our script easily. It takes a bit of discipline to get started, but I believe that you will see the benefits pretty quickly. There are even markdown templates for submitting to different journals or writing a thesis.
-
-For this lesson I suggest going to `Tools -> Global Options -> R Markdown -> Show output preview in`: and change from 'Window' to 'Viewer Pane', then click 'Apply' and 'OK'. This will allow us to see our new document in the same window (in the Viewer) instead of switching back and forth between our code and the document in a separate window. 
-
-###R markdown syntax
-
-Let's start by creating a new R markdown document by going to `File -> New File -> R Markdown`. R will ask you for the Title of your document, the Author and whether you want to _render_ your markdown as html, pdf, or as a word document. There is also the option to make slides (under Presentation), a Shiny app, or use Templates for package documentation or GitHub (there is a git version of markdown that differs slightly from R markdown).  html renders faster than the other formats, so we will stick with that and click OK. R immediately puts a yaml (yet another markup language, yaml ain't markup language) header which tells you how the file is configured. 
-
-    ---
-    title: "R markdown Lesson"
-    author: "EA"
-    date: "April 11, 2018"
-    output: html_document
-    ---
-
-As you can see, the date has been added (this is the date of script creation and does not update when the script is rendered), and the output is going to be html. Note also that your document is Untitled. We can go ahead and save that as 'Rmarkdown_Lesson' and see that the file is saved as a `.Rmd` file.
-
-We can see that R has a little demo set up already which we are going to work with. The new element in .Rmd files are these code _chunks_ denoted by a set of 3 backticks, followed by `{r}`, some code and a closing set of 3 backticks. The keyboard shortcut for generating a code chunk is `CTRL + ALT + I`.
-
-\`\`\`\{ r name_of_chunk,    code_options\}     
-
-type code here
-
-\`\`\`
-
-These code chunks have been named 'setup', 'cars', and 'pressure', and at the bottom left the source pane (or if you go to `Code -> Jump To...` it will pop up) you can navigate between these code chunks. This is a helpful feature as your code gets a bit longer. 
-
-You have probably also noticed that in this navigation bar the bolded items correspond to the title of the document and the text with a leading `##`. Hashtags (when outside code chunks, ie. in markdown language) denote headers. The number of hashtags denotes the level of the header as well as the size. For example, the title is a first level header, and 'R Markdown' and 'Including Plots' are second level headers, and will also be smaller than the title. Let's go ahead and _knit_ our document by clicking the Knit button. Note that you can change from your default output choice (html) to Word or pdf in the dropdown menu.
-
-Let's look at how markdown is rendered in our html file. We can see that to **bold** text you can have two asteriks (**) or two underscores (__) on either side of the text. 
-
-You can insert a url by typing the url inside of arrow brackets <<http://rmarkdown.rstudio.com>>. If you want the link to be named 'rmarkdown' can format it like this [rmarkdown] (http://rmarkdown.rstudio.com) without the space inbetween the name and the url. Replace the url with the named version and click knit to see the difference in the output.
-
-The other emphasized text in this document has a grey background. This is achieved by flanking the text with \``backticks`\`. The code in the 'cars' chunk has a grey background and the evaluated output is in white. This is standard in the R community for the code to be grey and the output to be white and commented. Inline code can be written by using r 2+2 flanked with backticks  and the output will be evaluated ie. 4. 
-
-
-*Rmarkdown*
-
-```r
-To make a bulleted list:
-
-* you need to leave a line before 
-* the text and the start of your bullets and a 
-* space between the asterik (bullet) and your text.
-```
-
-
-*Rendered*
-
-To make a bulleted list:
-
-* you need to leave a line before 
-* the text and the start of your bullets and a 
-* space between the asterik (bullet) and your text.
-
-
-*Rmarkdown + Rendered*
-
-To make a numbered list:
-
-1. you need to leave a line before 
-2. the text and the start of your numbers and a 
-3. space between the numbers and your text.
-
-
-
-*Rmarkdown*
-
-
-```r
-To make a super-cool updatable numbered list:
-
-1. you need to do the above as with numbered lists
-1. but all of the numbers are numbered '1.' 
-1. you can now add, remove and reorder and your numbers will update.
-```
-
-
-
-*Rendered*
-
-To make a super-cool updatable numbered list:
-
-1. you need to do the above for numbered lists
-1. but all of the numbers are numbered '1.' 
-1. you can now add, remove and reorder and your numbers will update.
-
-
-*Rmarkdown*
-
-
-```r
-If ever your text
-is clumping together
-when you do not expect it to,
-remember that you need 5 spaces at at the end of a line
-to start a new line.
-```
-
-*Rendered*
-
-If ever your text
-is clumping together
-when you do not expect it to,
-remember that you need 5 spaces at at the end of a line
-to start a new line.
-
-*Rmarkdown*
-
-
-```r
-    A text box can be created by indenting with Tab twice.
-```
-
-*Rendered*
-
-    A text box can be created by indenting with Tab twice.
-
-*Rmarkdown*
-
-A line across the page is '***'.
-
-*Rendered*
-
-***
-
-###Knitr Chunk Options
-
-You might notice that while there are 3 code chunks in this example, there is one line of code visible in the rendered version, and 2 outputs (summary statistics and a plot). Why don't we see the code used to make the plot? Code chunks have options that can be entered to modify their output. In this case the inclusion of `echo = FALSE` prevents the code from being included, but the code is still run and so the plot is still produced. Try changing the code chunk option for the plot to `eval = FALSE`. What happened?
-
-`{r pressure, eval = FALSE}`
-
-```r
-plot(pressure)
-```
-
-`eval = FALSE` means the code is shown, but not evaluated. 
-
-You can specify which lines of code in a chunk get evaluated. For example if you had 5 lines of code, but only wanted to run the first and third, you could use `eval = c(1,3)`. This feature of using a vector of position to specify code is available for other chunk options such as `echo`. 
-
-The first code chunk in this script is setting default options for all code chunks to be used in this script.  In this case `echo = TRUE` was set as a default chunk option. The option `include = FALSE` for this chunk means that the code will not be included, but the code will still be run. The difference between this command and `echo = FALSE` is that the output of the code is NOT shown. 
-
-Let's look at what the default chunk options are - this way we will be able to see all of the options available to change.
-
-`{r setup, echo = TRUE }`
-
-```r
-str(knitr::opts_chunk$get())
-```
-
-```
-## List of 53
-##  $ eval         : logi TRUE
-##  $ echo         : logi TRUE
-##  $ results      : chr "markup"
-##  $ tidy         : logi FALSE
-##  $ tidy.opts    : NULL
-##  $ collapse     : logi FALSE
-##  $ prompt       : logi FALSE
-##  $ comment      : chr "##"
-##  $ highlight    : logi TRUE
-##  $ strip.white  : logi TRUE
-##  $ size         : chr "normalsize"
-##  $ background   : chr "#F7F7F7"
-##  $ cache        : logi FALSE
-##  $ cache.path   : chr "Lesson_4_cache/html/"
-##  $ cache.vars   : NULL
-##  $ cache.lazy   : logi TRUE
-##  $ dependson    : NULL
-##  $ autodep      : logi FALSE
-##  $ cache.rebuild: logi FALSE
-##  $ fig.keep     : chr "high"
-##  $ fig.show     : chr "asis"
-##  $ fig.align    : chr "default"
-##  $ fig.path     : chr "Lesson_4_files/figure-html/"
-##  $ dev          : chr "png"
-##  $ dev.args     : NULL
-##  $ dpi          : num 96
-##  $ fig.ext      : NULL
-##  $ fig.width    : num 7
-##  $ fig.height   : num 5
-##  $ fig.env      : chr "figure"
-##  $ fig.cap      : NULL
-##  $ fig.scap     : NULL
-##  $ fig.lp       : chr "fig:"
-##  $ fig.subcap   : NULL
-##  $ fig.pos      : chr ""
-##  $ out.width    : NULL
-##  $ out.height   : NULL
-##  $ out.extra    : NULL
-##  $ fig.retina   : num 1
-##  $ external     : logi TRUE
-##  $ sanitize     : logi FALSE
-##  $ interval     : num 1
-##  $ aniopts      : chr "controls,loop"
-##  $ warning      : logi TRUE
-##  $ error        : logi FALSE
-##  $ message      : logi TRUE
-##  $ render       : NULL
-##  $ ref.label    : NULL
-##  $ child        : NULL
-##  $ engine       : chr "R"
-##  $ split        : logi FALSE
-##  $ include      : logi TRUE
-##  $ purl         : logi TRUE
-```
-There are a ton of options here. You can guess that some of them have to do with default figure sizes and labels, and there a bunch of options that are not specified (NULL). 
-
-As far as setting chunk options at the beginning of a script goes, consider the following:
-
-`{r}`
-
-```r
-library(tidyverse)
-```
-
-If we are creating a document, we may want to show what package we used, but we don't want all of the package startup messages. With `message = FALSE` the code will run and be shown but any messages generated will be suppressed.
-
-`{r message = FALSE}`
-
-```r
-library(tidyverse)
-```
-
-I could use `include = FALSE, message = FALSE` if I wanted the library loaded but didn't want the code or its message to be seen.
-
-
-If I wanted to do something silly like add 6 to every summary value (in truth each of these summary values is a character) it would generate an error. A document will not be rendered if it has an error in it. Try to knit the document with this code.
-
-`{r error = TRUE}`
-
-```r
-summary(cars) + 6
-```
-
-```
-## Error in summary(cars) + 6: non-numeric argument to binary operator
-```
-Adding the option `error = TRUE` allows the document to be rendered despite the error. The error message will still be shown.
-
-***
-__Challenge__ 
-
-
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/maxresdefault.jpg){width=200px}
-
-</div>
-
-
-For the code chunk containing `plot(pressure)`: How would you show just the code (not the plot) and not run the code?  How would you run the code but not show it? How would you change the background color to something other than gray? You can use help pages, Google, or the knitr documentation found here: <https://yihui.name/knitr/options/#chunk_options>
-
-</br>
-</br>
-
-***
-
-###Caching
-
-
-In the 'Run' dropdown menu (found in the top right of the source pane), there are various options for running your current chunk - `CTRL+SHIFT+ENTER`, the next chunk - `CTRL+ALT+N`, all chunks above - `CTRL+ALT+P`, all chunks below, and another few options. This allows you to assess the upstream and downstream consequences of a change in your code. `knitr` also has the option to _cache_ the output of code chunks by setting the option `cache = TRUE`. A folder will be created that saves the output of your chunk in a data file. `knitr` accesses the cache and loads the result from the last time the chunk was run without recalculating values.   This can be very useful if the code in a particular chunk takes awhile to run and you are assessing changes unrelated to that code,  or changes after that code. 
-
-If the code in the cache changed, the its values were recalculated. Changes in the the cached chunk are evaluated and passed on to the next code block. The previous cache values are deleted and replaced with the current values.
-
-For example, if your document isn't knitting because of an error at line 200 and your time intensive code runs at line 100, you can cache the line 100 chunk and troubleshoot the line 200 code without having to wait for this earlier chunk to run again. The caching caveat is that changing anything in earlier code (at line 50 in this example) that your cached chunk depends on would not be appropriately updated (ie. the code at line 100 would still not change). Therefore it is important to be conscious of what you are caching and where changes are occurring in your script. You should uncache your code chunk for the final rendering to make sure there haven't been any unforseen changes to your document. 
-
-This is a simplified explanation of caching and more details can be found in the [knitr manual](https://www.cs.bham.ac.uk/~axj/pub/teaching/2016-7/stats/knitr-manual.pdf) and its [cache demo](https://yihui.name/knitr/demo/cache/).
-
-__Playing with Caching__
-
-
-__Scenario 1__
-
-With our current .Rmd file, let's say the 'summary' chunk took awhile to run. Let's add `cache = TRUE` to its chunk options. Make sure `eval = FALSE` has been removed from the options in your 'plot' chunk. Knit the document and take a look. 
-
-We are now going to change the plot chunk to depend on the cars dataset.
-
-
-`{r cars}`
-
-```r
-plot(cars$speed, cars$dist)
-```
-
-We can knit the document again, and assume that we saved ourselves the time cost of running the second chunk when we are just updating a plot. 
-
-Now let's put a chunk _before_ our cached chunk called 'new row'.  Add a point to the cars dataset using `dplyr`'s `bind_rows`. Note that I haven't loaded the entire `dplyr` package, but rather have just made a call to one specific function. Knit the document again.  
-
-`{r new row}`
-
-```r
-cars <- dplyr::bind_rows(cars, c(speed = 50, dist = 200))
-```
-
-Knit the document again! We see that this point is an outlier, and the change can be seen on the output of our plot. However, our summary also depends on the cars dataset and has not been updated (ie. the maximum distance is still 120 km). If the code of the cached chunk does not change, the chunk is not rerun.
-
-
-__After Scenario 1 questions will be on Socrative.__
-
-
-
-###Tables
-
-You can make table in markdown, but it is kind of annoying compared to using the `kable` package to make tables in `knitr`. Making tables in markdown involves using a series of pipes (|) to make columns and hypens (-) to make column headers. Here is an example of a markdown table. Here is an example of how to format markdown tables: <https://help.github.com/articles/organizing-information-with-tables/>. Go nuts. 
-
-      
-      |Summary      | Values|
-      |-------------|-------|
-      | correlation |   0.8068949|
-      | mean km/h   |    15.4|
-      | mean km     |    42.98|
-     
-
-
-
-|Summary      | Values|     
-|-------------|--------|     
-| correlation |   0.8068949|     
-| mean km/h   |    15.4|     
-| mean km     |    42.98|     
-      
-####Rounding Values
-
-The value for 'correlation' in this table was really the output of 'r cor(cars\$speed, cars\$dist)' which gives the value of 0.8068949. To round values is as easy as selecting the number of significant digits using the `round` function: 'r round(cor(cars\$speed, cars\$dist), 2)' would then give 0.81 two significant digits. The `kable` tables were are going to work with have a digits argument which gets passed to the `round`  function (usage: `digits = 2`).
-
-####Kable tables in knitr
-
-In this lesson we are going to focus on nice looking `kable` tables, which are easily customizable through the [kableExtra](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#getting_started) package. The summary stats from cars is a table. However, it doesn't look very good. Here is a reminder of the default output. 
-
-
-```r
-summary(cars)
-```
-
-```
-##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00
-```
-
-This summary is an odd table object. If we turn it into a data frame it will be easier to work with.
-
-
-```r
-dat <- data.frame(speed = summary(cars)[,1], distance = summary(cars)[,2])
-```
-
-Here, a simple call to `kable` creates a table styled similar to the above markdown. 
-
-
-```r
-kable(dat)
-```
-
-<table>
- <thead>
-  <tr>
-   <th style="text-align:left;"> speed </th>
-   <th style="text-align:left;"> distance </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> Min.   : 4.0 </td>
-   <td style="text-align:left;"> Min.   :  2.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> 1st Qu.:12.0 </td>
-   <td style="text-align:left;"> 1st Qu.: 26.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Median :15.0 </td>
-   <td style="text-align:left;"> Median : 36.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Mean   :15.4 </td>
-   <td style="text-align:left;"> Mean   : 42.98 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> 3rd Qu.:19.0 </td>
-   <td style="text-align:left;"> 3rd Qu.: 56.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Max.   :25.0 </td>
-   <td style="text-align:left;"> Max.   :120.00 </td>
-  </tr>
-</tbody>
-</table>
-
-</br>
-
-
-A variety of styles are offered with simple syntax. Here we have striped rows which highlight when you hover over them, the table width iis the length of the longest text and not across the whole page, and the table is left-aligned.
-
-
-```r
-kable(dat, "html")  %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
-```
-
-<table class="table table-striped table-hover" style="width: auto !important; ">
- <thead>
-  <tr>
-   <th style="text-align:left;"> speed </th>
-   <th style="text-align:left;"> distance </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> Min.   : 4.0 </td>
-   <td style="text-align:left;"> Min.   :  2.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> 1st Qu.:12.0 </td>
-   <td style="text-align:left;"> 1st Qu.: 26.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Median :15.0 </td>
-   <td style="text-align:left;"> Median : 36.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Mean   :15.4 </td>
-   <td style="text-align:left;"> Mean   : 42.98 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> 3rd Qu.:19.0 </td>
-   <td style="text-align:left;"> 3rd Qu.: 56.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Max.   :25.0 </td>
-   <td style="text-align:left;"> Max.   :120.00 </td>
-  </tr>
-</tbody>
-</table>
-
-
-You can also have the table move to the left or right side of your document so that text or a figure could be included beside it. In this case, having the table _float_ right allows for text or images to be formatted on the left side of the page. For example, we could change the figure size as well and have a figure and table side-by-side in our document.
-
-
-
-```r
-kable(dat, "html", escape = F)  %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "float_right") 
-```
-
-<table class="table table-striped table-hover" style="width: auto !important; float: right; margin-left: 10px;">
- <thead>
-  <tr>
-   <th style="text-align:left;"> speed </th>
-   <th style="text-align:left;"> distance </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> Min.   : 4.0 </td>
-   <td style="text-align:left;"> Min.   :  2.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> 1st Qu.:12.0 </td>
-   <td style="text-align:left;"> 1st Qu.: 26.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Median :15.0 </td>
-   <td style="text-align:left;"> Median : 36.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Mean   :15.4 </td>
-   <td style="text-align:left;"> Mean   : 42.98 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> 3rd Qu.:19.0 </td>
-   <td style="text-align:left;"> 3rd Qu.: 56.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Max.   :25.0 </td>
-   <td style="text-align:left;"> Max.   :120.00 </td>
-  </tr>
-</tbody>
-</table>
-
-
-<img src="Lesson_4_files/figure-html/unnamed-chunk-49-1.png" width="50%" height="50%" />
-
-
-In this case, I shrank the plot using `out.width` and `out.height` so that it would fit beside our table.
-
-`{r pressure,  echo = FALSE, fig.width=6, fig.height = 5, out.width='50%', out.height='50%'}`
-
-
-```r
-par(mar = c(4,4,1,0)) #adjusting figure margins
-plot(cars$speed, cars$dist)
-```
-
-
-</br>
-
-
-
-
-
-</br>
-
-#####Customize with highlighting and borders. 
-
-For this table black lines have been specified as column borders. A row was specified to be highlighted by a yellow background as well as to have the text emphasized in bold. `escape = FALSE` escapes specical characters. In this case it interferes with our column titles.
-
-
-```r
-kable(dat, "html") %>%
-       kable_styling("striped", full_width = FALSE) %>%
-       column_spec(1:2, border_right = TRUE, border_left = TRUE) %>%
-       row_spec(3, bold = T, color = "black", background = "yellow") 
-```
-
-<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
- <thead>
-  <tr>
-   <th style="text-align:left;"> speed </th>
-   <th style="text-align:left;"> distance </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> Min.   : 4.0 </td>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> Min.   :  2.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> 1st Qu.:12.0 </td>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> 1st Qu.: 26.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;font-weight: bold;color: black;background-color: yellow;"> Median :15.0 </td>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;font-weight: bold;color: black;background-color: yellow;"> Median : 36.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> Mean   :15.4 </td>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> Mean   : 42.98 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> 3rd Qu.:19.0 </td>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> 3rd Qu.: 56.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> Max.   :25.0 </td>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> Max.   :120.00 </td>
-  </tr>
-</tbody>
-</table>
-
-#####Add footnotes.
-
-Footnotes can be added to a table using symbols or alphabet markers for flags. 
-
-This is a good time to learn another useful data cleaning function, `str_c`. `str_c` is used to collapse or 'paste' string characters together. In this case we want to take a character string (the title of each column of our data frame) and add a footnote symbol to it to denote units. 
-
-
-```r
-colnames(dat)[1] <- str_c("car_", colnames(dat)[1], footnote_marker_symbol(1))
-colnames(dat)[2] <- str_c("car_", colnames(dat)[2], footnote_marker_alphabet(1))
-```
-Escape has been changed to FALSE so that the html encoding of our superscript is not escaped. The legend for the footnote symbol or character below the table is also added in out `kable` call.
-
-```r
-kable(dat, "html", escape = FALSE) %>%
-  kable_styling("striped", full_width = F) %>%
-  column_spec(1:2, border_right = TRUE, border_left = TRUE) %>%
-  row_spec(3, bold = T, color = "black", background = "yellow") %>%
-  footnote(symbol = "kilometers per hour", alphabet = "kilometers;") 
-```
-
-<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
- <thead>
-  <tr>
-   <th style="text-align:left;"> car_speed<sup>*</sup> </th>
-   <th style="text-align:left;"> car_distance<sup>a</sup> </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> Min.   : 4.0 </td>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> Min.   :  2.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> 1st Qu.:12.0 </td>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> 1st Qu.: 26.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;font-weight: bold;color: black;background-color: yellow;"> Median :15.0 </td>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;font-weight: bold;color: black;background-color: yellow;"> Median : 36.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> Mean   :15.4 </td>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> Mean   : 42.98 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> 3rd Qu.:19.0 </td>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> 3rd Qu.: 56.00 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> Max.   :25.0 </td>
-   <td style="text-align:left;border-left:1px solid;border-right:1px solid;"> Max.   :120.00 </td>
-  </tr>
-</tbody>
-<tfoot>
-<tr><td style="padding: 0; border: 0;" colspan="100%">
-<sup>a</sup> kilometers;</td></tr>
-<tr><td style="padding: 0; border: 0;" colspan="100%">
-<sup>*</sup> kilometers per hour</td></tr>
-</tfoot>
-</table>
-
-
-###Adding Images to your Document
-
-To add pictures to your document:
-
-   
-    ! [#caption (optional)]   (#directory/file)     {#size (optional)}     
-`![knitr - get it?](img/kitten-with-string.pjg){width=400px}`     
-
-
-![knitr - get it?](img/kitten-with-string.jpg){width=400px}
-
-Minimum syntax to add an image (no caption, default image size):     
-`![](img/kitten-with-string.jpg)`
-
-###Table of contents
-
-This is the yaml header including the table of contents (toc) for the lessson. It is as simple as writing `toc = TRUE` under the output for the document type you are using and then specifying what level of headers (remember our hashtags) you would like to include in the toc. I am keeping 1st, 2nd, and 3rd level headers in this example. If I had a 4th level header, it would still be larger than my text, but it will not show up in my table of contents. The toc creates a hyperlink to each section for the user to navigate the document.  
-
-
-    ---
-    title: "Lesson 4 - Of Data Cleaning and Documentation - Conquer Regular Expressions, Use R markdown and knitr to make PDFs, and Challenge yourself with a 'Real' Dataset"
-    output: 
-      html_document:
-              keep_md: yes
-              toc: TRUE
-              toc_depth: 3
-      html_notebook:
-              toc: TRUE
-              toc_depth: 3
-    ---
-
-
-You may have noticed the blue button that kind of looks like an eyeball in the top right corner of the Viewer Pane as well as the Source Pane with a dropdown that says 'Publish'. If you are super-proud of your work, you can post your rendered document for free, for the world to see at [Rpubs](https://rpubs.com/). It can be interesting to see what other people in the R community have been working on as well.
-
-###Slides
-
-Slideshows can also be made fairly simply in R markdown. Go to `File -> New File -> R Presentation` and create an .RPres file. Slides are separated by a series of equals lines (===) and the title of the slide is just above these lines.
-
-
-      First Slide
-      ========================================================
-
-      For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
-
-      - Bullet 1
-      - Bullet 2
-      - Bullet 3
-
-    Slide With Code
-    ========================================================
-
-    
-    ```r
-    summary(cars)
-    ```
-    
-    ```
-    ##      speed           dist       
-    ##  Min.   : 4.0   Min.   :  2.00  
-    ##  1st Qu.:12.0   1st Qu.: 26.00  
-    ##  Median :15.0   Median : 36.00  
-    ##  Mean   :15.4   Mean   : 42.98  
-    ##  3rd Qu.:19.0   3rd Qu.: 56.00  
-    ##  Max.   :25.0   Max.   :120.00
-    ```
-
-    Slide With Plot
-    ========================================================
-
-    
-    ```r
-    plot(cars)
-    ```
-
-
-If you click on 'Preview' in the Source Pane, a Presentation Tab will open in the Environment Pane with a a slideshow that you can toggle through. In that Pane under 'More' you can also 'View in Browser' or 'Save As Webpage', which is the common way these slides get presented.
-
-I really just wanted to show you that these slides exist. Depending on what you are presenting, this could be a quick alternative to Powerpoint if you are need to present some code. Again, these are customizable <https://rmarkdown.rstudio.com/ioslides_presentation_format.html>.
-
-If you are interested in a separate tutorial on making and customizing ioslides or the fancier [Slidify](https://www.jvcasillas.com/slidify_tutorial) slides, please leave a comment in the Lesson 4 survey (https://www.surveymonkey.com/r/PVHDKDB).
 
 
 ***
@@ -1905,9 +1647,7 @@ __Resources:__
 <http://www.gastonsanchez.com/Handling_and_Processing_Strings_in_R.pdf>     
 <http://varianceexplained.org/r/trump-tweets/>     
 <http://www.opiniomics.org/biologists-this-is-why-bioinformaticians-hate-you/>     
-<https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054>     
-<http://www.datacommunitydc.org/blog/2013/08/fantastic-presentations-from-r-using-slidify-and-rcharts/>     
-<https://github.com/rdpeng/cachesweave/blob/master/inst/doc/cacheSweave.Rnw>     
+<https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054>     >     
 <http://emailregex.com/>     
 <https://regex101.com/>     
 <https://regexr.com/>     
@@ -1915,15 +1655,6 @@ __Resources:__
 <https://www.regular-expressions.info/unicode.html>     
 <https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf>     
 <https://raw.githubusercontent.com/today-is-a-good-day/Emoticons/master/emDict.csv>     
-<http://rmarkdown.rstudio.com>     
-<https://yihui.name/knitr/options/#chunk_options>  
-<https://www.cs.bham.ac.uk/~axj/pub/teaching/2016-7/stats/knitr-manual.pdf>     
-<https://yihui.name/knitr/demo/cache/>  
-<https://help.github.com/articles/organizing-information-with-tables/>      
-<https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#getting_started>     
-<https://rmarkdown.rstudio.com/ioslides_presentation_format.html>     
-<https://rpubs.com/>      
-<https://www.jvcasillas.com/slidify_tutorial>     
 <http://r4ds.had.co.nz/strings.html>
 
 

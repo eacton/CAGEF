@@ -307,14 +307,41 @@ dino <-">DinoDNA from Crichton JURASSIC PARK  p. 103 nt 1-1200 GCGTTGCTGGCGTTTTT
 
 This piece of DNA is from the book Jurassic park, and was supposed to be dinosaur DNA, but is actually just a cloning vector. Bummer.
 
-(picture of trex and cloning vector side by side.
+</br>
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![nope](img/jurassicpark-trex-statue-photo1-700x376.jpg){width=450px} 
+</div>
+
+<div style="float:right;margin:0 10px 10px 0" markdown="1">
+![yep](img/pBR328.png){width=300px} 
+</div>
+</br>
+
+</br>
+
+</br>
+</br>
+
+</br>
+</br>
+
+</br>
+
+</br>
+
+</br>
+</br>
+
+</br>
+</br>
 
 
-Removing:
+__Removing:__
 
-This string is in FASTA format, but we don't want the header - we just want to deal with the DNA sequence. The header begins with '>' and ends with a number, '1200', and a space. Let's practice capturing each of these parts of a string, and then we'll make a regular expression to remove the entire header. 
+This string is in FASTA format, but we don't need the header - we just want to deal with the DNA sequence. The header begins with '>' and ends with a number, '1200', with a space between the header and the sequence. Let's practice capturing each of these parts of a string, and then we'll make a regular expression to remove the entire header. 
 
-All `stringr` functions take in as arguments the string you are manipulating and the pattern you are capturing. `str_remove` replaces the matched pattern with an empty character string `""`. In our first search we remove '>' from our string, dino.
+All `stringr` functions take in as arguments the __string__ you are manipulating and the __pattern__ you are capturing. `str_remove` replaces the matched pattern with an empty character string "". In our first search we remove '>' from our string, dino.
 
 ```{r}
 str_remove(string = dino, pattern = ">") 
@@ -331,7 +358,7 @@ Why aren't all of the numbers replaced? `str_remove` only replaces the first mat
 str_remove_all(string = dino, pattern = "[0-9]") 
 ```
 
-How do we capture spaces? The pattern '\s' replaces a space. However, for the backslash to not be used as an escape character (its special function), we need to add another backslash, making our pattern '\\s'.
+How do we capture spaces? The pattern '\\s' replaces a space. However, for the backslash to not be used as an escape character (its special function), we need to add another backslash, making our pattern '\\\\s'.
 
 ```{r}
 str_remove_all(string = dino, pattern = "\\s") 
@@ -343,7 +370,7 @@ To remove the entire header, we need to combine these patterns. The header is ev
 str_remove(string = dino, pattern = ">.*[0-9]\\s")
 ```
 
-You may have noticed that we also have a number followed by a space earlier in the header, '103 '. Why didn't the replacement end at that first match? The first instance is an example of _greedy_ matching - it will take the longest possible string. To curtail this behaviour and use _lazy_ matching - the shortest possible string, you can add the `?` quantifier.
+You may have noticed that we also have a number followed by a space earlier in the header, '103 '. Why didn't the replacement end at that first match? The first instance is an example of _greedy_ matching - it will take the longest possible string. To curtail this behaviour and use _lazy_ matching - the shortest possible string - you can add the `?` quantifier.
 
 
 
@@ -357,7 +384,7 @@ In this case, we want the greedy matching to replace the entire header. Let's sa
 dna <- str_remove(string = dino, pattern = ">.*[0-9]\\s")
 ```
 
-Extracting:
+__Extracting:__
 
 We may also want to retain our header in a separate string. `str_extract` will retain the string that matches our pattern instead of removing it. We can save this in an object called header (I removed the final space from our expresssion).
 
@@ -368,7 +395,9 @@ header
 ```
 
 
-Searching:
+__Searching:__
+
+Now we can look for patterns in our (dino) DNA!
 
 Does this DNA have balanced GC content? We can use `str_extract_all` to capture every character that is either a G or a C.
 
@@ -385,9 +414,11 @@ length(str_extract_all(dna, pattern = "G|C")[[1]])/nchar(dna) * 100
 
 
 
-Let's translate this into mRNA!
+Let's translate this into mRNA! 
 
-Replacement:
+__Replacement:__
+
+To replace multiple patterns at once, a character vector is supplied to `str_replace_all` of patterns and their matched replacements. This allows us to perform multiple replacements multiple times.
 
 ```{r}
 mrna <- str_replace_all(dna, c("G" = "C", "C" = "G", "A" = "U", "T" = "A"))
@@ -395,7 +426,7 @@ mrna <- str_replace_all(dna, c("G" = "C", "C" = "G", "A" = "U", "T" = "A"))
 ```
 
 
-Searching:
+__More Searching:__
 
 Is there even a start codon in this thing? `str_detect` can be used to get a local (TRUE or FALSE) answer to whether or not a match is found.
 
@@ -412,7 +443,7 @@ str_locate(mrna, "AUG")
 ```
 
 
-Splitting:
+__Splitting:__
 
 Let's split this string into substrings of codons, starting at the position of our start codon. We have the position of our start codon from `str_locate`. We can use `str_sub` to subset the string by position (we will just go to the end of the string for now).
 
@@ -423,7 +454,7 @@ mrna <- str_sub(mrna, str_locate(mrna, "AUG")[1])
 
 ```
 
-We can get codons by extracting groups of 3 nucleotides/characters in our reading frame.
+We can get codons by extracting groups of (any) 3 nucleotides/characters in our reading frame.
 
 ```{r}
 str_extract_all(mrna, "...")
@@ -442,39 +473,51 @@ Do we have a stop codon in our reading frame? Let's check with `str_detect`. We 
 ```{r}
 str_detect(codons, "(UAG)|(UGA)|(UAA)")
 ```
-Looks like we have many matches. We can subset the codons using `str_detect` (instances where the presence of a stop codon is TRUE) to see which ones we have. 
-
+Looks like we have many matches. We can subset the codons using `str_detect` (instances where the presence of a stop codon is equal to TRUE) to see which stop codons are represented. We can use the `which` function to find the which indices the stop codons are positioned at.
 
 ```{r}
-codons[str_detect(codons, "(UAG)|(UGA)|(UAA)")]
+which(str_detect(codons, "(UAG)|(UGA)|(UAA)") == TRUE)
 ```
 
-Let's subset by the position 
+Let's subset our codon strings to end at the first stop codon. 
 
 ```{r}
-str_sub(codons, 
-```
+translation <- codons[1:121]
 
-
-
-Replacing:
-
-Translating to protein.
-
-
-```{r}
-
+#equivalent to 
+translation <- codons[1:which(str_detect(codons, "(UAG)|(UGA)|(UAA)") == TRUE)[1]]
 ```
 
 
-Combining:
 
-What is our final protein string?
+__More Replacing:__
+
+After finding our unique codons, we can translate codons into their respective proteins by using `str_replace_all` using multiple patterns and replacements as before.
+
 
 ```{r}
+unique(translation)
 
+translation <- str_replace_all(translation, c("AUG"="M", "GGA" = "G",  "GGG" = "G",  "AGU" = "S",  "GGU" = "G",  "GUU" = "V",  "UUU" = "F", "AGG" = "R", "UGG" = "W",  "UUG" = "L", "UGU" = "C",  "GAU" = "D", "AUU" = "I",  "GUG" = "V", "AAA"="K",  "GAG" = "E",  "AAG" = "K",  "AAU" = "N",  "GUA" = "V", "AGA" = "R", "GAA" = "E", "AUA" = "M", "UAA" = ""))
+
+translation
 ```
 
+
+__Combining:__
+
+What is our final protein string? `str_flatten` allows us to collapse our individual protein strings into one long string.
+
+```{r}
+translation <- str_flatten(translation)
+translation
+```
+
+We can add our header back using `str_c`, which allows us to combine strings. We can use a space to separate our original strings.
+
+```{r}
+str_c(header, translation, sep = " ")
+```
 
 
 ***
