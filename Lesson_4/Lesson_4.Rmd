@@ -1,13 +1,17 @@
 ---
-title: "Lesson 4 - Of Data Cleaning and Documentation - Conquer Regular Expressions and Challenge yourself with a 'Real' Dataset"
-output: 
-  html_document:
-          keep_md: yes
-          toc: TRUE
-          toc_depth: 3
+title: Lesson 4 - Of Data Cleaning and Documentation - Conquer Regular Expressions
+  and Challenge yourself with a 'Real' Dataset
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
   html_notebook:
-          toc: TRUE
-          toc_depth: 3
+    toc: yes
+    toc_depth: 3
+  html_document:
+    keep_md: yes
+    toc: yes
+    toc_depth: 3
 ---
 ***
 ![](img/big-data-borat.png){width=400px} 
