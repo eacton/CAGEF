@@ -481,34 +481,10 @@ vec_mixed
 
 
 R will _coerce_ your vector to be of one data type, in this case the type that is most inclusive is a character vector. 
-What do you think will happen if 'bacteria' is removed from the vector? Will it be coerced to the same type?
-
-```{r}
-vec_mixed <- c(1, TRUE)
-vec_mixed
-```
-
-R has forced the vector to be numeric. TRUE and FALSE may be represented by 1 and 0, respectively.
-
-```{r}
-vec_test <- as.numeric(vec_log)
-vec_test
-```
 
 
-Does it work to change it back into TRUE and FALSE?
+__Socrative Question__
 
-```{r}
-vec_log <- as.logical(vec_test)
-vec_log
-```
-
-What about for our mixed vector?
-
-```{r}
-vec_mixed <- as.logical(vec_mixed)
-vec_mixed
-```
 
 I am highlighting this for a couple of reasons. Keep your data types in mind. It is good practice to look at your object or the global environment to make sure the object that you just made is what you think it is. Secondly, it can be useful for data analysis to be able to switch from TRUE/FALSE to 1/0, and it is pretty easy, as we have just seen.
 
@@ -697,13 +673,8 @@ class(list_mix)
 
 ```
 
-Some package creaters will have created their own data classes and will require your data to be in the format required of that class. For example in Bioconducter there is an _ExpressionSet_ class. 
 
-![](img/expressionset.jpg)
-
-</br>
-
-This class contains your metadata (information about your samples), your assay data (experiment results), and your feature data (information about genes, probes, whatnot) in different slots. Functions in a package using this class may not work unless your data is in the ExpressionSet class format. This isn't something we will be dealing with a lot in this class, but it is good to be aware of from a trouble-shooting perspective.     
+Some R package developers have created their own object classes. We won't deal with this today, but it is good to be aware of from a trouble-shooting perspective that your data may need to be formatted to fit a certain class of object when using different packages.     
 
 ***
 
@@ -999,17 +970,6 @@ apply(counts, MARGIN = 1, median)
 apply(counts, MARGIN = 1, quantile)
 ```
 
-Public service announcement. Know what logarithm you are using. 
-
-```{r}
-#this is base exp(1)
-apply(counts, MARGIN = 1, log) 
-str(apply(counts, MARGIN = 1, log))
-class(apply(counts, MARGIN = 1, log))
-
-apply(counts, MARGIN = 1, log2)
-apply(counts, MARGIN = 1, log10)
-```
 
 When all data values are transformed, the output is a numeric matrix.
 
@@ -1097,12 +1057,6 @@ apply(counts, MARGIN = 1, mean, na.rm = TRUE)
 
 ```
 
-Most of the functions used above have this parameter. Although some do not.
-
-```{r error = TRUE}
-apply(counts, MARGIN = 1, log, na.rm = TRUE)
-
-```
 In this case na.omit can be useful. 
 
 ```{r}
@@ -1216,25 +1170,27 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Install and load the package `DESeq2`.
+Install and load the packages `tidyverse` and `limma`.
 
 </br>
 
 </br>
 
 
-***
 
 ```{r include = FALSE, eval = FALSE}
+
+install.packages('tidyverse')
+
 library(BiocInstaller)
-biocLite('DESeq2', dependencies = TRUE)
+biocLite('limma', dependencies = TRUE)
 #or
 
-BiocInstaller::biocLite('DESeq2', dependencies = TRUE)
+BiocInstaller::biocLite('limma', dependencies = TRUE)
 #or
 
 source("https://bioconductor.org/biocLite.R")
-biocLite("DESeq2", dependencies = TRUE)
+biocLite("limma", dependencies = TRUE)
 
 #didn't have to have 'dependencies = TRUE', but may have run into some issues
 ```
