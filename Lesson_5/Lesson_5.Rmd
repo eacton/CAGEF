@@ -108,9 +108,9 @@ This grammar allows very specific control over your plot and the ability to chan
 
 ##The Grammar of Graphics in Action: Making Figures with ggplot2
 
-####Dataset: Pyrosequencing of the V3-V5 hypervariable regions of the 16S rRNA gene
+####Dataset: Sequencing of the V3-V5 hypervariable regions of the 16S rRNA gene
 
-16S rRNA pyrosequencing of 30 latrines from Tanzania and Vietnam at different depths (multiples of 20cm). Microbial abundance is represented in Operational Taxonomic Units (OTUs). Operational Taxonomic Units (OTUs) are groups of organisms defined by a specified level of DNA sequence similarity at a marker gene (e.g. 97% similarity at the V4 hypervariable region of the 16S rRNA gene). Intrinsic environmental factors such as pH, temperature, organic matter composition were also recorded.
+16S rRNA sequencing of 30 latrines from Tanzania and Vietnam at different depths (multiples of 20cm). Microbial abundance is represented in Operational Taxonomic Units (OTUs). Operational Taxonomic Units (OTUs) are groups of organisms defined by a specified level of DNA sequence similarity at a marker gene (e.g. 97% similarity at the V4 hypervariable region of the 16S rRNA gene). Intrinsic environmental factors such as pH, temperature, organic matter composition were also recorded.
 
 We have 2 csv files:
 
@@ -125,7 +125,7 @@ Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
 
 ###Scatterplot
 
-I have saved a version of the OTU table in tidy format (which we created in Lesson 2 - split_dat). As well as a modified version of the metadata table.
+I have saved a version of the OTU table in tidy format (which we created in Lesson 3 - split_dat). As well as a modified version of the metadata table.
 
 ```{r include = FALSE, warning = FALSE}
 #ndat <- read.csv("data/ENV_pitlatrine.csv", stringsAsFactors = F)
@@ -143,8 +143,8 @@ Let's read our data tables in and also load `ggplot2`. We will be using a variet
 ```{r, suppressPackageStartupMessages()}
 library(tidyverse)
 
-dat <- read.csv("data/long_SPE_pitlatrine.csv", stringsAsFactors = F, header = TRUE)
-ndat <- read.csv("data/split_ENV_pitlatrine.csv")
+dat <- read_csv("data/long_SPE_pitlatrine.csv")
+ndat <- read_csv("data/split_ENV_pitlatrine.csv")
 ```
 
 ```{r include = FALSE}
@@ -323,7 +323,7 @@ __Challenge__
 
 </div>
 
-Using the data filtered for OTUs greater than or equal to two, make a violin plot of the distribution of OTUs for each country. Use a log scale. Colour the violin plots by Country. Draw lines across the violin plot where the quantiles (25th, 50th, 75th) are for each plot. What do the widths of the plots represent?
+Create a bar plot of OTUs per country and use the filled in colour to represent Taxa.
 
 
 </br>
@@ -332,44 +332,26 @@ Using the data filtered for OTUs greater than or equal to two, make a violin plo
 
 ***
 
-
+_do we want the filtered OTUs for this (continuting on as well) or not? filter using dplyr, not base_
 
 ```{r include = FALSE, eval = FALSE}
-ggplot(dat[dat$OTU >=2,], aes(x=Country, y = OTUs, fill = Country)) + 
-  scale_y_log10() +
-	geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) 
 
-```
-
-
-
-
-###Bar plots
-
-Let's create a bar plot of OTUs per country and use the filled in colour to represent Taxa. 
-
-```{r eval = FALSE}
-ggplot(dat, aes(x=Country, y=OTUs, fill=Taxa)) + 
-	geom_bar() 
-```
-
-    ##Error: stat_count() must not be used with a y aesthetic.
-
-This is a common error because the default for `geom_bar()` is to use the y-axis for a count. To use it for a variable instead, we have to specify `stat="identity"`.
-
-```{r}
 ggplot(dat[dat$OTU >=2,], aes(x=Country, y=OTUs, fill=Taxa)) + 
 	geom_bar(stat = "identity") 
+
+#If do not use stat = "identity" get the error ##Error: stat_count() must not be used with a y aesthetic.
+#This is a common error because the default for `geom_bar()` is to use the y-axis for a count. To use it for a variable instead, we have to specify `stat="identity"`.
 ```
+
+
 
 ####Controlling the order categorical variables in your legend
 
-In the legend for the diagram above our factor levels for Taxa are in *alphabetical order*. However, an ordering that might be more useful would be an order that matches our data, for example, Taxa in descending order of OTUs. To do this, we can use the `forcats` package (included in `tidyverse` and already loaded). `fct_reorder2()` takes the factor we want ordered (Taxa) and orders it by the values given (Country, OTUs). 
+In the legend for the bar plot our factor levels for Taxa are in *alphabetical order*. However, an ordering that might be more useful would be an order that matches our data, for example, Taxa in descending order of OTUs. To do this, we can use the `forcats` package (included in `tidyverse` and already loaded). `fct_reorder2()` takes the factor we want ordered (Taxa) and orders it by the values given (Country, OTUs). 
 
 We will talk about customizing plots later in this lesson, but the last line of code is one way to remove the legend title (by making the legend title 'blank').
 
 ```{r}
-
 ggplot(dat[dat$OTU >=2,], aes(x=Country, y=OTUs, fill=fct_reorder2(Taxa, Country, OTUs))) + 
 	geom_bar(stat = "identity") +
   theme(legend.title = element_blank())
@@ -380,7 +362,6 @@ Now our highest abundance Taxa is the first value in our legend, and this matche
 
 
 
-
 Let's take a second to look at what happens when stat does not equal 'identity'. What is being counted instead of OTUs? Why does the colouring for Taxa look so different?
 
 ```{r}
@@ -388,8 +369,6 @@ ggplot(dat, aes(x=Country, fill=Taxa)) +
 	geom_bar() 
 
 ```
-
-
 
 
 You can alternate between 'stacked' or 'dodged' (as we did with the histogram) for whether your bars are on top of each other or next to each other when splitting by a factor or categorical variable.
@@ -405,25 +384,6 @@ You can have your bars horizonal instead of vertical by using `coord_flip()`.
 ggplot(ndat, aes(x=Depth, y=pH, fill = Country)) + 
 	geom_bar(stat="identity", position = "dodge") +
   coord_flip()
-
-```
-
-###Circular Plots
-
-In `ggplot2`, circular plots are related to bar graphs - they just have different *coordinate systems*. The default coordinate system is cartesian coordinates, and we need to switch to polar coordinates to make a circle. This is a Coxcomb plot - pH levels increase as you move up the outer rings, and depth increases as you move clockwise around the circle. Colour is still represented by country. 
-
-```{r}
-ggplot(ndat, aes(x=Depth, y=pH, fill = Country)) + 
-	geom_bar(stat="identity", position = "dodge") +
-  coord_polar()
-```
-
-To make your classic pie chart, use theta to specify what variable is going to be used to make up the angles (width of pie slices). To wrap to a full circle instead of having sections (as in the above Coxcomb plot), the width is set to one.
-
-```{r}
-ggplot(dat, aes(x="", y=Country, fill = Country)) + 
-	geom_bar(stat = "identity", width = 1) +
-  coord_polar(theta = "y")
 
 ```
 
@@ -495,6 +455,8 @@ ggplot(dat, aes(x = Depth, y = OTUs+1)) +
   facet_wrap(~Country)
 ```
 
+
+_move bubble plots to appendix and  use a different plot for ggarrange and labelling demo?_
 
 ###Bubble Plots
 
@@ -678,6 +640,13 @@ b + geom_quasirandom(varwidth = TRUE)
 
 Other spacing and distribution options are available at https://github.com/eclarke/ggbeeswarm.
 
+####Heatmaps
+
+
+<!-- Data can be ordered by calculating the distance between samples (ie. euclidean - *sqrt(sum((x_i - y_i)^2))*) and then clustering them in a hierarchical way (joining the most similiar samples, iteratively, until all samples are clustered). -->
+
+<!-- `dist()` computes the distance between rows of a matrix and `hclust()` clusters the output of `dist()`. Once we reorder our correlation matrix, we then convert it to long format for plotting as before. -->
+
 
 
 ##Customization
@@ -856,7 +825,6 @@ theme_bw
 And this is what `theme_bw()` practically looks like:
 
 ```{r warning = FALSE}
-
 p + theme_bw()
 
 ```
@@ -864,7 +832,6 @@ p + theme_bw()
 Note that the last call to theme overrides my previous call to theme if there is a conflict (in this case the angle of the x-axis text). Here is an example of `theme_dark()`. I am going to override the default x-axis text angle of this theme by modifying it AFTER I call `theme_dark()`.
 
 ```{r warning = FALSE}
-
 p + theme_dark() + 
   theme(axis.text.x = element_text(angle=90, hjust=1))
 ```
@@ -958,92 +925,6 @@ p+theme_minimal()+
 ```
 
 
-***
-##Taking it up a notch
-
-There are many fantastic R packages to analyze and visualize your data. As a group, we are likely working in a variety of specialized areas. The plots we have made so far today should be useful for data exploration for many different kinds of data. In the next section we are going to preview some more complex visualization types, but since these take more time to go through and not everyone may be interested in interactive graphics, network diagrams, time-series analysis, or geospatial data, we will not be plotting all of these together. We will, however do a heatmap and also an upset plot.  If you are interested in a tutorial on one of these other visualization types, please indicate that in the comments area of the lesson survey (https://www.surveymonkey.com/r/VNQZ3KS). 
-
-
-###Interactive graphics 
-**Packages**
-
-Plotly: https://plot.ly/r/
-
-ggvis: http://ggvis.rstudio.com/interactivity.html
-
-Heatmaps: https://github.com/talgalili/heatmaply
-
-Interactive time-series data: https://rstudio.github.io/dygraphs/
-
-####Correlation Plots and Heatmaps
-
-One common way to look for outliers or trends in data is to calculate the correlation coefficients between samples and make a correlation plot. Since the `cor()` function expects samples to be in columns and observations in rows, this is an example of where you would use 'wide' data. The default correlation coefficient is the Pearson correlation, but others (Kendall, Spearman) can be specified. `cor()` takes in a matrix of numeric data only.
-
-Read in the wide version of our OTU table, keeping the Taxa as rownames since the matrix can only contain numeric data. Samples (the Country, Latrine Number and Depth combination) are in columns. We do not have any missing data in this example. Make sure to look at the help menu if you have 'NA's in your data to select which values to use as 'NA' will propogate through your matrix.
-
-```{r warning = FALSE}
-cdat <- read.csv("data/SPE_pitlatrine.csv", row.names = 1)
-
-cdat <- cor(cdat, method = "pearson", use = "complete.obs")
-```
-
-The output correlation matrix must be converted into long format before we can make our plot. Our data must first be converted to a data frame to use our `dplyr` and `tidyr` tools. We convert the matrix to a data frame, save the rownames as 'Site1', gather our column names ('Site2') and their values, making sure to retain 'Site1' information.
-
-A heatmap can be made with `ggplot` by using the tile geom. The fill is now the correlation coefficient, which is a continuous variable (hence the gradient). I have changed the title of the legend from 'value' to 'Pearson Correlation' by using `scale_fill_continuous()`. The `\n` included in the name is a line break. A fantastic resource for modifying legends is http://www.cookbook-r.com/Graphs/Legends_(ggplot2)/.
-
-```{r warning = FALSE}
-clong <- as.data.frame(cdat) %>% 
-  rownames_to_column("Site1") %>% 
-  gather(key = "Site2", value = "correlation", -Site1)
-
-ggplot(clong, aes(Site1, Site2, fill = correlation)) + 
-  geom_tile() +
-  xlab(NULL) +
-  ylab(NULL) +
-  scale_fill_continuous(name = "Pearson\nCorrelation") +
-  theme(axis.text.x = element_text(angle =90, hjust=1)) 
-  
-```
-
-
-If this looks a little jarring to you compared to 'normal' heatmaps, it is probably because the data has not been ordered yet. This can be done by calculating the distance between samples (ie. euclidean - *sqrt(sum((x_i - y_i)^2))*) and then clustering them in a hierarchical way (joining the most similiar samples, iteratively, until all samples are clustered).
-
-`dist()` computes the distance between rows of a matrix and `hclust()` clusters the output of `dist()`. Once we reorder our correlation matrix, we then convert it to long format for plotting as before.
-
-```{r}
-distance <- dist(cdat)
-clust <- hclust(distance)
-fdat <- cdat[clust$order, clust$order]
- 
-levels <- rownames(fdat)
- 
-flong <- as.data.frame(fdat) %>% 
-   rownames_to_column("Site1") %>% 
-   gather(key = "Site2", value = "correlation", -Site1)
- 
-flong$Site1 <- factor(flong$Site1, levels = levels, labels = levels)
-flong$Site2 <- factor(flong$Site2, levels = levels, labels = levels)
-```
-
-
-To have a different colour scheme that for example, goes from red to yellow, you can use `scale_fill_gradient()` and specify what you want the diverging colours to be. Note that your legend title now derives from this gradient. We can also adjust the text size such that our labels do not overlap. 
-
-
-```{r}
-ggplot(flong, aes(Site1, Site2, fill = correlation)) + geom_tile() +
-  scale_fill_gradient(name = "Pearson\nCorrelation", low = "red", high = "yellow") +
-  xlab(NULL) +
-  ylab(NULL)+
-  theme(axis.text.x = element_text(angle =90, hjust=1, size =5), legend.title = element_text(size=10), axis.text.y = element_text(size=5)) 
-
-```
-
-We can now see that there is a patch of dark red samples with low correlation. 
-
-
-</br>
-
-
 ###Saving your Figures
 
 Up until now, we have taken for granted that our plots have been displayed using a *Graphic Device*. 
@@ -1073,30 +954,36 @@ You can send the plot object to the screen device to preview your image, and the
 With `ggsave()` you can minimally input the filename you would like to have, and the path to your file.
 
 ```{r}
-ggplot(clong, aes(Site1, Site2, fill = correlation)) + geom_tile() +
-  scale_fill_gradient(name = "Pearson\nCorrelation", low = "red", high = "yellow") +
-  xlab(NULL) +
-  ylab(NULL)+
-  theme(axis.text.x = element_text(angle =90, hjust=1, size =5), legend.title = element_text(size=10), axis.text.y = element_text(size=5)) 
+#change from heatmap example
 
-ggsave("heatmap.png", path = "img")
+#ggsave("heatmap.png", path = "img")
 ```
 
 However, in some cases you want to tailor your output. You can specify the width, height and units of your image, or you can apply a scaling factor (the 'eyeballing' approach). You can also specify the plot object you want to save instead of whatever was on your graphics device last using the 'plot' parameter. Note that this time I have combined the path with the filename, and called the file device type separately.
 
 ```{r}
-hmap <- ggplot(clong, aes(Site1, Site2, fill = correlation)) + geom_tile() +
-  scale_fill_gradient(name = "Pearson\nCorrelation", low = "red", high = "yellow") +
-  xlab(NULL) +
-  ylab(NULL)+
-  theme(axis.text.x = element_text(angle =90, hjust=1, size =5), legend.title = element_text(size=10), axis.text.y = element_text(size=5)) 
+#change from heatmap example
 
-ggsave("img/heatmap", plot = hmap, device = "pdf", scale = 2, width = 150, height = 110, units = "mm")
+#hmap <- 
+
+#ggsave("img/heatmap", plot = hmap, device = "pdf", scale = 2, width = 150, height = 110, units = "mm")
 ```
 
 No image is sent to the screen device when a file is saved in this manner.
 
 </br>
+
+***
+##Taking it up a notch
+
+There are many fantastic R packages to analyze and visualize your data. As a group, we are likely working in a variety of specialized areas. The plots we have made so far today should be useful for data exploration for many different kinds of data. In the next section we are going to preview some more complex visualization types, but since these take more time to go through and not everyone may be interested in interactive graphics, network diagrams, time-series analysis, or geospatial data, we will not be plotting all of these together. We will, however learn how to arrange multiple plots per page, and also how to make an upset plot.  If you are interested in a tutorial on one of these other visualization types, please indicate that in the comments area of the lesson survey (https://www.surveymonkey.com/r/VNQZ3KS). 
+
+
+
+</br>
+
+
+
 
 ###Multiple plots on one page (ie. for publication images)
 
@@ -1221,17 +1108,6 @@ ggarrange(lin+ font("axis.title", size=9) + font("legend.title", size=9) + font(
            nrow = 2, labels = "A")
 ```
 
-
-###Network diagrams 
-**Packages**
-
-visNetwork (based on igraph): https://datastorm-open.github.io/visNetwork/edges.html
-
-###Circos Plots
-**Packages**
-
-Migest: https://gjabel.wordpress.com/category/r/migest/
-
 ###Upset Plots
 **Packages**
 
@@ -1282,6 +1158,30 @@ upset(subdat, nsets = 8, empty.intersections = TRUE, order.by = "freq", ninterse
 ```
 
 Let's look at our greatest Intersection Size (equal to 28). This means that 28 of our 81 samples have Clostridia, Alphaproteobacteria, and Deinococci present in the same sample WITHOUT Chloroflexi, both Acidobacteria, Cyanobacteria and Lentisphaeria. We can see from the Set Size that Clostridia and Alphaproteobacteria are present in almost all samples, and Deinococci is present in greater than 3/4 of the samples. You might expect this overlap to be higher, but remember that this is without all the other Taxa. Moving along our interesection sizes and dot matrix, we can see that other intersections include these bacteria. For example, the next bar to the right with an Intersection Size of 16, also includes Lentisphaeria. Some quick mental math shows that 63 samples have these top 3 Taxa present.  
+
+
+###Interactive graphics 
+**Packages**
+
+Plotly: https://plot.ly/r/
+
+ggvis: http://ggvis.rstudio.com/interactivity.html
+
+Heatmaps: https://github.com/talgalili/heatmaply
+
+Interactive time-series data: https://rstudio.github.io/dygraphs/
+
+
+###Network diagrams 
+**Packages**
+
+visNetwork (based on igraph): https://datastorm-open.github.io/visNetwork/edges.html
+
+###Circos Plots
+**Packages**
+
+Migest: https://gjabel.wordpress.com/category/r/migest/
+
 
 ###Geospatial Data
 **Packages**
@@ -1380,3 +1280,24 @@ Your feedback is essential to help the next cohort of trainees. Please take a mi
 Thanks for coming!!!
 
 ![](img/rstudio-bomb.png){width=300px}
+
+#Appendix
+
+###Circular Plots
+
+In `ggplot2`, circular plots are related to bar graphs - they just have different *coordinate systems*. The default coordinate system is cartesian coordinates, and we need to switch to polar coordinates to make a circle. This is a Coxcomb plot - pH levels increase as you move up the outer rings, and depth increases as you move clockwise around the circle. Colour is still represented by country. 
+
+```{r}
+ggplot(ndat, aes(x=Depth, y=pH, fill = Country)) + 
+	geom_bar(stat="identity", position = "dodge") +
+  coord_polar()
+```
+
+To make your classic pie chart, use theta to specify what variable is going to be used to make up the angles (width of pie slices). To wrap to a full circle instead of having sections (as in the above Coxcomb plot), the width is set to one.
+
+```{r}
+ggplot(dat, aes(x="", y=Country, fill = Country)) + 
+	geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y")
+
+```
