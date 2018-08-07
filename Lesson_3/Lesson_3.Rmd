@@ -109,17 +109,18 @@ In this lesson we want to answer 3 simple questions:
     - Which site had the greatest number of Taxa represented?
 
 
-To help us be able to answer these questions, we are going to learn how to manipulate our data.
+Last lesson, we learned how to filter and select data subsets we were interested in. However, we can make data manipulation more efficient by controlling the overall structure or format of our data.
 
 ![](img/making_progress.png){width=200px} 
 </br>
 </br>
 
-Let's read in our dataset, store it in a variable, and remind ourselves about the structure.
+Let's read in our dataset, store it in a variable, and remind ourselves about the original structure.
 
 ```{r}
+library(readr)
 
-dat <- read.csv("data/SPE_pitlatrine.csv", stringsAsFactors = FALSE)
+dat <- read_csv("data/SPE_pitlatrine.csv")
 str(dat)
 
 ```
@@ -414,33 +415,25 @@ spread_dat <- unite_dat %>%
 We are going to use a subset of the collected environmental data from the study to practice adding rows and columns to a data frame. We can use our pipe while reading in our data to do this subsetting.
 
 ```{r}
-jdat <- read.csv("data/ENV_pitlatrine.csv", stringsAsFactors = FALSE) %>% select(1:4)
+jdat <- read_csv("data/ENV_pitlatrine.csv") %>% select(1:4)
 
 str(jdat)
 ```
 
-There is a function from `dplyr`, `bind_rows()`, which tries to save you from errors when joining a row of observations to a data frame by ensuring that your column names match. If you do not give column names, whether you are trying to add a vector or a list, it will not add your row to the frame. This is a much 'safer' function than base R's `rbind()` which lets you add unnamed values and assumes proper ordering.
+There is a function from `dplyr`, `bind_rows()`, which tries to save you from human error when joining a row of observations to a data frame by ensuring that your column names match (so data is not entered in the wrong column). If you do not give column names, an error will be thrown.
 
 What data structure should you be using to add a row to a data frame?
 
-```{r error = TRUE}
-bind_rows(jdat, c("V_2_10", rep(5, 2))) %>% tail()
-```
-
-
-```{r error = TRUE}
-bind_rows(jdat, list("V_2_10", rep(5, 2))) %>% tail()
-```
 If you give `bind_rows()` the correct column information in vector format, it will only add a vector as a row IF THE CHARACTER TYPE MATCHES ALL DATA FRAME COLUMN TYPES (ie. if our data frame was all character data). Otherwise, it actually gives you the useful error that your character types are not matching. 
 
 ```{r error = TRUE}
-bind_rows(jdat, c(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
+bind_rows(jdat, c(Samples = "V_2_10", pH = 6, Temp = 5, TS = 5)) %>% tail()
 ```
 
 A list allows us to add the data we can't add in vector format, by retaining the data types that match the data frame columns.
 
 ```{r}
-bind_rows(jdat, list(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
+bind_rows(jdat, list(Samples = "V_2_10", pH = 6, Temp = 5, TS = 5)) %>% tail()
 
 ```
 
@@ -448,25 +441,13 @@ If you give `bind_rows()` the correct column information in list format, it will
 
 A _sanity check_ is making sure things are turning out as you expect them to - it is a way of checking your (or others') assumptions. It is particularly useful in the data exploration stage when you are getting familiar with your data set before you try to run any type of model. However, it is also good to make sure a function is behaving as you expect it to, or trouble-shooting odd behaviours
 
-Here is a sanity check on switching the order of the columns (pH is changed to a 6 to trace its position).
+Here is a sanity check on switching the order of the columns.
 
 ```{r}
 bind_rows(jdat, list(Samples = "V_2_10", Temp = 5, pH = 6, TS = 5)) %>% tail()
 ```
 
 Since we have named our values, `bind_rows()` will add the value to the appropriate column. 
-
-You could also add your data in the format of a data frame of 1 row and 4 columns.
-
-```{r}
-bind_rows(jdat, data.frame(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) %>% tail()
-
-```
-
-
-
-
-
 
 
 What happens if column name do not match? `bind_rows()` will match your columns as much as possible, and then create new columns for the data that does not fit at the end of your data frame. Note that 'NA's will be created for all missing data.
@@ -475,6 +456,8 @@ What happens if column name do not match? `bind_rows()` will match your columns 
 bind_rows(jdat, list(Turtles = "V_2_10", pH = 5, Volatility = 5, TS = 5)) %>% tail()
 ```
 
+
+__Socrative Question__
 
 
 ***
@@ -501,7 +484,7 @@ Why doesn't jdat change after all these operations?
 
 Whenever you are adding rows or columns, I strongly advise checking to see that the dimensions of the resulting data frame are what you expect. 
 ```{r}
-jdat <- bind_rows(jdat, list(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5)) 
+jdat <- bind_rows(jdat, list(Samples = "V_2_10", pH = 6, Temp = 5, TS = 5)) 
 dim(jdat)
 ```
 
