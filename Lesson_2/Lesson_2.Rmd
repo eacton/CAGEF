@@ -63,9 +63,8 @@ The following packages are used in this lesson:
 `dplyr`
 `readr`
 `readxl`
-`googlesheets`
-   
-
+`tibble`
+(`googlesheets`- optional)
 
 Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
 
@@ -113,10 +112,8 @@ Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
 Let's read our metadata file into R. While we do these exercises, we are going to become friends with the Help menu. Let's start by using the `read.table()` function which takes in the path to our file.
 
 
-
 ```{r}
 meta <- read.table(file = "data/ENV_pitlatrine.csv")
-
 ```
 
 To see the result, we can look at 'meta' in the Environment pane and see that there are 82 observations of one variable. If we click on the arrow next to 'meta' we can now see that we have a column 'V1' and the variable type is a factor. We can also hover the mouse over the column name for this information. 
@@ -162,36 +159,12 @@ meta <- read.table("data/ENV_pitlatrine.csv", TRUE, ",", stringsAsFactors = FALS
 ```
 
 
-
-***
-__Challenge__ 
-
-
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/turtle_challenge.jpg){width=100px}
-</div>
-
-Use a parameter in `read.table()` to read in metadata such that all columns will be of character data type, and the first column is a factor.
-
-</br>
-
-</br>
-
-```{r include = FALSE}
-meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = T, stringsAsFactors = F, colClasses = c("factor", rep("character",11)))
-str(meta)
-
-meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = T, stringsAsFactors = F, colClasses = c("factor", "character", "character", "character", "character", "character", "character", "character", "character", "character", "character", "character"))
-
-```
-
-
 ***
 
 __Challenge__ 
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/turtle_challenge.jpg){width=100px}
+![](img/pug_challenge1.jpeg){width=100px}
 </div>
 
 Read our metadata table into R using any previously unused function under Usage in the `read.table()` Help menu. Save your result in a variable called 'dat'.
@@ -300,102 +273,14 @@ excel3 <- data.frame(ex[[3]])
 
 At this point, you will be able to use your excel worksheet as a normal data frame in R.
 
-##Googlesheets
-
-Googlesheets have a similar structure to excel workbooks, the only tricky thing is getting the name of your googlesheet to input.
-
-I have a googlesheet to share from my Google Drive:     
-<https://docs.google.com/spreadsheets/d/1JTy5sCtQz8PmlpDrgvOnwZ1tB2pxOndxoNMTHQR_PrQ/edit?usp=sharing>. 
-
-Add the sheet to your own Google Drive. Then load googlesheets.
-
-```{r }
-library(googlesheets)
-```
-
-
-If you load googlesheets and ask it to list the googlesheets you have, googlesheets will open a new window and ask if it can have access to your googlesheets. If you say yes, you can return to R and breathe a sigh of relief. Your import of your googlesheets worked.
-
-```{r }
-gs_ls()
-
-#if you have many googlesheets like I do you may need to search for your sheet
-#tail(gs_ls())
-```
-
-_Register_ the sheet you are going to use (gather information on the sheet from the API) with the sheet title using `gs_title()`.
-
-```{r}
-books <- gs_title('Books Everyone Should Read')
-```
-
-If this did not work for some reason, download [books_alpha.xlsx](https://github.com/eacton/CAGEF/blob/master/Lesson_1/data/books_alpha.xlsx) and save it to your current working directory. Upload the file to Google Drive using `gs_upload()`.
-
-```{r}
-books <- gs_upload(file = "data/books_alpha.xlsx")
-```
-
-
-The structure of the googlesheet is a list.
-
-```{r}
-str(books)
-```
-
-
-How many worksheets are in this spreadsheet and what are their names? To find the number of worksheets, I subset from the list `n_ws`. To get the names of the worksheets, I grab the worksheets `ws` (itself a data frame) and subset the column `ws_title` for their titles. 
-
-```{r }
-books$n_ws
-
-books$ws$ws_title
-```
-
-
-Read in the worksheet you want to access using `gs_read()`. You can do this by specifying the worksheet number or title.
-
-```{r}
-book_sheet1 <- gs_read(books, ws = 1)
-
-```
-
-The last 2 columns don't hold much information. You can specify a subset of this sheet similarly to the excel sheets using `range`. You can do this by selecting the cell columns with `cell_cols`, or by using the cell range.
-
-```{r eval = FALSE}
-booksfilt <- gs_read(books, ws = 1, range = cell_cols(1:14))
-#or
-booksfilt <- gs_read(books, ws = 1, range = "A1:N1000")
-```
-
-Here we specify the worksheet by name, and sort by rows using `cell_rows`. Here are the top recommendations for what to read, when you are no longer in academia.
-
-```{r eval = FALSE}
-books_alpha <- gs_read(books, ws = "Top titles", range = cell_rows(1:10)) 
-
-```
-
-
-One nice thing about the `googlesheets` package is that all of the functions begin with `gs_` which is great for finding functions and tab completion.
-
-
-You can use `gs_download` to save this file to your computer as an excel workbook by giving the title of the googlesheet and the name for the output file. You can overwrite an existing file by selecting `overwrite = TRUE`.
-
-```{r eval=FALSE}
-gs_download(gs_title("Books Everyone Should Read"), to = "books_alpha.xlsx", overwrite = TRUE)
-```
-
-You can upload sheets you've made on your computer to use in googlesheets. This file is now in your google account online.
-
-```{r eval=FALSE}
-books <- gs_upload("books_alpha.xlsx")
-```
+If you are a googlesheets person, there is a package (surprisingly called 'googlesheets') that will allow you to get your worksheets in and out of R. Checkout the appendix at the end of this lesson for a brief tutorial.
 
 
 ***
 __Challenge__ 
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/turtle_challenge.jpg){width=100px}
+![](img/pug_challenge1.jpeg){width=100px}
 </div>
 
 Read in the 'adult_income.tsv' dataset. How many rows and columns in the dataset? Can you delete the last column? What flavour of variables are there? Change a column name. Write the data to a csv file. 
@@ -436,72 +321,73 @@ Try reading in one of your own datasets. Write it to a different file format.
 
 ***
 
-##A quick intro to base R subsetting
+##A quick intro to the dplyr package
 
-First, I am going to show you how to subset data in __base R__. Then I will show you how do the same thing with the popular packages `dplyr` and `tidyr`. These packages are great for data wrangling with _data frames_. While a lot of new packages play nicely with the functions we are going to use today, not all packages or data structures will work with `dplyr` functions. You will see `dplyr` and `tidyr` used for data cleaning and the manipulation of data frames.
+To be able to answer any questions with our data, we need the ability to select and filter parts of our data. 
 
-
-###Dataset: Sequencing of the V3-V5 hypervariable regions of the 16S rRNA gene
-
-16S rRNA sequencing of 30 latrines from Tanzania and Vietnam at different depths (multiples of 20cm). Microbial abundance is represented in Operational Taxonomic Units (OTUs). Operational Taxonomic Units (OTUs) are groups of organisms defined by a specified level of DNA sequence similarity at a marker gene (e.g. 97% similarity at the V4 hypervariable region of the 16S rRNA gene). Intrinsic environmental factors such as pH, temperature, organic matter composition were also recorded.
-
-We have 2 csv files:
-
-1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.     
-2. OTU abundance table.
-
-B Torondel, JHJ Ensink, O Gunvirusdu, UZ Ijaz, J Parkhill, F Abdelahi, V-A Nguyen, S Sudgen, W Gibson, AW Walker, and C Quince.
-Assessment of the influence of intrinsic environmental and geographical factors on the bacterial ecology of pit latrines
-Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
-
-***
-
-In this lesson we want to answer 3 simple questions: 
-
-   
-    - Which latrine depth has the greatest mean number of OTUs?
-      (remember the Country_LatrineNo_Depth site encoding)
-    - Is there more Clostridia in Tanzania or Vietnam?
-    - Which site had the greatest number of Taxa represented?
-
-
-To help us be able to answer these questions, we are going to learn how to manipulate our data.
 
 ![](img/making_progress.png){width=200px} 
+
+
 </br>
 </br>
+
+
+The `dplyr` package was made by Hadley Wickham to help make data frame manipulation easier.  It has 5 major functions:
+
+  1. `filter()` - subsets your data frame by row
+  2. `select()` - subsets your data frame by columns
+  3. `arrange()` - orders your data frame alphabetically or numerically by ascending or descending variables
+  4. `mutate(), transmute()` - create a new column of data
+  5. `summarize()` - reduces data to summary values (for example using `mean()`, `sd()`, `min()`, `quantile()`, etc)
+  
+  
+Let's load the library.
+
+```{r message = FALSE}
+library(dplyr)
+library(tibble)
+```
+
+
 
 Let's read in our dataset, store it in a variable, and remind ourselves about the structure.
 
 ```{r}
-
-dat <- read.csv("data/SPE_pitlatrine.csv", stringsAsFactors = FALSE)
+dat <- read_csv("data/SPE_pitlatrine.csv")
 str(dat)
 
 ```
 
-
-
-
-It is often extremely useful to subset your data by some logical condition (`==` (equal to), `!=` (not equal to), `>` (greater than), `>=` (greater than or equal to), `<` (less than), `<=` (less than or equal to), `&` (and), `|` (or)). For example, we may want to keep all rows that have either Fusobacteria or Methanobacteria.
+You can take a look at the first few rows of your data frame using the `head()` function.
 
 ```{r}
+head(dat)
+```
 
-dat[dat$Taxa == "Fusobacteria" | dat$Taxa == "Methanobacteria", ]
+
+
+Likewise, to inspect the last rows, you can use the `tail()` function. You can specify the number of rows to `head()` or `tail()`.
+
+```{r }
+tail(dat, 10)
 
 ```
+
+
+It is often extremely useful to subset your data by some logical condition (`==` (equal to), `!=` (not equal to), `>` (greater than), `>=` (greater than or equal to), `<` (less than), `<=` (less than or equal to), `&` (and), `|` (or)). For example, we may want to keep all rows that have either Fusobacteria or Methanobacteria. Using the `filter()` function our first argument will be our data frame, followed by the information for the rows we want to subset by.
+
+
+```{r}
+filter(dat, Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
+
+```
+
+
 Will this work?
 
-```{r error = TRUE}
-
-dat[dat$Taxa == "Fusobacteria" | "Methanobacteria", ]
-
-```
-
-What about this? 
-
 ```{r}
-dat[dat$Taxa == c("Fusobacteria", "Methanobacteria"), ]
+filter(dat, Taxa == c("Fusobacteria", "Methanobacteria"))
 ```
 
 
@@ -538,13 +424,13 @@ c(1,2,3,4) + c(10,11)
 Let's go back to our example. In this code, I am looking through the Taxa column for when Taxa is equal to Fusobacteria OR Taxa is equal to Methanobacteria.
 
 ```{r eval = FALSE}
-dat[dat$Taxa == "Fusobacteria" | dat$Taxa == "Methanobacteria", ]
+filter(dat, Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
 ```
 
 However, with a vector, I am alternately going through all values of Taxa and asking: does the first value match Fusobacteria? does the second value match Methanobacteria? Then the vector recycles and asks: does the third value match Fusobacteria? does the 4th value match Methanobacteria? We end up with a data frame of zero observations when we are expecting a data frame of 2 observations.
 
 ```{r eval = FALSE}
-dat[dat$Taxa == c("Fusobacteria", "Methanobacteria"), ]
+filter(dat, Taxa == c("Fusobacteria", "Methanobacteria"))
 ```
 
 
@@ -554,124 +440,14 @@ Be careful when filtering. You have been warned.
 
 ***
 </br>
-You can also filter to obtain more specific subsets using more than one column. To get only Taxa that had OTUs at sites T_2_1 and T_2_10 you can use the following filter:
-
-```{r}
-dat[dat$T_2_10!=0 & dat$T_2_1 != 0, ]
-```
-
-You can select columns by name or position, and reorder them as well (you can also do this for rows). I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. To inspect the first rows of an output, you can use the `head()` function. 
-
-```{r}
-head(dat[ , c("T_2_9", "T_2_10", "Taxa")])
-#equivalent to
-head(dat[ , c(9:10,1)])
-
-```
-
-Likewise, to inspect the last rows, you can use the `tail()` function. 
-
-```{r }
-tail(dat[ , "Taxa"])
-#equivalent to
-tail(dat[ , 1])
-
-```
-Try changing the output to show only the first 5 rows of your data frame.
-
-```{r include = FALSE}
-#using head
-head(dat,5)
-#subsetting
-dat[1:5,]
-```
 
 
-You can arrange your data frame alphabetically or by value using `order()`. Let's take the first 10 columns for ease of visualization. Adding `decreasing = TRUE` to this function call results in reverse alphabetical ordering or highest to lowest values.
 
-```{r}
-head(dat[order(dat$Taxa, decreasing = TRUE), 1:10]) 
-head(dat[order(dat$T_2_1, decreasing = TRUE), 1:10])
-```
-You can order your data frame by multiple variables. If we look at the top 10 rows after ordering we can see that as soon as T_2_12 gets to 0 OTUs, the data frame is ordered by values in T_2_9. 
-
-```{r}
-head(dat[order(dat$T_2_12, dat$T_2_9, decreasing = TRUE), 1:10], 10)
-```
-Now that we have some basic data-wrangling skills:
-
-    - Which latrine depth has the greatest mean number of OTUs?
-      (remember the Country_LatrineNo_Depth site encoding)
-    - Is there more Clostridia in Tanzania or Vietnam?
-    - Which site had the greatest number of Taxa represented?
-
-
-How easy is it to answer these questions with the data in this 'messy' format?
-
-***
-__Challenge__ 
-
-
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/pug_challenge1.jpeg){width=150px}
-
-</div>
-
-Answer our 3 questions using the base R.
-
-
-</br>
-</br>
-</br>
-
-***
-
-```{r include = FALSE}
-#which latrine depth has the greatest mean number of otus?
-mean_otus_sites <- apply(dat[,-1], 2, mean)
-mean_otus_sites[order(mean_otus_sites, decreasing = TRUE)]
-#end of abilities shown...based on descending order, probably 1cm? 
-
-
-#more clostridia or tanzania in vietnam?
-tan <- dat[, 1:30]
-viet <- dat[, c(1, 31:82)]
-
-tan <- tan[dat$Taxa == "Clostridia",]
-viet <- viet[dat$Taxa == "Clostridia",]
-
-sum(tan[,-1]) > sum(viet[, -1])
-sum(tan[,-1])/(length(tan)-1) > sum(viet[, -1])/(length(viet)-1)
-
-#which site had the greatest number of Taxa represented?
-sum_otus_sites <- apply(dat[,-1], 2, function(x) ifelse(x !=0, 1, 0))
-sum_otus_sites <- apply(sum_otus_sites, 2, sum)
-sum_otus_sites[order(sum_otus_sites, decreasing = TRUE)]
-
-```
-
-
-##A quick intro to the dplyr package
-
-The `dplyr` package was made by Hadley Wickham to help make data manipulation with data frames easier. It has 5 major functions:
-
-  1. `filter()` - subsets your data frame by row
-  2. `select()` - subsets your data frame by columns
-  3. `arrange()` - orders your data frame alphabetically or numerically by ascending or descending variables
-  4. `mutate(), transmute()` - create a new column of data
-  5. `summarize()` - reduces data to summary values (for example using `mean()`, `sd()`, `min()`, `quantile()`, etc)
-  
-  
 The `dplyr` package, and some other common packages for data frame manipulation allow the use of the pipe function, `%>%`. This is equivalent to `|` for any unix peeps. __Piping__ allows the output of a function to be passed to the next function without making intermediate variables. Piping can save typing, make your code more readable, and reduce clutter in your global environment from variables you don't need. The keyboard shortcut for `%>%` is `CTRL+SHIFT+M`. 
 
-Let's load the library.
 
-```{r message = FALSE}
-library(dplyr)
-library(tibble)
-```
 
-We are going to see how pipes work in conjunction with our first function, `filter()`. We are going to use the same subsetting examples so you can see how the syntax differs from base R. In this case, we want to keep all rows that have either Fusobacteria or Methanobacteria. 
+We are going to see how pipes work in conjunction with our first function, `filter()`. 
 
 
 ```{r eval = FALSE}
@@ -700,7 +476,7 @@ We can use the reverse function `rownames_to_column` to recreate the Taxa column
 taxa_colnames_dat <- taxa_rownames_dat %>% rownames_to_column("Taxa")
 ```
 
-Continuing, with our previous base R subsetting examples, to get only Taxa that had OTUs at sites T_2_1 and T_2_10 using `dplyr`, you can use the following filter:
+To get only Taxa that had OTUs at sites T_2_1 and T_2_10 using `dplyr`, you can use the following filter:
 
 ```{r}
 dat %>% filter(., T_2_10 != 0 & T_2_1 != 0)
@@ -848,14 +624,6 @@ dat %>%
 
 ```
 
-Now that we have some new tools, let's try to answer our questions again.
-
-    - Which latrine depth has the greatest mean number of OTUs?
-      (remember the Country_LatrineNo_Depth site encoding)
-    - Is there more Clostridia in Tanzania or Vietnam?
-    - Which site had the greatest number of Taxa represented?
-
-
 
 
 ***
@@ -867,7 +635,8 @@ __Challenge__
 
 </div>
 
-Answer our 3 questions using the `dplyr`.
+Let's try to answer a question with our data:
+    - Is there more Clostridia in Tanzania or Vietnam?
 
 </br>
 </br>
@@ -876,17 +645,9 @@ Answer our 3 questions using the `dplyr`.
 ***
 
 ```{r include = FALSE}
-#which latrine depth has the greatest mean number of otus?
-#this doesn't get much better until we get our tidy data format
-#we could grab otu depths that match and add them together...
-mean_otus_sites <- apply(dat[,-1], 2, mean)
-mean_otus_sites[order(mean_otus_sites, decreasing = TRUE)]
-#end of abilities shown...based on descending order, probably 1cm? 
-
 
 #more clostridia or tanzania in vietnam?
-#now we can use helper functions to select by name rather than counting our columns
-#total
+#we can use helper functions to select by name 
 tan <- dat %>%
   select(starts_with("T")) %>% 
   filter(Taxa == "Clostridia") %>% 
@@ -913,12 +674,6 @@ viet <- dat %>%
   summarize(sum_clostridia = as.numeric(mean(.[,-1])))
 
 tan$sum_clostridia > viet$sum_clostridia 
-
-#which site had the greatest number of Taxa represented?
-#this doesn't get much better until we get our tidy data format
-sum_otus_sites <- apply(dat[,-1], 2, function(x) ifelse(x !=0, 1, 0))
-sum_otus_sites <- apply(sum_otus_sites, 2, sum)
-sum_otus_sites[order(sum_otus_sites, decreasing = TRUE)]
 
 
 ```
@@ -948,5 +703,97 @@ https://www.surveymonkey.com/r/SMGKMCS
 Thanks for coming!!!
 
 ![](img/rstudio-bomb.png){width=300px}
+***
+
+#Appendix
 
 
+##Googlesheets
+
+Googlesheets have a similar structure to excel workbooks, the only tricky thing is getting the name of your googlesheet to input.
+
+I have a googlesheet to share from my Google Drive:     
+<https://docs.google.com/spreadsheets/d/1JTy5sCtQz8PmlpDrgvOnwZ1tB2pxOndxoNMTHQR_PrQ/edit?usp=sharing>. 
+
+Add the sheet to your own Google Drive. Then load googlesheets.
+
+```{r }
+library(googlesheets)
+```
+
+
+If you load googlesheets and ask it to list the googlesheets you have, googlesheets will open a new window and ask if it can have access to your googlesheets. If you say yes, you can return to R and breathe a sigh of relief. Your import of your googlesheets worked.
+
+```{r }
+gs_ls()
+
+#if you have many googlesheets like I do you may need to search for your sheet
+#tail(gs_ls())
+```
+
+_Register_ the sheet you are going to use (gather information on the sheet from the API) with the sheet title using `gs_title()`.
+
+```{r}
+books <- gs_title('Books Everyone Should Read')
+```
+
+If this did not work for some reason, download [books_alpha.xlsx](https://github.com/eacton/CAGEF/blob/master/Lesson_1/data/books_alpha.xlsx) and save it to your current working directory. Upload the file to Google Drive using `gs_upload()`.
+
+```{r}
+books <- gs_upload(file = "data/books_alpha.xlsx")
+```
+
+
+The structure of the googlesheet is a list.
+
+```{r}
+str(books)
+```
+
+
+How many worksheets are in this spreadsheet and what are their names? To find the number of worksheets, I subset from the list `n_ws`. To get the names of the worksheets, I grab the worksheets `ws` (itself a data frame) and subset the column `ws_title` for their titles. 
+
+```{r }
+books$n_ws
+
+books$ws$ws_title
+```
+
+
+Read in the worksheet you want to access using `gs_read()`. You can do this by specifying the worksheet number or title.
+
+```{r}
+book_sheet1 <- gs_read(books, ws = 1)
+
+```
+
+The last 2 columns don't hold much information. You can specify a subset of this sheet similarly to the excel sheets using `range`. You can do this by selecting the cell columns with `cell_cols`, or by using the cell range.
+
+```{r eval = FALSE}
+booksfilt <- gs_read(books, ws = 1, range = cell_cols(1:14))
+#or
+booksfilt <- gs_read(books, ws = 1, range = "A1:N1000")
+```
+
+Here we specify the worksheet by name, and sort by rows using `cell_rows`. Here are the top recommendations for what to read, when you are no longer in academia.
+
+```{r eval = FALSE}
+books_alpha <- gs_read(books, ws = "Top titles", range = cell_rows(1:10)) 
+
+```
+
+
+One nice thing about the `googlesheets` package is that all of the functions begin with `gs_` which is great for finding functions and tab completion.
+
+
+You can use `gs_download` to save this file to your computer as an excel workbook by giving the title of the googlesheet and the name for the output file. You can overwrite an existing file by selecting `overwrite = TRUE`.
+
+```{r eval=FALSE}
+gs_download(gs_title("Books Everyone Should Read"), to = "books_alpha.xlsx", overwrite = TRUE)
+```
+
+You can upload sheets you've made on your computer to use in googlesheets. This file is now in your google account online.
+
+```{r eval=FALSE}
+books <- gs_upload("books_alpha.xlsx")
+```
