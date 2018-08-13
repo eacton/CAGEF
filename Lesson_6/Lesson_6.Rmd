@@ -113,14 +113,14 @@ cholesterol <- read.delim("data/SISG-Data-cholesterol.txt", sep = " ", header = 
 
 str(cholesterol)
 ```
-This dataset is looking at genetic variants (single nucleotide polymorphisms (SNPs)) and their relationship to cholesterol (chol) and triglycerides (TG) for 3 genes: rs174548 (FADS1 - an enzyme in fatty acid unsaturation), rs4775401 (a candidate SNP), and APOE (a major apolipoprotein important for Alzheimer's disease; variants can also affect cholesterol and triglycerides). 
+This dataset is looking at genetic variants (single nucleotide polymorphisms (SNPs)) and their relationship to cholesterol (chol) and triglycerides (TG) for 3 genes: rs174548 (FADS1 - an enzyme in fatty acid unsaturation), rs4775401 (a candidate SNP), and APOE (a major apolipoprotein important for Alzheimer's disease). 
 
 Note that categorical variables have been encoded. Sex is 0 and 1 instead of 'Male' and 'Female'. rs174548 has 3 possible nucleotide combinations, "C/C", "C/G", and "G/G" which have been encoded as 0, 1, and 2. Similarly rs4775401 has 0, 1, and 2 representing SNPs. APOE has 6 variants labelled starting at 1 (1-6).
 
 
 We are ultimately interested in the relationship between the above genetic variants and cholesterol, while controlling for factors such as age and sex. But let's get our feet wet by starting with the easier __question: is there an association between mean serum cholesterol and age?__
 
-For this question cholesterol is the __dependent__ variable, or the variable being measured. Age is the __independent variable__ that we are changing to determine the effect on cholesterol.
+For this question cholesterol is the __dependent variable__, or the variable being measured. Age is the __independent variable__ that we are changing to determine the effect on cholesterol.
 
 It is always, always, always, a good idea to make an 'exploratory' plot of your data and get an idea of what its distribution looks like. We can start with a simple scatterplot of age and cholesterol.
 
@@ -129,11 +129,36 @@ ggplot(cholesterol, aes(age, chol)) +
   geom_point()
 ```
 
-
-Let's add the mean cholesterol to our plot for reference. This is done by adding `geom_hline` and specifying the value for the 'yintercept'.
+We could also describe our data with some basic summary statistics such as the mean, median, mode, min, max, standard deviation, and variance. R does not have a mode function relating to statistics, but we can figure it out for ourselves.
 
 ```{r}
+cholesterol %>% 
+  summarize(mean = mean(chol), median = median(chol), min = min(chol), 
+            max = max(chol), sd = sd(chol), variance = var(chol)) 
 
+mode <- sort(table(cholesterol$chol), decreasing = TRUE)
+mode[1]
+
+```
+
+Our mean, median and mode are not that different, and so our data is not skewed in either direction. We can also prove this to ourselves by making a quick density plot.
+
+```{r}
+ggplot(cholesterol, aes(chol)) + 
+  geom_density() 
+```
+
+The `quantile()` function will also give us a good sense of the range and distribution of our data.
+
+```{r}
+quantile(cholesterol$chol)
+```
+
+
+
+Going back to our question of if age is related to cholesterol, let's add the mean cholesterol to our plot for reference. This is done by adding `geom_hline` and specifying the value for the 'yintercept'.
+
+```{r}
 ggplot(cholesterol, aes(age, chol)) + 
   geom_point() + 
   geom_hline(yintercept = mean(cholesterol$chol), color = "red")
@@ -150,6 +175,7 @@ We can use an if/else statement (the `ifelse` function) to test: is age greater 
 
 ```{r}
 cholesterol <- cholesterol %>% mutate(age_group = ifelse(test = cholesterol$age > 55, yes = 1, no = 0))
+
 str(cholesterol)
 ```
 
@@ -161,7 +187,8 @@ We can now use a boxplot to look at the distribution of cholesterol for our 2 gr
     
 
 ```{r}
-ggplot(cholesterol, aes(factor(age_group),chol)) + geom_boxplot() +
+ggplot(cholesterol, aes(factor(age_group),chol)) + 
+  geom_boxplot() +
   scale_x_discrete(labels = c("30-55", "56-80")) +
   xlab("age") +
   ylab("cholesterol (mg/dl)")
@@ -185,7 +212,7 @@ $\alpha$ is our p-value, and $\mu$ is the population mean, k is our sample mean.
 
 We will use a simple student's t-test to test the alternative hypothesis that the true difference in means is not equal to 0.
 
-The `t.test` function inputs the variables on which we are performing the test (in vector format), the type of t-test being performed, and the confidence interval. The __confidence interval__ is the interval that will cover the true parameter x% of the time. In the image above the confidence interval covers the pink area, (1-$\alpha$).
+The `t.test` function takes as input the variables on which we are performing the test (in vector format), the type of t-test being performed, and the confidence interval. The __confidence interval__ is the interval that will cover the true parameter x% of the time. In the image above the confidence interval covers the pink area, (1-$\alpha$).
 
 You can alternatively enter your variables in a `formula`, in this case `y ~ x`. The `~` in r language is used to separate the left and right sides of a formula. (You can run a 1-sided t-test by specifiying `alternative = 'greater'` or `alternative = 'less'`). In this case, `alternative = 'two-sided'` and `conf.level = 0.95` are the default parameters and only included for clarity. For now we are assuming that equal variance is true.
 
@@ -314,7 +341,7 @@ _Slopes_
 
 The __interpretation__ in our example is that the slope is the difference in mean serum cholesterol associated with a one year increase in age.
 
-With a straight line we are not, of course, plotting through all of our points, but rather the _mean_ of an outcome in y as a function of x. For example, there are values of cholesterol for about six 50 year-olds, and our line will fall somewhere close to the mean of these values. Values of y have a distribution at a given x, which we have assumed is normally distributed.
+With a straight line we are not, of course, plotting through all of our points, but rather close to the mean of an outcome in y as a function of x. For example, there are values of cholesterol for about six 50 year-olds, and our line will fall somewhere close to the mean of these values. Values of y have a distribution at a given x, which we have assumed is normally distributed.
 
 
 Lastly, in this equation we also have some normally distributed error - sampling error exists in our estimates, because different estimates give different means. 
@@ -399,7 +426,7 @@ lm(y ~ x + I(x^2))
 
 ###Adding extra variables to our model
 
-We are interested in improving our model by adding extra variable we think might have an effect on our outcome values. In the example below, we are adding the independent variables x~1~, x~2~, and each of these terms has their own linear parameter b~1~, b~2~, b~3~.
+We are interested in improving our model by adding extra variable we think might have an effect on our outcome values. In the example below, we are adding the independent variables x~1~, x~2~, and each of these terms has their own linear parameter b~1~ and b~2~, respectively.
 
 _Expression:_ 
 
@@ -458,7 +485,7 @@ The estimated increase in mean serum cholesterol over after one year holding BMI
 
 Before, we were not controlling for BMI. Our estimates of the age associated increase in mean cholesterol is now for subjects with the _same_ BMI and not for subjects with _all_ BMIs.
 
-It looks like both age and BMI are significant. But we might want to verify - did adding BMI actually make our model better?
+It looks like both age and BMI are significant. But we might want to verify - did adding BMI actually make a difference to the model?
 
 We can compare these models with the `anova` function. The output of our model, 'mfit', is an `lm` object. With 2 `lm` objects, the `anova` function tests the _models_ against one another to see if their coefficients are significantly different and prints these results in an analysis of variance table. (Given 1 `lm` object, it will test whether model _terms_ of a model are significant - we will be using the function in this format later.)
 
@@ -468,7 +495,7 @@ anova(fit, mfit)
 
 Our second model is a signifcantly different from our first model. What is this significance based on?
 
-The significance is a probability based on an F test. While the t-test tells if you a single variable is statistically significant, and an __F-test__ tells you if a group of variables is jointly significant. Since the F-test compares the joint effect of all variables together, a large F value means 'something' is significant. F-tests are not used alone because you still need to use a p-value to find out 'what' is significant. 
+The significance is a probability based on an F-test. While the t-test tells if you a single variable is statistically significant, and an __F-test__ tells you if a group of variables is jointly significant. Since the F-test compares the joint effect of all variables together, a large F value means 'something' is significant. F-tests are not used alone because you still need to use a p-value to find out 'what' is significant. 
 
 
 
@@ -492,7 +519,7 @@ In the graph below, there is an interaction between education and ideology. The 
 
 </br>
 
-When testing for an interaction between 2 input variables, the `lm` input uses an asterik '*' instead of a plus sign.
+When testing for an interaction between 2 input variables, the `lm` input takes an asterik '*' instead of a plus sign between the covariates.
 
 _R code:_ 
 
@@ -568,7 +595,7 @@ ggplot(cholesterol, aes(as.factor(rs174548), chol)) + geom_boxplot()
 
 Our genetic factor has 3 groups, and we will be comparing the means for each of these groups. These groups have high variance, and there is a good deal of overlap between them.
 
-To assess wherther the means are equal, the model compares:
+To assess whether the means are equal, the model compares:
 
 - variation between the sample means (MSR)
 - natural variation of the observations within the sample (MSE)
@@ -587,7 +614,7 @@ kable(dat3, "html") %>%
   kable_styling(full_width = FALSE, position = "center")
 ```
 
-Now we can do regression with our dummy variables. The form of this equation should lookk more familiar.
+Now we can do regression with our dummy variables. The form of this equation should look more familiar.
 
 _Expression:_ 
 
@@ -714,10 +741,10 @@ We need to test whether there is an effect of our factors on cholesterol and als
 _Expression:_ 
 
 \begin{equation*}
-Y \verb|~| Normal({\alpha_i} + {\beta_j} + {\gamma_{ij}}, {\sigma^2}) 
+Y \verb|~| Normal({\alpha_i} + {\beta_j}, {\sigma^2}) 
 \end{equation*}
 
-$\alpha$, $\beta$ and $\gamma$ are our categorical variables. _i_ is the level of the first group, and _j_ is the level of the second group.
+$\alpha$ and $\beta$ are our categorical variables. _i_ is the level of the first group, and _j_ is the level of the second group.
 
 As with one-way ANOVA, R models our categorical variables as factors.
 
@@ -731,9 +758,14 @@ The following diagram will help us visualize the differences in coefficients wit
 
 
 In this first scenario, the difference in the means between groups defined by factor B does not depend on the level of factor A and vice versa. This means that there is no interaction, and the lines between the factor groups are parallel. In the second scenario the difference in the means between groups defined by factor B changes when A~2~ is present. There is an interaction and the lines are not parallel.
+
+
+</br>
+</br>
+
+
 ![SISG_2016](img/2wayanova.png){width=500px}
 
-SISG_2016
 
 We can first run a two-way model without testing for interaction.
 
