@@ -26,7 +26,7 @@ output:
 This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This course was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
 
 
-This lesson is the fifth in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
+This lesson is the last in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
 
 
 ![](img/data-science-explore.png)
@@ -64,11 +64,6 @@ Please install and load these packages for the lesson. In this document I will l
 **bold** - heading or a term that is being defined      
 <span style="color:blue">blue text</span> - named or unnamed hyperlink     
 
-***
-
-###Homework
-
-_Discussion: Taking up the Lesson 4 Challenge question_
 
 
 ***
@@ -91,7 +86,7 @@ These are all really important questions that we might ignore as we try to dive 
 
 Load the packages!
 
-```{r message = FALSE, echo = c(1:5)}
+```{r message = FALSE, warning=FALSE, echo = c(1:5)}
 library(tidyverse)
 library(limma)
 library(gee)
@@ -401,11 +396,11 @@ confint(fit)
 
 ##Multiple linear regression
 
-In multiple linear regression we use multiple continuous covariates to predict outcome values. Additional terms can be added in 2 ways.
+In multiple linear regression we use multiple continuous dependent variables to predict outcome values. Additional terms can be added in 2 ways.
 
 ***
 
-###Adding covariates that are powers of a variable (polynomial regression)
+###Adding powers of a variable (polynomial regression)
 
 It was mentioned before that the 'linear' part of linear regression is the linear function of the _parameters_ and not the independent variables. In the example below, the parameters $a$, $b_1$, and $b_2$ are linear even though we have the independent variable has a quadratic component, $x^2$. An example of this could be synthesizing a chemical, where with increasing temperature synthesis progresses with an increasing curve.
 
@@ -519,7 +514,7 @@ In the graph below, there is an interaction between education and ideology. The 
 
 </br>
 
-When testing for an interaction between 2 input variables, the `lm` input takes an asterik '*' instead of a plus sign between the covariates.
+When testing for an interaction between 2 input variables, the `lm` input takes an asterik '*' instead of a plus sign between the dependent variables.
 
 _R code:_ 
 
@@ -897,7 +892,7 @@ anova(mfit2, intfit)
 
 Adding the interaction term did not change the model significantly.
 
-Let's compare the model with age only to the model where sex is a covariate without interaction.
+Let's compare the model with age only to the model where sex is a taken into account without interaction.
 
 ```{r}
 anova(fit, mfit2)
@@ -919,6 +914,41 @@ __Interpretation__
 </div>
 
 Gender doesn't change the relationship between age and cholesterol; these lines are almost parallel (another way to put it is whether you are male or female your cholesterol will on average be increasing by 0.30 mg/dl a year), but there is a different mean serum cholesterol estimate for males vs females that differs by 10.51 dg/ml.
+
+</br>
+
+
+##Review: Models we used today
+
+Before we move on I want to take a step back and quickly review the models and code we've gone through today. Firstly, with our example dataset, and then more generally. I hope you can see that though conceptually different, getting a handle on the code isn't too bad.  
+
+For all of these models we are trying to determine the effect of different variables on cholesterol. The differences are whether we are using continuous data, categorical data, a mixture of data types, and whether there is an interaction (`*`) between our input variables.
+
+We have started with models that assume normally distributed errors, and we will investigate models with non-normal errors in a future lesson.  
+
+
+
+```{r echo = FALSE}
+dat2 <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)"), categorical = c("X", "X", "$\\checkmark$", "$\\checkmark$ $\\checkmark$", "$\\checkmark$"), continuous = c("$\\checkmark$", "$\\checkmark$ $\\checkmark$", "X", "X", "$\\checkmark$"),R_code = c("lm(chol ~ age)", "lm(chol ~ age + BMI), lm(chol ~ age*BMI)", "lm(chol ~ factor(rs174548))", "lm(chol ~ factor(sex) + factor(rs174548)), lm(chol ~ factor(sex)*factor(rs174548))", "lm(chol ~ factor(sex) + age), lm(chol ~ factor(sex)*age) "))
+
+
+kable(dat2, "html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
+
+```
+
+In the table below, our R code for each of the models has been generalized. Here, y is our predictor variable, x is a continuous variable, and f is a categorical variable (factor). 
+
+```{r echo = FALSE}
+dat2 <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)"), R_code = c("lm(y ~ x)", "lm(y ~ x + I(x^2)), lm(y ~ x~1~ + x~2~), lm(y ~ x~1~*x~2~)", "lm(y ~ f)", "lm(y ~ f~1~ + f~2~), lm(y ~ f~1~*f~2~)", "lm(y ~ f + x), lm(y ~ f*x)"))
+
+
+kable(dat2, "html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
+
+```
+
+You need not memorize any of these charts - you may just want to use them to orient yourself in the future. Much of the R code seems the same whether you are doing multiple linear regression, ANOVA or ANCOVA, so it is good to have a reference point.
 
 
 ***
@@ -957,37 +987,7 @@ anova(ancfit, intfit3)
 ```
 
 
-##Review: Models we used today
 
-Before we move on I want to take a step back and quickly review the models and code we've gone through today. Firstly, with our example dataset, and then more generally. I hope you can see that though conceptually different, getting a handle on the code isn't too bad.  
-
-For all of these models we are trying to determine the effect of different variables on cholesterol. The differences are whether we are using continuous data, categorical data, a mixture of data types, and whether there is an interaction (`*`) between our input variables.
-
-We have started with models that assume normally distributed errors, and we will investigate models with non-normal errors in the a future lesson.  
-
-
-
-```{r echo = FALSE}
-dat2 <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)"), categorical = c("X", "X", "$\\checkmark$", "$\\checkmark$ $\\checkmark$", "$\\checkmark$"), continuous = c("$\\checkmark$", "$\\checkmark$ $\\checkmark$", "X", "X", "$\\checkmark$"),R_code = c("lm(chol ~ age)", "lm(chol ~ age + BMI), lm(chol ~ age*BMI)", "lm(chol ~ factor(rs174548))", "lm(chol ~ factor(sex) + factor(rs174548)), lm(chol ~ factor(sex)*factor(rs174548))", "lm(chol ~ factor(sex) + age), lm(chol ~ factor(sex)*age) "))
-
-
-kable(dat2, "html") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
-
-```
-
-In the table below, our R code for each of the models has been generalized. Here, y is our predictor variable, x is a continuous variable, and f is a categorical variable (factor). 
-
-```{r echo = FALSE}
-dat2 <- data.frame(model = c("simple linear regression", "multiple linear regression", "one-way analysis of variance (ANOVA)", "multi-way analysis of variance (ANOVA)", "analysis of covariance (ANCOVA)"), R_code = c("lm(y ~ x)", "lm(y ~ x + I(x^2)), lm(y ~ x~1~ + x~2~), lm(y ~ x~1~*x~2~)", "lm(y ~ f)", "lm(y ~ f~1~ + f~2~), lm(y ~ f~1~*f~2~)", "lm(y ~ f + x), lm(y ~ f*x)"))
-
-
-kable(dat2, "html") %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "left")
-
-```
-
-You need not memorize any of these charts - you may just want to use them to orient yourself in the future. Much of the R code seems the same whether you are doing multiple linear regression, ANOVA or ANCOVA, so it is good to have a reference point.
 
 ##Prediction
 
@@ -1056,33 +1056,26 @@ predict(mfit, newdata = data.frame(BMI = c(21,26,30), age = 60), interval = "pre
 
 __Residuals__ are the differences between the observed response and the predicted response, and can be used to identify poorly fit data points, unequal variance (heteroscedasticity), nonlinear relationships, and examine the normality assumption.
 
-The residuals are found in our  `lm` object, 'fit', which also contains the inputs of our model.
+
+We can plot the residuals vs x, residuals vs y, or a histogram of the residuals to see if there are any patterns. For example, plotting residuals against x (age), should be unstructured and centered at 0. 
+
+
+If the residuals look like they are grouped in one section of the plot, or follow a pattern, then the model is not a good fit (ie. looks quadratic - you would have a nonlinear association). If it looks like a sideways tornado, then errors are increasing with x, and this is non-constant variance.
+
+The residuals are found in our  `lm` object, 'fit', which also contains the inputs of our model; it is a list of 12.
 
 
 ```{r}
 str(fit)
 ```
 
-We can plot the residuals vs x, residuals vs y, and a histogram of the residuals to see if there are any patterns. For example, plotting residuals against x (age), should be unstructured and centered at 0. We can subset the residuals from the list using `$` or `[[ ]]`.
-
-```{r}
-ggplot(cholesterol, aes(x=age, y=fit[['residuals']])) + 
-  geom_point() + 
-  geom_hline(yintercept=0, color="black")
-
-```
-
-If the residuals look like they are grouped in one section of the plot, or follow a pattern, then the model is not a good fit (ie. looks quadratic - you would have a nonlinear association). If it looks like a sideways tornado, then errors are increasing with x, and this is non-constant variance.
-
-
-
-The structure of the `lm` object is a list of 12. We can use the `broom()` package to get information out of linear model objects into the glorious dataframe format that we know and love. This is done using the `augment` function. 
+We can use the `broom()` package to get information out of linear model objects into the glorious dataframe format that we know and love. This is done using the `augment` function. 
 
 ```{r}
 datfit <- augment(fit)
 str(datfit)
 ```
-To make the same plot as above, we simply use .resid and .fitted from our data frame.
+Now that we have a data frame we can plot our residuals (.resid) versus our fitted data (.fitted).
 
 
 ```{r}
@@ -1103,7 +1096,7 @@ ggplot(anfit1, aes(.fitted, .resid, color = as.factor.rs174548.)) +
   geom_hline(yintercept=0, color="black")
 ```
 
-You could 'jitter' the points to see the distribution a bit better, but you can also perform a statistical test of equal variance.
+Instead, you can perform a statistical test of equal variance.
 
 Bartlett's test can test whether or not population (group) variances are the same. We can see if variances are equal in our model of cholesterol as a function of sex by inputting the formula and dataset into the `bartlett.test` function.
 
@@ -1116,12 +1109,15 @@ The p-value is telling us that the variance is not statistically different betwe
 
 ###QQ-plots
 
-__QQ-plots (quantile-quantile)__ are a tool to answer the question: Does our data plausibly come from the (normal) distribution? The data is plotted against a theoretical distribution. Points should fall on the straight line. Anything data points not fitting are moving away from the distribution. 
+__QQ-plots (quantile-quantile)__ are a tool to answer the question: Does our data plausibly come from the (normal) distribution? The data is plotted against a theoretical distribution. Points should fall on the straight line. Any data points not fitting are moving away from the distribution. 
 
-The `qqnorm` function plots our residuals along the y-axis in ascending order, and theoretical quantiles of a normal distribution along the x-axis.
+The `stat_qq` geom from `ggplot2` allows us to plot our residuals along the y-axis in ascending order, and theoretical quantiles of a normal distribution along the x-axis. A straight line can be added to see where residuals fall with `stat_qq_line`.
 
 ```{r}
-qqnorm(datfit$.resid)
+ggplot(datfit, aes(sample = .resid)) +
+  stat_qq() + 
+  stat_qq_line()
+
 ```
 
 This looks pretty straight. We likely have normality of errors.
@@ -1157,7 +1153,9 @@ Our residuals are increasing with increasing values of y.
 What do the residuals look like in a qq-plot?
 
 ```{r}
-qqnorm(datfitTG$.resid) 
+ggplot(datfitTG, aes(sample = .resid)) +
+  stat_qq() + 
+  stat_qq_line()
 ```
 
 Our qqplot points are deviating from the line suggesting a poor fit for our model.
@@ -1209,7 +1207,7 @@ We have the same estimates for our intercept and slope, but our error estimates 
 
 __Use a different model that does not assume constant variance (glm)__
 
-Generalized linear models can deal with non-normal errors as well as non-linearity. They use linker functions to transform nonlinear relationships into linear ones. They will be tackled in a future.
+Generalized linear models can deal with non-normal errors as well as non-linearity. They use linker functions to transform nonlinear relationships into linear ones. 
 
 Breaking the non-normality assumption will have minimal effect on estimates unless in the presence of outliers. Robust regression (ie. least squares) can be used.
 
