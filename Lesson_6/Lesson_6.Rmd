@@ -778,8 +778,8 @@ __Interpretation__
 
 -The estimated mean cholesterol for males in C/C group is the intercept, 175.36 mg/dl.     
 -The estimated difference in mean cholesterol between females and males controlled for genotype is 11.05 mg/dl.     
--The estimated difference in mean betweeen C/G and C/C groups controlled for gender is 7.24 mg/dl.     
--The estimated difference in mean betweeen G/G and C/C groups controlled for gender is 5.18 mg/dl.     
+-The estimated difference in mean between C/G and C/C groups controlled for gender is 7.24 mg/dl.     
+-The estimated difference in mean between G/G and C/C groups controlled for gender is 5.18 mg/dl.     
 
 There is evidence cholesterol is associated with gender (p<0.001).
 
@@ -1223,7 +1223,7 @@ __Challenge:__
 
 </div>
 
-Does the effect of the genetic factor APOE affect cholesterol levels? If so, does this interaction vary depending on a subject's age? Plot the relationship between APOE and cholesterol. Choose your model(s). Interpret your summary statistics. What model did you find 'best' for the job? Can you use any tools to assess whether the assumptions of your model are accurate?
+Does the genetic factor APOE have an effect on cholesterol levels? If so, does this interaction vary depending on a subject's age? Plot the relationship between APOE and cholesterol. Choose your model(s). Interpret your summary statistics. What model did you find 'best' for the job? Can you use any tools to assess whether the assumptions of your model are accurate?
 
 
 
