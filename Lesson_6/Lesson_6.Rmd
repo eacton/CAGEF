@@ -82,7 +82,7 @@ In order to work with our data we need to be able to answer some basic questions
 - How do we compare models? 
 - How do we make a prediction with new values? 
 
-These are all really important questions that we might ignore as we try to dive in and get our answer. Today we are going to slow down a bit and think about our data and our models. 
+These are all really important questions that we may or may not think about as we try to dive in and get our answer as quickly as possible. Today we are going to slow down a bit and think about our data and our models. 
 
 Load the packages!
 
@@ -508,7 +508,7 @@ Y  \verb|~|  Normal(a + b_1x_1 + b_2x_2 + b_3x_1x_2, {\sigma^2})
 
 
 
-In the graph below, there is an interaction between education and ideology. The slope indicating the probability that people will care if sea level rises 20 feet, changes with each education level and each shift in ideology. This interaction is greatest for those of extremely liberal ideology. If there was no interaction with ideology and education, the slopes shown would be parallel. 
+In the graph below, there is an interaction between education and ideology. The slope indicating the probability that people will care if sea level rises 20 feet, changes with each education level and each shift in ideology. If there was no interaction with ideology and education, the slopes shown would be parallel. 
 
 ![](img/GSS_sealevel_interaction.png){width=600px}
 
@@ -1160,6 +1160,87 @@ ggplot(datfitTG, aes(sample = .resid)) +
 
 Our qqplot points are deviating from the line suggesting a poor fit for our model.
 
+
+***
+
+__Challenge:__      
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/04722ac51b800387ee8498fb072834e7.jpg){width=150px}
+
+</div>
+
+Does the genetic factor APOE have an effect on cholesterol levels? If so, does this interaction vary depending on a subject's age? Plot the relationship between APOE and cholesterol. Choose your model(s). Interpret your summary statistics. What model did you find 'best' for the job? Can you use any tools to assess whether the assumptions of your model are accurate? Perform multiple hypothesis testing for the relationship between choleterol and APOE variants. Which relationships are significant? Do these hold after multiple test correction?
+
+
+
+</br>
+
+```{r include = FALSE, echo = FALSE}
+
+apofit <- lm(chol ~ as.factor(APOE), data = cholesterol)
+summary(apofit)
+
+ggplot(cholesterol, aes(x = as.factor(APOE), y = chol)) +
+  geom_boxplot()
+
+apoagefit <- lm(chol ~ as.factor(APOE) + age, data = cholesterol)
+summary(apoagefit)
+
+infit4 <-  lm(chol ~ as.factor(APOE) * age, data = cholesterol)
+summary(infit4)
+
+
+ggplot(cholesterol, aes(x = age, y = chol, color = factor(APOE))) +
+  geom_point() +
+  stat_smooth(method = "lm")
+
+anova(apofit, apoagefit)
+anova(apoagefit, infit4)
+
+agefit <- lm(chol ~ age, data = cholesterol)
+summary(agefit)
+
+anova(agefit, apoagefit)
+
+
+datapofit <- augment(apofit)
+
+ggplot(datapofit, aes(.fitted, .resid)) +
+  geom_point()  +
+  geom_hline(yintercept=0, color="black")
+
+bartlett.test(chol ~ factor(APOE), data = cholesterol)
+
+datapoagefit <- augment(apoagefit)
+
+ggplot(datapoagefit, aes(.fitted, .resid)) +
+  geom_point()  +
+  geom_hline(yintercept=0, color="black")
+
+
+ggplot(datapoagefit, aes(sample = .resid)) +
+  stat_qq() + 
+  stat_qq_line()
+
+#multiple test correction
+mtfit <- lm(chol ~ -1 + as.factor(APOE), data = cholesterol)
+
+Mt <- contrMat(table(cholesterol$APOE), type = "Tukey")
+Mt
+mt <- glht(mtfit, linfct = Mt)
+
+summary(mt, test = adjusted("none"))
+summary(mt, test = adjusted("fdr"))
+summary(mt, test = adjusted("bonferroni"))
+
+#APOE genotype has a significant effect on cholesterol. This relationship remains while holding age constant. There is no significant interaction between APOE genotype and age other than possibly APOE genotype 5, and the models are not significantly different. Therefore the 'best' model includes both APOE genotype and age. A bartlett test tells us that the variances are significantly different between the APOE genotype groups, so the assumption of equal variance is false. We can also see this by plotting the residuals for the model with APOE genotype + age, whose pattern looks like an arrowhead. The qq-plot looks reasonable. For multiple hypothesis testing all variants are different from the APOE genotype 1, and APOE genotype 5 is also significantly different from genotypes 2 and 4. Only the difference between genotype 5 and 2 is lost after multiple test correction.
+```
+
+
+
+***
+
 ##Next Steps (or When Assumptions Fail)
 
 The consequences of violating the assumptions for linear models depends, of course, on the assumption being violated. The worst offence, of course, is having non-linearity of your parameters in which case you are using the wrong model.  
@@ -1205,32 +1286,15 @@ summary(geefit)
 We have the same estimates for our intercept and slope, but our error estimates have now changed.
 (Note: residuals in geefit are the originals.)
 
-__Use a different model that does not assume constant variance (glm)__
+_Use a different model that does not assume constant variance (glm)_
 
-Generalized linear models can deal with non-normal errors as well as non-linearity. They use linker functions to transform nonlinear relationships into linear ones. 
+__Generalized linear models__ can deal with non-normal errors as well as non-linearity. They use linker functions to transform nonlinear relationships into linear ones. 
 
 Breaking the non-normality assumption will have minimal effect on estimates unless in the presence of outliers. Robust regression (ie. least squares) can be used.
 
 Breaking the dependency assumption will have minimal effect on estimates, but the variance will be inaccurate. A different regression model for dependent data should be investigated. 
 
-
 ***
-
-__Challenge:__      
-
-<div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/04722ac51b800387ee8498fb072834e7.jpg){width=150px}
-
-</div>
-
-Does the genetic factor APOE have an effect on cholesterol levels? If so, does this interaction vary depending on a subject's age? Plot the relationship between APOE and cholesterol. Choose your model(s). Interpret your summary statistics. What model did you find 'best' for the job? Can you use any tools to assess whether the assumptions of your model are accurate?
-
-
-
-</br>
-
-***
-
 
 __Resources:__      
 
