@@ -964,8 +964,6 @@ Does the effect of the genetic factor rs174548 differ depending on a subject's a
 
 </br>
 
-***
-
 
 
 ```{r include = FALSE}
@@ -987,6 +985,102 @@ anova(ancfit, intfit3)
 ```
 
 
+***
+
+__Challenge:__      
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/04722ac51b800387ee8498fb072834e7.jpg){width=150px}
+
+</div>
+
+Does the genetic factor APOE have an effect on cholesterol levels? If so, does this interaction vary depending on a subject's age? Plot the relationship between APOE and cholesterol. Choose your model(s). Interpret your summary statistics. What model did you find 'best' for the job? Perform multiple hypothesis testing for the relationship between choleterol and APOE variants. Which relationships are significant? Do these hold after multiple test correction?
+
+
+
+</br>
+
+```{r include = FALSE, echo = FALSE}
+
+apofit <- lm(chol ~ as.factor(APOE), data = cholesterol)
+summary(apofit)
+
+ggplot(cholesterol, aes(x = as.factor(APOE), y = chol)) +
+  geom_boxplot()
+
+apoagefit <- lm(chol ~ as.factor(APOE) + age, data = cholesterol)
+summary(apoagefit)
+
+infit4 <-  lm(chol ~ as.factor(APOE) * age, data = cholesterol)
+summary(infit4)
+
+
+ggplot(cholesterol, aes(x = age, y = chol, color = factor(APOE))) +
+  geom_point() +
+  stat_smooth(method = "lm")
+
+anova(apofit, apoagefit)
+anova(apoagefit, infit4)
+
+agefit <- lm(chol ~ age, data = cholesterol)
+summary(agefit)
+
+anova(agefit, apoagefit)
+
+
+#multiple test correction
+mtfit <- lm(chol ~ -1 + as.factor(APOE), data = cholesterol)
+
+Mt <- contrMat(table(cholesterol$APOE), type = "Tukey")
+Mt
+mt <- glht(mtfit, linfct = Mt)
+
+summary(mt, test = adjusted("none"))
+summary(mt, test = adjusted("fdr"))
+summary(mt, test = adjusted("bonferroni"))
+
+#APOE genotype has a significant effect on cholesterol. This relationship remains while holding age constant. There is no significant interaction between APOE genotype and age other than possibly APOE genotype 5, and the models are not significantly different. Therefore the 'best' model includes both APOE genotype and age. For multiple hypothesis testing all variants are different from the APOE genotype 1, and APOE genotype 5 is also significantly different from genotypes 2 and 4. Only the difference between genotype 5 and 2 is lost after multiple test correction.
+```
+
+***
+
+
+
+__Resources:__      
+
+<https://github.com/ttimbers/lm_and_glm/blob/master/lm_and_glm.Rmd>          
+<https://github.com/seananderson/glmm-course>          
+<http://michael.hahsler.net/SMU/EMIS7331/R/regression.html>     
+<https://ms.mcmaster.ca/~bolker/emdbook/book.pdf>     
+<http://www.differencebetween.net/science/mathematics-statistics/difference-between-ancova-and-regression/>     
+<https://stats.stackexchange.com/questions/77563/linear-model-fit-seems-off-in-r>          
+<https://www.biostat.washington.edu/suminst/archives/SISG2016/SM1604>     
+<https://ms.mcmaster.ca/~bolker/>         
+<http://www.mathnstuff.com/math/spoken/here/2class/90/htest.htm>
+
+</br>
+</br>
+
+
+#Post-Lesson Assessment
+***
+
+Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
+https://www.surveymonkey.com/r/3RKC6MP
+
+</br>
+
+***
+
+</br>
+
+Thanks for coming!!!
+
+![](img/rstudio-bomb.png){width=300px}
+
+***
+
+#Appendix
 
 
 ##Prediction
@@ -1047,6 +1141,8 @@ For our multiple linear regression model explaining cholesterol as a function of
 ```{r}
 predict(mfit, newdata = data.frame(BMI = c(21,26,30), age = 60), interval = "prediction", se.fit = TRUE)
 ```
+
+
 
 
 ##Assessing the performance of the model (feedback)
@@ -1170,8 +1266,7 @@ __Challenge:__
 
 </div>
 
-Does the genetic factor APOE have an effect on cholesterol levels? If so, does this interaction vary depending on a subject's age? Plot the relationship between APOE and cholesterol. Choose your model(s). Interpret your summary statistics. What model did you find 'best' for the job? Can you use any tools to assess whether the assumptions of your model are accurate? Perform multiple hypothesis testing for the relationship between choleterol and APOE variants. Which relationships are significant? Do these hold after multiple test correction?
-
+For a) the anova model of the effect of the genetic factor APOE on cholesterol levels and b) the ancova model of age + APOE genotype on cholesterol levels: can you use any tools to assess whether the assumptions of your model are accurate? 
 
 
 </br>
@@ -1181,27 +1276,8 @@ Does the genetic factor APOE have an effect on cholesterol levels? If so, does t
 apofit <- lm(chol ~ as.factor(APOE), data = cholesterol)
 summary(apofit)
 
-ggplot(cholesterol, aes(x = as.factor(APOE), y = chol)) +
-  geom_boxplot()
-
 apoagefit <- lm(chol ~ as.factor(APOE) + age, data = cholesterol)
 summary(apoagefit)
-
-infit4 <-  lm(chol ~ as.factor(APOE) * age, data = cholesterol)
-summary(infit4)
-
-
-ggplot(cholesterol, aes(x = age, y = chol, color = factor(APOE))) +
-  geom_point() +
-  stat_smooth(method = "lm")
-
-anova(apofit, apoagefit)
-anova(apoagefit, infit4)
-
-agefit <- lm(chol ~ age, data = cholesterol)
-summary(agefit)
-
-anova(agefit, apoagefit)
 
 
 datapofit <- augment(apofit)
@@ -1223,23 +1299,11 @@ ggplot(datapoagefit, aes(sample = .resid)) +
   stat_qq() + 
   stat_qq_line()
 
-#multiple test correction
-mtfit <- lm(chol ~ -1 + as.factor(APOE), data = cholesterol)
 
-Mt <- contrMat(table(cholesterol$APOE), type = "Tukey")
-Mt
-mt <- glht(mtfit, linfct = Mt)
-
-summary(mt, test = adjusted("none"))
-summary(mt, test = adjusted("fdr"))
-summary(mt, test = adjusted("bonferroni"))
-
-#APOE genotype has a significant effect on cholesterol. This relationship remains while holding age constant. There is no significant interaction between APOE genotype and age other than possibly APOE genotype 5, and the models are not significantly different. Therefore the 'best' model includes both APOE genotype and age. A bartlett test tells us that the variances are significantly different between the APOE genotype groups, so the assumption of equal variance is false. We can also see this by plotting the residuals for the model with APOE genotype + age, whose pattern looks like an arrowhead. The qq-plot looks reasonable. For multiple hypothesis testing all variants are different from the APOE genotype 1, and APOE genotype 5 is also significantly different from genotypes 2 and 4. Only the difference between genotype 5 and 2 is lost after multiple test correction.
+#A bartlett test tells us that the variances are significantly different between the APOE genotype groups, so the assumption of equal variance is false. We can also see this by plotting the residuals for the model with APOE genotype + age, whose pattern looks like an arrowhead. The qq-plot looks reasonable.
 ```
 
 
-
-***
 
 ##Next Steps (or When Assumptions Fail)
 
@@ -1295,32 +1359,3 @@ Breaking the non-normality assumption will have minimal effect on estimates unle
 Breaking the dependency assumption will have minimal effect on estimates, but the variance will be inaccurate. A different regression model for dependent data should be investigated. 
 
 ***
-
-__Resources:__      
-
-<https://github.com/ttimbers/lm_and_glm/blob/master/lm_and_glm.Rmd>          
-<https://github.com/seananderson/glmm-course>          
-<http://michael.hahsler.net/SMU/EMIS7331/R/regression.html>     
-<https://ms.mcmaster.ca/~bolker/emdbook/book.pdf>     
-<http://www.differencebetween.net/science/mathematics-statistics/difference-between-ancova-and-regression/>     
-<https://stats.stackexchange.com/questions/77563/linear-model-fit-seems-off-in-r>          
-<https://www.biostat.washington.edu/suminst/archives/SISG2016/SM1604>     
-<https://ms.mcmaster.ca/~bolker/>         
-<http://www.mathnstuff.com/math/spoken/here/2class/90/htest.htm>
-
-#Post-Lesson Assessment
-***
-
-Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
-https://www.surveymonkey.com/r/3RKC6MP
-
-</br>
-
-***
-
-</br>
-
-Thanks for coming!!!
-
-![](img/rstudio-bomb.png){width=300px}
-

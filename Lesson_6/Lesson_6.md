@@ -1514,13 +1514,67 @@ Does the effect of the genetic factor rs174548 differ depending on a subject's a
 
 </br>
 
+
+
+
+
+
+***
+
+__Challenge:__      
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/04722ac51b800387ee8498fb072834e7.jpg){width=150px}
+
+</div>
+
+Does the genetic factor APOE have an effect on cholesterol levels? If so, does this interaction vary depending on a subject's age? Plot the relationship between APOE and cholesterol. Choose your model(s). Interpret your summary statistics. What model did you find 'best' for the job? Perform multiple hypothesis testing for the relationship between choleterol and APOE variants. Which relationships are significant? Do these hold after multiple test correction?
+
+
+
+</br>
+
+
+
 ***
 
 
 
+__Resources:__      
+
+<https://github.com/ttimbers/lm_and_glm/blob/master/lm_and_glm.Rmd>          
+<https://github.com/seananderson/glmm-course>          
+<http://michael.hahsler.net/SMU/EMIS7331/R/regression.html>     
+<https://ms.mcmaster.ca/~bolker/emdbook/book.pdf>     
+<http://www.differencebetween.net/science/mathematics-statistics/difference-between-ancova-and-regression/>     
+<https://stats.stackexchange.com/questions/77563/linear-model-fit-seems-off-in-r>          
+<https://www.biostat.washington.edu/suminst/archives/SISG2016/SM1604>     
+<https://ms.mcmaster.ca/~bolker/>         
+<http://www.mathnstuff.com/math/spoken/here/2class/90/htest.htm>
+
+</br>
+</br>
 
 
+#Post-Lesson Assessment
+***
 
+Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
+https://www.surveymonkey.com/r/3RKC6MP
+
+</br>
+
+***
+
+</br>
+
+Thanks for coming!!!
+
+![](img/rstudio-bomb.png){width=300px}
+
+***
+
+#Appendix
 
 
 ##Prediction
@@ -1610,6 +1664,8 @@ predict(mfit, newdata = data.frame(BMI = c(21,26,30), age = 60), interval = "pre
 ## $residual.scale
 ## [1] 21.34293
 ```
+
+
 
 
 ##Assessing the performance of the model (feedback)
@@ -1723,7 +1779,7 @@ ggplot(datfit, aes(.fitted, .resid)) +
   geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_6_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+![](Lesson_6_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
 
 
 You can plot the fitted and residual values with a categorical variable, but it is sometimes difficult to view patterns. For example, here is what plotting the residuals for our model of cholesterol as a function of genotype would look like.
@@ -1737,7 +1793,7 @@ ggplot(anfit1, aes(.fitted, .resid, color = as.factor.rs174548.)) +
   geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_6_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
+![](Lesson_6_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
 
 Instead, you can perform a statistical test of equal variance.
 
@@ -1772,7 +1828,7 @@ ggplot(datfit, aes(sample = .resid)) +
   stat_qq_line()
 ```
 
-![](Lesson_6_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
+![](Lesson_6_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
 
 This looks pretty straight. We likely have normality of errors.
 
@@ -1785,7 +1841,7 @@ ggplot(cholesterol, aes(age, TG)) +
   stat_smooth(method = "lm")
 ```
 
-![](Lesson_6_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
+![](Lesson_6_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
 
 Write a linear model for triglyceride levels as a function of age. Use `broom` to get the output of the `lm` object into data frame format.
 
@@ -1806,7 +1862,7 @@ ggplot(datfitTG, aes(.fitted, .resid)) +
   geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_6_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
+![](Lesson_6_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
 
 Our residuals are increasing with increasing values of y. 
 
@@ -1819,7 +1875,7 @@ ggplot(datfitTG, aes(sample = .resid)) +
   stat_qq_line()
 ```
 
-![](Lesson_6_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
+![](Lesson_6_files/figure-html/unnamed-chunk-57-1.png)<!-- -->
 
 Our qqplot points are deviating from the line suggesting a poor fit for our model.
 
@@ -1833,8 +1889,7 @@ __Challenge:__
 
 </div>
 
-Does the genetic factor APOE have an effect on cholesterol levels? If so, does this interaction vary depending on a subject's age? Plot the relationship between APOE and cholesterol. Choose your model(s). Interpret your summary statistics. What model did you find 'best' for the job? Can you use any tools to assess whether the assumptions of your model are accurate? Perform multiple hypothesis testing for the relationship between choleterol and APOE variants. Which relationships are significant? Do these hold after multiple test correction?
-
+For a) the anova model of the effect of the genetic factor APOE on cholesterol levels and b) the ancova model of age + APOE genotype on cholesterol levels: can you use any tools to assess whether the assumptions of your model are accurate? 
 
 
 </br>
@@ -1842,8 +1897,6 @@ Does the genetic factor APOE have an effect on cholesterol levels? If so, does t
 
 
 
-
-***
 
 ##Next Steps (or When Assumptions Fail)
 
@@ -1897,7 +1950,7 @@ ggplot(logdat, aes(.fitted, .resid)) +
   geom_hline(yintercept=0, color="black")
 ```
 
-![](Lesson_6_files/figure-html/unnamed-chunk-59-1.png)<!-- -->
+![](Lesson_6_files/figure-html/unnamed-chunk-60-1.png)<!-- -->
 
 We corrected the non-constant variance issue, but it is harder to interpret our model. 
 
@@ -1971,32 +2024,3 @@ Breaking the non-normality assumption will have minimal effect on estimates unle
 Breaking the dependency assumption will have minimal effect on estimates, but the variance will be inaccurate. A different regression model for dependent data should be investigated. 
 
 ***
-
-__Resources:__      
-
-<https://github.com/ttimbers/lm_and_glm/blob/master/lm_and_glm.Rmd>          
-<https://github.com/seananderson/glmm-course>          
-<http://michael.hahsler.net/SMU/EMIS7331/R/regression.html>     
-<https://ms.mcmaster.ca/~bolker/emdbook/book.pdf>     
-<http://www.differencebetween.net/science/mathematics-statistics/difference-between-ancova-and-regression/>     
-<https://stats.stackexchange.com/questions/77563/linear-model-fit-seems-off-in-r>          
-<https://www.biostat.washington.edu/suminst/archives/SISG2016/SM1604>     
-<https://ms.mcmaster.ca/~bolker/>         
-<http://www.mathnstuff.com/math/spoken/here/2class/90/htest.htm>
-
-#Post-Lesson Assessment
-***
-
-Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
-https://www.surveymonkey.com/r/3RKC6MP
-
-</br>
-
-***
-
-</br>
-
-Thanks for coming!!!
-
-![](img/rstudio-bomb.png){width=300px}
-
