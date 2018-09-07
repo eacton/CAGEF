@@ -1,5 +1,7 @@
 #### Lesson 5 - Plot all the things! From Data Exploration to Publication-Quality Figures
 
+(The entire Lesson 5 folder can be downloaded [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/eacton/CAGEF/tree/master/Lesson_5) thanks to DownGit)
+
 **Objective:** At the end of this session you will be able to use ggplot2 to make a ton of different types of plots with your data for both for data exploration and for publication-quality figures.
 
 *Intro to the Grammar of Graphics*

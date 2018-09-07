@@ -1,5 +1,7 @@
 #### Lesson 6 - Linear Regression, Multiple Linear Regression, ANOVA, ANCOVA: Choosing the Best Model for the Job
 
+(The entire Lesson 6 folder can be downloaded [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/eacton/CAGEF/tree/master/Lesson_6) thanks to DownGit)
+
 **Objective:** At the end of this session you will be able to perform simple and multiple linear regression, one- and multiway analysis of variance (ANOVA) and analysis of covariance (ANCOVA). You will be able to interpret the statistics that come out of this model, be cognizant of the assumptions the model makes, and use an F-test to select the best model for the job.
 
 *How we Evaluate which Model to Use*

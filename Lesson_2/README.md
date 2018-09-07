@@ -1,5 +1,7 @@
 #### Lesson 2 - Basic Life Skills: How to Read, Write, and Manipulate (Your Data)
 
+(The entire Lesson 2 folder can be downloaded [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/eacton/CAGEF/tree/master/Lesson_2) thanks to DownGit)
+
 **Objective:** At the end of this session you will be able to use the dplyr package to subset and manipulate your data and to perform simple calculations. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
 
 *Reading in and writing data*
