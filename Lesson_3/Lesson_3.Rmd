@@ -80,7 +80,7 @@ These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Le
 
 
 
-__Objective:__ At the end of this session you will know the principles of tidy data, and be able to subset and transform your data to perform simple calculations.
+__Objective:__ At the end of this session you will know the principles of tidy data, and be able to subset and transform your data to perform simple calculations. You will be able to add new rows and columns to your data frame.
 
 ***
 
