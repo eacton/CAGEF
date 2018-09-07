@@ -69,8 +69,7 @@ These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Le
 ***
 
 
-__Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
-
+__Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to install and load packages.
 ***
 
 ##Installing R and RStudio
