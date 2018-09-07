@@ -65,14 +65,14 @@ Location: 25 Willcocks St, Room 4035
 
 ## Content
 
-Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment
+[Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment](https://github.com/eacton/CAGEF/tree/master/Lesson_1)
 
-Lesson 2 - Basic Life Skills: How to Read, Write, and Manipulate (Your Data)
+[Lesson 2 - Basic Life Skills: How to Read, Write, and Manipulate (Your Data)](https://github.com/eacton/CAGEF/tree/master/Lesson_2)
 
-Lesson 3 - Intro to Tidy Data: Go Long!
+[Lesson 3 - Intro to Tidy Data: Go Long!](https://github.com/eacton/CAGEF/tree/master/Lesson_3)
 
-Lesson 4 - Of Data Cleaning and Documentation - Conquer Regular Expressions and Challenge yourself with a 'Real' Dataset
+[Lesson 4 - Of Data Cleaning and Documentation - Conquer Regular Expressions and Challenge yourself with a 'Real' Dataset](https://github.com/eacton/CAGEF/tree/master/Lesson_4)
 
-Lesson 5 - Plot all the things! From Data Exploration to Publication-Quality Figures
+[Lesson 5 - Plot all the things! From Data Exploration to Publication-Quality Figures](https://github.com/eacton/CAGEF/tree/master/Lesson_5)
 
-Lesson 6 - Linear Regression, Multiple Linear Regression, ANOVA, ANCOVA: Choosing the Best Model for the Job
+[Lesson 6 - Linear Regression, Multiple Linear Regression, ANOVA, ANCOVA: Choosing the Best Model for the Job](https://github.com/eacton/CAGEF/tree/master/Lesson_6)
