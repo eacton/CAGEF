@@ -1,19 +1,24 @@
-#### Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment and Getting your Data In and Out of R
+#### Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment
 
-**Objective:** At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
+**Objective:** At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to install and load packages.
 
 *Quick Intro to the R Environment*
 
--   setting working directory (also, absolute and relative paths)
+-   Source, Console, Environment, and Viewer panes
 -   check out variables in the global environment and viewer
 -   changing global options
 -   how to get help
+
+*Quick Intro to setting you working directory*
+
+-   absolute and relative paths
 
 *Making Life Easier*
 
 -   trouble-shooting basics
 -   annotating your code
 -   finding answers online
+-   best practices
 
 *Quick Intro to R Data Structures* - ie. vectors, matrices, data frames, lists
 
@@ -24,14 +29,9 @@
 -   transpose a matrix, t()
 -   how to do simple mathematical calculations (+, - , ^, \*, /)
 -   simple calculation using apply()
--   a primer on missing data
 
-*Installing and importing libraries*
+*A primer on missing data*
+
+*Installing and loading libraries*
 
 -   from CRAN, Bioconductor, GitHub
-
-*Reading in data & writing data*
-
--   read.delim(), read.csv(), read\_csv(), readxl(), gs\_read()
--   look at help files for the differences in function defaults
--   corresponding write fxns
