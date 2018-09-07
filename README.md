@@ -45,15 +45,17 @@ Grades in this module will be determined by a combination of participation in in
 
 #### Pre-requisites
 
-Access to a laptop computer at each module that can connect to the internet.; 2) R and R-Studio installed (https://cloud.r-project.org/ and https://www.rstudio.com/products/rstudio/download/). There will be some challenge questions as well as multiple choice questions on Socrative; a class key will be provided in class. 
+Access to a laptop computer to bring to class is REQUIRED with R and R-Studio installed (https://cloud.r-project.org/ and https://www.rstudio.com/products/rstudio/download/). There multiple choice questions on Socrative which requires an internet connection; a class key will be provided in class. Participation is required as part of your final grade. 
+
+As preparatory material for the course, students should install swirl (install.packages(‘swirl’)) and complete R Programming 1: Basic Building Blocks, 3: Sequences of Numbers, 4: Vectors, 7: Matrices and Data Frames.
 
 #### Reading materials
 
-As preparatory material for the course, students should install swirl (install.packages(‘swirl’)) and complete R Programming 1: Basic Building Blocks, 3: Sequences of Numbers, 4: Vectors, 7: Matrices and Data Frames. A reference throughout the course will be R for Data Science (http://r4ds.had.co.nz/).
+A reference throughout the course will be R for Data Science (http://r4ds.had.co.nz/).
 
 #### Website
 
-All lesson materials and datasets for the course are found at https://github.com/eacton/CAGEF. Assignments will be submitted to a course Dropbox.
+All lesson materials and datasets for the course are found at https://github.com/eacton/CAGEF. Each lesson README page (linked to in 'Content' below) has a link to download the lesson folder. Assignments will be submitted to a course Dropbox.
 
 #### Office Hours
 
