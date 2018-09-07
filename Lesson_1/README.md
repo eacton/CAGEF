@@ -1,5 +1,7 @@
 #### Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment
 
+(The entire Lesson 1 folder can be downloaded [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/eacton/CAGEF/tree/master/Lesson_1) thanks to DownGit)
+
 **Objective:** At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to install and load packages.
 
 *Quick Intro to the R Environment*
