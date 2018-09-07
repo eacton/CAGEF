@@ -1,8 +1,8 @@
 
 # Welcome to CSB1020H/F - Introduction to R for Data Science!
 
-![](CSB_banner.png){width=400px}
-![](CAGEF_new.png){width=400px}
+![](CSB_banner.png)
+![](CAGEF_new.png)
 
 CAGEF Training & Outreach Material by Erica Acton (erica.acton@utoronto.ca)
 
@@ -58,6 +58,7 @@ All lesson materials and datasets for the course are found at https://github.com
 #### Office Hours
 
 By appointment: e-mail erica.acton@utoronto.ca to make an appointment. 
+
 Location: 25 Willcocks St, Room 4035
 
 ***
