@@ -1,13 +1,19 @@
 ---
-title: "Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment"
-output: 
-  html_document:
-          keep_md: yes
-          toc: TRUE
-          toc_depth: 3
+title: 'Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment'
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
   html_notebook:
-          toc: TRUE
-          toc_depth: 3
+    toc: yes
+    toc_depth: 3
+  html_document:
+    keep_md: yes
+    toc: yes
+    toc_depth: 3
+  word_document:
+    toc: yes
+    toc_depth: '3'
 ---
 ***
 
@@ -17,11 +23,11 @@ output:
 
 </br>
 
-##A quick intro to the intro to R Lesson Series
+##A quick intro to the Introduction to R for Data Science
 
 </br>
 
-This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This course was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
+This 'Introduction to R for Data Science' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This CSB1020 was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
 
 
 
@@ -35,7 +41,7 @@ This lesson is the first in a 6-part series. The idea is that at the end of the 
 How do we get there? Today we are going to be learning about the basic data structures in R, get cozy with the R environment, and learn how to get help when you are stuck. Because everyone gets stuck. A lot. Then you will learn how to get your data in and out of R. Next week we will learn how to tidy our data, subset and merge data and generate descriptive statistics. The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. After that, we will make all sorts of plots - from simple data exploration to interactive plots - this is always a fun lesson. And then lastly, we will learn to write some functions, which really can save you time and help scale up your analyses.
 
 
-![Henrik Kniberg, refurbished by blog.fastmonkeys.com](img/spotify-howtobuildmvp.gif)
+![Henrik Kniberg, refurbished by blog.fastmonkeys.com](img/spotify-howtobuildmvp.png)
 
 </br>
 
@@ -58,18 +64,15 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 
 ####Data Files Used in This Lesson
 
--ENV_pitlatrine.csv     
--books_alpha.xlsx     
--adult_income.tsv     
+Lesson files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_1/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
 
-These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_1/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
-
-
+Or click on the blue hyperlink at the start of the README.md at <https://github.com/eacton/CAGEF/tree/master/Lesson_1> to download the entire folder at DownGit.
 
 ***
 
 
 __Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to install and load packages.
+
 ***
 
 ##Installing R and RStudio
@@ -211,7 +214,7 @@ Why???
 
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/real_programmers.jpg)
+![](img/real_programmers.jpg){width=300px}  
 </div>
  
 
@@ -293,7 +296,7 @@ __Beginner Advice__
 
 Try to solve a problem yourself, but set a 30 minute cutoff on being stuck. At this level, many people have had and solved your problem. Beginners get frustrated because they get stuck and take hours to solve a problem themselves. Set your limit, stay within it, then go online and get help.
 </br>
-</br>
+
 
 ***
 
@@ -319,7 +322,8 @@ _Asking a question_
 
 </br>
 
-![](img/StackOverflow.png)
+
+![](img/StackOverflow.png){width=400px}
 
 </br>
 
@@ -389,7 +393,7 @@ You can set your working directory by:
 
 
 ***
-__Challenge__ 
+ 
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
 ![](img/turtle_challenge.jpg){width=100px}
@@ -397,16 +401,9 @@ __Challenge__
 
 </br>
 
-Assume you are in the _Tables_ folder. Which is NOT a valid way to get to the _Thesis_ folder?
+__Challenge Question: Socrative__
 
-- `setwd("../../ewan/Thesis")`
-- `setwd("~/ewan/Thesis")`
-- `setwd("../brad/../ewan/Thesis")`
-- `setwd("./../../ewan/Thesis")`
-- `setwd("/home/ewan/Thesis")`
-- They are all valid, stop messing with me.
-
-Follow-up: Which are the absolute paths?
+</br>
 
 </br>
 
@@ -481,9 +478,22 @@ vec_mixed
 
 R will _coerce_ your vector to be of one data type, in this case the type that is most inclusive is a character vector. 
 
+***
+ 
 
-__Socrative Question__
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/turtle_challenge.jpg){width=100px}
+</div>
 
+</br>
+
+__Challenge Question: Socrative x 2__
+
+</br>
+
+</br>
+
+***
 
 I am highlighting this for a couple of reasons. Keep your data types in mind. It is good practice to look at your object or the global environment to make sure the object that you just made is what you think it is. Secondly, it can be useful for data analysis to be able to switch from TRUE/FALSE to 1/0, and it is pretty easy, as we have just seen.
 
@@ -600,6 +610,7 @@ __Challenge__
 </div>
 Make a 4 x 4 matrix that looks like this, using the `seq()` function at least once. 
 
+
 <pre>
 2   4   6   8
 10  12  3   6
@@ -607,9 +618,11 @@ Make a 4 x 4 matrix that looks like this, using the `seq()` function at least on
 0   1   0   1
 </pre>
 
+</br>
+
 ***
 
-```{r include = FALSE}
+```{r include = FALSE, eval = FALSE}
 matrix(c(seq(from = 2, to = 12, by = 2), seq(3,12,3), rep(seq(0,1,1), 3)), nrow = 4, ncol = 4, byrow = TRUE)
 matrix(c(seq(from = 2, to = 12, by = 2), seq(3,12,3), c(0,1,0,1,0,1)), nrow = 4, ncol = 4, byrow = TRUE)
 matrix(c(seq(from = 2, to = 12, by = 2), seq(3,12,3), rep(c(0,1), 3)), nrow = 4, ncol = 4, byrow = TRUE)
@@ -713,6 +726,8 @@ What is a _factor_?
 
 A factor is a _class_ of object used to encode a character vector into categories. This will become clear with a bit more data, so lets make our data frame larger by adding rows. We can only do this if the data we want to add has the same number of columns. How many rows and columns does this new data frame have?
 
+</br>
+
 ```{r}
 dat_large <-  rbind(dat, dat, dat)
 
@@ -749,12 +764,16 @@ __Challenge__
 
 Look up the factor function. Use it to make 'bacteria' the first level, 'virus' the second level, and 'archaea' the third level for the data frame 'dat'. Bonus if you can make the level numbers match (1,2,3 instead of 2,3,1). Use functions from the lesson to make sure your answer is correct. 
 
-</br>     
-</br>     
+</br>
+
+</br>
+
+</br>
+    
 
 ***
 
-```{r include = FALSE}
+```{r include = FALSE, eval = FALSE}
 #this is okay - but be aware of alphabetical order
 dat$character <- factor(dat$character, levels = c('bacteria', 'virus', 'archaea'))
 #archaea, bacteria, virus
@@ -991,7 +1010,10 @@ __Challenge__
 Use the `apply()` function to multiply the counts for each gene by 3.
 
 </br>
+
 </br>     
+
+</br>
 
 ***
 
@@ -1169,13 +1191,13 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Install and load the packages `tidyverse` and `limma`.
+Install and load the packages `tidyverse` and `readxl`.
 
 </br>
 
 </br>
 
-
+</br>
 
 ```{r include = FALSE, eval = FALSE}
 
