@@ -47,7 +47,7 @@ Grades in this module will be determined by a combination of participation in in
 
 Access to a laptop computer to bring to class is REQUIRED with R and R-Studio installed (https://cloud.r-project.org/ and https://www.rstudio.com/products/rstudio/download/). There multiple choice questions on Socrative which requires an internet connection; a class key will be provided in class. Participation is required as part of your final grade. 
 
-As preparatory material for the course, students should install swirl (install.packages(‘swirl’)) and complete R Programming 1: Basic Building Blocks, 3: Sequences of Numbers, 4: Vectors, 7: Matrices and Data Frames.
+As preparatory material for the course, students should install swirl (install.packages(‘swirl’)). When you have installed swirl, type library(swirl) and follow the prompts (ie. type what it tells you to type). From list 1 - R Programming, complete 1: Basic Building Blocks, 3: Sequences of Numbers, 4: Vectors, 7: Matrices and Data Frames.
 
 #### Reading materials
 
