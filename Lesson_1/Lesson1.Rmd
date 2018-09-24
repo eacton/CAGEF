@@ -1,17 +1,11 @@
 ---
 title: 'Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment'
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: '3'
-  html_notebook:
-    toc: yes
-    toc_depth: 3
   html_document:
     keep_md: yes
     toc: yes
     toc_depth: 3
-  word_document:
+  pdf_document:
     toc: yes
     toc_depth: '3'
 ---
@@ -762,7 +756,7 @@ __Challenge__
 ![](img/turtle_challenge.jpg){width=100px}
 </div>
 
-Look up the factor function. Use it to make 'bacteria' the first level, 'virus' the second level, and 'archaea' the third level for the data frame 'dat'. Bonus if you can make the level numbers match (1,2,3 instead of 2,3,1). Use functions from the lesson to make sure your answer is correct. 
+Look up the factor function. Use it to make 'bacteria' the first level, 'virus' the second level, and 'archaea' the third level for the data frame 'dat_large'. Bonus if you can make the level numbers match (1,2,3 instead of 2,3,1). Use functions from the lesson to make sure your answer is correct. 
 
 </br>
 
@@ -774,20 +768,20 @@ Look up the factor function. Use it to make 'bacteria' the first level, 'virus' 
 ***
 
 ```{r include = FALSE, eval = FALSE}
-#this is okay - but be aware of alphabetical order
-dat$character <- factor(dat$character, levels = c('bacteria', 'virus', 'archaea'))
-#archaea, bacteria, virus
-#2,3,1
+#this is okay
+dat_large$character <- factor(dat_large$character, levels = c('bacteria', 'virus', 'archaea'))
+#bacteria, virus, archaea
+#1,2,3
 
 #this is okay, what we wanted except implies a < relationship
 #class is actually 'ordered' 'factor'
 #Ordered factors differ from factors only in their class, but methods and the model-fitting functions treat the two classes quite differently.
-dat$character <- factor(dat$character, levels = c('bacteria', 'virus', 'archaea'), ordered = TRUE)
+dat_large$character <- factor(dat_large$character, levels = c('bacteria', 'virus', 'archaea'), ordered = TRUE)
 #bacteria, virus, archaea
-#1,2,3
+#1 < 2 < 3
 
 #this is super not okay
-dat$character <- factor(dat$character, labels = c('bacteria', 'virus', 'archaea'))
+dat_large$character <- factor(dat_large$character, labels = c('bacteria', 'virus', 'archaea'))
 #bacteria, virus, archaea
 #BUT named levels above, therefore
 #bacteria = archaea, virus = bacteria, archaea = virus
@@ -796,12 +790,14 @@ dat$character <- factor(dat$character, labels = c('bacteria', 'virus', 'archaea'
 #virus, archaea, bacteria
 
 #this is okay - what we wanted
-dat$character <- factor(dat$character, levels = c('bacteria', 'virus', 'archaea'), labels = c('bacteria', 'virus', 'archaea'))
+dat_large$character <- factor(dat_large$character, levels = c('bacteria', 'virus', 'archaea'), labels = c('bacteria', 'virus', 'archaea'))
 
 #bacteria, virus, archaea
 #1,2,3
 levels(dat$character)
-str(dat)
+
+#Example
+table(dat_large$character)
 
 #if this isn't working for people it is likely due to the fact that labels inherit from prior factor levels
 #have them remake the original dat and then try again 
