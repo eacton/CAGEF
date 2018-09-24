@@ -1,12 +1,6 @@
 ---
 title: 'Lesson 2 - Basic Life Skills: How to Read, Write, and Manipulate (Your Data)'
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: '3'
-  html_notebook:
-    toc: yes
-    toc_depth: 3
   html_document:
     keep_md: yes
     toc: yes
@@ -18,11 +12,11 @@ output:
 
 </br>
 
-##A quick intro to the intro to R Lesson Series
+##A quick intro to the Introduction to R for Data Science
 
 </br>
 
-This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This course was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
+This 'Introduction to R for Data Science' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This CSB1020 was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
 
 
 
@@ -60,10 +54,10 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 
 The following packages are used in this lesson:
 
-`dplyr`
-`readr`
-`readxl`
-`tibble`
+`dplyr`     
+`readr`     
+`readxl`     
+`tibble`     
 (`googlesheets`- optional)
 
 Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
@@ -73,11 +67,13 @@ Please install and load these packages for the lesson. In this document I will l
 ####Data Files Used in This Lesson
 
 -ENV_pitlatrine.csv     
--gapminder_wide.csv         
 -SPE_pitlatrine.csv     
+-books.alpha.xlsx     
+-adult_income.tsv
 
 These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_2/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
 
+Or click on the blue hyperlink at the start of the README.md at <https://github.com/eacton/CAGEF/tree/master/Lesson_2> to download the entire folder at DownGit.
 
 ***
 
@@ -118,17 +114,18 @@ meta <- read.table(file = "data/ENV_pitlatrine.csv")
 
 To see the result, we can look at 'meta' in the Environment pane and see that there are 82 observations of one variable. If we click on the arrow next to 'meta' we can now see that we have a column 'V1' and the variable type is a factor. We can also hover the mouse over the column name for this information. 
 
-We can click on 'meta' in the Environment pane or type `View(meta)` in the Console to open a spreadsheet-like view of 'meta' in a new tab. `head()` will show us the first 6 rows of our data frame. `tail()` would show the last 6 rows.
+We can click on 'meta' in the Environment pane or type `View(meta)` in the Console to open a spreadsheet-like view of 'meta' in a new tab. This is pretty ugly looking. Why? 
 
-```{r}
-head(meta)
-```
 
-This is pretty ugly looking. Why?
 In the help file the default `sep` or what is separating columns is expected to be a space. We need to use specify a comma instead.  
 
 ```{r}
 meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",")
+```
+
+We can either inspect meta again in the spreadsheet-like view or `head()` will show us the first 6 rows of our data frame. `tail()` would show the last 6 rows.
+
+```{r}
 head(meta)
 ```
 
@@ -321,7 +318,8 @@ Try reading in one of your own datasets. Write it to a different file format.
 
 ***
 
-##A quick intro to the dplyr package
+
+#A quick intro to the dplyr package
 
 To be able to answer any questions with our data, we need the ability to select and filter parts of our data. 
 
@@ -351,11 +349,11 @@ library(tibble)
 
 
 
-Let's read in our dataset, store it in a variable, and remind ourselves about the structure.
+Let's read in our dataset, store it in a variable, and check out the structure.
 
-```{r}
+```{r }
 dat <- read_csv("data/SPE_pitlatrine.csv")
-str(dat)
+View(dat)
 
 ```
 
@@ -442,63 +440,29 @@ Be careful when filtering. You have been warned.
 </br>
 
 
-
-The `dplyr` package, and some other common packages for data frame manipulation allow the use of the pipe function, `%>%`. This is equivalent to `|` for any unix peeps. __Piping__ allows the output of a function to be passed to the next function without making intermediate variables. Piping can save typing, make your code more readable, and reduce clutter in your global environment from variables you don't need. The keyboard shortcut for `%>%` is `CTRL+SHIFT+M`. 
-
-
-
-We are going to see how pipes work in conjunction with our first function, `filter()`. 
-
-
-```{r eval = FALSE}
-
-filter(dat, Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
-#equivalent to
-dat %>% filter(Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
-#equivalent to
-```
-```{r }
-dat %>% filter(., Taxa == "Fusobacteria" | Taxa == "Methanobacteria") 
-```
-
-You'll notice that when piping, we are not explicitly writing the first argument (our data frame) to `filter()`, but rather passing the first argument to filter using `%>%`. The dot `.` is sometimes used to fill in the first argument as a placeholder (this is useful for nested functions (functions inside of functions), which we will come across a bit later).  
-
-The `column_to_rownames()` function is used here to move our character data, Taxa, to rownames. We will then have a numeric dataframe on which to do any calculations while preserving all information. This function requires the column variable to be quoted. Click on 'dat' in the Global Environment to see the difference.
-
+We just filtered for multiple Taxa (multiple rows based on the identity of values values in 1 column), however you can also filter for rows based on values in multiple columns. For example, to get only Taxa that had OTUs at sites T_2_1 and T_2_10 using `dplyr`, you can use the following filter:
 
 ```{r}
-taxa_rownames_dat <- dat %>% column_to_rownames("Taxa") 
+filter(dat, T_2_10 != 0 & T_2_1 != 0)
 ```
 
-We can use the reverse function `rownames_to_column` to recreate the Taxa column from rownames.
+You can subset columns by using the `select()` function. You can also reorder columns using this function. I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. 
 
 ```{r}
-taxa_colnames_dat <- taxa_rownames_dat %>% rownames_to_column("Taxa")
-```
-
-To get only Taxa that had OTUs at sites T_2_1 and T_2_10 using `dplyr`, you can use the following filter:
-
-```{r}
-dat %>% filter(., T_2_10 != 0 & T_2_1 != 0)
-```
-
-You can subset columns by using the `select()` function. You can also reorder columns using this function. I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. `head()` and `tail()` can also be used with pipes to look at the output.
-
-```{r}
-dat %>% select(T_2_9, T_2_10, Taxa) %>% head()
+select(dat, T_2_9, T_2_10, Taxa)
 ```
 
 `dplyr` also includes some helper functions that allow you to select variables based on their names. For example, if we only wanted the samples from Vietnam, we could use `starts_with()`. 
 
 ```{r}
-dat %>% select(Taxa, starts_with("V")) %>% head()
+select(dat, Taxa, starts_with("V")) 
 
 ```
 
 Or all latrines with depths of 4 cm using `ends_with()`.
 
 ```{r}
-dat %>% select(Taxa, ends_with("4")) %>% head()
+select(dat, Taxa, ends_with("4")) 
 
 ```
 
@@ -516,11 +480,11 @@ __Challenge__
 Check out 'select_helpers' in the help menu. Grab all of the columns that contain depths for Well 2, whether it is from Vietnam or Tanzania. Retain Taxa either as rownames or in a column.
 
 ```{r include = FALSE}
-dat %>% select(Taxa, contains("_2_")) 
+select(dat, Taxa, contains("_2_")) 
 
-dat %>% select(Taxa, matches("_2_")) 
+select(dat, Taxa, matches("_2_")) 
 
-dat %>% select(Taxa, starts_with("T_2_"), starts_with("V_2_")) 
+select(dat, Taxa, starts_with("T_2_"), starts_with("V_2_")) 
 
 ```
 
@@ -533,18 +497,19 @@ dat %>% select(Taxa, starts_with("T_2_"), starts_with("V_2_"))
 
 The `arrange()` function helps you to sort your data. The default is ordered from smallest to largest (or a-z for character data). You can switch the order by specifying `desc` (descending) as shown below. 
 
-I have added a few extra lines of code to show you how we can start building code that passes a result to the next function instead of creating a bunch of new variables to store data in between functions being exectuted. However, if you get more than 2 pipes `%>%` it gets hard to follow for a reader (or yourself). Starting a new line after each pipe, allows a reader to easily see which function is operating and makes it easier to follow your logic.
+Let's say we want to look at Tanzania, Well 2, at 1cm depth. We want to arrange our data frame in descending order of OTUs, and we want to find the unique Taxa that have > 0 OTUs and are not 'Unknown'. Our goal is to have the Taxa present in that particular well in order of decreasing abundance. How would you go about solving this problem?
 
-```{r eval = c(3:8)}
-dat %>% select(Taxa, T_2_1) %>% arrange(desc(T_2_1)) %>% filter(T_2_1 !=0) %>% filter(Taxa != "Unknown") %>% unique()
-#equivalent to
-dat %>% 
-  select(Taxa, T_2_1) %>% 
-  arrange(desc(T_2_1)) %>% 
-  filter(T_2_1 !=0) %>%
-  filter(Taxa != "Unknown") %>%
-  unique()
 
+```{r}
+t21 <- select(dat, Taxa, T_2_1) 
+
+desc_t21 <- arrange(t21, desc(T_2_1)) 
+
+filt_t21 <- filter(desc_t21, T_2_1 !=0 & Taxa != "Unknown") 
+
+select_taxa <- select(filt_t21, Taxa)
+
+uni <- unique(select_taxa)
 ```
 
 `unique()` is a function that removes duplicate rows. How many rows did it remove in this case? How do you know?
@@ -554,8 +519,76 @@ dat %>%
 #number of rows before and after the unique call are the same
 ```
 
+While this code answered the question, it also created a bunch of new variables that we aren't interested in. These 'intermediate variables' were used to store data that got passed as input to the next function. This would quickly clutter our global environment if this was our strategy for data analysis.
 
-`mutate()` is a function to create new column, most often the product of a calculation. For example, let's calculate the total number of OTUs for each Taxa using `rowSums()`. You must specify a column name for the column you are creating. 
+The `dplyr` package, and some other common packages for data frame manipulation allow the use of the pipe function, `%>%`. This is equivalent to `|` for any unix peeps. __Piping__ allows the output of a function to be passed to the next function without making intermediate variables. Piping can save typing, make your code more readable, and reduce clutter in your global environment from variables you don't need. The keyboard shortcut for `%>%` is `CTRL+SHIFT+M`. 
+
+
+We are going to see how pipes work in conjunction with our first function, `filter()` and then see the benefits for our more complex example.
+
+```{r eval = FALSE}
+
+filter(dat, Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
+#equivalent to
+dat %>% filter(Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
+#equivalent to
+```
+```{r }
+dat %>% filter(., Taxa == "Fusobacteria" | Taxa == "Methanobacteria") 
+```
+
+You'll notice that when piping, we are not explicitly writing the first argument (our data frame) to `filter()`, but rather passing the first argument to filter using `%>%`. The dot `.` is sometimes used to fill in the first argument as a placeholder (this is useful for nested functions (functions inside of functions), which we will come across a bit later). 
+
+What would working with pipes look like for our more complex example?
+
+```{r eval = FALSE}
+dat %>% select(Taxa, T_2_1) %>% arrange(desc(T_2_1)) %>% filter(T_2_1 !=0 & Taxa != "Unknown") %>% select(Taxa) %>% unique()
+```
+
+
+When using more than 2 pipes `%>%` it gets hard to follow for a reader (or yourself). Starting a new line after each pipe, allows a reader to easily see which function is operating and makes it easier to follow your logic. Using pipes also has the benefit that extra intermediate variables do not need to be created, freeing up your global environment for objects you are interested in keeping.
+
+```{r}
+dat %>% 
+  select(Taxa, T_2_1) %>% 
+  arrange(desc(T_2_1)) %>% 
+  filter(T_2_1 !=0 & Taxa != "Unknown") %>%
+  select(Taxa) %>%
+  unique()
+
+```
+
+R will throw an error if you try to do a calculation on a dataframe which contains both numeric and character data. 
+
+The `column_to_rownames()` function is used here to move our character data, Taxa, to rownames. We will then have a numeric dataframe on which to do any calculations while preserving all information. This function requires the column variable to be quoted. Click on 'dat' in the Global Environment to see the difference.
+
+
+```{r warning = FALSE}
+taxa_rownames_dat <- dat %>% column_to_rownames("Taxa") 
+```
+
+We can use the reverse function `rownames_to_column` to recreate the Taxa column from rownames.
+
+```{r}
+taxa_colnames_dat <- taxa_rownames_dat %>% rownames_to_column("Taxa")
+```
+
+
+An example of where this might be useful would be calculating the total number of OTUs for each Taxa using `rowSums()`. Without the above functions, you would have to subset out the character column, Taxa, losing important information.
+
+
+```{r}
+dat[, -1] %>% rowSums()
+```
+
+If instead, the dataframe where the Taxa column was converted to rownames, the output is a named vector; the rownames were preserved for the names of the vector elements.
+
+```{r}
+taxa_rownames_dat %>% rowSums()
+```
+
+
+`mutate()` is a function to create new column, most often the product of a calculation. For example, let's calculate the total number of OTUs for each Taxa using `rowSums()` by adding an additional column to our table. You must specify a column name for the column you are creating. 
 
 An annoying part of `dplyr` is that it will drop rownames with most functions (ie. `mutate()`, `filter()` and `arrange()`, but not `select()`). It doesn't make much sense to take row sums if we can't tell what the rows are. However, to do the `rowSums()` calculation we cannot have character data in our rows. Therefore `.[ , -1]` is everything but our character data (which is our first column).
 
@@ -567,14 +600,6 @@ dat %>% mutate(total_OTUs = rowSums(.[,-1])) %>% head()
 ```
 Note that if I use `rowSums()` outside of another function (ie. not nested), I do not need to specify the data frame. While mutate creates a new column for the result of the `rowSums()` function, using `rowSums()` alone produces an output in vector format of the length of the number of rows in the data frame.
 
-```{r}
-dat[, -1] %>% rowSums()
-```
-If instead, the dataframe where the Taxa column was converted to rownames, the output is a named vector; the rownames were preserved for the names of the vector elements.
-
-```{r}
-taxa_rownames_dat %>% rowSums()
-```
 
 
 `transmute()` will also create a new variable, but it will drop the existing variables (it will give you a single column of your new variable). The output for `transmute()` is a data frame of one column.
@@ -591,7 +616,7 @@ It is up to you whether you want to keep your data in a data frame or switch to 
 
 `dplyr` has one more super-useful function, `summarize()` which allows us to get summary statistics on data. I'll give one example and then we'll come back to this function once our data is in 'tidy' format. 
 
-`n()` is a `dplyr` function to count the number of observations in a group - we are simply going to count the instances of a Taxa. In order for R to know we want to count the instances of each Taxa (as opposed to say, each row), there is a function `group_by()` that we can use to group variables or sets of variables together. That way if we had more than one case of "Clostridia", they would be grouped together and when we counted the number of cases, the result would be greater than 1. `group_by()` is useful for calculations and plotting on subsets of your data without having to turn your variables into factors.
+`n()` is a `dplyr` function to count the number of observations in a group - we are simply going to count the instances of a Taxa. In order for R to know we want to count the instances of each Taxa (as opposed to say, each row), there is a function `group_by()` that we can use to group variables or sets of variables together (treating them like a factor). That way if we had more than one case of "Clostridia", they would be grouped together and when we counted the number of cases, the result would be greater than 1. `group_by()` is useful for calculations and plotting on subsets of your data without having to explicitly change your variables into factors.
 
 We can arrange the results in descending order to see if there is more than one row per Taxa. 
 
@@ -636,7 +661,8 @@ __Challenge__
 </div>
 
 Let's try to answer a question with our data:
-    - Is there more Clostridia in Tanzania or Vietnam?
+
+- Is there more Clostridia in Tanzania or Vietnam?
 
 </br>
 </br>
@@ -703,6 +729,10 @@ https://www.surveymonkey.com/r/SMGKMCS
 Thanks for coming!!!
 
 ![](img/rstudio-bomb.png){width=300px}
+</br>
+
+</br>
+
 ***
 
 #Appendix
@@ -717,14 +747,14 @@ I have a googlesheet to share from my Google Drive:
 
 Add the sheet to your own Google Drive. Then load googlesheets.
 
-```{r }
+```{r message = FALSE}
 library(googlesheets)
 ```
 
 
 If you load googlesheets and ask it to list the googlesheets you have, googlesheets will open a new window and ask if it can have access to your googlesheets. If you say yes, you can return to R and breathe a sigh of relief. Your import of your googlesheets worked.
 
-```{r }
+```{r eval = FALSE}
 gs_ls()
 
 #if you have many googlesheets like I do you may need to search for your sheet
@@ -733,27 +763,27 @@ gs_ls()
 
 _Register_ the sheet you are going to use (gather information on the sheet from the API) with the sheet title using `gs_title()`.
 
-```{r}
+```{r eval = FALSE}
 books <- gs_title('Books Everyone Should Read')
 ```
 
-If this did not work for some reason, download [books_alpha.xlsx](https://github.com/eacton/CAGEF/blob/master/Lesson_1/data/books_alpha.xlsx) and save it to your current working directory. Upload the file to Google Drive using `gs_upload()`.
+If this did not work for some reason, download [books_alpha.xlsx](https://github.com/eacton/CAGEF/blob/master/Lesson_2/data/books_alpha.xlsx) and save it to your current working directory. Upload the file to Google Drive using `gs_upload()`.
 
-```{r}
+```{r eval=FALSE}
 books <- gs_upload(file = "data/books_alpha.xlsx")
 ```
 
 
 The structure of the googlesheet is a list.
 
-```{r}
+```{r eval=FALSE}
 str(books)
 ```
 
 
 How many worksheets are in this spreadsheet and what are their names? To find the number of worksheets, I subset from the list `n_ws`. To get the names of the worksheets, I grab the worksheets `ws` (itself a data frame) and subset the column `ws_title` for their titles. 
 
-```{r }
+```{r eval=FALSE}
 books$n_ws
 
 books$ws$ws_title
@@ -762,7 +792,7 @@ books$ws$ws_title
 
 Read in the worksheet you want to access using `gs_read()`. You can do this by specifying the worksheet number or title.
 
-```{r}
+```{r eval=FALSE}
 book_sheet1 <- gs_read(books, ws = 1)
 
 ```
