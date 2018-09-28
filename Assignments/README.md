@@ -13,5 +13,22 @@ Due date: 11:59pm October 2nd, 2018
 
 Submission: Each student will upload a .R file and a .csv file to Quercus. Please include your first and last name, the date of submission, and the assignment number.
 
+__Assignment_2: Normalizing Fly RNA-Seq Counts__
 
-General Late Policy: 1 mark will be deducted for each day the assignment is late to a maximum of 5 days, after which a mark of 0 will be given.
+Date Assigned: October 2, 2018
+
+Due date: 11:59pm October 9th, 2018
+
+Submission: Each student will upload a .R file to Quercus. Please include your first and last name, the date of submission, and the assignment number.
+
+
+__Assignment_3: Parsing a FASTA file from NCBI__
+
+Date Assigned: October 9, 2018
+
+Due date: 11:59pm October 16th, 2018
+
+Submission: Each student will upload a .R file and a .xls file to Quercus. Please include your first and last name, the date of submission, and the assignment number.
+
+
+_General Late Policy: 1 mark will be deducted for each day the assignment is late to a maximum of 5 days, after which a mark of 0 will be given._
