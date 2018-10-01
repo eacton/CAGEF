@@ -1,12 +1,6 @@
 ---
 title: 'Lesson 3 - Intro to Tidy Data: Go Long!'
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: '3'
-  html_notebook:
-    toc: yes
-    toc_depth: 3
   html_document:
     keep_md: yes
     toc: yes
@@ -18,29 +12,29 @@ output:
 
 </br>
 
-##A quick intro to the intro to R Lesson Series
+##A quick intro to the Introduction to R for Data Science
 
 </br>
 
-This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This course was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
+This 'Introduction to R for Data Science' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This CSB1020 was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
 
 
 
-This lesson is the second in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
+This lesson is the third in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
 
 
 ![img borrowed from r4ds.had.co.nz](img/data-science-explore.png)
 
 </br>
 
-How do we get there? Today we are going to be learning about how to subset and filter our data and perform all of the manipulations one has to do in daily coding life. We will learn about tidy data and how it makes data analysis less of a pain. We will perform some basic statistics on our newly transformed dataset. Next week we will learn how to tidy our data, subset and merge data and generate descriptive statistics. The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. After that, we will make all sorts of plots - from simple data exploration to interactive plots - this is always a fun lesson. 
+How do we get there? Today we are going to be learning about tidy data and how it makes data analysis less of a pain. We will perform some basic statistics on our newly transformed dataset. The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. After that, we will make all sorts of plots - from simple data exploration to interactive plots - this is always a fun lesson. 
 
 
 ![Henrik Kniberg, refurbished by blog.fastmonkeys.com](img/spotify-howtobuildmvp.gif)
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF>, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/SMGKMCS>), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF>, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/VNQZ3KS>), it will help me further develop this course and would be greatly appreciated. 
 
 </br>
 
@@ -73,8 +67,9 @@ Please install and load these packages for the lesson. In this document I will l
 -gapminder_wide.csv         
 -SPE_pitlatrine.csv     
 
-These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_2/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
+These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_3/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
 
+Or click on the blue hyperlink at the start of the README.md at <https://github.com/eacton/CAGEF/tree/master/Lesson_3> to download the entire folder at DownGit.
 
 ***
 
@@ -117,11 +112,11 @@ Last lesson, we learned how to filter and select data subsets we were interested
 
 Let's read in our dataset, store it in a variable, and remind ourselves about the original structure.
 
-```{r}
+```{r message = FALSE, warning=FALSE}
 library(readr)
 
 dat <- read_csv("data/SPE_pitlatrine.csv")
-str(dat)
+head(dat)
 
 ```
 
@@ -211,7 +206,7 @@ We can use the `gather()` function to collect our columns. This will make our da
 We need to provide `gather()` with information on our new columns. The first argument is our data frame, the second argument is the __key__, which is the name for the variable we want to gather (a set of column names). In this case our columns represent latrine sites, so we can assign the name 'Sites' to our key. The next argument is the __value__, which is the name for the measurements (usually numeric or integer) we have. In this case our values are Operational Taxonomic Units, so we can assign the name 'OTUs' to our value. The third argument is all of the columns that we want to gather. You can specify the columns by listing their names or positions. 
 
 ```{r }
-dat %>% gather(Site, OTUs, T_2_1:V_9_4) %>% head()
+dat %>% gather(key = Site, value = OTUs, T_2_1:V_9_4) %>% head()
 ```
 
 ```{r eval=FALSE}
@@ -231,7 +226,7 @@ Let's save the last variation into a data frame called spread_dat.
 spread_dat <- dat %>% gather(Site, OTUs, -Taxa)
 ```
 
-Note how the dimensions of your dataframe have changed relative to dat. spread_dat is now in a long format instead of wide.
+Note how the dimensions of your dataframe have changed relative to dat. Instead of 52 rows and 82 columns, we now have a data frame with 4212 rows and 3 columns (which is the 81 columns we gathered x 52 rows). spread_dat is now in a long format instead of wide.
 
 Next, we can use the `separate()` function to get the Country, Latrine_Number, and Depth information from our Site column. `separate()` takes in your dataframe, the name of the column to be split, the names of your new columns, and the character that you want to split the columns by (in this case an underscore). Note that the default is to remove your original column - if you want to keep it, you can add the additional argument `remove = FALSE`, keeping in mind that you now have redundant data. 
 
@@ -410,6 +405,43 @@ spread_dat <- unite_dat %>%
 
 ***
 
+
+__Challenge__
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/bonus_pow.jpg){width=100px}
+
+</div>
+
+Read in the gapminder_wide.csv. What rules of tidy data does it break? Transform the dataset to the format below. How many rows do you have?
+
+```{r echo = FALSE}
+
+gap <- gapminder::gapminder[1:6,]
+
+knitr::kable(gap)
+```
+
+
+</br>
+
+</br>
+
+```{r include=FALSE}
+gap <- read_csv("data/gapminder_wide.csv")
+#broken rules: multiple variables per column (gdpPercap + year, lifeExp + year, population + year), multiple observation types in one table
+
+gap <- gap %>% gather(obs_type, obs_value, -continent, -country)
+
+gap <- gap %>% separate(obs_type, c("obs_type", "year"), sep="_", convert = TRUE)
+
+gap <- gap %>% spread(key = obs_type, value = obs_value)
+
+gap <- gap %>% select(continent, country, year, lifeExp, pop, gdpPercap)
+```
+
+
+***    
+
 ##Adding rows and columns to data frames
 
 We are going to use a subset of the collected environmental data from the study to practice adding rows and columns to a data frame. We can use our pipe while reading in our data to do this subsetting.
@@ -417,7 +449,7 @@ We are going to use a subset of the collected environmental data from the study 
 ```{r}
 jdat <- read_csv("data/ENV_pitlatrine.csv") %>% select(1:4)
 
-str(jdat)
+glimpse(jdat)
 ```
 
 There is a function from `dplyr`, `bind_rows()`, which tries to save you from human error when joining a row of observations to a data frame by ensuring that your column names match (so data is not entered in the wrong column). If you do not give column names, an error will be thrown.
@@ -473,7 +505,7 @@ Why doesn't jdat change after all these operations?
 </br>
 
 ```{r include=FALSE}
-#This is just a reminder that if you want to retain the addition of a row from 'rbind()' you need to save it into a variable. You can reassign the data frame object that you have (jdat) or create a new data frame object.
+#This is just a reminder that if you want to retain the addition of a row from 'bind_rows' you need to save it into a variable. You can reassign the data frame object that you have (jdat) or create a new data frame object.
 #ie. new_dat <- rbind(jdat, c(Samples = "V_2_10", Temp = 5, pH = 6, TS = 5))
 ```
 
@@ -512,24 +544,170 @@ pdat <- bind_cols(jdat, Turtles = c(rep(5, 75)))
 </br>
 </br>
 </br>
+  
+ ***
+
+
+##All of the joins
+
+Often we have more than one data table that shares a common attribute. For example, with our current dataset, we have other variables (such as pH) for a sample, as well as our OTU table, both of which have site IDs (ie. T_2_9). We want to merge these into one table.
+
+
+Joins can be tricky, so we are going to use a subset of our tidy data such that we can easily observe the output of our join.
+
+Joins use a 'key' by which we can match up our data frames. When we look at our data frames we can see that they have matching information in 'Samples'.  We are going to reduce our dataset by only keeping non-zero values so we can see how the join functions work a bit more easily. 
 
 ***
+__Challenge__ 
 
 
-__Challenge__
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-![](img/bonus_pow.jpg){width=100px}
+![](img/pug_challenge1.jpeg){width=150px}
 
 </div>
 
-Read in the gapminder_wide.csv. What rules of tidy data does it break? Tidy this dataset and save it as gapminder_long.csv.
+Filter unite_dat to remove all non-zero values, and store it in an object ndat. How many rows in unite_dat had the value of zero? Sort ndat to keep the top 20 rows with the highest OTUs.
+
+</br>
+</br>
+</br>
+
+***
+
+```{r eval=TRUE, echo=FALSE}
+
+ndat <- unite_dat %>% filter(OTUs!=0) %>% arrange(desc(OTUs)) %>% .[1:20, ]
+```
+
+We will remove some observations from jdat, just so our key columns don't match perfectly.
+
+```{r}
+jdat <- jdat[-c(4,7,9,12,20,22) , 1:4]
+
+```
+
+There are 2 types of joins:
+
+1. _mutating joins_ - uses a key to match observations and combines variables from 2 tables (adding columns and potentially rows)
+2. _filtering joins_ - uses a key to match observations, to subset observations (rows)
+
+In these examples we are joining 2 dataframes: x and y.
+
+__Inner join__ is a mutating join.  Inner join returns all rows from x where there are matching values in y, and all columns from x and y. If there are multiple matches between x and y, all combination of the matches are returned.
+
+A set of graphics from _'R for Data Science'_ makes the description clearer:
+![img borrowed from r4ds.had.co.nz](img/join-inner.png){width=500px}  
+
+
+```{r}
+
+inner_join(ndat, jdat, by = c("Site" = "Samples"))
+
+```
+
+We can see that there are 18 rows in the resulting data frame, and columns from jdat have been added. Rows from ndat that did not have a matching site in jdat were removed.
+
+</br>
+
+__Outer joins__ are a set of mutating joins. There are 3 outer joins: left, right, and full.
+
+
+![img borrowed from r4ds.had.co.nz](img/join-outer.png){width=500px}
+</br>
+</br>
+
+
+__Left join__ returns all rows from x, and all columns from x and y. Rows in x with no match in y will have NA values in the new columns. If there are multiple matches between x and y, all combinations of the matches are returned.
+
+
+```{r}
+
+left_join(ndat, jdat, by = c("Site" = "Samples"))
+
+```
+That means that we will have our 20 rows from ndat, and any items that weren't found in jdat, in this case T_2_2 and T_4_3 will be filled with NA.
+
+__Right join__ returns all rows from y, and all columns from x and y. Rows in y with no match in x will have NA values in the new columns. If there are multiple matches between x and y, all combinations of the matches are returned.
+
+```{r}
+
+right_join(ndat, jdat, by = c("Site" = "Samples"))
+
+```
+
+That means that we will have our 75 rows from jdat, and any items that weren't found in ndat will be filled with NA. Since there are 77 rows in the final data frame, this means there must have been multiple rows matching from ndat. In other words, we had a duplicate key (Site) in ndat.
+
+</br>
+
+
+![img borrowed from r4ds.had.co.nz](img/join-one-to-many.png){width=500px}
 
 </br>
 
 </br>
 
-***      
-        
+Let's try to find which Site was duplicated by using `n()`.
+
+```{r}
+right_join(ndat, jdat, by = c("Site" = "Samples")) %>% 
+  group_by(Site) %>% 
+  filter(n()>1)
+
+```
+
+Note that Bacteriodia and Clostridia have different OTUs (from ndat), but the same pH, Temp and TS (from jdat). 
+
+
+</br>
+
+![img borrowed from r4ds.had.co.nz](img/join-many-to-many.png){width=500px}
+
+</br>
+
+__Full join__ returns all rows and all columns from both x and y. Where there are not matching values, returns NA for the one missing.
+
+
+```{r}
+
+full_join(ndat, jdat, by = c("Site" = "Samples"))
+
+```
+The full join returns all of the rows from both ndat and jdat - we have the 75 rows from jdat, plus the second V_17_1 as seen in the right_join and T_2_2 and T_4_3 that we present in ndat but NA in jdat for a total of 79 rows.
+
+Lastly, we have the 2 filtering joins. These will not add columns, but rather filter the rows based on what is present in the second data frame.
+
+__Semi join__ returns all rows from x where there are matching values in y, keeping just columns from x. A semi join differs from an inner join because an inner join will return one row of x for each matching row of y, where a semi join will never duplicate rows of x.
+
+```{r}
+semi_join(ndat, jdat, by = c("Site" = "Samples"))
+
+```
+`semi_join()` returns the 18 rows of ndat that have a Site match in jdat. Note that the columns from jdat have not been added.
+
+</br>
+
+__Anti join__ returns all rows from x where there are not matching values in y, keeping just columns from x.
+
+```{r}
+anti_join(ndat, jdat, by = c("Site" = "Samples"))
+
+```
+This returns our 2 rows in ndat that did not have a match in jdat. Note that the columns from jdat have not been added.
+
+***
+__Challenge__
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=150px}
+
+</div>
+
+Given the definitions for the inner_, left_, right_, full_, semi_ and anti_joins, what would you expect the resulting data frame to be if jdat and ndat were reversed? Write down the number of rows and columns you would expect the data frame to have, then run the code. Did you find any surprises?
+
+</br>
+</br>
+</br>
+
+***       
 
   
 #Resources  
@@ -544,7 +722,7 @@ http://dplyr.tidyverse.org/articles/two-table.html
 ***
 
 Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
-https://www.surveymonkey.com/r/SMGKMCS
+<https://www.surveymonkey.com/r/VNQZ3KS>
 
 </br>
 
