@@ -15,6 +15,8 @@ Submission: Each student will upload a .R file and a .csv file to Quercus. Pleas
 
 __Assignment_2: Normalizing Fly RNA-Seq Counts__
 
+The Assignment_2 folder can be downloaded [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/eacton/CAGEF/tree/master/Assignments/Assignment_2).
+
 Date Assigned: October 2, 2018
 
 Due date: 11:59pm October 9th, 2018
