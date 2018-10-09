@@ -26,6 +26,8 @@ Submission: Each student will upload a .R file to Quercus. Please include your f
 
 __Assignment_3: Parsing a FASTA file from NCBI__
 
+The Assignment_3 folder can be downloaded [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/eacton/CAGEF/tree/master/Assignments/Assignment_3).
+
 Date Assigned: October 9, 2018
 
 Due date: 11:59pm October 16th, 2018
