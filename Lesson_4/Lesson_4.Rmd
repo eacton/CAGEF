@@ -408,11 +408,11 @@ Does this DNA have balanced GC content? We can use `str_extract_all` to capture 
 str_extract_all(dino, pattern = "G|C")
 ```
 
-The output is a list object in which is stored an entry for each G or C extracted. We count the number of these entries and divide by the total number of characters in our string to get the %GC content. 
+The output is a list object in which is stored an entry for each G or C extracted. We count the number of occurences of G and C using `str_count` and divide by the total number of characters in our string to get the %GC content. 
 
 
 ```{r}
-length(str_extract_all(dna, pattern = "G|C")[[1]])/nchar(dna) * 100
+str_count(dna, pattern = "G|C")/str_length(dna) * 100
 ```
 
 
@@ -437,6 +437,14 @@ Is there even a start codon in this thing? `str_detect` can be used to get a loc
 str_detect(mrna, "AUG")
 
 ```
+
+It might be more useful to know exactly how many possible start codons we have. `str_count` will count the number of matches in the string for our pattern.
+
+```{r}
+str_count(mrna, "AUG")
+```
+
+
 
 To get the position of a possible start codon we can use `str_locate` which will return the indices of where the start and end of our substring occurs (`str_locate_all` can be used to find the all possible locations).
 
