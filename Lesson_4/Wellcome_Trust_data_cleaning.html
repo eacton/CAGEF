@@ -92,6 +92,9 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
 }
@@ -138,7 +141,6 @@ $(document).ready(function () {
 <li><a href="#question-2-what-is-the-mean-cost-of-publishing-for-the-top-3-most-popular-publishers">Question 2: What is the mean cost of publishing for the top 3 most popular publishers?</a></li>
 <li><a href="#question-3-what-is-the-number-of-publications-by-plos-one-in-this-dataset">Question 3: What is the number of publications by PLOS One in this dataset?</a></li>
 <li><a href="#question-4-convert-sterling-to-cad.-what-is-the-median-cost-of-publishing-with-elsevier-in-cad">Question 4: Convert sterling to CAD. What is the median cost of publishing with Elsevier in CAD?</a></li>
-<li><a href="#question-5-annotate-your-data-cleaning-efforts-and-answers-to-these-questions-in-an-.rmd-file.-knit-your-final-answers-to-pdf.">Question 5: Annotate your data cleaning efforts and answers to these questions in an .Rmd file. Knit your final answers to pdf.</a></li>
 </ul></li>
 </ul>
 </div>
@@ -150,8 +152,7 @@ $(document).ready(function () {
 <h2>Inspect your dataset. Are the data types what you expect?</h2>
 <p>Read in the Wellcome Trust APC (article processing charge) dataset.</p>
 <p>Take a look at the entire dataset before removing `Article title'. The backticks around Article title allow for selecting a column name with a space present - we will get rid of these spaces shortly). I am removing the Article title column because a) we don’t need it to answer our questions and b) there are some Greek letters make it so we would have to install another package to make our document render to pdf.</p>
-<pre class="r"><code>#dat &lt;- read_xlsx(&quot;data/University returns_for_figshare_FINAL.xlsx&quot;) 
-dat &lt;- read_xlsx(&quot;data/University returns_for_figshare_FINAL.xlsx&quot;) %&gt;%
+<pre class="r"><code>dat &lt;- read_xlsx(&quot;data/University returns_for_figshare_FINAL.xlsx&quot;) %&gt;%
   select(-`Article title`)
 
 glimpse(dat)</code></pre>
@@ -169,14 +170,14 @@ glimpse(dat)</code></pre>
 <h3>Question 1: List 3 problems with this dataset that require data cleaning.</h3>
 <pre class="r"><code>head(dat)</code></pre>
 <pre><code>## # A tibble: 6 x 4
-##   `PMID/PMCID`              Publisher   `Journal title`  `COST (£) charge…
-##   &lt;chr&gt;                     &lt;chr&gt;       &lt;chr&gt;                        &lt;dbl&gt;
-## 1 &quot;PMC3378987\r\n&quot;          Elsevier    Academy of Nutr…             2380.
-## 2 PMCID: PMC3780468         ACS (Amerc… ACS Chemical Bi…             1295.
-## 3 PMCID: PMC3621575         ACS (Amerc… ACS Chemical Bi…             1295.
-## 4 &lt;NA&gt;                      American C… ACS Chemical Bi…              947.
-## 5 PMID: 24015914 PMC3833349 American C… ACS Chemical Bi…             1268.
-## 6 : PMC3805332              American C… ACS Chemical Bi…             2287.</code></pre>
+##   `PMID/PMCID`    Publisher      `Journal title`    `COST (£) charged to …
+##   &lt;chr&gt;           &lt;chr&gt;          &lt;chr&gt;                               &lt;dbl&gt;
+## 1 &quot;PMC3378987\r\… Elsevier       Academy of Nutrit…                  2380.
+## 2 PMCID: PMC3780… ACS (Amercian… ACS Chemical Biol…                  1295.
+## 3 PMCID: PMC3621… ACS (Amercian… ACS Chemical Biol…                  1295.
+## 4 &lt;NA&gt;            American Chem… ACS Chemical Biol…                   947.
+## 5 PMID: 24015914… American Chem… ACS Chemical Biol…                  1268.
+## 6 : PMC3805332    American Chem… ACS Chemical Biol…                  2287.</code></pre>
 <p></br></p>
 <ol style="list-style-type: decimal">
 <li>There is no structured vocabulary and as a consequence many publisher and Journal titles have multiple entries (abbreviations vs full names, spelling errors) instead of one journal or publisher.</li>
@@ -189,29 +190,29 @@ glimpse(dat)</code></pre>
 <div id="clean-up-column-names." class="section level2">
 <h2>Clean up column names.</h2>
 <p>First of all let’s change the column names to not have spaces and weird characters in them. I am also going to convert them to lowercase. I am not too concerned about including the units for cost as it is referenced in the README for the dataset.</p>
-<pre class="r"><code>colnames(dat) &lt;- gsub(&quot;/&quot;, &quot;_&quot;, colnames(dat))
-colnames(dat) &lt;- gsub(&quot; .*&quot;, &quot;&quot;, colnames(dat))
-colnames(dat) &lt;-tolower(colnames(dat))</code></pre>
+<pre class="r"><code>colnames(dat) &lt;- str_replace(colnames(dat), &quot;/&quot;, &quot;_&quot;)
+colnames(dat) &lt;- str_replace(colnames(dat),&quot; .*&quot;, &quot;&quot;)
+colnames(dat) &lt;- str_to_lower(colnames(dat))</code></pre>
 </div>
 <div id="investigate-the-range-of-your-data." class="section level2">
 <h2>Investigate the range of your data.</h2>
 <p>Let’s find the least expensive publication.</p>
 <pre class="r"><code>dat %&gt;% arrange(cost) %&gt;% head()</code></pre>
 <pre><code>## # A tibble: 6 x 4
-##   pmid_pmcid  publisher                      journal                  cost
-##   &lt;chr&gt;       &lt;chr&gt;                          &lt;chr&gt;                   &lt;dbl&gt;
-## 1 &lt;NA&gt;        American Society for Nutrition American Society for N…  45.9
-## 2 3543450     Public Library of Science      PLoS One                122. 
-## 3 &lt;NA&gt;        Sciedu Press                   Journal of Biomedical … 135. 
-## 4 PMC 3536734 Landes Bioscience              Channels                160. 
-## 5 &lt;NA&gt;        JSciMed Central                Journal of Neurology &amp;… 160. 
-## 6 &lt;NA&gt;        Sciedu Press                   &quot;International Journal… 187.</code></pre>
+##   pmid_pmcid  publisher              journal                          cost
+##   &lt;chr&gt;       &lt;chr&gt;                  &lt;chr&gt;                           &lt;dbl&gt;
+## 1 &lt;NA&gt;        American Society for … American Society for Nutrition   45.9
+## 2 3543450     Public Library of Sci… PLoS One                        122. 
+## 3 &lt;NA&gt;        Sciedu Press           Journal of Biomedical Graphics… 135. 
+## 4 PMC 3536734 Landes Bioscience      Channels                        160. 
+## 5 &lt;NA&gt;        JSciMed Central        Journal of Neurology &amp; Transla… 160. 
+## 6 &lt;NA&gt;        Sciedu Press           &quot;International Journal of Fina… 187.</code></pre>
 <p>There is a very low value (45.9) and it is possible other funders contributed to this publication (as mentioned in the README). Let’s see if there are any other publications by this publisher to tell us if this is reasonable for the publisher.</p>
 <pre class="r"><code>dat %&gt;% arrange(cost) %&gt;% filter(publisher == &quot;American Society for Nutrition&quot;)</code></pre>
 <pre><code>## # A tibble: 1 x 4
-##   pmid_pmcid publisher                      journal                   cost
-##   &lt;chr&gt;      &lt;chr&gt;                          &lt;chr&gt;                    &lt;dbl&gt;
-## 1 &lt;NA&gt;       American Society for Nutrition American Society for Nu…  45.9</code></pre>
+##   pmid_pmcid publisher                    journal                     cost
+##   &lt;chr&gt;      &lt;chr&gt;                        &lt;chr&gt;                      &lt;dbl&gt;
+## 1 &lt;NA&gt;       American Society for Nutrit… American Society for Nutr…  45.9</code></pre>
 <p>Since there is only one entry from this publisher, let’s check its value in relation to the mean and standard deviation of the dataset as a whole.</p>
 <pre class="r"><code>dat %&gt;% summarize(sd = sd(cost), mean = mean(cost))</code></pre>
 <pre><code>## # A tibble: 1 x 2
@@ -219,21 +220,29 @@ colnames(dat) &lt;-tolower(colnames(dat))</code></pre>
 ##   &lt;dbl&gt; &lt;dbl&gt;
 ## 1  807. 1826.</code></pre>
 <p>The mean less the lowest cost divided by the standard deviation tells us that the point is 2.2 standard deviations from the mean.</p>
-<pre class="r"><code>(1826-45.9)/807</code></pre>
-<pre><code>## [1] 2.205824</code></pre>
+<pre class="r"><code>dat %&gt;% summarise(sd_from_mean = (mean(cost)-min(cost))/sd(cost))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   sd_from_mean
+##          &lt;dbl&gt;
+## 1         2.21</code></pre>
 <p>Since there is only one entry from this publisher, and its cost is less than 3 standard deviations from the mean, we will keep it in our dataset.</p>
 <p>Let’s find the most expensive publication.</p>
 <pre class="r"><code>dat %&gt;% arrange(desc(cost)) %&gt;% head()</code></pre>
 <pre><code>## # A tibble: 6 x 4
-##   pmid_pmcid                        publisher            journal      cost
-##   &lt;chr&gt;                             &lt;chr&gt;                &lt;chr&gt;       &lt;dbl&gt;
-## 1 &lt;NA&gt;                              MacMillan            NA         13200.
-## 2 543219                            public.service.co.uk Public Se…  6000.
-## 3 PMID: 23041239 /PMCID: PMC3490334 Elsevier             The Lance…  5760.
-## 4 23541370 PMC3744751               Elsevier             Elsevier    4800.
-## 5 &lt;NA&gt;                              Elsevier             Lancet      4800.
-## 6 &quot;PMCID:\r\n    PMC3627205\r\n&quot;    Elsevier             The Lancet  4800.</code></pre>
+##   pmid_pmcid                    publisher         journal             cost
+##   &lt;chr&gt;                         &lt;chr&gt;             &lt;chr&gt;              &lt;dbl&gt;
+## 1 &lt;NA&gt;                          MacMillan         NA                 13200
+## 2 543219                        public.service.c… Public Service Re…  6000
+## 3 PMID: 23041239 /PMCID: PMC34… Elsevier          The Lancet Neurol…  5760
+## 4 23541370 PMC3744751           Elsevier          Elsevier            4800
+## 5 &lt;NA&gt;                          Elsevier          Lancet              4800
+## 6 &quot;PMCID:\r\n    PMC3627205\r\… Elsevier          The Lancet          4800</code></pre>
 <p>It looks like the most expensive publication is not a journal, but a book. It also appears to be more than twice as expensive as our next most expensive cost. The book is obviously an outlier as a value (greater than 3 standard deviations from the mean) and for a fair comparison of cost (books vs journal articles). We will remove it from the dataset.</p>
+<pre class="r"><code>dat %&gt;% summarise(sd_from_mean = (mean(cost)-max(cost))/sd(cost))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   sd_from_mean
+##          &lt;dbl&gt;
+## 1        -14.1</code></pre>
 </div>
 <div id="do-you-have-missing-data" class="section level2">
 <h2>Do you have missing data?</h2>
@@ -244,18 +253,18 @@ colnames(dat) &lt;-tolower(colnames(dat))</code></pre>
 ## #   cost &lt;dbl&gt;</code></pre>
 <pre class="r"><code>dat[!complete.cases(dat),]</code></pre>
 <pre><code>## # A tibble: 199 x 4
-##    pmid_pmcid publisher                        journal                cost
-##    &lt;chr&gt;      &lt;chr&gt;                            &lt;chr&gt;                 &lt;dbl&gt;
-##  1 &lt;NA&gt;       American Chemical Society        ACS Chemical Biology   947.
-##  2 &lt;NA&gt;       Springer                         Acta Neuropathologica 1884.
-##  3 &lt;NA&gt;       Springer                         Advances in Experime… 1928.
-##  4 &lt;NA&gt;       Springer                         Advances in Experime… 1928.
-##  5 &lt;NA&gt;       Springer                         Advances in Experime… 1928.
-##  6 &lt;NA&gt;       Springer                         Advances in Experime… 1928.
-##  7 &lt;NA&gt;       Cambridge University Press       Ageing &amp; Society      1695.
-##  8 &lt;NA&gt;       Wiley                            American Ethnologist  1870.
-##  9 &lt;NA&gt;       Wiley                            American Ethnologist  1871.
-## 10 &lt;NA&gt;       American Psychiatric Association American Journal of … 2352.
+##    pmid_pmcid publisher               journal                         cost
+##    &lt;chr&gt;      &lt;chr&gt;                   &lt;chr&gt;                          &lt;dbl&gt;
+##  1 &lt;NA&gt;       American Chemical Soci… ACS Chemical Biology            947.
+##  2 &lt;NA&gt;       Springer                Acta Neuropathologica          1884.
+##  3 &lt;NA&gt;       Springer                Advances in Experimental Medi… 1928.
+##  4 &lt;NA&gt;       Springer                Advances in Experimental Medi… 1928.
+##  5 &lt;NA&gt;       Springer                Advances in Experimental Medi… 1928.
+##  6 &lt;NA&gt;       Springer                Advances in Experimental Medi… 1928.
+##  7 &lt;NA&gt;       Cambridge University P… Ageing &amp; Society               1695 
+##  8 &lt;NA&gt;       Wiley                   American Ethnologist           1870.
+##  9 &lt;NA&gt;       Wiley                   American Ethnologist           1871.
+## 10 &lt;NA&gt;       American Psychiatric A… American Journal of Psychiatry 2352.
 ## # ... with 189 more rows</code></pre>
 <p>What is going on? We know that there is a case where journal is <em>NA</em> and there are <NA> values in the id column. It appears that in data collection “<em>NA</em>” was entered as a character string instead of simply being an empty entry like with the identifiers. This was likely due to a rule that ‘something’ had to be entered into the journal field. We can then remove it from our dataset using the <code>filter</code> function.</p>
 <pre class="r"><code>dat &lt;- dat %&gt;% filter(journal != &quot;NA&quot;)</code></pre>
@@ -550,7 +559,7 @@ colnames(dat) &lt;-tolower(colnames(dat))</code></pre>
 <pre><code>## [1] 279</code></pre>
 <p>There appears to be 280 publishers, however we can see that many are duplicated through inconsistencies in data collection. For example I would guess that ‘Sage’, ‘SAGE’, ‘Sage Publications’, ‘SAGE Publications’, ‘Sage Publications Inc’, ‘Sage Publications Ltd’, ‘Sage publishers’ and ‘Sage Publishing’ are all the same publisher.</p>
 <p>The first thing I am going to do is change everything to lowercase and look at how many matches were case-dependant.</p>
-<pre class="r"><code>dat$publisher &lt;- tolower(dat$publisher)
+<pre class="r"><code>dat$publisher &lt;- str_to_lower(dat$publisher)
 
 length(levels(as.factor(dat$publisher)))</code></pre>
 <pre><code>## [1] 255</code></pre>
@@ -784,9 +793,9 @@ dat$publisher &lt;- str_remove_all(dat$publisher, &quot;the &quot;)</code></pre>
 <div id="question-3-what-is-the-number-of-publications-by-plos-one-in-this-dataset" class="section level3">
 <h3>Question 3: What is the number of publications by PLOS One in this dataset?</h3>
 <p>Let’s start by converting the journal titles to lowercase. Then we can grab everything with plos to see what we are dealing with.</p>
-<pre class="r"><code>dat$journal &lt;- tolower(dat$journal)
+<pre class="r"><code>dat$journal &lt;- str_to_lower(dat$journal)
 
-filter(dat, grepl(&quot;plos&quot;, dat$journal)) %&gt;%
+filter(dat, str_detect(journal, &quot;plos&quot;)) %&gt;%
   select(journal)</code></pre>
 <pre><code>## # A tibble: 298 x 1
 ##    journal                    
@@ -803,7 +812,7 @@ filter(dat, grepl(&quot;plos&quot;, dat$journal)) %&gt;%
 ## 10 plos 1                     
 ## # ... with 288 more rows</code></pre>
 <p>We should probably check for ‘public library of science one’ listed. Looks like there is 1.</p>
-<pre class="r"><code>filter(dat, grepl(&quot;public&quot;, dat$journal)) %&gt;%
+<pre class="r"><code>filter(dat, str_detect(journal,&quot;public&quot;)) %&gt;%
   select(journal) %&gt;%
   tail()</code></pre>
 <pre><code>## # A tibble: 6 x 1
@@ -816,11 +825,11 @@ filter(dat, grepl(&quot;plos&quot;, dat$journal)) %&gt;%
 ## 5 public service review        
 ## 6 zoonoses and public health</code></pre>
 <p>It looks like our variations are “plos one”, “plos one”, plosone“,”public library of science one&quot; and “plos 1”. Instead of doing data-cleaning for the journal column, we are just going to grab all of the rows in our data frame that contain one of these versions of PLOS One, and then count the number of those rows. It’s regex time!!</p>
-<pre class="r"><code>filter(dat, grepl(&quot;p(los[[:space:]]*(one|1)|ublic library of science one)&quot;, dat$journal)) %&gt;% 
+<pre class="r"><code>filter(dat, str_detect(journal, &quot;p(los[[:space:]]*(one|1)|ublic library of science one)&quot;)) %&gt;% 
   nrow(.)</code></pre>
 <pre><code>## [1] 208</code></pre>
 <p>Another, less clunky way.</p>
-<pre class="r"><code>filter(dat, grepl(&quot;[^b]\\s?(1|one)$&quot;, dat$journal)) %&gt;% select(journal)%&gt;% nrow(.)</code></pre>
+<pre class="r"><code>filter(dat, str_detect(journal, &quot;[^b]\\s?(1|one)$&quot;)) %&gt;% select(journal)%&gt;% nrow(.)</code></pre>
 <pre><code>## [1] 208</code></pre>
 <p>That is our answer!</p>
 </div>
@@ -833,10 +842,6 @@ filter(dat, grepl(&quot;plos&quot;, dat$journal)) %&gt;%
 ##   median_cad
 ##        &lt;dbl&gt;
 ## 1      4198.</code></pre>
-</div>
-<div id="question-5-annotate-your-data-cleaning-efforts-and-answers-to-these-questions-in-an-.rmd-file.-knit-your-final-answers-to-pdf." class="section level3">
-<h3>Question 5: Annotate your data cleaning efforts and answers to these questions in an .Rmd file. Knit your final answers to pdf.</h3>
-<p>Congratulate yourself of how professional your document looks.</p>
 </div>
 </div>
 

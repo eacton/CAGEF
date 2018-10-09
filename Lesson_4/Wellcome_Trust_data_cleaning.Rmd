@@ -3,12 +3,12 @@ title: "Wellcome Trust Data Cleaning"
 author: "EA"
 date: "April 18, 2018"
 output:
-  html_document:
-    toc: yes
-    toc_depth: 3
   pdf_document:
     toc: yes
     toc_depth: '3'
+  html_document:
+    toc: yes
+    toc_depth: 3
 ---
 
 </br>
@@ -30,7 +30,6 @@ Read in the Wellcome Trust APC (article processing charge) dataset.
 Take a look at the entire dataset before removing \`Article title\'. The backticks around Article title allow for selecting a column name with a space present - we will get rid of these spaces shortly). I am removing the Article title column because a) we don't need it to answer our questions and b) there are some Greek letters make it so we would have to install another package to make our document render to pdf.
 
 ```{r}
-#dat <- read_xlsx("data/University returns_for_figshare_FINAL.xlsx") 
 dat <- read_xlsx("data/University returns_for_figshare_FINAL.xlsx") %>%
   select(-`Article title`)
 
@@ -60,9 +59,9 @@ head(dat)
 First of all let's change the column names to not have spaces and weird characters in them. I am also going to convert them to lowercase. I am not too concerned about including the units for cost as it is referenced in the README for the dataset. 
 
 ```{r}
-colnames(dat) <- gsub("/", "_", colnames(dat))
-colnames(dat) <- gsub(" .*", "", colnames(dat))
-colnames(dat) <-tolower(colnames(dat))
+colnames(dat) <- str_replace(colnames(dat), "/", "_")
+colnames(dat) <- str_replace(colnames(dat)," .*", "")
+colnames(dat) <- str_to_lower(colnames(dat))
 ```
 
 ##Investigate the range of your data.
@@ -90,7 +89,7 @@ dat %>% summarize(sd = sd(cost), mean = mean(cost))
 
 The mean less the lowest cost divided by the standard deviation tells us that the point is 2.2 standard deviations from the mean.
 ```{r}
-(1826-45.9)/807
+dat %>% summarise(sd_from_mean = (mean(cost)-min(cost))/sd(cost))
 
 ```
 
@@ -104,6 +103,11 @@ dat %>% arrange(desc(cost)) %>% head()
 ```
 
 It looks like the most expensive publication is not a journal, but a book. It also appears to be more than twice as expensive as our next most expensive cost. The book is obviously an outlier as a value (greater than 3 standard deviations from the mean) and for a fair comparison of cost (books vs journal articles). We will remove it from the dataset.  
+
+```{r}
+dat %>% summarise(sd_from_mean = (mean(cost)-max(cost))/sd(cost))
+
+```
 
 
 ##Do you have missing data?
@@ -141,7 +145,7 @@ There appears to be 280 publishers, however we can see that many are duplicated 
 The first thing I am going to do is change everything to lowercase and look at how many matches were case-dependant.
 
 ```{r}
-dat$publisher <- tolower(dat$publisher)
+dat$publisher <- str_to_lower(dat$publisher)
 
 length(levels(as.factor(dat$publisher)))
 ```
@@ -294,16 +298,16 @@ dat %>%
 Let's start by converting the journal titles to lowercase. Then we can grab everything with plos to see what we are dealing with.
 
 ```{r}
-dat$journal <- tolower(dat$journal)
+dat$journal <- str_to_lower(dat$journal)
 
-filter(dat, grepl("plos", dat$journal)) %>%
+filter(dat, str_detect(journal, "plos")) %>%
   select(journal)
 ```
 
 We should probably check for 'public library of science one' listed. Looks like there is 1.
 
 ```{r}
-filter(dat, grepl("public", dat$journal)) %>%
+filter(dat, str_detect(journal,"public")) %>%
   select(journal) %>%
   tail()
 ```
@@ -314,14 +318,14 @@ It looks like our variations are "plos one", "plos  one", plosone", "public libr
 
 
 ```{r}
-filter(dat, grepl("p(los[[:space:]]*(one|1)|ublic library of science one)", dat$journal)) %>% 
+filter(dat, str_detect(journal, "p(los[[:space:]]*(one|1)|ublic library of science one)")) %>% 
   nrow(.)
 ```
 
 Another, less clunky way.
 
 ```{r}
-filter(dat, grepl("[^b]\\s?(1|one)$", dat$journal)) %>% select(journal)%>% nrow(.)
+filter(dat, str_detect(journal, "[^b]\\s?(1|one)$")) %>% select(journal)%>% nrow(.)
 ```
 
 That is our answer!
@@ -336,6 +340,3 @@ dat %>%
 ```
 
 
-###Question 5: Annotate your data cleaning efforts and answers to these questions in an .Rmd file. Knit your final answers to pdf.
-
-Congratulate yourself of how professional your document looks.
