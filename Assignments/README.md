@@ -34,5 +34,16 @@ Due date: 11:59pm October 16th, 2018
 
 Submission: Each student will upload a .R file and a .xls file to Quercus. Please include your first and last name, the date of submission, and the assignment number.
 
+__Assignment_4: Exploratory Analysis of an Arabidopsis Chemical Genetic Screen__
+
+The Assignment_4 folder can be downloaded [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/eacton/CAGEF/tree/master/Assignments/Assignment_4).
+
+The folder contains the instructions and dataset required to complete the assignment.
+
+Date Assigned: October 16th, 2018
+
+Due date: 11:59pm October 23rd, 2018
+
+Submission: Each student will upload a .R file and a .png or .pdf file to Quercus. Please include your first and last name, the date of submission, and the assignment number.
 
 _General Late Policy: 1 mark will be deducted for each day the assignment is late to a maximum of 5 days, after which a mark of 0 will be given._
