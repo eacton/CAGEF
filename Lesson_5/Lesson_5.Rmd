@@ -14,15 +14,15 @@ output:
 
 </br>
 
-##A quick intro to the intro to R Lesson Series
+##A quick intro to the Introduction to R for Data Science
 
 </br>
 
-This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This course was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
+This 'Introduction to R for Data Science' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This CSB1020 was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
 
 
 
-This lesson is the third in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
+This lesson is the fifth in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots to share your results. 
 
 
 ![](img/data-science-explore.png)
@@ -36,7 +36,7 @@ How do we get there? Today we are going to be learning how to make all sorts of 
 
 </br>
 
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF>, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/VNQZ3KS>), it will help me further develop this course and would be greatly appreciated. 
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF>, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/H3PFQR3>), it will help me further develop this course and would be greatly appreciated. 
 
 ***
 
@@ -75,8 +75,9 @@ Please install and load these packages for the lesson. In this document I will l
 -long_SPE_pitlatrine.csv         
 -SPE_pitlatrine.csv     
 
-These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_3/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
+These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_5/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
 
+Or click on the blue hyperlink at the start of the README.md at <https://github.com/eacton/CAGEF/tree/master/Lesson_5> to download the entire folder at DownGit.
 
 ***
 
@@ -143,16 +144,9 @@ Let's read our data tables in and also load `ggplot2`. We will be using a variet
 ```{r, suppressPackageStartupMessages()}
 library(tidyverse)
 
-dat <- read_csv("data/long_SPE_pitlatrine.csv")
-ndat <- read_csv("data/split_ENV_pitlatrine.csv")
+dat <- read_csv("data/long_SPE_pitlatrine.csv", col_types = 'ccici')
+ndat <- read_csv("data/split_ENV_pitlatrine.csv", col_types = 'cccnnnn')
 ```
-
-```{r include = FALSE}
-
-ndat$Depth <- as.character(ndat$Depth)
-```
-
-
 
 Let's build a plot by adding components one by one to see how the grammar of graphics is implemented in `ggplot2`. To start, we of course need to input our data. However, if that is all we input, what we get back is a blank graphic. We have not yet said what we want to plot and how we want to plot it. 
 
@@ -287,7 +281,9 @@ ggplot(dat, aes(x=OTUs, fill=Country, alpha=0.3)) +
 The first thing to notice is that everything is clumped at 0. This is because we have not filtered our data frame to remove all observations where OTUs are zero. Here we filter to have at least 2 OTUs. The other thing to notice is that there is a long tail where there will only be a few observations. It will be necessary to change the x-axis to see our data. This is done by setting 'limits' (lower and upper boundaries) on the x-axis with `xlim()`. Note that R gives us a warning that we are not viewing 158 of our 4212 rows. We can add a rug geom to see each value.
 
 ```{r }
-ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) + 
+fdat <- dat %>% filter(OTUs >=2)
+
+ggplot(fdat, aes(x=OTUs, fill=Country, alpha=0.3)) + 
 	geom_density() +
   geom_rug() +
   xlim(0, 1000)
@@ -299,7 +295,7 @@ ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) +
 Histograms instead count the number of observations you have in each 'bin' that you specify. The default binwidth is 30, which means your data will be divided into a new bin every 30 units along your x-axis. THIS HAS NOTHING TO DO WITH YOUR DATA!! CHANGE IT!! R will even warn you to change your binwidth.
 
 ```{r}
-ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) + 
+ggplot(fdat, aes(x=OTUs, fill=Country, alpha=0.3)) + 
 	geom_histogram() +
   xlim(0,1000)
 ```
@@ -307,7 +303,7 @@ ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) +
 Instead of having the countries information stacked, we may want to see the data side by side. This can be done with the parameter position set to 'dodge'. A rug geom can also be added to a histogram. Note that the binwidth has been changed and limits have also been set on the y-axis.
 
 ```{r warning = FALSE}
-ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) + 
+ggplot(fdat, aes(x=OTUs, fill=Country, alpha=0.3)) + 
 	geom_histogram(binwidth = 50, position = "dodge") +
   xlim(0,1000) +
   ylim(0,150) +
@@ -332,11 +328,10 @@ Create a bar plot of OTUs per country and use the filled in colour to represent 
 
 ***
 
-_do we want the filtered OTUs for this (continuting on as well) or not? filter using dplyr, not base_
 
 ```{r include = FALSE, eval = FALSE}
 
-ggplot(dat[dat$OTU >=2,], aes(x=Country, y=OTUs, fill=Taxa)) + 
+ggplot(fdat, aes(x=Country, y=OTUs, fill=Taxa)) + 
 	geom_bar(stat = "identity") 
 
 #If do not use stat = "identity" get the error ##Error: stat_count() must not be used with a y aesthetic.
@@ -352,7 +347,7 @@ In the legend for the bar plot our factor levels for Taxa are in *alphabetical o
 We will talk about customizing plots later in this lesson, but the last line of code is one way to remove the legend title (by making the legend title 'blank').
 
 ```{r}
-ggplot(dat[dat$OTU >=2,], aes(x=Country, y=OTUs, fill=fct_reorder2(Taxa, Country, OTUs))) + 
+ggplot(fdat, aes(x=Country, y=OTUs, fill=fct_reorder2(Taxa, Country, OTUs))) + 
 	geom_bar(stat = "identity") +
   theme(legend.title = element_blank())
  
@@ -361,177 +356,24 @@ ggplot(dat[dat$OTU >=2,], aes(x=Country, y=OTUs, fill=fct_reorder2(Taxa, Country
 Now our highest abundance Taxa is the first value in our legend, and this matches the order of the Taxa in our bar graph. The legend order now has meaning. The white line in the Vietnam bar graph is a Taxa for which there was an OTU value in Tanzania but no data in Vietnam (since anything <=2 was filtered out of the data set). 
 
 
-
-Let's take a second to look at what happens when stat does not equal 'identity'. What is being counted instead of OTUs? Why does the colouring for Taxa look so different?
-
-```{r}
-ggplot(dat, aes(x=Country, fill=Taxa)) + 
-	geom_bar() 
-
-```
-
-
 You can alternate between 'stacked' or 'dodged' (as we did with the histogram) for whether your bars are on top of each other or next to each other when splitting by a factor or categorical variable.
 
 ```{r}
-ggplot(ndat, aes(x=Depth, y=pH, fill = Country)) + 
-	geom_bar(stat="identity", position = "dodge") 
+ggplot(fdat, aes(x=Country, y=OTUs, fill=fct_reorder2(Taxa, Country, OTUs))) + 
+	geom_bar(stat = "identity", position = "dodge") +
+  theme(legend.title = element_blank())
 ```
 
 You can have your bars horizonal instead of vertical by using `coord_flip()`.
 
 ```{r}
-ggplot(ndat, aes(x=Depth, y=pH, fill = Country)) + 
-	geom_bar(stat="identity", position = "dodge") +
+ggplot(fdat, aes(x=Country, y=OTUs, fill=fct_reorder2(Taxa, Country, OTUs))) + 
+	geom_bar(stat = "identity") +
+  theme(legend.title = element_blank()) +
   coord_flip()
-
 ```
 
 
-
-###Lines 
-
-To draw a line graph, we select `geom_line()`. 
-
-```{r}
-ggplot(ndat, aes(x=Temp, y=pH)) + geom_line() 
-```
-
-We can colour the lines for the different countries. Looking at our previous graph, what must have happened when these values were over the same range?
-
-```{r}
-ggplot(ndat, aes(x=Temp, y=pH, colour = Country)) + geom_line() 
-```
-
-####Error bars
-
-To plot error bars, we need to give the geom, `geom_errorbar()`, and the interval over which we want to draw the bar. This interval is usually one standard deviation, one standard error or a confidence interval. 
-
-Luckily, we have learned how to calculate the mean and standard deviation with `dplyr`. Once we have that, all we need to do is add or subtract the standard deviation from our data points to get the bounds of the error bar. 
-
-`geom_errorbar()` takes these bounds passed to the parameters ymax and ymin. In this case, since there were no sample replicates the standard deviation is taken from the mean of all of the soil readings in a given country at a given depth.
-
-```{r warning = FALSE}
-errdat <- ndat %>% group_by(Country, Depth) %>% mutate(mean_pH = mean(pH)) %>% mutate(sd_pH= sd(pH))
-
-ggplot(errdat, aes(x=Temp, y=pH, colour = Country)) + 
-  geom_line() + 
-  geom_errorbar(aes(ymin=pH-sd_pH, ymax = pH+sd_pH), width = 0.2, alpha = 0.4)
-```
-
-
-
-
-###Stripplots
-
-The first plots we made we scatterplots with 2 continuous variables. With one discrete variable and one categorical variable, we can make a stripplot. We use the point geom for both of these types of plots.
-
-
-```{r}
-ggplot(dat, aes(x = Depth, y = OTUs)) + geom_point() 
-```
-
-Again, we have a lot of values crushed near the x-axis. If we add log scaling to the y-axis, we get an error that this transformation created infinite values. This is because we have zeros in our data set. 
-```{r}
-ggplot(dat, aes(x = Depth, y = OTUs)) +
-  geom_point() +
-  scale_y_log10() 
-```
-
-Knowing this, we could ignore the warning, or add +1 to each OTU (negligable on a log scale).
-
-```{r}
-ggplot(dat, aes(x = Depth, y = OTUs+1)) +
-  geom_point() +
-  scale_y_log10() 
-```
-
-In order to see the points a little better, we can 'jitter' them. Jittering spreads out our data points while keeping them in the same area of the plot so we can get an idea of density.
-
-```{r}
-ggplot(dat, aes(x = Depth, y = OTUs+1)) +
-  geom_point(position = "jitter") +
-  scale_y_log10() +
-  facet_wrap(~Country)
-```
-
-
-_move bubble plots to appendix and  use a different plot for ggarrange and labelling demo?_
-
-###Bubble Plots
-
-With bubble plots, we need to provide the size of our bubbles in a way that is proportional to our data, and provide a scale to map these to.
-
-Let's group our OTUs by Country and Taxa and look at the Taxa for the top 30 OTUs. As a refresher, try to do this using `dplyr` functions.
- 
-We are going to make our bubbles (which can be thought of as large points) with `geom_jitter()` so that our bubbles don't overlap. Remember that we want to specify what we are plotting with **aesthetics**. We want the bubbles representing OTUs_per_Taxa, so we divide each value by pi when calling size.
-
-```{r} 
-bdat <- dat %>% 
-  group_by(Taxa, Country) %>% 
-  mutate(OTUs_per_Taxa = sum(OTUs)) %>% 
-  arrange(desc(OTUs_per_Taxa)) %>%
-  select(Taxa, Country, OTUs_per_Taxa) %>%
-  unique() %>%
-  .[1:30,]
-
-ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
-  scale_y_log10() +
-  geom_jitter(aes(size = OTUs_per_Taxa/pi), pch = 21, show.legend = TRUE)  +
-  guides(fill = FALSE)
-```
-
-However, it is hard to tell proportionally how different these sizes are. Mapping values to a scale gives us more of an idea of their relative sizes. This is done by giving a range of values to `scale_size_continuous()`. This range is the size you want your plotting symbols (bubbles) to be after transformation. You can use trial and error to see what range you like; it is not changing your data, but rather your perception of the data.
-
-```{r}
-ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
-  scale_y_log10() +
-  geom_jitter(aes(size = OTUs_per_Taxa/pi), pch = 21, show.legend = FALSE) + 
-  scale_size_continuous(range=c(1,30)) +
-  guides(fill=FALSE)
-```
-
-####Labelling Data Points
-
-`ggplot2` provides 2 methods of labelling: `geom_label()` and `geom_text()`. Let's look at the help menu to find out what the difference between them is. 
-
-We have to specify with **aesthetics** what we are plotting for our label. 
-
-```{r}
-ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
-  scale_y_log10() +
-  geom_jitter(aes(size = OTUs_per_Taxa/pi), pch = 21, show.legend = FALSE) + 
-  scale_size_continuous(range=c(1,30)) +
-  geom_label(aes(label = Taxa), show.legend = FALSE)
-```
-
-This isn't fantastic because our labels are overlapping. What parameters might you be able to use to move the labels? Try using them to get the labels to not overlap.
-
-The text geom has an option to check for overlap of labels. `geom_text()` does not provide a background for the label, and it may be harder to tell which label belongs to each data point.
-
-```{r}
-ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
-  scale_y_log10() +
-  geom_jitter(aes(size = sqrt(OTUs_per_Taxa/pi)), pch = 21, show.legend = FALSE) + 
-  scale_size_continuous(range=c(1,30)) +
-  geom_text(aes(label = Taxa), check_overlap = TRUE, show.legend = FALSE)
-```
-
-What happened here? Why don't we have as many labels? Look in the help menu to explain this behaviour.
-
-I don't like futzing with label positions, so I went looking for a package that would do this for me. `ggrepel` will 'repel' your labels away from each other without getting rid of them. Let's check it out with our bubble plot labels. Install and load `ggrepel`. The equivalent function we can use is `geom_label_repel()`. The force parameter allow you to modify how far you want your labels pushed away from each other. 
-
-Here, the box colour is being used to map to our data points but `ggrepel` can instead connect a line to data points by altering the value of segment.size. Variations on use can be found here: https://cran.r-project.org/web/packages/ggrepel/vignettes/ggrepel.html.
-
-```{r}
-library(ggrepel)
-
-ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
-  scale_y_log10() +
-  geom_jitter(aes(size = sqrt(OTUs_per_Taxa/pi)), pch = 21, show.legend = FALSE) + 
-  scale_size_continuous(range=c(1,30)) +
-  geom_label_repel(aes(label = Taxa), force = 2, show.legend = FALSE, segment.size = 0)
-```
 
 ###Boxplots
 
@@ -579,22 +421,21 @@ The `%in%` function returns a logical vector of whether there is a match or not 
 We can facet our plot by Country to verify we have only commonly appearing OTUs.
 
 ```{r warning = FALSE}
-keep <- dat %>% 
-  filter(OTUs>=2) %>% 
+keep <- fdat %>% 
   group_by(Country, Taxa) %>% 
   summarize(n = n()) %>% 
   filter(n > 1) %>%
   ungroup() %>%
-  select(Taxa)
+  select(Taxa) %>%
+  filter(duplicated(.))
 
-keep <- keep[duplicated(keep$Taxa),]
+subfdat <- fdat %>% filter(Taxa %in% keep$Taxa)
 
-ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs)) + 
+ggplot(subfdat , aes(x = Taxa, y = OTUs)) + 
   geom_boxplot() + 
   theme(axis.text.x = element_text(angle=90, hjust=1)) + 
   scale_y_log10() + 
   facet_grid(~Country)
-
 ```
 
 We will be using this graph as a base for customization later in the lesson.
@@ -608,7 +449,9 @@ I have subset the data to make a boxplot with 3 Taxa and 1 Country so that we ca
 An option with `ggplot2` is to save your plot into a *ggplot object*. This works well if you know you are only changing one or two elements of your plot, and you do not want to keep retyping code. What we are going to vary here is how the data points are displayed.
 
 ```{r warning = FALSE}
-b <- ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
+subdat <- dat %>% filter((Taxa=="Clostridia" | Taxa == "Unknown" | Taxa == "Bacilli") & Country == "T")
+
+b <- ggplot(subdat, aes(x = Taxa, y = OTUs)) + 
   geom_boxplot() +
   theme(axis.text.x = element_text(angle=90, hjust=1)) + 
   scale_y_log10()
@@ -639,14 +482,6 @@ b + geom_quasirandom(varwidth = TRUE)
 
 
 Other spacing and distribution options are available at https://github.com/eclarke/ggbeeswarm.
-
-####Heatmaps
-
-
-<!-- Data can be ordered by calculating the distance between samples (ie. euclidean - *sqrt(sum((x_i - y_i)^2))*) and then clustering them in a hierarchical way (joining the most similiar samples, iteratively, until all samples are clustered). -->
-
-<!-- `dist()` computes the distance between rows of a matrix and `hclust()` clusters the output of `dist()`. Once we reorder our correlation matrix, we then convert it to long format for plotting as before. -->
-
 
 
 ##Customization
@@ -682,7 +517,7 @@ I also want to add a title, modify the y-axis label to say that the data is log,
 
 
 ```{r warning = FALSE}
-ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs, fill = Taxa)) + 
+ggplot(subfdat , aes(x = Taxa, y = OTUs, fill = Taxa)) + 
   geom_boxplot(outlier.colour = "red") + 
   scale_y_log10() + 
   facet_grid(~Country) +
@@ -702,7 +537,7 @@ I am now going to save this plot in a *ggplot object*, since we are going to use
 ```{r warning = FALSE}
 labels <- c(T = "Tanzania", V = "Vietnam")
 
-p <- ggplot(dat[dat$Taxa %in% keep$Taxa,] , aes(x = Taxa, y = OTUs, fill = Taxa)) + 
+p <- ggplot(subfdat, aes(x = Taxa, y = OTUs, fill = Taxa)) + 
   geom_boxplot(outlier.colour = "red") + 
   scale_y_log10() + 
   facet_grid(~Country, labeller = labeller(Country = labels)) +
@@ -825,7 +660,7 @@ theme_bw
 And this is what `theme_bw()` practically looks like:
 
 ```{r warning = FALSE}
-p + theme_bw()
+p + theme_bw() 
 
 ```
 
@@ -954,19 +789,23 @@ You can send the plot object to the screen device to preview your image, and the
 With `ggsave()` you can minimally input the filename you would like to have, and the path to your file.
 
 ```{r}
-#change from heatmap example
-
-#ggsave("heatmap.png", path = "img")
+ggsave("crazy_blue_graph.png", path = "img")
 ```
 
 However, in some cases you want to tailor your output. You can specify the width, height and units of your image, or you can apply a scaling factor (the 'eyeballing' approach). You can also specify the plot object you want to save instead of whatever was on your graphics device last using the 'plot' parameter. Note that this time I have combined the path with the filename, and called the file device type separately.
 
 ```{r}
-#change from heatmap example
+saved_plot <- p+theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        panel.border = element_rect(fill = NA),
+        strip.text.x = element_text(face = "bold", size = 16),
+        plot.title = element_text(hjust=0.5, size = 18),
+        axis.ticks.y = element_line(),
+        panel.grid.major = element_line(),
+        panel.grid.minor = element_line(), 
+        plot.background = element_rect(fill = "cornflowerblue"))
 
-#hmap <- 
-
-#ggsave("img/heatmap", plot = hmap, device = "pdf", scale = 2, width = 150, height = 110, units = "mm")
+ggsave("img/crazy_blue", plot = saved_plot, device = "pdf", scale = 2, width = 150, height = 110, units = "mm")
 ```
 
 No image is sent to the screen device when a file is saved in this manner.
@@ -976,7 +815,7 @@ No image is sent to the screen device when a file is saved in this manner.
 ***
 ##Taking it up a notch
 
-There are many fantastic R packages to analyze and visualize your data. As a group, we are likely working in a variety of specialized areas. The plots we have made so far today should be useful for data exploration for many different kinds of data. In the next section we are going to preview some more complex visualization types, but since these take more time to go through and not everyone may be interested in interactive graphics, network diagrams, time-series analysis, or geospatial data, we will not be plotting all of these together. We will, however learn how to arrange multiple plots per page, and also how to make an upset plot.  If you are interested in a tutorial on one of these other visualization types, please indicate that in the comments area of the lesson survey (https://www.surveymonkey.com/r/VNQZ3KS). 
+There are many fantastic R packages to analyze and visualize your data. As a group, we are likely working in a variety of specialized areas. The plots we have made so far today should be useful for data exploration for many different kinds of data. In the next section we are going to preview some more complex visualization types, but since these take more time to go through and not everyone may be interested in interactive graphics, network diagrams, time-series analysis, or geospatial data, we will not be plotting all of these together. We will, however learn how to arrange multiple plots per page, and also how to make an upset plot.  If you are interested in a tutorial on one of these other visualization types, please indicate that in the comments area of the lesson survey (https://www.surveymonkey.com/r/H3PFQR3). 
 
 
 
@@ -987,26 +826,26 @@ There are many fantastic R packages to analyze and visualize your data. As a gro
 
 ###Multiple plots on one page (ie. for publication images)
 
-There are a variety of methods to mix multiple graphs on the same page, however `ggplot2` does not work well with all of them. I am going to work with a package based that uses `gridExtra`(which allows us to arrange plots) but works well with `ggplot2` called `ggpubr` (which allows us to align the axes of our plots). For a demonstration, we are going to take 3 plots that we made earlier (a boxplot, a histogram, and a bubble plot), save them as objects, and then arrange and align them in the same figure. (http://www.sthda.com/english/rpkgs/ggpubr/)
+There are a variety of methods to mix multiple graphs on the same page, however `ggplot2` does not work well with all of them. I am going to work with a package based that uses `gridExtra`(which allows us to arrange plots) but works well with `ggplot2` called `ggpubr` (which allows us to align the axes of our plots). For a demonstration, we are going to take 3 plots that we made earlier (a boxplot, a histogram, and a dot plot), save them as objects, and then arrange and align them in the same figure. (http://www.sthda.com/english/rpkgs/ggpubr/)
 
-`ggarrange()` is a function that takes your plots, their labels, and how you would like your plots arranged in rows and columns. To start, we want our boxplot and bubble plot side by side. If you picture each plot as a square in a grid, we need two columns (one for each plot, `ncol = 2`) and one row (since they are side by side, `nrow = 1`). 
+`ggarrange()` is a function that takes your plots, their labels, and how you would like your plots arranged in rows and columns. To start, we want our boxplot and dot plot side by side. If you picture each plot as a square in a grid, we need two columns (one for each plot, `ncol = 2`) and one row (since they are side by side, `nrow = 1`). 
 
 ```{r warning = FALSE, message = FALSE}
 library(ggpubr)
 
-hist <- ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) + 
+hist <- ggplot(fdat, aes(x=OTUs, fill=Country, alpha=0.3)) + 
 	geom_histogram(binwidth = 50, position = "dodge") +
   xlim(0,1000) +
   ylim(0,150) +
   geom_rug() 
 
-bub <- ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
+dot <- ggplot(ndat, aes(x=TS, y=CODt)) + 
+  geom_point() +
   scale_y_log10() +
-  geom_jitter(aes(size = sqrt(OTUs_per_Taxa/pi)), pch = 21, show.legend = FALSE) + 
-  scale_size_continuous(range=c(1,30)) +
-  geom_text(aes(label = Taxa), check_overlap = TRUE, show.legend = FALSE)
+  facet_grid(~Country) +
+  stat_smooth(method = lm)
 
-ggarrange(bub, hist, 
+ggarrange(dot, hist, 
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
 
@@ -1017,7 +856,7 @@ While our grid areas are the same size, our plot backgrounds are not. Let's adju
 
 
 ```{r warning = FALSE}
-hist <- ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) + 
+hist <- ggplot(fdat, aes(x=OTUs, fill=Country, alpha=0.3)) + 
 	geom_histogram(binwidth = 50, position = "dodge") +
   xlim(0,1000) +
   ylim(0,150) +
@@ -1025,7 +864,7 @@ hist <- ggplot(dat[dat$OTU >=2,], aes(x=OTUs, fill=Country, alpha=0.3)) +
   guides(alpha = FALSE) +
   theme(legend.justification=c(1,1), legend.position=c(1,1), legend.background = element_blank())
 
-ggarrange(bub, hist, 
+ggarrange(dot, hist, 
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
 ```
@@ -1033,41 +872,26 @@ ggarrange(bub, hist,
 Next we will add in the boxplot. Imagine a square with 4 boxes. We are going to put our boxplot in the left top and bottom boxes, the histogram in the top right box, and the bubble plot in the bottom right box.  To do this, we are arranging 2 columns (one with the boxplot and one with the histogram + bubble plot, `ncol = 2`) and we are arranging 2 rows (one with the histogram and one with the bubble plot, `nrow = 2`).
 
 ```{r warning = FALSE}
-box <- ggplot(dat[(dat$Taxa=="Clostridia" | dat$Taxa == "Unknown" | dat$Taxa == "Bacilli") & dat$Country == "T",] , aes(x = Taxa, y = OTUs)) + 
+box <- ggplot(subdat , aes(x = Taxa, y = OTUs)) + 
   geom_boxplot() + 
   geom_point() +
   theme(axis.text.x = element_text(angle=90, hjust=1)) + 
   scale_y_log10()
 
-ggarrange(box, ggarrange(hist, bub, 
+ggarrange(box, ggarrange(hist, dot, 
           labels = c("B", "C"),
           nrow = 2),
            ncol = 2, labels = "A")
 
 ```
 
-The y-axis lines for the histogram and bubble plot are not aligned, but this can be fixed with a call to `align="v"`.
+If y-axis lines or x-axis lines are not aligned, but this can be fixed with a call to `align = "v"` or `align="h"`.
 
-
-```{r warning = FALSE}
-ggarrange(box, ggarrange(hist, bub, 
-          labels = c("B", "C"),
-          nrow = 2, align = "v"),
-           ncol = 2, labels = "A")
-
-```
-
-To make sure all axis titles are the same size (B and C look a little off to me), we can specify using `font()` which text we want changed and the size we want to change it to. I am also going to make the legend title size the same. I want to make the text inside the bubble plot a little smaller as well. Let's look at the `font()` function. Can we do that? What might be another option?
+To make sure all axis titles are the same size (B and C look a little off to me), we can specify using `font()` which text we want changed and the size we want to change it to. I am also going to make the legend title size the same.Let's look at the `font()` function.
 
 ```{r warning = FALSE}
-bub <- ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
-  scale_y_log10() +
-  geom_jitter(aes(size = sqrt(OTUs_per_Taxa/pi)), pch = 21, show.legend = FALSE) + 
-  scale_size_continuous(range=c(1,30)) +
-  geom_text(aes(label = Taxa, size=16), check_overlap = TRUE, show.legend = FALSE)
 
-
-ggarrange(box + font("axis.title", size=9), ggarrange(hist + font("axis.title", size=9) + font("legend.title", size=9), bub + font("axis.title", size=9), 
+ggarrange(box + font("axis.title", size=9), ggarrange(hist + font("axis.title", size=9) + font("legend.title", size=9), dot + font("axis.title", size=9), 
           labels = c("B", "C"),
           nrow = 2, align = "v"),
            ncol = 2, labels = "A")
@@ -1082,12 +906,13 @@ __Challenge__
 
 </div>
 
-Using the code available here for a line graph we made earlier in the lesson, make a combined figure. Imagine a square with 4 boxes. We are going to put our line graph in the top right and left boxes, the histogram in the bottom left box, and the bubble plot in the bottom right box. Make sure the legend and axis titles are the same size. Change the legend text for the line graph to be smaller than the legend title. 
+Using the code available here for a density plot we made earlier in the lesson, make a combined figure. Imagine a square with 4 boxes. We are going to put our density plot in the top right and left boxes, the histogram in the bottom left box, and the box plot in the bottom right box. Make sure the legend and axis titles are the same size. Change the legend text for the line graph to be smaller than the legend title. 
 
 ```
-lin <- ggplot(errdat, aes(x=Temp, y=pH, colour = Country)) + 
-  geom_line() + 
-  geom_errorbar(aes(ymin=pH-sd_pH, ymax = pH+sd_pH), width = .2, alpha = 0.4)
+dens <- ggplot(fdat, aes(x=OTUs, fill=Country, alpha=0.3)) + 
+	geom_density() +
+  geom_rug() +
+  xlim(0, 1000)
 ```
 
 </br>
@@ -1097,12 +922,13 @@ lin <- ggplot(errdat, aes(x=Temp, y=pH, colour = Country)) +
 ***
 
 ```{r include = FALSE, warning = FALSE, eval = FALSE}
-lin <- ggplot(errdat, aes(x=Temp, y=pH, colour = Country)) + 
-  geom_line() + 
-  geom_errorbar(aes(ymin=pH-sd_pH, ymax = pH+sd_pH), width = .2, alpha = 0.4)
+dens <- ggplot(fdat, aes(x=OTUs, fill=Country, alpha=0.3)) + 
+	geom_density() +
+  geom_rug() +
+  xlim(0, 1000)
 
 
-ggarrange(lin+ font("axis.title", size=9) + font("legend.title", size=9) + font("legend.text", size = 8), ggarrange(hist + font("axis.title", size=9) + font("legend.title", size=9), bub + font("axis.title", size=9), 
+ggarrange(dens+ font("axis.title", size=9) + font("legend.title", size=9) + font("legend.text", size = 6), ggarrange(hist + font("axis.title", size=9)+ font("legend.text", size = 6) + font("legend.title", size=9), box + font("axis.title", size=9), 
           labels = c("B", "C"),
           ncol = 2, align = "h"),
            nrow = 2, labels = "A")
@@ -1126,12 +952,12 @@ Let's see how UpSet plots work practically.
 I have picked 8 different Taxa, which would make a crazy venn diagram with a lot of zeros in it since a couple of these Taxa are rare.
 
 ```{r}
-subdat <- read.csv("data/SPE_pitlatrine.csv", stringsAsFactors = FALSE)
+subtax <- read.csv("data/SPE_pitlatrine.csv", stringsAsFactors = FALSE)
 
 eight <- c("Chloroflexi", "Acidobacteria_Gp16", "Acidobacteria_Gp5", "Cyanobacteria", "Lentisphaeria", "Deinococci", "Alphaproteobacteria", "Clostridia")
 
 #subset for the 8 taxa
-subdat <- subdat[subdat$Taxa %in% eight, ]
+subtax <- subtax %>% filter(Taxa %in% eight)
 ```
 
 The data that we have is an OTU table. For this purpose we simply want to know whether a given Taxa was present or absent in the sample, and then we can form intersections based on this information. So, for each OTU value that is *not* 0, we replace it with a 1 instead. 
@@ -1139,13 +965,13 @@ The data that we have is an OTU table. For this purpose we simply want to know w
 ```{r}
 #this is a tidyr way of transposing our data frame so that Taxa are in columns and sites are in rows
 #this format is for the upset plot only, we can do the value replacement in either format
-subdat <- subdat %>% 
-   gather(variable, value, -Taxa) %>% 
-   spread(Taxa, value) 
+subtax  <- subtax %>% 
+   gather(sample, otus, -Taxa) %>% 
+   spread(Taxa, otus) 
 
 #if any OTUs are present, substitute the value with a 1 (exclude the first row which is character)
 #don't worry about the function syntax, we will be writing functions in lesson 6
-subdat[,-1] <- apply(subdat[,-1], 2, function(x) ifelse(x!=0, 1, 0))
+subtax[,-1] <- apply(subtax[,-1], 2, function(x) ifelse(x!=0, 1, 0))
 ```
 
 Then to use the `upset()` plotting function, we enter our data set, the number of sets we are inputting, if we want to order the results (in this case by frequency), and how many intersections we want to show.  Here, I will show 15 intersections - we know the remaining intersections would be zero since this is ordered by frequency.
@@ -1153,7 +979,7 @@ Then to use the `upset()` plotting function, we enter our data set, the number o
 ```{r warning = FALSE, message = FALSE}
 library(UpSetR)
 
-upset(subdat, nsets = 8, empty.intersections = TRUE, order.by = "freq", nintersects = 15, main.bar.color = "black", sets.bar.color = "#56B4E9" )
+upset(subtax, nsets = 8, empty.intersections = TRUE, order.by = "freq", nintersects = 15, main.bar.color = "black", sets.bar.color = "#56B4E9" )
 
 ```
 
@@ -1269,7 +1095,7 @@ Tufte, Edward R. The Visual Display of Quantitative Information.
 ***
 
 Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
-<https://www.surveymonkey.com/r/VNQZ3KS>
+<https://www.surveymonkey.com/r/H3PFQR3>
 
 </br>
 
@@ -1300,4 +1126,144 @@ ggplot(dat, aes(x="", y=Country, fill = Country)) +
 	geom_bar(stat = "identity", width = 1) +
   coord_polar(theta = "y")
 
+```
+
+###Lines 
+
+To draw a line graph, we select `geom_line()`. 
+
+```{r}
+ggplot(ndat, aes(x=Temp, y=pH)) + geom_line() 
+```
+
+We can colour the lines for the different countries. Looking at our previous graph, what must have happened when these values were over the same range?
+
+```{r}
+ggplot(ndat, aes(x=Temp, y=pH, colour = Country)) + geom_line() 
+```
+
+####Error bars
+
+To plot error bars, we need to give the geom, `geom_errorbar()`, and the interval over which we want to draw the bar. This interval is usually one standard deviation, one standard error or a confidence interval. 
+
+Luckily, we have learned how to calculate the mean and standard deviation with `dplyr`. Once we have that, all we need to do is add or subtract the standard deviation from our data points to get the bounds of the error bar. 
+
+`geom_errorbar()` takes these bounds passed to the parameters ymax and ymin. In this case, since there were no sample replicates the standard deviation is taken from the mean of all of the soil readings in a given country at a given depth.
+
+```{r warning = FALSE}
+errdat <- ndat %>% group_by(Country, Depth) %>% mutate(mean_pH = mean(pH)) %>% mutate(sd_pH= sd(pH))
+
+ggplot(errdat, aes(x=Temp, y=pH, colour = Country)) + 
+  geom_line() + 
+  geom_errorbar(aes(ymin=pH-sd_pH, ymax = pH+sd_pH), width = 0.2, alpha = 0.4)
+```
+
+###Stripplots
+
+The first plots we made we scatterplots with 2 continuous variables. With one discrete variable and one categorical variable, we can make a stripplot. We use the point geom for both of these types of plots.
+
+
+```{r}
+ggplot(dat, aes(x = Depth, y = OTUs)) + geom_point() 
+```
+
+Again, we have a lot of values crushed near the x-axis. If we add log scaling to the y-axis, we get an error that this transformation created infinite values. This is because we have zeros in our data set. 
+```{r}
+ggplot(dat, aes(x = Depth, y = OTUs)) +
+  geom_point() +
+  scale_y_log10() 
+```
+
+Knowing this, we could ignore the warning, or add +1 to each OTU (negligable on a log scale).
+
+```{r}
+ggplot(dat, aes(x = Depth, y = OTUs+1)) +
+  geom_point() +
+  scale_y_log10() 
+```
+
+In order to see the points a little better, we can 'jitter' them. Jittering spreads out our data points while keeping them in the same area of the plot so we can get an idea of density.
+
+```{r}
+ggplot(dat, aes(x = Depth, y = OTUs+1)) +
+  geom_point(position = "jitter") +
+  scale_y_log10() +
+  facet_wrap(~Country)
+```
+
+
+
+###Bubble Plots
+
+With bubble plots, we need to provide the size of our bubbles in a way that is proportional to our data, and provide a scale to map these to.
+
+Let's group our OTUs by Country and Taxa and look at the Taxa for the top 30 OTUs. As a refresher, try to do this using `dplyr` functions.
+ 
+We are going to make our bubbles (which can be thought of as large points) with `geom_jitter()` so that our bubbles don't overlap. Remember that we want to specify what we are plotting with **aesthetics**. We want the bubbles representing OTUs_per_Taxa, so we divide each value by pi when calling size.
+
+```{r} 
+bdat <- dat %>% 
+  group_by(Taxa, Country) %>% 
+  mutate(OTUs_per_Taxa = sum(OTUs)) %>% 
+  arrange(desc(OTUs_per_Taxa)) %>%
+  select(Taxa, Country, OTUs_per_Taxa) %>%
+  unique() %>%
+  .[1:30,]
+
+ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
+  scale_y_log10() +
+  geom_jitter(aes(size = OTUs_per_Taxa/pi), pch = 21, show.legend = TRUE)  +
+  guides(fill = FALSE)
+```
+
+However, it is hard to tell proportionally how different these sizes are. Mapping values to a scale gives us more of an idea of their relative sizes. This is done by giving a range of values to `scale_size_continuous()`. This range is the size you want your plotting symbols (bubbles) to be after transformation. You can use trial and error to see what range you like; it is not changing your data, but rather your perception of the data.
+
+```{r}
+ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
+  scale_y_log10() +
+  geom_jitter(aes(size = OTUs_per_Taxa/pi), pch = 21, show.legend = FALSE) + 
+  scale_size_continuous(range=c(1,30)) +
+  guides(fill=FALSE)
+```
+
+####Labelling Data Points
+
+`ggplot2` provides 2 methods of labelling: `geom_label()` and `geom_text()`. Let's look at the help menu to find out what the difference between them is. 
+
+We have to specify with **aesthetics** what we are plotting for our label. 
+
+```{r}
+ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
+  scale_y_log10() +
+  geom_jitter(aes(size = OTUs_per_Taxa/pi), pch = 21, show.legend = FALSE) + 
+  scale_size_continuous(range=c(1,30)) +
+  geom_label(aes(label = Taxa), show.legend = FALSE)
+```
+
+This isn't fantastic because our labels are overlapping. What parameters might you be able to use to move the labels? Try using them to get the labels to not overlap.
+
+The text geom has an option to check for overlap of labels. `geom_text()` does not provide a background for the label, and it may be harder to tell which label belongs to each data point.
+
+```{r}
+ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
+  scale_y_log10() +
+  geom_jitter(aes(size = sqrt(OTUs_per_Taxa/pi)), pch = 21, show.legend = FALSE) + 
+  scale_size_continuous(range=c(1,30)) +
+  geom_text(aes(label = Taxa), check_overlap = TRUE, show.legend = FALSE)
+```
+
+What happened here? Why don't we have as many labels? Look in the help menu to explain this behaviour.
+
+I don't like futzing with label positions, so I went looking for a package that would do this for me. `ggrepel` will 'repel' your labels away from each other without getting rid of them. Let's check it out with our bubble plot labels. Install and load `ggrepel`. The equivalent function we can use is `geom_label_repel()`. The force parameter allow you to modify how far you want your labels pushed away from each other. 
+
+Here, the box colour is being used to map to our data points but `ggrepel` can instead connect a line to data points by altering the value of segment.size. Variations on use can be found here: https://cran.r-project.org/web/packages/ggrepel/vignettes/ggrepel.html.
+
+```{r}
+library(ggrepel)
+
+ggplot(bdat, aes(x = Country, y = OTUs_per_Taxa, fill=Taxa)) +
+  scale_y_log10() +
+  geom_jitter(aes(size = sqrt(OTUs_per_Taxa/pi)), pch = 21, show.legend = FALSE) + 
+  scale_size_continuous(range=c(1,30)) +
+  geom_label_repel(aes(label = Taxa), force = 2, show.legend = FALSE, segment.size = 0)
 ```
