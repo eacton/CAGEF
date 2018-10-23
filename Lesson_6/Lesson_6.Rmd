@@ -19,11 +19,11 @@ output:
 
 </br>
 
-##A quick intro to the intro to R Lesson Series
+##A quick intro to the Introduction to R for Data Science
 
 </br>
 
-This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This course was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
+This 'Introduction to R for Data Science' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This CSB1020 was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
 
 
 This lesson is the last in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
@@ -42,6 +42,15 @@ How do we get there? Today we are going to be testing and interpreting the outpu
 The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF>, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/3RKC6MP>), it will help me further develop this course and would be greatly appreciated. 
 
 ***
+####Highlighting
+
+`grey background` - a package, function, code or command      
+*italics* - an important term or concept     
+**bold** - heading or a term that is being defined      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink     
+
+
+***
 
 ####Packages Used in This Lesson
 
@@ -55,15 +64,16 @@ The following packages are used in this lesson:
 
 Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
 
-
 ***
-####Highlighting
 
-`grey background` - a package, function, code or command      
-*italics* - an important term or concept     
-**bold** - heading or a term that is being defined      
-<span style="color:blue">blue text</span> - named or unnamed hyperlink     
 
+####Data Files Used in This Lesson
+
+-SISG-Data-cholesterol.txt    
+
+These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_6/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
+
+Or click on the blue hyperlink at the start of the README.md at <https://github.com/eacton/CAGEF/tree/master/Lesson_6> to download the entire folder at DownGit.
 
 
 ***
