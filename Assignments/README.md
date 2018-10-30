@@ -59,3 +59,17 @@ Due date: 11:59pm October 30th, 2018
 Submission: Each student will upload a .R file to Quercus. Please include your first and last name, the date of submission, and the assignment number.
 
 _General Late Policy: 1 mark will be deducted for each day the assignment is late to a maximum of 5 days, after which a mark of 0 will be given._
+
+__Final_Project: Microbial Composition of Freshwater Lakes and Bogs__
+
+The Final Project folder can be downloaded [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/eacton/CAGEF/tree/master/Assignments/Final_Project).
+
+The folder contains the instructions and dataset required to complete the assignment.
+
+Date Assigned: October 30th, 2018
+
+Due date: 11:59pm November 13th, 2018
+
+Submission: Each student will upload a .R file to Quercus. Please include your first and last name, the date of submission, and the assignment number.
+
+_Project Late Policy: 5% will be deducted for each day the assignment is late to a maximum of 5 days, after which a mark of 0 will be given._
