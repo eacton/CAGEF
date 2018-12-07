@@ -20,7 +20,7 @@ Professor D. Guttman and Erica Acton
 
 #### Offered
 
-Winter 2019 - January 10 - February 20 (6 weeks)
+Winter 2019 - January 10 - February 20 (6 weeks)     
 Fall 2018 - September 18 - October 23 (6 weeks)
 
 #### Weight
