@@ -1,0 +1,829 @@
+---
+title: 'Lesson 2 - Basic Life Skills: How to Read, Write, and Manipulate (Your Data)'
+output:
+  html_document:
+    keep_md: yes
+    toc: yes
+    toc_depth: 3
+---
+***
+
+![](img/Data-Wrangling-Is-The.jpg){width=400px} 
+
+</br>
+
+##A quick intro to the Introduction to R for Data Science
+
+</br>
+
+This 'Introduction to R for Data Science' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This CSB1020 was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
+
+
+
+This lesson is the second in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
+
+
+![img borrowed from r4ds.had.co.nz](img/data-science-explore.png)
+
+</br>
+
+How do we get there? Today we are going to be learning about how to subset and filter our data and perform all of the manipulations one has to do in daily coding life. We will learn about tidy data and how it makes data analysis less of a pain. We will perform some basic statistics on our newly transformed dataset. Next week we will learn how to tidy our data, subset and merge data and generate descriptive statistics. The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. After that, we will make all sorts of plots - from simple data exploration to interactive plots - this is always a fun lesson. 
+
+
+![Henrik Kniberg, refurbished by blog.fastmonkeys.com](img/spotify-howtobuildmvp.gif)
+
+</br>
+
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF>, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/SMGKMCS>), it will help me further develop this course and would be greatly appreciated. 
+
+</br>
+
+***
+
+####Highlighting
+
+`grey background` - a package, function, code, command or directory      
+*italics* - an important term or concept or an individual file or folder     
+**bold** - heading or a term that is being defined      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink   
+
+
+***
+
+####Packages Used in This Lesson
+
+The following packages are used in this lesson:
+
+`dplyr`     
+`readr`     
+`readxl`     
+`tibble`     
+(`googlesheets`- optional)
+
+Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
+
+***
+
+####Data Files Used in This Lesson
+
+-ENV_pitlatrine.csv     
+-SPE_pitlatrine.csv     
+-books.alpha.xlsx     
+-adult_income.tsv
+
+These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_2/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
+
+Or click on the blue hyperlink at the start of the README.md at <https://github.com/eacton/CAGEF/tree/master/Lesson_2> to download the entire folder at DownGit.
+
+***
+
+
+
+__Objective:__ At the end of this session you will be able to use the dplyr package to subset and manipulate your data and to perform simple calculations. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
+
+***
+
+
+</br>
+
+#Reading in data & writing data
+
+###Dataset: Sequencing the V3-V5 hypervariable regions of the 16S rRNA gene
+
+16S rRNA sequencing of 30 latrines from Tanzania and Vietnam at different depths (multiples of 20cm). Microbial abundance is represented in Operational Taxonomic Units (OTUs). Operational Taxonomic Units (OTUs) are groups of organisms defined by a specified level of DNA sequence similarity at a marker gene (e.g. 97% similarity at the V4 hypervariable region of the 16S rRNA gene). Intrinsic environmental factors such as pH, temperature, organic matter composition were also recorded.
+
+We have 2 csv files:
+
+1. A metadata file (Naming conventions: [Country_LatrineNo_Depth]) with sample names and environmental variables.     
+2. OTU abundance table.
+
+B Torondel, JHJ Ensink, O Gunvirusdu, UZ Ijaz, J Parkhill, F Abdelahi, V-A Nguyen, S Sudgen, W Gibson, AW Walker, and C Quince.
+Assessment of the influence of intrinsic environmental and geographical factors on the bacterial ecology of pit latrines
+Microbial Biotechnology, 9(2):209-223, 2016. DOI:10.1111/1751-7915.12334
+
+***
+
+##tsv/csv files (utils and readr) 
+
+Let's read our metadata file into R. While we do these exercises, we are going to become friends with the Help menu. Let's start by using the `read.table()` function which takes in the path to our file.
+
+
+```{r}
+meta <- read.table(file = "data/ENV_pitlatrine.csv")
+```
+
+To see the result, we can look at 'meta' in the Environment pane and see that there are 82 observations of one variable. If we click on the arrow next to 'meta' we can now see that we have a column 'V1' and the variable type is a factor. We can also hover the mouse over the column name for this information. 
+
+We can click on 'meta' in the Environment pane or type `View(meta)` in the Console to open a spreadsheet-like view of 'meta' in a new tab. This is pretty ugly looking. Why? 
+
+
+In the help file the default `sep` or what is separating columns is expected to be a space. We need to use specify a comma instead.  
+
+```{r}
+meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",")
+```
+
+We can either inspect meta again in the spreadsheet-like view or `head()` will show us the first 6 rows of our data frame. `tail()` would show the last 6 rows.
+
+```{r}
+head(meta)
+```
+
+Better. Looking in the Environment pane 'meta' now has 82 rows and 12 columns, meaning our columns are separated appropriately, but what about our column titles? We want the names in the 1st row to be our column headings.
+
+```{r}
+meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = TRUE)
+head(meta)
+```
+
+We use `header=TRUE` to specify that the first row we read in will be the column headers. We now have 81 rows and 12 columns. 
+
+These samples are not replicates. Each represents a combination of a different country, latrine, and depth. In this case, we might prefer to have Samples as character data, not a factor. (Note: TRUE and FALSE can be abbreviated as T and F)
+
+```{r}
+meta <- read.table(file = "data/ENV_pitlatrine.csv", sep = ",", header = T, stringsAsFactors = F)
+str(meta)
+```
+
+Don't forget! `str()` is still the best way to look at your data structure without taking your hands off the keyboard.
+
+This is as good a time as any to mention that you do not have to specify the name for every argument in a function. If unnamed, arguments are assumed to be input in the order they appear in the function documentation. You can place arguments out of order if they are named (`header = TRUE` is the second argument to `read.table()`, but can be placed in the 3rd position above due to being named). 
+
+Only leave out argument names that are fairly obvious. In the example below, we can easily assume what character string is supposed to be the file, but there are many TRUE/FALSE argument options and it is not obvious what `TRUE` is referring to without looking up the documentation. I would also retain `sep=` as there are other quoted argument options, and it is better to be explicitly obvious than implicitly so (ie. the file is a .csv so it is comma separated).  
+
+```{r}
+meta <- read.table("data/ENV_pitlatrine.csv", TRUE, ",", stringsAsFactors = FALSE)
+```
+
+
+***
+
+__Challenge__ 
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=100px}
+</div>
+
+Read our metadata table into R using any previously unused function under Usage in the `read.table()` Help menu. Save your result in a variable called 'dat'.
+
+</br>
+</br>
+
+```{r include = FALSE}
+#read.csv has header=T as default and sep = ","
+dat <- read.csv(file = "data/ENV_pitlatrine.csv", stringsAsFactors =F)
+#read.csv2 has header=T as default and sep = ";"
+dat <- read.csv2(file = "data/ENV_pitlatrine.csv", sep = ",", stringsAsFactors =F)
+
+#read.delim has header=T as default and sep = "\t"
+dat <- read.delim(file = "data/ENV_pitlatrine.csv", sep = ",", stringsAsFactors =F)
+#read.delim2 has header=T as default and sep = "\t" and dec = ","
+dat <- read.delim2(file = "data/ENV_pitlatrine.csv", sep = ",", dec = ".", stringsAsFactors =F)
+
+```
+
+
+***
+
+Hopefully this exercise forced you to look at the differences in the default values of the parameters in these different functions. I suggest that you keep these in mind as we look at some functions that were aimed to make a few typing shortcuts. Let's load the `readr` library.
+
+```{r}
+library(readr)
+
+```
+
+Use `read_csv()` to read in your metadata file. What is different from `read.csv()`?
+
+```{r}
+meta <- read_csv("data/ENV_pitlatrine.csv")
+head(meta)
+```
+
+Note that `readr` tells you exactly how it parsed your file, and how each column is encoded. It also saves us from typing `stringsAsFactors = FALSE`. Every. Time. The syntax is a bit different - for example, `col_names = TRUE` instead of `header = TRUE`, `col_types = 'c'` instead of `colClasses = 'character'`. It is a matter of personal preference what you want to use. If you have a csv file you are really struggling with, I would try `read_csv` as it has some pretty sensible defaults.     
+
+##Excel spreadsheets
+
+But what happens if we have a good, old-fashioned excel file? The `readxl` package will recognize both xls and xlsx files. It expects tabular data.
+
+```{r}
+library(readxl)
+
+head(read_excel("data/books_alpha.xlsx"))
+
+```
+
+This doesn't look like a workbook. Why not? The `read_excel()` function defaults to reading in the first worksheet. You can specify which sheet you want to read in by position or name. Let's see what the name of our sheets are.
+
+```{r}
+excel_sheets("data/books_alpha.xlsx")
+
+```
+
+Note that the argument to both of these functions was the path to our data sheet. We can save this path into a variable to save ourselves some typing.
+
+```{r}
+path <- "data/books_alpha.xlsx"
+```
+
+
+It is possible to subset from a sheet by specifying cell numbers or ranges. Here we are grabbing sheet 1, and subsetting cells over 2 columns - C1:D9.
+
+
+```{r}
+read_excel(path, sheet = 1, range = "C1:D9")
+
+```
+
+We could alternatively specify the sheet by name. This is how you would simply grab rows.
+
+```{r}
+read_excel(path, sheet = "Top titles", range = cell_rows(1:9))
+```
+
+And likewise, how you would subset just columns from the same sheet.
+
+```{r }
+read_excel(path, sheet = 1, range = cell_cols("B:D"))
+```
+
+
+You can also use a list version of the apply function `lapply()` to read in all sheets at once. Each sheet will be stored as a data frame inside of a list object. If you remember, `apply()` took in a matrix, a row/column specification (MARGIN), and a function. `lapply()` takes in a list (which does not have rows and columns) and a function. 
+
+While so far we are used to functions finding our variables globally (in the global environment), `lapply()` is looking locally (within the function) and so we need to explicitly provide our path. We will get more into local vs global variables in our functions lesson. For now, I just want you to be able to read in all worksheets from an excel workbook.
+
+```{r}
+ex <- lapply(excel_sheets(path), read_excel, path = path)
+
+str(ex)
+```
+We now have a list object with each worksheet being one item in the list. 
+
+
+You can subset the sheet you would like to work with using the syntax 'list[[x]]' and store it as a variable using `data.frame()` (or work with all sheets at once - see the `purrr` package for working with list objects).
+
+
+```{r}
+str(ex[[3]])
+
+excel3 <- data.frame(ex[[3]])
+```
+
+At this point, you will be able to use your excel worksheet as a normal data frame in R.
+
+If you are a googlesheets person, there is a package (surprisingly called 'googlesheets') that will allow you to get your worksheets in and out of R. Checkout the appendix at the end of this lesson for a brief tutorial.
+
+
+***
+__Challenge__ 
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=100px}
+</div>
+
+Read in the 'adult_income.tsv' dataset. How many rows and columns in the dataset? Can you delete the last column? What flavour of variables are there? Change a column name. Write the data to a csv file. 
+
+</br>
+
+```{r include = FALSE, eval = FALSE}
+
+#doesn't really matter if strings are character or factor
+dat <- read.table("data/adult_income.tsv", stringsAsFactors = F)
+
+#rows 16281, columns 15
+str(dat)
+dim(dat)
+
+#delete last column
+dat <- dat[, -1]
+
+#flavor of variables: integer and character or integer and factor
+#assumes row names which we don't have in this case, row.names = FALSE 
+#to not be imported with extra column of index numbers
+write.csv(dat, "data/adult_income.csv", row.names = FALSE)
+
+```
+
+
+</br>
+
+__Bonus:__ 
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/bonus_pow.jpg){width=100px}
+</div>
+
+Try reading in one of your own datasets. Write it to a different file format. 
+
+</br>
+</br>
+
+***
+
+
+#A quick intro to the dplyr package
+
+To be able to answer any questions with our data, we need the ability to select and filter parts of our data. 
+
+
+![](img/making_progress.png){width=200px} 
+
+
+</br>
+</br>
+
+
+The `dplyr` package was made by Hadley Wickham to help make data frame manipulation easier.  It has 5 major functions:
+
+  1. `filter()` - subsets your data frame by row
+  2. `select()` - subsets your data frame by columns
+  3. `arrange()` - orders your data frame alphabetically or numerically by ascending or descending variables
+  4. `mutate(), transmute()` - create a new column of data
+  5. `summarize()` - reduces data to summary values (for example using `mean()`, `sd()`, `min()`, `quantile()`, etc)
+  
+  
+Let's load the library.
+
+```{r message = FALSE}
+library(dplyr)
+library(tibble)
+```
+
+
+
+Let's read in our dataset, store it in a variable, and check out the structure.
+
+```{r }
+dat <- read_csv("data/SPE_pitlatrine.csv")
+View(dat)
+
+```
+
+You can take a look at the first few rows of your data frame using the `head()` function.
+
+```{r}
+head(dat)
+```
+
+
+
+Likewise, to inspect the last rows, you can use the `tail()` function. You can specify the number of rows to `head()` or `tail()`.
+
+```{r }
+tail(dat, 10)
+
+```
+
+
+It is often extremely useful to subset your data by some logical condition (`==` (equal to), `!=` (not equal to), `>` (greater than), `>=` (greater than or equal to), `<` (less than), `<=` (less than or equal to), `&` (and), `|` (or)). For example, we may want to keep all rows that have either Fusobacteria or Methanobacteria. Using the `filter()` function our first argument will be our data frame, followed by the information for the rows we want to subset by.
+
+
+```{r}
+filter(dat, Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
+
+```
+
+
+Will this work?
+
+```{r}
+filter(dat, Taxa == c("Fusobacteria", "Methanobacteria"))
+```
+
+
+
+***
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pause.jpg){width=100px}
+
+</div>
+Wait a second - why is this answer different? Why do we have 0 rows instead of 2?
+
+</br>
+
+</br>
+
+
+
+
+###A reminder/warning about vectors 
+
+```{r}
+c(1,2,3) + c(10,11)
+
+```
+Vectors recycle. In this case, R gave us a warning that our vectors don't match. It returned to us a vector of length 3 (our longest vector), and it recycled the 10 from the shorter vector to add to the 3.
+
+However, R will assume that you know what you are doing as long as your one of your vector lengths is a multiple of your other vector length. Here the shorter vector is recycled twice. No warning is given.
+
+```{r}
+c(1,2,3,4) + c(10,11)
+```
+
+Let's go back to our example. In this code, I am looking through the Taxa column for when Taxa is equal to Fusobacteria OR Taxa is equal to Methanobacteria.
+
+```{r eval = FALSE}
+filter(dat, Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
+```
+
+However, with a vector, I am alternately going through all values of Taxa and asking: does the first value match Fusobacteria? does the second value match Methanobacteria? Then the vector recycles and asks: does the third value match Fusobacteria? does the 4th value match Methanobacteria? We end up with a data frame of zero observations when we are expecting a data frame of 2 observations.
+
+```{r eval = FALSE}
+filter(dat, Taxa == c("Fusobacteria", "Methanobacteria"))
+```
+
+
+
+Be careful when filtering. You have been warned.
+
+
+***
+</br>
+
+
+We just filtered for multiple Taxa (multiple rows based on the identity of values values in 1 column), however you can also filter for rows based on values in multiple columns. For example, to get only Taxa that had OTUs at sites T_2_1 and T_2_10 using `dplyr`, you can use the following filter:
+
+```{r}
+filter(dat, T_2_10 != 0 & T_2_1 != 0)
+```
+
+You can subset columns by using the `select()` function. You can also reorder columns using this function. I want to to compare the depth of latrine 2 at 9cm compared to 10cm, but I want Taxa in the last column. 
+
+```{r}
+select(dat, T_2_9, T_2_10, Taxa)
+```
+
+`dplyr` also includes some helper functions that allow you to select variables based on their names. For example, if we only wanted the samples from Vietnam, we could use `starts_with()`. 
+
+```{r}
+select(dat, Taxa, starts_with("V")) 
+
+```
+
+Or all latrines with depths of 4 cm using `ends_with()`.
+
+```{r}
+select(dat, Taxa, ends_with("4")) 
+
+```
+
+You can look up other 'select_helpers' in the help menu.
+
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=150px}
+
+</div>
+
+Check out 'select_helpers' in the help menu. Grab all of the columns that contain depths for Well 2, whether it is from Vietnam or Tanzania. Retain Taxa either as rownames or in a column.
+
+```{r include = FALSE}
+select(dat, Taxa, contains("_2_")) 
+
+select(dat, Taxa, matches("_2_")) 
+
+select(dat, Taxa, starts_with("T_2_"), starts_with("V_2_")) 
+
+```
+
+
+</br>
+</br>
+</br>
+
+***
+
+The `arrange()` function helps you to sort your data. The default is ordered from smallest to largest (or a-z for character data). You can switch the order by specifying `desc` (descending) as shown below. 
+
+Let's say we want to look at Tanzania, Well 2, at 1cm depth. We want to arrange our data frame in descending order of OTUs, and we want to find the unique Taxa that have > 0 OTUs and are not 'Unknown'. Our goal is to have the Taxa present in that particular well in order of decreasing abundance. How would you go about solving this problem?
+
+
+```{r}
+t21 <- select(dat, Taxa, T_2_1) 
+
+desc_t21 <- arrange(t21, desc(T_2_1)) 
+
+filt_t21 <- filter(desc_t21, T_2_1 !=0 & Taxa != "Unknown") 
+
+select_taxa <- select(filt_t21, Taxa)
+
+uni <- unique(select_taxa)
+```
+
+`unique()` is a function that removes duplicate rows. How many rows did it remove in this case? How do you know?
+
+```{r include = FALSE}
+#Trick question. None. I just wanted to include the `unique()` function in the lesson.
+#number of rows before and after the unique call are the same
+```
+
+While this code answered the question, it also created a bunch of new variables that we aren't interested in. These 'intermediate variables' were used to store data that got passed as input to the next function. This would quickly clutter our global environment if this was our strategy for data analysis.
+
+The `dplyr` package, and some other common packages for data frame manipulation allow the use of the pipe function, `%>%`. This is equivalent to `|` for any unix peeps. __Piping__ allows the output of a function to be passed to the next function without making intermediate variables. Piping can save typing, make your code more readable, and reduce clutter in your global environment from variables you don't need. The keyboard shortcut for `%>%` is `CTRL+SHIFT+M`. 
+
+
+We are going to see how pipes work in conjunction with our first function, `filter()` and then see the benefits for our more complex example.
+
+```{r eval = FALSE}
+
+filter(dat, Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
+#equivalent to
+dat %>% filter(Taxa == "Fusobacteria" | Taxa == "Methanobacteria")
+#equivalent to
+```
+```{r }
+dat %>% filter(., Taxa == "Fusobacteria" | Taxa == "Methanobacteria") 
+```
+
+You'll notice that when piping, we are not explicitly writing the first argument (our data frame) to `filter()`, but rather passing the first argument to filter using `%>%`. The dot `.` is sometimes used to fill in the first argument as a placeholder (this is useful for nested functions (functions inside of functions), which we will come across a bit later). 
+
+What would working with pipes look like for our more complex example?
+
+```{r eval = FALSE}
+dat %>% select(Taxa, T_2_1) %>% arrange(desc(T_2_1)) %>% filter(T_2_1 !=0 & Taxa != "Unknown") %>% select(Taxa) %>% unique()
+```
+
+
+When using more than 2 pipes `%>%` it gets hard to follow for a reader (or yourself). Starting a new line after each pipe, allows a reader to easily see which function is operating and makes it easier to follow your logic. Using pipes also has the benefit that extra intermediate variables do not need to be created, freeing up your global environment for objects you are interested in keeping.
+
+```{r}
+dat %>% 
+  select(Taxa, T_2_1) %>% 
+  arrange(desc(T_2_1)) %>% 
+  filter(T_2_1 !=0 & Taxa != "Unknown") %>%
+  select(Taxa) %>%
+  unique()
+
+```
+
+R will throw an error if you try to do a calculation on a dataframe which contains both numeric and character data. 
+
+The `column_to_rownames()` function is used here to move our character data, Taxa, to rownames. We will then have a numeric dataframe on which to do any calculations while preserving all information. This function requires the column variable to be quoted. Click on 'dat' in the Global Environment to see the difference.
+
+
+```{r warning = FALSE}
+taxa_rownames_dat <- dat %>% column_to_rownames("Taxa") 
+```
+
+We can use the reverse function `rownames_to_column` to recreate the Taxa column from rownames.
+
+```{r}
+taxa_colnames_dat <- taxa_rownames_dat %>% rownames_to_column("Taxa")
+```
+
+
+An example of where this might be useful would be calculating the total number of OTUs for each Taxa using `rowSums()`. Without the above functions, you would have to subset out the character column, Taxa, losing important information.
+
+
+```{r}
+dat[, -1] %>% rowSums()
+```
+
+If instead, the dataframe where the Taxa column was converted to rownames, the output is a named vector; the rownames were preserved for the names of the vector elements.
+
+```{r}
+taxa_rownames_dat %>% rowSums()
+```
+
+
+`mutate()` is a function to create new column, most often the product of a calculation. For example, let's calculate the total number of OTUs for each Taxa using `rowSums()` by adding an additional column to our table. You must specify a column name for the column you are creating. 
+
+An annoying part of `dplyr` is that it will drop rownames with most functions (ie. `mutate()`, `filter()` and `arrange()`, but not `select()`). It doesn't make much sense to take row sums if we can't tell what the rows are. However, to do the `rowSums()` calculation we cannot have character data in our rows. Therefore `.[ , -1]` is everything but our character data (which is our first column).
+
+You may have noticed that I included the dot (`.`) in the bracket for `rowSums()`. This is because it is inside a nested function (`mutate()` is a function and `rowSums()` is inside it). Without an argument to `rowSums()` an error would be generated that "argument 'x' is missing with no default". 
+
+```{r}
+dat %>% mutate(total_OTUs = rowSums(.[,-1])) %>% head()
+
+```
+Note that if I use `rowSums()` outside of another function (ie. not nested), I do not need to specify the data frame. While mutate creates a new column for the result of the `rowSums()` function, using `rowSums()` alone produces an output in vector format of the length of the number of rows in the data frame.
+
+
+
+`transmute()` will also create a new variable, but it will drop the existing variables (it will give you a single column of your new variable). The output for `transmute()` is a data frame of one column.
+
+```{r}
+dat %>% transmute(total_OTUs = rowSums(.[ , -1]))
+
+```
+
+
+
+It is up to you whether you want to keep your data in a data frame or switch to a vector if you are dealing with a single variable. Using a `dplyr` function will maintain your data in a data frame. Using non-dplyr functions will switch your data to a vector if you have a 1-dimensional output.
+
+
+`dplyr` has one more super-useful function, `summarize()` which allows us to get summary statistics on data. I'll give one example and then we'll come back to this function once our data is in 'tidy' format. 
+
+`n()` is a `dplyr` function to count the number of observations in a group - we are simply going to count the instances of a Taxa. In order for R to know we want to count the instances of each Taxa (as opposed to say, each row), there is a function `group_by()` that we can use to group variables or sets of variables together (treating them like a factor). That way if we had more than one case of "Clostridia", they would be grouped together and when we counted the number of cases, the result would be greater than 1. `group_by()` is useful for calculations and plotting on subsets of your data without having to explicitly change your variables into factors.
+
+We can arrange the results in descending order to see if there is more than one row per Taxa. 
+
+```{r}
+dat %>% 
+  group_by(Taxa) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n))
+```
+What is the result if you don't use `group_by()`? Can anyone think of another way to see if there is more than one row per Taxa? 
+
+```{r include = FALSE}
+#using mutate
+dat %>% 
+  group_by(Taxa) %>%
+  mutate(n = n()) %>%
+  arrange(desc(n))
+#using transmute
+dat %>% 
+  group_by(Taxa) %>%
+  transmute(n = n()) %>%
+  arrange(desc(n))
+#unique - total number of unique Taxa equal to number of rows
+nrow(dat)
+#should be equal to:
+dat %>% 
+  select(Taxa) %>%
+  unique() %>%
+  summarize(n()) #or nrow(.)
+
+```
+
+
+
+***
+__Challenge__ 
+
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/pug_challenge1.jpeg){width=150px}
+
+</div>
+
+Let's try to answer a question with our data:
+
+- Is there more Clostridia in Tanzania or Vietnam?
+
+</br>
+</br>
+</br>
+
+***
+
+```{r include = FALSE}
+
+#more clostridia or tanzania in vietnam?
+#we can use helper functions to select by name 
+tan <- dat %>%
+  select(starts_with("T")) %>% 
+  filter(Taxa == "Clostridia") %>% 
+  transmute(sum_clostridia = sum(.[,-1]))
+
+#or can use summarize
+viet <- dat %>%
+  select(Taxa, starts_with("V")) %>% 
+  filter(Taxa == "Clostridia") %>% 
+  summarize(sum_clostridia = sum(.[,-1]))
+
+tan$sum_clostridia > viet$sum_clostridia
+#don't really need to use transmute here, but good practice
+
+#per site
+tan <- dat %>%
+  select(starts_with("T")) %>% 
+  filter(Taxa == "Clostridia") %>% 
+  transmute(sum_clostridia = sum(.[,-1])/(ncol(.)-1))
+
+viet <- dat %>%
+  select(Taxa, starts_with("V")) %>% 
+  filter(Taxa == "Clostridia") %>% 
+  summarize(sum_clostridia = as.numeric(mean(.[,-1])))
+
+tan$sum_clostridia > viet$sum_clostridia 
+
+
+```
+
+
+
+#Resources  
+<https://github.com/jennybc/googlesheets>     
+<http://stat545.com/block009_dplyr-intro.html>          
+<http://stat545.com/block010_dplyr-end-single-table.html>     
+<http://stat545.com/bit001_dplyr-cheatsheet.html>     
+<http://dplyr.tidyverse.org/articles/two-table.html>     
+
+
+#Post-Lesson Assessment
+***
+
+Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
+https://www.surveymonkey.com/r/SMGKMCS
+
+</br>
+
+***
+
+</br>
+
+Thanks for coming!!!
+
+![](img/rstudio-bomb.png){width=300px}
+</br>
+
+</br>
+
+***
+
+#Appendix
+
+
+##Googlesheets
+
+Googlesheets have a similar structure to excel workbooks, the only tricky thing is getting the name of your googlesheet to input.
+
+I have a googlesheet to share from my Google Drive:     
+<https://docs.google.com/spreadsheets/d/1JTy5sCtQz8PmlpDrgvOnwZ1tB2pxOndxoNMTHQR_PrQ/edit?usp=sharing>. 
+
+Add the sheet to your own Google Drive. Then load googlesheets.
+
+```{r message = FALSE}
+library(googlesheets)
+```
+
+
+If you load googlesheets and ask it to list the googlesheets you have, googlesheets will open a new window and ask if it can have access to your googlesheets. If you say yes, you can return to R and breathe a sigh of relief. Your import of your googlesheets worked.
+
+```{r eval = FALSE}
+gs_ls()
+
+#if you have many googlesheets like I do you may need to search for your sheet
+#tail(gs_ls())
+```
+
+_Register_ the sheet you are going to use (gather information on the sheet from the API) with the sheet title using `gs_title()`.
+
+```{r eval = FALSE}
+books <- gs_title('Books Everyone Should Read')
+```
+
+If this did not work for some reason, download [books_alpha.xlsx](https://github.com/eacton/CAGEF/blob/master/Lesson_2/data/books_alpha.xlsx) and save it to your current working directory. Upload the file to Google Drive using `gs_upload()`.
+
+```{r eval=FALSE}
+books <- gs_upload(file = "data/books_alpha.xlsx")
+```
+
+
+The structure of the googlesheet is a list.
+
+```{r eval=FALSE}
+str(books)
+```
+
+
+How many worksheets are in this spreadsheet and what are their names? To find the number of worksheets, I subset from the list `n_ws`. To get the names of the worksheets, I grab the worksheets `ws` (itself a data frame) and subset the column `ws_title` for their titles. 
+
+```{r eval=FALSE}
+books$n_ws
+
+books$ws$ws_title
+```
+
+
+Read in the worksheet you want to access using `gs_read()`. You can do this by specifying the worksheet number or title.
+
+```{r eval=FALSE}
+book_sheet1 <- gs_read(books, ws = 1)
+
+```
+
+The last 2 columns don't hold much information. You can specify a subset of this sheet similarly to the excel sheets using `range`. You can do this by selecting the cell columns with `cell_cols`, or by using the cell range.
+
+```{r eval = FALSE}
+booksfilt <- gs_read(books, ws = 1, range = cell_cols(1:14))
+#or
+booksfilt <- gs_read(books, ws = 1, range = "A1:N1000")
+```
+
+Here we specify the worksheet by name, and sort by rows using `cell_rows`. Here are the top recommendations for what to read, when you are no longer in academia.
+
+```{r eval = FALSE}
+books_alpha <- gs_read(books, ws = "Top titles", range = cell_rows(1:10)) 
+
+```
+
+
+One nice thing about the `googlesheets` package is that all of the functions begin with `gs_` which is great for finding functions and tab completion.
+
+
+You can use `gs_download` to save this file to your computer as an excel workbook by giving the title of the googlesheet and the name for the output file. You can overwrite an existing file by selecting `overwrite = TRUE`.
+
+```{r eval=FALSE}
+gs_download(gs_title("Books Everyone Should Read"), to = "books_alpha.xlsx", overwrite = TRUE)
+```
+
+You can upload sheets you've made on your computer to use in googlesheets. This file is now in your google account online.
+
+```{r eval=FALSE}
+books <- gs_upload("books_alpha.xlsx")
+```

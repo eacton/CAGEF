@@ -1,0 +1,52 @@
+---
+title: "README.md"
+author: "EA"
+date: "September 7, 2018"
+output: 
+  md_document:
+    variant: markdown_github
+        
+---
+
+#### Lesson 1 - Intro to R and R-Studio: Becoming Friends with the R Environment
+
+(The entire Lesson 1 folder can be downloaded [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/eacton/CAGEF/tree/master/Lesson_1) thanks to DownGit)
+
+__Objective:__ At the end of this session you will be familiar with the R environment, setting your working directory, know about basic data structures in R and how to create them. You will be able to install and load packages.
+
+
+_Quick Intro to the R Environment_
+
+- Source, Console, Environment, and Viewer panes
+- check out variables in the global environment and viewer
+- changing global options
+- how to get help
+
+_Quick Intro to setting you working directory_
+
+- absolute and relative paths 
+
+_Making Life Easier_
+
+- trouble-shooting basics
+- annotating your code
+- finding answers online
+- best practices
+
+_Quick Intro to R Data Structures_ - ie. vectors, matrices, data frames, lists
+  
+- numerical, integer, character, factor, logical types of data
+- controlling/setting factor levels
+- how to create each of these data classes
+- str(), dim(), nrow(), ncol(), class(), length()
+- transpose a matrix, t()
+- how to do simple mathematical calculations (+, - , ^, *, /)
+- simple calculation using apply()
+
+_A primer on missing data_
+
+_Installing and loading libraries_
+
+- from CRAN, Bioconductor, GitHub
+    
+

@@ -1,0 +1,644 @@
+---
+title: Lesson 4 - Of Data Cleaning and Documentation - Conquer Regular Expressions
+  and Challenge yourself with a 'Real' Dataset
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+always_allow_html: yes
+---
+***
+![](img/big-data-borat.png){width=400px} 
+
+</br>
+
+##A quick intro to the intro to R Lesson Series
+
+</br>
+
+This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This course was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
+
+
+
+This lesson is the fourth in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, and test a regression model. 
+
+
+![](img/data-science-explore.png)
+
+</br>
+
+How do we get there? Today we are going to be learning data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. In the next lesson we will learn how to do t-tests and perform regression and modeling in R. 
+
+
+
+</br>
+
+The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/PVHDKDB), it will help me further develop this course and would be greatly appreciated. 
+
+***
+
+####Packages Used in This Lesson
+
+The following packages are used in this lesson:
+
+`tidyverse` (`stringr`, `dplyr`)     
+
+Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
+
+
+***
+####Highlighting
+
+`grey background` - a package, function, code or command      
+*italics* - an important term or concept     
+**bold** - heading or 'grammar of graphics' term      
+<span style="color:blue">blue text</span> - named or unnamed hyperlink     
+
+***
+
+####Data Files Used in This Lesson
+
+-University returns_for_figshare_FINAL.xlsx     
+-Readme_file.docx
+
+These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_4/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
+
+Or click on the blue hyperlink at the start of the README.md at <https://github.com/eacton/CAGEF/tree/master/Lesson_4> to download the entire folder at DownGit.
+
+***
+__Objective:__ At the end of this session you will be able to use regular expressions to 'clean' your data. 
+
+***
+
+####Load libraries
+
+Since we are moving along in the world, we are now going to start loading our libraries at the start of our script. This is a 'best practice' and makes it much easier for someone to reproduce your work efficiently by knowing exactly what packages they need to run your code. 
+
+```{r message = FALSE}
+library("tidyverse")
+
+```
+
+```{r include=FALSE}
+library(knitr)
+library(kableExtra)
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+
+str_break = function(x, width = 80L) {
+  n = nchar(x)
+  if (n <= width) return(x)
+  n1 = seq(1L, n, by = width)
+  n2 = seq(width, n, by = width)
+  if (n %% width != 0) n2 = c(n2, n)
+  substring(x, n1, n2)
+}
+
+```
+
+
+***
+
+##Data Cleaning or Data Munging or Data Wrangling
+
+Why do we need to do this?
+
+'Raw' data is seldom (never) in a useable format. Data in tutorials or demos has already been meticulously filtered, transformed and readied to showcase that specific analysis. How many people have done a tutorial only to find they can't get their own data in the format to use the tool they have just spend an hour learning about???
+
+Data cleaning requires us to:
+
+- get rid of inconsistencies in our data. 
+- have labels that make sense. 
+- check for invalid character/numeric values.
+- check for incomplete data.
+- remove data we do not need.
+- get our data in a proper format to be analyzed by the tools we are using. 
+- flag/remove data that does not make sense.
+
+Some definitions might take this a bit farther and include normalizing data and removing outliers, but I consider data cleaning as getting data into a format where we can start actively doing 'the maths or the graphs' - whether it be statistical calculations, normalization or exploratory plots. 
+
+Today we are going to mostly be focusing on the **data cleaning of text**. This step is crucial to taking control of your dataset and your metadata. I have included the functions I find most useful for these tasks but I encourage you to take a look at the [Strings Chapter](http://r4ds.had.co.nz/strings.html) in *R for Data Science* for an exhaustive list of functions. We have learned how to transform data into a tidy format in Lesson 2, but the prelude to transforming data is doing the grunt work of data cleaning. So let's get to it!
+
+
+</br>
+
+</br>
+
+
+##Intro to regular expressions
+
+
+**Regular expressions**
+
+"A God-awful and powerful language for expressing patterns to match in text or for search-and-replace. Frequently described as 'write only', because regular expressions are easier to write than to read/understand. And they are not particularly easy to write."  - Jenny Bryan
+
+</br>
+
+
+So why do regular expressions or 'regex' get so much flak if it is so powerful for text matching?
+
+Scary example: how to get an email in different programming languages <http://emailregex.com/>. 
+
+Regex is definitely one of those times when it is important to annotate your code. There are many jokes related to people coming back to their code the next day and having no idea what their code means.
+
+<div style="left;margin:0 20px 20px 0" markdown="1">
+![](img/yesterdays-regex.png){width=200px} 
+</div>
+
+There are sites available to help you make up your regular expressions and validate them against text. These are usually not R specific, but they will get you close and the expression will only need a slight modification for R (like an extra backslash - described below).
+
+Regex testers:
+
+<https://regex101.com/>     
+<https://regexr.com/>
+
+
+Today we will be practicing regex at Simon Goring's R-specific demo tester:     
+<https://simongoring.shinyapps.io/RegularExpressionR/>
+
+
+
+__What does the language look like?__ 
+
+The language is based on _meta-characters_ which have a special meaning rather than their literal meaning. For example, '$' is used to match the end of a string, and this use supercedes its use as a character in a string (ie 'Joe paid \$2.99 for chips.'). 
+
+
+###Classes
+
+What kind of character is it?
+
+```{r echo = FALSE, eval = TRUE, warning = FALSE}
+text_table <- data.frame(
+  Expression = c("\\\\w, [A-z0-9], [[:alnum:]]", "\\\\d, [0-9], [[:digit:]]", "[A-z], [:alpha:]", "\\\\s, [[:space:]]", "[[:punct:]]", "[[:lower:]]", "[[:upper:]]", "\\\\W, [^A-z0-9]", "\\\\S", "\\\\D, [^0-9]"),
+  Meaning = c("word characters (letters + digits)", "digits", "alphabetical characters", "space", "punctuation", "lowercase", "uppercase", "not word characters", "not space", "not digits")
+)
+
+kable(text_table, "markdown") %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, border_right = T) %>%
+  column_spec(2, italic = T, width = "40em")
+```
+
+
+###Quantifiers
+
+How many times will a character appear?
+
+```{r echo = FALSE, eval = TRUE, warning = FALSE}
+text_table <- data.frame(
+  Expression = c("?", "\\*","\\+", "{n}", "{n,}", "{,n}", "{n,m}"),
+  Meaning = c("0 or 1", "0 or more", "1 or more", "exactly n", "at least n", "at most n", "between n and m (inclusive)")
+)
+
+kable(text_table, "markdown") %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, border_right = T) %>%
+  column_spec(2, italic = T, width = "40em")
+```
+
+
+###Operators
+
+Helper actions to match your characters.
+
+```{r echo = FALSE, eval = TRUE, warning = FALSE}
+text_table <- data.frame(
+  Expression = c("|", ".", "[  ]", "[ - ]", "[^ ]", "( )"),
+  Meaning = c("or", "matches any single character", "matches ANY of the characters inside the brackets", "matches a RANGE of characters inside the brackets", "matches any character EXCEPT those inside the bracket", "grouping - used for [backreferencing](https://www.regular-expressions.info/backref.html)")
+)
+
+kable(text_table, "markdown") %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, border_right = T) %>%
+  column_spec(2, italic = T, width = "40em")
+```
+
+###Matching by position
+
+Where is the character in the string?
+
+```{r echo = FALSE, eval = TRUE, warning = FALSE}
+
+text_table <- data.frame(
+  Expression = c("^", "$", "\\\\b", "\\\\B"),
+  Meaning = c("start of string", "end of string", "empty string at either edge of a word", "empty string that is NOT at the edge of a word")
+)
+
+kable(text_table, "markdown") %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, border_right = T) %>%
+  column_spec(2, italic = T, width = "40em")
+```
+
+###Escape characters
+
+Sometimes a meta-character is just a character. _Escaping_ allows you to use a character 'as is' rather than its special function. In R, regex gets evaluated as a string before a regular expression, and a backslash is used to escape the string - so you really need 2 backslashes to escape, say, a '$' sign (`"\\\$"`). 
+
+```{r echo = FALSE, eval = TRUE, warning = FALSE}
+text_table <- data.frame(
+  Expression = c("\\\\"),
+  Meaning = c("escape for meta-characters to be used as characters (*, $, ^, ., ?, |, \\\\, [, ], {, }, (, )). 
+              Note: the backslash is also a meta-character.")
+)
+
+kable(text_table, "markdown") %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, border_right = T) %>%
+  column_spec(2, italic = T, width = "40em")
+```
+
+Trouble-shooting with escaping meta-characters means adding backslashes until something works. 
+
+![Joking/Not Joking (xkcd)](img/backslashes.png){width=300px}
+
+While you can always refer back to this lesson for making your regular expressions, you can also use this [regex cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf).
+
+</br>
+</br>
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![](img/80170c11996bd58e422dbb6631b73c4b.jpg){width=200px} 
+</div>
+
+
+</br>
+</br>
+
+What I would like to get across it that it is okay to google and use resources early on for regex, and that even experts still use these resources.  
+
+***
+
+##Intro to string manipulation with stringr
+
+Common uses of string manipulation are: searching, replacing or removing (making substitutions), and splitting and combining substrings.
+
+As an example, we are going to play with a string of DNA. 
+
+```{r tidy=TRUE, tidy.opts=list(width.cutoff=60) }
+dino <-">DinoDNA from Crichton JURASSIC PARK  p. 103 nt 1-1200 GCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAAAATCGACGCGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCTCCCTCGTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGAAGCGTGGCTGCTCACGCTGTACCTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGGGCTGTGTGCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACCCGGTAAAGTAGGACAGGTGCCGGCAGCGCTCTGGGTCATTTTCGGCGAGGACCGCTTTCGCTGGAGATCGGCCTGTCGCTTGCGGTATTCGGAATCTTGCACGCCCTCGCTCAAGCCTTCGTCACTCCAAACGTTTCGGCGAGAAGCAGGCCATTATCGCCGGCATGGCGGCCGACGCGCTGGGCTGGCGTTCGCGACGCGAGGCTGGATGGCCTTCCCCATTATGATTCTTCTCGCTTCCGGCGGCCCGCGTTGCAGGCCATGCTGTCCAGGCAGGTAGATGACGACCATCAGGGACAGCTTCAACGGCTCTTACCAGCCTAACTTCGATCACTGGACCGCTGATCGTCACGGCGATTTATGCCGCACATGGACGCGTTGCTGGCGTTTTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAACAAGTCAGAGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCGCTCTCCTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGCTTTCTCAATGCTCACGCTGTAGGTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGACGAACCCCCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACACGACTTAACGGGTTGGCATGGATTGTAGGCGCCGCCCTATACCTTGTCTGCCTCCCCGCGGTGCATGGAGCCGGGCCACCTCGACCTGAATGGAAGCCGGCGGCACCTCGCTAACGGCCAAGAATTGGAGCCAATCAATTCTTGCGGAGAACTGTGAATGCGCAAACCAACCCTTGGCCATCGCGTCCGCCATCTCCAGCAGCCGCACGCGGCGCATCTCGGGCAGCGTTGGGTCCT"
+
+
+
+```
+
+```{r echo = FALSE}
+cat(str_break(dino), sep = '\n')
+```
+
+
+
+This piece of DNA is from the book Jurassic park, and was supposed to be dinosaur DNA, but is actually just a cloning vector. Bummer.
+
+</br>
+
+<div style="float:left;margin:0 10px 10px 0" markdown="1">
+![nope](img/jurassicpark-trex-statue-photo1-700x376.jpg){width=350px} 
+</div>
+
+
+
+
+</br>
+</br>
+
+</br>
+</br>
+
+
+__Removing:__
+
+This string is in FASTA format, but we don't need the header - we just want to deal with the DNA sequence. The header begins with '>' and ends with a number, '1200', with a space between the header and the sequence. Let's practice capturing each of these parts of a string, and then we'll make a regular expression to remove the entire header. 
+
+All `stringr` functions take in as arguments the __string__ you are manipulating and the __pattern__ you are capturing. `str_remove` replaces the matched pattern with an empty character string "". In our first search we remove '>' from our string, dino.
+
+```{r eval=FALSE}
+str_remove(string = dino, pattern = ">") 
+```
+```{r  echo=FALSE}
+cat(str_break(str_remove(string = dino, pattern = ">")), sep = '\n')
+```
+
+
+Next we can search for numbers. The expression '[0-9]' is looking for any number. Always make sure to check that the pattern you are using gives you the output you expect.
+
+```{r eval = FALSE}
+str_remove(string = dino, pattern = "[0-9]") 
+```
+```{r echo = FALSE}
+cat(str_break(str_remove(string = dino, pattern = "[0-9]")), sep = '\n')
+```
+
+
+
+Why aren't all of the numbers replaced? `str_remove` only replaces the first match in a character string. Switching to `str_remove_all` replaces all instances of numbers in the character string.
+
+```{r eval = FALSE}
+str_remove_all(string = dino, pattern = "[0-9]") 
+```
+```{r echo = FALSE}
+cat(str_break(str_remove_all(string = dino, pattern = "[0-9]")), sep = '\n')
+```
+
+
+How do we capture spaces? The pattern '\\s' replaces a space. However, for the backslash to not be used as an escape character (its special function), we need to add another backslash, making our pattern '\\\\s'.
+
+```{r eval=FALSE}
+str_remove_all(string = dino, pattern = "\\s") 
+```
+```{r echo = FALSE}
+cat(str_break(str_remove_all(string = dino, pattern = "\\s")), sep = '\n')
+```
+
+
+To remove the entire header, we need to combine these patterns. The header is everything in between '>' and the number '1200' followed by a space. The operator `.` captures any single character and the quantifier `*` is any number of times (including zero). 
+
+```{r eval=FALSE}
+str_remove(string = dino, pattern = ">.*[0-9]\\s")
+```
+```{r echo = FALSE}
+cat(str_break(str_remove(string = dino, pattern = ">.*[0-9]\\s")), sep = '\n')
+```
+
+
+
+You may have noticed that we also have a number followed by a space earlier in the header, '103 '. Why didn't the replacement end at that first match? The first instance is an example of _greedy_ matching - it will take the longest possible string. To curtail this behaviour and use _lazy_ matching - the shortest possible string - you can add the `?` quantifier.
+
+
+
+
+```{r eval = FALSE}
+str_remove(string = dino, pattern = ">.*?[0-9]\\s")
+```
+```{r echo = FALSE}
+cat(str_break(str_remove(string = dino, pattern = ">.*?[0-9]\\s")), sep = '\n')
+```
+
+
+In this case, we want the greedy matching to replace the entire header. Let's save the dna into its own object.
+
+```{r }
+dna <- str_remove(string = dino, pattern = ">.*[0-9]\\s")
+
+```
+
+```{r echo=FALSE}
+cat(str_break(dna), sep = '\n')
+```
+
+
+__Extracting:__
+
+We may also want to retain our header in a separate string. `str_extract` will retain the string that matches our pattern instead of removing it. We can save this in an object called header (I removed the final space from our expresssion).
+
+
+```{r}
+header <- str_extract(string = dino, pattern = ">.*[0-9]")
+header
+```
+
+
+__Searching:__
+
+Now we can look for patterns in our (dino) DNA!
+
+Does this DNA have balanced GC content? We can use `str_extract_all` to capture every character that is either a G or a C.
+
+```{r}
+str_extract_all(dino, pattern = "G|C")
+```
+
+The output is a list object in which is stored an entry for each G or C extracted. We count the number of occurences of G and C using `str_count` and divide by the total number of characters in our string to get the %GC content. 
+
+
+```{r}
+str_count(dna, pattern = "G|C")/str_length(dna) * 100
+```
+
+
+
+Let's translate this into mRNA! 
+
+__Replacement:__
+
+To replace multiple patterns at once, a character vector is supplied to `str_replace_all` of patterns and their matched replacements. This allows us to perform multiple replacements multiple times.
+
+```{r}
+mrna <- str_replace_all(dna, c("G" = "C", "C" = "G", "A" = "U", "T" = "A"))
+  
+```
+
+
+__More Searching:__
+
+Is there even a start codon in this thing? `str_detect` can be used to get a local (TRUE or FALSE) answer to whether or not a match is found.
+
+```{r}
+str_detect(mrna, "AUG")
+
+```
+It might be more useful to know exactly how many possible start codons we have. `str_count` will count the number of matches in the string for our pattern.
+
+```{r}
+str_count(mrna, "AUG")
+```
+
+
+
+To get the position of a possible start codon we can use `str_locate` which will return the indices of where the start and end of our substring occurs (`str_locate_all` can be used to find the all possible locations).
+
+
+```{r}
+str_locate(mrna, "AUG")
+```
+
+
+__Splitting:__
+
+Let's split this string into substrings of codons, starting at the position of our start codon. We have the position of our start codon from `str_locate`. We can use `str_sub` to subset the string by position (we will just go to the end of the string for now).
+
+```{r eval=FALSE}
+str_sub(mrna, 21, 1200)
+#is equivalent to
+mrna <- str_sub(mrna, str_locate(mrna, "AUG")[1])
+
+```
+```{r echo=FALSE}
+cat(str_break(str_sub(mrna, 21, 1200)), sep = '\n')
+```
+
+
+We can get codons by extracting groups of (any) 3 nucleotides/characters in our reading frame.
+
+```{r}
+str_extract_all(mrna, "...")
+
+```
+The codons are extracted into a list, but we can get our character substrings using `unlist`. 
+
+```{r}
+codons <- unlist(str_extract_all(mrna, "..."))
+```
+
+We now have a vector with `r length(codons)` codons.
+
+Do we have a stop codon in our reading frame? Let's check with `str_detect`. We can use round brackets `( )` to separately group the different stop codons.
+
+```{r}
+str_detect(codons, "(UAG)|(UGA)|(UAA)")
+```
+Looks like we have many matches. We can subset the codons using `str_detect` (instances where the presence of a stop codon is equal to TRUE) to see which stop codons are represented. We can use the `which` function to find the which indices the stop codons are positioned at.
+
+```{r}
+which(str_detect(codons, "(UAG)|(UGA)|(UAA)") == TRUE)
+```
+
+Let's subset our codon strings to end at the first stop codon. 
+
+```{r}
+translation <- codons[1:121]
+
+#equivalent to 
+translation <- codons[1:which(str_detect(codons, "(UAG)|(UGA)|(UAA)") == TRUE)[1]]
+```
+
+
+
+__More Replacing:__
+
+After finding our unique codons, we can translate codons into their respective proteins by using `str_replace_all` using multiple patterns and replacements as before.
+
+
+```{r}
+unique(translation)
+
+translation <- str_replace_all(translation, c("AUG"="M", "GGA" = "G",  "GGG" = "G",  "AGU" = "S",  "GGU" = "G",  "GUU" = "V",  "UUU" = "F", "AGG" = "R", "UGG" = "W",  "UUG" = "L", "UGU" = "C",  "GAU" = "D", "AUU" = "I",  "GUG" = "V", "AAA"="K",  "GAG" = "E",  "AAG" = "K",  "AAU" = "N",  "GUA" = "V", "AGA" = "R", "GAA" = "E", "AUA" = "M", "UAA" = ""))
+
+translation
+```
+
+
+__Combining:__
+
+What is our final protein string? `str_flatten` allows us to collapse our individual protein strings into one long string.
+
+```{r}
+translation <- str_flatten(translation)
+translation
+```
+
+We can add our header back using `str_c`, which allows us to combine strings. We can use a space to separate our original strings.
+
+```{r eval = FALSE}
+str_c(header, translation, sep = " ")
+```
+```{r echo=FALSE}
+cat(str_break(str_c(header, translation, sep = " ")), sep = '\n')
+```
+
+</br>
+</br>
+
+
+
+***
+
+##A Real Messy Dataset
+
+I looked for a messy dataset for data cleaning and found it in a blog titled:     
+["Biologists: this is why bioinformaticians hate you..."](http://www.opiniomics.org/biologists-this-is-why-bioinformaticians-hate-you/) 
+     
+     
+__Challenge:__      
+
+This is [Wellcome Trust APC dataset](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/University%20returns_for_figshare_FINAL.xlsx) on the costs of open access publishing by providing article processing charge (APC) data. 
+
+https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054     
+     
+     
+The main and common issue with this dataset is that when data entry was done there was no _structured vocabulary_; people could type whatever they wanted into free text answer boxes instead of using dropdown menus with limited options, giving an error if something is formatted incorrectly, or stipulating some rules (ie. must be all lowercase, uppercase, no numbers, spacing, etc). 
+
+I must admit I have been guilty of messing with people who have made databases without rules. For example, giving an emergency contact, there was a line to input 'Relationship', which could easily have been a dropdown menu: 'parent, partner, friend, other'. Instead I was allowed to write in a free text box 'lifelong kindred spirit, soulmate and doggy-daddy'. I don't think anyone here was trying to be a nuisance, this messy data is just a consequence of poor data collection. 
+
+    
+
+</br>
+
+
+<div style="float:right;margin:0 10px 10px 0" markdown="1">
+![](img/yougotthis.jpg){width=200px}
+</div>
+
+
+What I want to know is: 
+
+  1. List 3 problems with this dataset that require data cleaning.
+  1. What is the mean cost of publishing for the top 3 most popular publishers? 
+  1. What is the number of publications by PLOS One in dataset?      
+  1. Convert sterling to CAD. What is the median cost of publishing with Elsevier in CAD?
+
+
+The route I suggest to take in answering these question is:
+
+* Inspect your dataset. Are the data types what you expect?
+* Identify any immediate problems. (Answer Question #1)
+* Clean up column names.
+* Data clean the publisher column.
+    - convert all entries to lowercase
+    - correct typos
+    - correct multiple names for a publisher to one name
+    - remove newline characters and trailing whitespace
+* Answer Questions #2-4
+
+
+
+There is a [README](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/Readme_file.docx) file to go with this spreadsheet if you have questions about the data fields.  
+
+</br>
+
+
+The blogger's opinion of cleaning this dataset:
+
+_'I now have no hair left; I’ve torn it all out.  My teeth are just stumps from excessive gnashing.  My faith in humanity has been destroyed!'_
+
+Don't get to this point. The dataset doesn't need to be perfect. No datasets are 100% clean. Just do what you gotta do to answer these questions.  
+
+We can talk about how this went at the beginnning of next week's lesson.
+
+***
+
+
+
+   
+__Resources:__     
+<http://stat545.com/block022_regular-expression.html>     
+<http://stat545.com/block027_regular-expressions.html>     
+<http://stat545.com/block028_character-data.html>     
+<http://r4ds.had.co.nz/strings.html>
+<http://www.gastonsanchez.com/Handling_and_Processing_Strings_in_R.pdf>     
+<http://www.opiniomics.org/biologists-this-is-why-bioinformaticians-hate-you/>     
+<https://figshare.com/articles/Wellcome_Trust_APC_spend_2012_13_data_file/963054>     >     
+<http://emailregex.com/>     
+<https://regex101.com/>     
+<https://regexr.com/>     
+<https://www.regular-expressions.info/backref.html>     
+<https://www.regular-expressions.info/unicode.html>     
+<https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf>     
+<https://simongoring.shinyapps.io/RegularExpressionR/>   
+
+
+#Post-Lesson Assessment
+***
+
+Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
+https://www.surveymonkey.com/r/PVHDKDB
+
+</br>
+
+***
+
+</br>
+
+Thanks for coming!!!
+
+![](img/rstudio-bomb.png){width=300px}
+
+

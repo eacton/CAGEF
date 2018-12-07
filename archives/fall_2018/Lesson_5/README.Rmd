@@ -1,0 +1,54 @@
+---
+title: "README.md"
+author: "EA"
+date: "September 7, 2018"
+output: 
+  md_document:
+    variant: markdown_github
+        
+---
+
+#### Lesson 5 - Plot all the things! From Data Exploration to Publication-Quality Figures
+
+(The entire Lesson 5 folder can be downloaded [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/eacton/CAGEF/tree/master/Lesson_5) thanks to DownGit)
+
+__Objective:__ At the end of this session you will be able to use ggplot2 to make a ton of different types of plots with your data for both for data exploration and for publication-quality figures.    
+
+_Intro to the Grammar of Graphics_
+
+- general structure of ggplot syntax:
+      + aesthetics, geoms, scaling, statistical transformations, facetting
+- how ggplot makes use of the tidy data format
+
+_Data Exploration - plot all the things!_
+
+- scatter plots, line graphs, bar graphs, histograms, density plots, bubble plots, heatmaps, strip plots
+- regression lines and error bars
+
+  
+_Customization of Figures_
+
+- attributes related to your data
+      + shapes, fill, color, opacity, size
+      + adding text to data points, labels
+      + controlling categorical variable order in your legend (forcats package)
+- color palettes (sequential, diverging, qualitative)
+- themes (attributes unrelated to your data)
+      + ie. axis, legend, panels, gridlines, backgrounds
+      + element_text, _line, _rect, _blank, _grob
+      + designer themes
+- saving plots
+  
+  
+_Taking it up a notch_ 
+
+- Multiple plots on one page (ie. publication images) (ggpubr)
+- Upset plots (UpSetR) as alternative to venn diagrams
+- Resources for:
+      + interactive graphics (d3heatmap, ggvis, plotly)
+      + Network diagrams (visNetwork, DiagrammR, igraph)
+      + Time series data (dygraphs)
+      + Circos plots (migest)
+      + Geospatial data (geodataviz)
+      + Phylogenetics data (ggtree, treeman, phyloseq, metacoder)
+      + Genomics data (ggbio, GenVisR, GenomeGraphs)

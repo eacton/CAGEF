@@ -1,5 +1,5 @@
 
-# Welcome to CSB1020H/F - Introduction to R for Data Science!
+# Welcome to CSB1020H/F & CSB1021H/S - Introduction to R for Data Science!
 
 ![](CSB_banner.png)
 ![](CAGEF_new.png)
@@ -20,6 +20,7 @@ Professor D. Guttman and Erica Acton
 
 #### Offered
 
+Winter 2019 - January 10 - February 20 (6 weeks)
 Fall 2018 - September 18 - October 23 (6 weeks)
 
 #### Weight
@@ -28,7 +29,7 @@ One module (0.25 FCE)
 
 #### Time
 
-Tuesdays, 3:00 - 6:00pm
+Thursdays, 3:00 - 6:00pm
 
 #### Location
 
