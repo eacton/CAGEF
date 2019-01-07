@@ -5,9 +5,8 @@ output:
     keep_md: yes
     toc: yes
     toc_depth: 3
-  pdf_document:
-    toc: yes
-    toc_depth: '3'
+  md_document:
+    variant: markdown_github
 ---
 ***
 
