@@ -12,31 +12,12 @@ output:
 
 </br>
 
-##A quick intro to the Introduction to R for Data Science
 
-</br>
-
-This 'Introduction to R for Data Science' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This CSB1020 was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
+***
 
 
+__Objective:__ At the end of this session you will be able to use the dplyr package to subset and manipulate your data and to perform simple calculations. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
 
-This lesson is the second in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
-
-
-![img borrowed from r4ds.had.co.nz](img/data-science-explore.png)
-
-</br>
-
-How do we get there? Today we are going to be learning about how to subset and filter our data and perform all of the manipulations one has to do in daily coding life. We will learn about tidy data and how it makes data analysis less of a pain. We will perform some basic statistics on our newly transformed dataset. Next week we will learn how to tidy our data, subset and merge data and generate descriptive statistics. The next lesson will be data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. After that, we will make all sorts of plots - from simple data exploration to interactive plots - this is always a fun lesson. 
-
-
-![Henrik Kniberg, refurbished by blog.fastmonkeys.com](img/spotify-howtobuildmvp.gif)
-
-</br>
-
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF>, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/SMGKMCS>), it will help me further develop this course and would be greatly appreciated. 
-
-</br>
 
 ***
 
@@ -75,16 +56,11 @@ These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Le
 
 Or click on the blue hyperlink at the start of the README.md at <https://github.com/eacton/CAGEF/tree/master/Lesson_2> to download the entire folder at DownGit.
 
-***
-
-
-
-__Objective:__ At the end of this session you will be able to use the dplyr package to subset and manipulate your data and to perform simple calculations. You will be able to import data into R (tsv, csv, xls(x), googlesheets) and export your data again.
-
-***
 
 
 </br>
+
+***
 
 #Reading in data & writing data
 
@@ -509,14 +485,6 @@ filt_t21 <- filter(desc_t21, T_2_1 !=0 & Taxa != "Unknown")
 
 select_taxa <- select(filt_t21, Taxa)
 
-uni <- unique(select_taxa)
-```
-
-`unique()` is a function that removes duplicate rows. How many rows did it remove in this case? How do you know?
-
-```{r include = FALSE}
-#Trick question. None. I just wanted to include the `unique()` function in the lesson.
-#number of rows before and after the unique call are the same
 ```
 
 While this code answered the question, it also created a bunch of new variables that we aren't interested in. These 'intermediate variables' were used to store data that got passed as input to the next function. This would quickly clutter our global environment if this was our strategy for data analysis.
@@ -542,7 +510,7 @@ You'll notice that when piping, we are not explicitly writing the first argument
 What would working with pipes look like for our more complex example?
 
 ```{r eval = FALSE}
-dat %>% select(Taxa, T_2_1) %>% arrange(desc(T_2_1)) %>% filter(T_2_1 !=0 & Taxa != "Unknown") %>% select(Taxa) %>% unique()
+dat %>% select(Taxa, T_2_1) %>% arrange(desc(T_2_1)) %>% filter(T_2_1 !=0 & Taxa != "Unknown") %>% select(Taxa) 
 ```
 
 
@@ -553,8 +521,7 @@ dat %>%
   select(Taxa, T_2_1) %>% 
   arrange(desc(T_2_1)) %>% 
   filter(T_2_1 !=0 & Taxa != "Unknown") %>%
-  select(Taxa) %>%
-  unique()
+  select(Taxa) 
 
 ```
 
@@ -578,7 +545,7 @@ An example of where this might be useful would be calculating the total number o
 
 
 ```{r}
-dat[, -1] %>% rowSums()
+dat %>% select(-Taxa) %>% rowSums()
 ```
 
 If instead, the dataframe where the Taxa column was converted to rownames, the output is a named vector; the rownames were preserved for the names of the vector elements.
@@ -597,6 +564,8 @@ You may have noticed that I included the dot (`.`) in the bracket for `rowSums()
 ```{r}
 dat %>% mutate(total_OTUs = rowSums(.[,-1])) %>% head()
 
+#you can confirm the calculation was performed by inspecting the data frame
+#dat %>% mutate(total_OTUs = rowSums(.[,-1])) %>% select(Taxa, total_OTUs)
 ```
 Note that if I use `rowSums()` outside of another function (ie. not nested), I do not need to specify the data frame. While mutate creates a new column for the result of the `rowSums()` function, using `rowSums()` alone produces an output in vector format of the length of the number of rows in the data frame.
 
@@ -606,9 +575,10 @@ Note that if I use `rowSums()` outside of another function (ie. not nested), I d
 
 ```{r}
 dat %>% transmute(total_OTUs = rowSums(.[ , -1]))
+#or
+dat %>% select(-Taxa) %>% transmute(total_OTUs = apply(., 1, sum))
 
 ```
-
 
 
 It is up to you whether you want to keep your data in a data frame or switch to a vector if you are dealing with a single variable. Using a `dplyr` function will maintain your data in a data frame. Using non-dplyr functions will switch your data to a vector if you have a 1-dimensional output.
@@ -626,19 +596,20 @@ dat %>%
   summarize(n = n()) %>%
   arrange(desc(n))
 ```
-What is the result if you don't use `group_by()`? Can anyone think of another way to see if there is more than one row per Taxa? 
+Special note: Note that the output of summarize contains the group the calculation summary calculation is performed on and the result of that operation. This is different from mutate, in which a column with the resulting values is added to our data frame and all other columns are retained (see below). Therefore, mutate is the appropriate function when you are carrying the data frame through further calculations, and summarize is more appropriate when the calculation is your ending point.
 
-```{r include = FALSE}
-#using mutate
+```{r}
 dat %>% 
   group_by(Taxa) %>%
   mutate(n = n()) %>%
   arrange(desc(n))
-#using transmute
-dat %>% 
-  group_by(Taxa) %>%
-  transmute(n = n()) %>%
-  arrange(desc(n))
+```
+
+
+
+What is the result if you don't use `group_by()`? Can anyone think of another way to see if there is more than one row per Taxa? `unique()` is a function that removes duplicate rows. How many rows did it remove in this case? How do you know?
+
+```{r }
 #unique - total number of unique Taxa equal to number of rows
 nrow(dat)
 #should be equal to:
@@ -712,13 +683,8 @@ tan$sum_clostridia > viet$sum_clostridia
 <http://stat545.com/block010_dplyr-end-single-table.html>     
 <http://stat545.com/bit001_dplyr-cheatsheet.html>     
 <http://dplyr.tidyverse.org/articles/two-table.html>     
+<https://github.com/rstudio/cheatsheets/blob/master/data-transformation.pdf>
 
-
-#Post-Lesson Assessment
-***
-
-Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
-https://www.surveymonkey.com/r/SMGKMCS
 
 </br>
 
