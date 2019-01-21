@@ -490,23 +490,23 @@ dat %&gt;% gather(Site, OTUs, -Taxa) %&gt;% head()</code></pre>
 <p></br></p>
 <p>Which latrine depth has the greatest mean number of OTUs?</p>
 <pre class="r"><code>split_dat %&gt;% 
-  group_by(Latrine_Number) %&gt;% 
+  group_by(Depth) %&gt;% 
   summarize(mean = mean(OTUs)) %&gt;% 
   arrange(desc(mean))</code></pre>
-<pre><code>## # A tibble: 22 x 2
-##    Latrine_Number  mean
-##    &lt;chr&gt;          &lt;dbl&gt;
-##  1 17              415.
-##  2 16              403.
-##  3 11              338.
-##  4 20              335.
-##  5 10              328.
-##  6 8               236.
-##  7 15              207.
-##  8 3               206.
-##  9 18              201.
-## 10 12              188.
-## # … with 12 more rows</code></pre>
+<pre><code>## # A tibble: 11 x 2
+##    Depth   mean
+##    &lt;chr&gt;  &lt;dbl&gt;
+##  1 9     480.  
+##  2 1     205.  
+##  3 6     193.  
+##  4 2     174.  
+##  5 3     158.  
+##  6 4     137.  
+##  7 8     107.  
+##  8 5      52.7 
+##  9 12     50.4 
+## 10 7      36.7 
+## 11 10      3.85</code></pre>
 <p>Without data being in ‘tidy’ format - with all variables that were mashed together into a Site (Country_LatrineNo_Depth) having their own columns - this is a difficult question to answer. Once Latrine_Number is a variable, we can simply group our data to perform our mean calculation and get an answer.</p>
 <p>Is there more Clostridia on average in sites from Tanzania or Vietnam?</p>
 <pre class="r"><code>split_dat %&gt;%
@@ -715,6 +715,17 @@ dat %&gt;% gather(Site, OTUs, -Taxa) %&gt;% head()</code></pre>
 ## 4 V_9_3    4.36  19.9  92.6 &lt;NA&gt;            NA
 ## 5 V_9_4    4.3   19.8  36.5 &lt;NA&gt;            NA
 ## 6 &lt;NA&gt;     5     NA     5   V_2_10           5</code></pre>
+<p>You can also bind data frames together, which is another common use of this function.</p>
+<pre class="r"><code>bind_rows(jdat, data.frame(Samples = &quot;V_2_10&quot;, pH = 5, Temp = 5, TS = 5, stringsAsFactors = F)) %&gt;% tail()</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   Samples    pH  Temp    TS
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 V_8_2    9.3   19.5  36.8
+## 2 V_9_1    7.3   18.8  31.3
+## 3 V_9_2    4.04  20.5  32  
+## 4 V_9_3    4.36  19.9  92.6
+## 5 V_9_4    4.3   19.8  36.5
+## 6 V_2_10   5      5     5</code></pre>
 <p><strong>Socrative Question</strong></p>
 <hr />
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
@@ -752,7 +763,7 @@ dim(jdat)</code></pre>
 <p>Given 5 data frames with data on the number of words spoken in the Lord of the Rings trilogy (datacarpentry archive, tidy-data), answer the following questions:</p>
 <p></br> </br></p>
 <ol style="list-style-type: decimal">
-<li>How many characters are present in all 3 films?</li>
+<li>What is the total number of characters in the trilogy?</li>
 <li>Which race speaks the most? Is this true across all 3 films?</li>
 <li>Which character is chattiest?</li>
 <li>Which gender speaks the most for Elvish characters? Does this hold true across all 3 films?</li>

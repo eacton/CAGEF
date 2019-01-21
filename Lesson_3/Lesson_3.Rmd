@@ -291,7 +291,7 @@ Which latrine depth has the greatest mean number of OTUs?
 
 ```{r}
 split_dat %>% 
-  group_by(Latrine_Number) %>% 
+  group_by(Depth) %>% 
   summarize(mean = mean(OTUs)) %>% 
   arrange(desc(mean))
 
@@ -470,6 +470,14 @@ What happens if column name do not match? `bind_rows()` will match your columns 
 bind_rows(jdat, list(Turtles = "V_2_10", pH = 5, Volatility = 5, TS = 5)) %>% tail()
 ```
 
+You can also bind data frames together, which is another common use of this function.
+
+```{r}
+bind_rows(jdat, data.frame(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5, stringsAsFactors = F)) %>% tail()
+
+```
+
+
 
 __Socrative Question__
 
@@ -488,7 +496,7 @@ Why doesn't jdat change after all these operations?
 
 ```{r include=FALSE}
 #This is just a reminder that if you want to retain the addition of a row from 'bind_rows' you need to save it into a variable. You can reassign the data frame object that you have (jdat) or create a new data frame object.
-#ie. new_dat <- rbind(jdat, c(Samples = "V_2_10", Temp = 5, pH = 6, TS = 5))
+#ie. new_dat <- bind_rows(jdat, list(Samples = "V_2_10", Temp = 5, pH = 6, TS = 5))
 ```
 
 
@@ -542,7 +550,7 @@ Given 5 data frames with data on the number of words spoken in the Lord of the R
 </br>
 </br> 
 
-1. How many characters are present in all 3 films?
+1. What is the total number of characters in the trilogy?
 1. Which race speaks the most? Is this true across all 3 films?
 1. Which character is chattiest?
 1. Which gender speaks the most for Elvish characters? Does this hold true across all 3 films?

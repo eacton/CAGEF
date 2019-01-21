@@ -449,26 +449,26 @@ Which latrine depth has the greatest mean number of OTUs?
 
 ```r
 split_dat %>% 
-  group_by(Latrine_Number) %>% 
+  group_by(Depth) %>% 
   summarize(mean = mean(OTUs)) %>% 
   arrange(desc(mean))
 ```
 
 ```
-## # A tibble: 22 x 2
-##    Latrine_Number  mean
-##    <chr>          <dbl>
-##  1 17              415.
-##  2 16              403.
-##  3 11              338.
-##  4 20              335.
-##  5 10              328.
-##  6 8               236.
-##  7 15              207.
-##  8 3               206.
-##  9 18              201.
-## 10 12              188.
-## # … with 12 more rows
+## # A tibble: 11 x 2
+##    Depth   mean
+##    <chr>  <dbl>
+##  1 9     480.  
+##  2 1     205.  
+##  3 6     193.  
+##  4 2     174.  
+##  5 3     158.  
+##  6 4     137.  
+##  7 8     107.  
+##  8 5      52.7 
+##  9 12     50.4 
+## 10 7      36.7 
+## 11 10      3.85
 ```
 Without data being in 'tidy' format - with all variables that were mashed together into a Site (Country_LatrineNo_Depth)  having their own columns - this is a difficult question to answer. Once Latrine_Number is a variable, we can simply group our data to perform our mean calculation and get an answer.
 
@@ -727,6 +727,26 @@ bind_rows(jdat, list(Turtles = "V_2_10", pH = 5, Volatility = 5, TS = 5)) %>% ta
 ## 6 <NA>     5     NA     5   V_2_10           5
 ```
 
+You can also bind data frames together, which is another common use of this function.
+
+
+```r
+bind_rows(jdat, data.frame(Samples = "V_2_10", pH = 5, Temp = 5, TS = 5, stringsAsFactors = F)) %>% tail()
+```
+
+```
+## # A tibble: 6 x 4
+##   Samples    pH  Temp    TS
+##   <chr>   <dbl> <dbl> <dbl>
+## 1 V_8_2    9.3   19.5  36.8
+## 2 V_9_1    7.3   18.8  31.3
+## 3 V_9_2    4.04  20.5  32  
+## 4 V_9_3    4.36  19.9  92.6
+## 5 V_9_4    4.3   19.8  36.5
+## 6 V_2_10   5      5     5
+```
+
+
 
 __Socrative Question__
 
@@ -797,7 +817,7 @@ Given 5 data frames with data on the number of words spoken in the Lord of the R
 </br>
 </br> 
 
-1. How many characters are present in all 3 films?
+1. What is the total number of characters in the trilogy?
 1. Which race speaks the most? Is this true across all 3 films?
 1. Which character is chattiest?
 1. Which gender speaks the most for Elvish characters? Does this hold true across all 3 films?
