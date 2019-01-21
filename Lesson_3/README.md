@@ -13,3 +13,10 @@
     -   spread(), gather(), unite(), separate()
 
 *Adding rows and columns to data frames*
+
+*Combining/filtering data frames with the join family of functions*
+
+-   Mutating joins
+    -   inner, left, right, and full joins
+-   Filtering joins
+    -   semi and anti joins
