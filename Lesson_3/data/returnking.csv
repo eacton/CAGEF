@@ -1,0 +1,248 @@
+Film,Chapter,Character,Dwarf,Elf,Hobbit,Man,Orc,Wizard
+The Return Of The King,01: The Finding Of The Ring,Deagol,NA,NA,13,NA,NA,NA
+The Return Of The King,02: Journey To The Cross-roads,Frodo,NA,NA,18,NA,NA,NA
+The Return Of The King,02: Journey To The Cross-roads,Sam,NA,NA,77,NA,NA,NA
+The Return Of The King,03: The Road To Isengard,Gandalf,NA,NA,NA,NA,NA,1
+The Return Of The King,03: The Road To Isengard,Gimli,22,NA,NA,NA,NA,NA
+The Return Of The King,03: The Road To Isengard,Merry,NA,NA,36,NA,NA,NA
+The Return Of The King,03: The Road To Isengard,Pippin,NA,NA,51,NA,NA,NA
+The Return Of The King,04: The Voice Of Saruman,Aragorn,NA,NA,NA,3,NA,NA
+The Return Of The King,04: The Voice Of Saruman,Gandalf,NA,NA,NA,NA,NA,111
+The Return Of The King,04: The Voice Of Saruman,Gimli,23,NA,NA,NA,NA,NA
+The Return Of The King,04: The Voice Of Saruman,Grima Wormtongue,NA,NA,NA,2,NA,NA
+The Return Of The King,04: The Voice Of Saruman,Saruman,NA,NA,NA,NA,NA,301
+The Return Of The King,04: The Voice Of Saruman,Theoden,NA,NA,NA,98,NA,NA
+The Return Of The King,05: Return To Edoras,Aragorn,NA,NA,NA,20,NA,NA
+The Return Of The King,05: Return To Edoras,Eomer,NA,NA,NA,4,NA,NA
+The Return Of The King,05: Return To Edoras,Eowyn,NA,NA,NA,8,NA,NA
+The Return Of The King,05: Return To Edoras,Gandalf,NA,NA,NA,NA,NA,15
+The Return Of The King,05: Return To Edoras,Gimli,40,NA,NA,NA,NA,NA
+The Return Of The King,05: Return To Edoras,Legolas,NA,21,NA,NA,NA,NA
+The Return Of The King,05: Return To Edoras,Merry,NA,NA,78,NA,NA,NA
+The Return Of The King,05: Return To Edoras,Pippin,NA,NA,73,NA,NA,NA
+The Return Of The King,05: Return To Edoras,Rohan Warrior,NA,NA,NA,1,NA,NA
+The Return Of The King,05: Return To Edoras,Theoden,NA,NA,NA,52,NA,NA
+The Return Of The King,06: Gollum's Villany,Frodo,NA,NA,46,NA,NA,NA
+The Return Of The King,06: Gollum's Villany,Sam,NA,NA,65,NA,NA,NA
+The Return Of The King,07: Eowyn's Dream,Aragorn,NA,NA,NA,13,NA,NA
+The Return Of The King,07: Eowyn's Dream,Eowyn,NA,NA,NA,50,NA,NA
+The Return Of The King,08: The Palantir,Aragorn,NA,NA,NA,20,NA,NA
+The Return Of The King,08: The Palantir,Gandalf,NA,NA,NA,NA,NA,255
+The Return Of The King,08: The Palantir,Legolas,NA,22,NA,NA,NA,NA
+The Return Of The King,08: The Palantir,Merry,NA,NA,135,NA,NA,NA
+The Return Of The King,08: The Palantir,Pippin,NA,NA,104,NA,NA,NA
+The Return Of The King,08: The Palantir,Theoden,NA,NA,NA,22,NA,NA
+The Return Of The King,09: Arwen's Vision,Elrond,NA,36,NA,NA,NA,NA
+The Return Of The King,09: Arwen's Vision,Figwit,NA,7,NA,NA,NA,NA
+The Return Of The King,10: The Reforging Of Narsil,Arwen,NA,100,NA,NA,NA,NA
+The Return Of The King,10: The Reforging Of Narsil,Elrond,NA,30,NA,NA,NA,NA
+The Return Of The King,11: Minas Tirith,Denethor,NA,NA,NA,151,NA,NA
+The Return Of The King,11: Minas Tirith,Gandalf,NA,NA,NA,NA,NA,202
+The Return Of The King,11: Minas Tirith,Pippin,NA,NA,36,NA,NA,NA
+The Return Of The King,12: The Decline Of Gondor,Gandalf,NA,NA,NA,NA,NA,268
+The Return Of The King,12: The Decline Of Gondor,Pippin,NA,NA,22,NA,NA,NA
+The Return Of The King,13: Cross-roads Of The Fallen King,Frodo,NA,NA,30,NA,NA,NA
+The Return Of The King,13: Cross-roads Of The Fallen King,Sam,NA,NA,56,NA,NA,NA
+The Return Of The King,14: The Deep Breath Before The Plunge,Gandalf,NA,NA,NA,NA,NA,163
+The Return Of The King,14: The Deep Breath Before The Plunge,Gondor Man,NA,NA,NA,2,NA,NA
+The Return Of The King,14: The Deep Breath Before The Plunge,Pippin,NA,NA,75,NA,NA,NA
+The Return Of The King,15: Minas Morgul,Frodo,NA,NA,8,NA,NA,NA
+The Return Of The King,15: Minas Morgul,Gandalf,NA,NA,NA,NA,NA,20
+The Return Of The King,15: Minas Morgul,Sam,NA,NA,5,NA,NA,NA
+The Return Of The King,16: Sam's Warning,Frodo,NA,NA,4,NA,NA,NA
+The Return Of The King,16: Sam's Warning,Sam,NA,NA,61,NA,NA,NA
+The Return Of The King,17: Pippin's Task,Gandalf,NA,NA,NA,NA,NA,30
+The Return Of The King,18: Osgiliath Invaded,Damrod,NA,NA,NA,3,NA,NA
+The Return Of The King,18: Osgiliath Invaded,Faramir,NA,NA,NA,18,NA,NA
+The Return Of The King,18: Osgiliath Invaded,Gondor Man,NA,NA,NA,7,NA,NA
+The Return Of The King,18: Osgiliath Invaded,Gothmog,NA,NA,NA,NA,6,NA
+The Return Of The King,18: Osgiliath Invaded,Madril,NA,NA,NA,28,NA,NA
+The Return Of The King,19: The Lighting Of The Beacons,Gandalf,NA,NA,NA,NA,NA,5
+The Return Of The King,19: The Lighting Of The Beacons,Gondor Man,NA,NA,NA,10,NA,NA
+The Return Of The King,20: Theoren's Decision,Aragorn,NA,NA,NA,18,NA,NA
+The Return Of The King,20: Theoren's Decision,Eomer,NA,NA,NA,21,NA,NA
+The Return Of The King,20: Theoren's Decision,Eowyn,NA,NA,NA,36,NA,NA
+The Return Of The King,20: Theoren's Decision,Gamling,NA,NA,NA,4,NA,NA
+The Return Of The King,20: Theoren's Decision,Gimli,15,NA,NA,NA,NA,NA
+The Return Of The King,20: Theoren's Decision,Legolas,NA,19,NA,NA,NA,NA
+The Return Of The King,20: Theoren's Decision,Merry,NA,NA,16,NA,NA,NA
+The Return Of The King,20: Theoren's Decision,Rohan Warrior,NA,NA,NA,3,NA,NA
+The Return Of The King,20: Theoren's Decision,Theoden,NA,NA,NA,73,NA,NA
+The Return Of The King,21: The Fall of Osgiliath,Damrod,NA,NA,NA,1,NA,NA
+The Return Of The King,21: The Fall of Osgiliath,Faramir,NA,NA,NA,66,NA,NA
+The Return Of The King,21: The Fall of Osgiliath,Gandalf,NA,NA,NA,NA,NA,34
+The Return Of The King,21: The Fall of Osgiliath,Gondor Man,NA,NA,NA,17,NA,NA
+The Return Of The King,21: The Fall of Osgiliath,Gothmog,NA,NA,NA,NA,13,NA
+The Return Of The King,21: The Fall of Osgiliath,Irolas,NA,NA,NA,13,NA,NA
+The Return Of The King,21: The Fall of Osgiliath,Madril,NA,NA,NA,8,NA,NA
+The Return Of The King,21: The Fall of Osgiliath,Pippin,NA,NA,15,NA,NA,NA
+The Return Of The King,22: The Wizard's Pupil,Denethor,NA,NA,NA,114,NA,NA
+The Return Of The King,22: The Wizard's Pupil,Faramir,NA,NA,NA,72,NA,NA
+The Return Of The King,23: The Stairs Of Cirith Ungol,Sam,NA,NA,8,NA,NA,NA
+The Return Of The King,24: Courage Is The Best Defense,Gandalf,NA,NA,NA,NA,NA,9
+The Return Of The King,24: Courage Is The Best Defense,Gondor Man,NA,NA,NA,9,NA,NA
+The Return Of The King,24: Courage Is The Best Defense,Gothmog,NA,NA,NA,NA,4,NA
+The Return Of The King,25: Peregrin Of The Tower Guard,Faramir,NA,NA,NA,80,NA,NA
+The Return Of The King,25: Peregrin Of The Tower Guard,Pippin,NA,NA,66,NA,NA,NA
+The Return Of The King,26: Allegiance To Denethor,Denethor,NA,NA,NA,89,NA,NA
+The Return Of The King,26: Allegiance To Denethor,Faramir,NA,NA,NA,53,NA,NA
+The Return Of The King,26: Allegiance To Denethor,Pippin,NA,NA,32,NA,NA,NA
+The Return Of The King,27: The Parting Of Sam & Frodo,Frodo,NA,NA,43,NA,NA,NA
+The Return Of The King,27: The Parting Of Sam & Frodo,Sam,NA,NA,184,NA,NA,NA
+The Return Of The King,28: The Sacrifice Of Faramir,Denethor,NA,NA,NA,20,NA,NA
+The Return Of The King,28: The Sacrifice Of Faramir,Faramir,NA,NA,NA,31,NA,NA
+The Return Of The King,28: The Sacrifice Of Faramir,Gandalf,NA,NA,NA,NA,NA,29
+The Return Of The King,28: The Sacrifice Of Faramir,Orc,NA,NA,NA,NA,5,NA
+The Return Of The King,28: The Sacrifice Of Faramir,Pippin,NA,NA,59,NA,NA,NA
+The Return Of The King,29: Marshalling At Dunharrow,Aragorn,NA,NA,NA,26,NA,NA
+The Return Of The King,29: Marshalling At Dunharrow,Eomer,NA,NA,NA,89,NA,NA
+The Return Of The King,29: Marshalling At Dunharrow,Eowyn,NA,NA,NA,56,NA,NA
+The Return Of The King,29: Marshalling At Dunharrow,Gimli,12,NA,NA,NA,NA,NA
+The Return Of The King,29: Marshalling At Dunharrow,Grimhold,NA,NA,NA,9,NA,NA
+The Return Of The King,29: Marshalling At Dunharrow,Legolas,NA,21,NA,NA,NA,NA
+The Return Of The King,29: Marshalling At Dunharrow,Merry,NA,NA,12,NA,NA,NA
+The Return Of The King,29: Marshalling At Dunharrow,Rohan Warrior,NA,NA,NA,30,NA,NA
+The Return Of The King,29: Marshalling At Dunharrow,Theoden,NA,NA,NA,24,NA,NA
+The Return Of The King,30: Anduril - Flame Of The West,Aragorn,NA,NA,NA,54,NA,NA
+The Return Of The King,30: Anduril - Flame Of The West,Arwen,NA,15,NA,NA,NA,NA
+The Return Of The King,30: Anduril - Flame Of The West,Elrond,NA,168,NA,NA,NA,NA
+The Return Of The King,30: Anduril - Flame Of The West,Rohan Warrior,NA,NA,NA,7,NA,NA
+The Return Of The King,30: Anduril - Flame Of The West,Theoden,NA,NA,NA,4,NA,NA
+The Return Of The King,31: Aragorn Takes The Paths Of The Dead,Aragorn,NA,NA,NA,42,NA,NA
+The Return Of The King,31: Aragorn Takes The Paths Of The Dead,Eowyn,NA,NA,NA,32,NA,NA
+The Return Of The King,31: Aragorn Takes The Paths Of The Dead,Gamling,NA,NA,NA,18,NA,NA
+The Return Of The King,31: Aragorn Takes The Paths Of The Dead,Gimli,20,NA,NA,NA,NA,NA
+The Return Of The King,31: Aragorn Takes The Paths Of The Dead,Legolas,NA,9,NA,NA,NA,NA
+The Return Of The King,31: Aragorn Takes The Paths Of The Dead,Rohan Warrior,NA,NA,NA,20,NA,NA
+The Return Of The King,31: Aragorn Takes The Paths Of The Dead,Theoden,NA,NA,NA,16,NA,NA
+The Return Of The King,32: No More Despair,Eowyn,NA,NA,NA,10,NA,NA
+The Return Of The King,32: No More Despair,Theoden,NA,NA,NA,60,NA,NA
+The Return Of The King,33: Dwimoberg ~ The Haunted Mountain,Aragorn,NA,NA,NA,6,NA,NA
+The Return Of The King,33: Dwimoberg ~ The Haunted Mountain,Gimli,45,NA,NA,NA,NA,NA
+The Return Of The King,33: Dwimoberg ~ The Haunted Mountain,Legolas,NA,123,NA,NA,NA,NA
+The Return Of The King,34: The Muster Of Rohan,Eomer,NA,NA,NA,8,NA,NA
+The Return Of The King,34: The Muster Of Rohan,Eowyn,NA,NA,NA,3,NA,NA
+The Return Of The King,34: The Muster Of Rohan,Merry,NA,NA,21,NA,NA,NA
+The Return Of The King,34: The Muster Of Rohan,Theoden,NA,NA,NA,63,NA,NA
+The Return Of The King,35: The Paths Of The Dead,Aragorn,NA,NA,NA,75,NA,NA
+The Return Of The King,35: The Paths Of The Dead,Gimli,43,NA,NA,NA,NA,NA
+The Return Of The King,35: The Paths Of The Dead,Legolas,NA,32,NA,NA,NA,NA
+The Return Of The King,36: The Siege Of Gondor,Denethor,NA,NA,NA,40,NA,NA
+The Return Of The King,36: The Siege Of Gondor,Gandalf,NA,NA,NA,NA,NA,81
+The Return Of The King,36: The Siege Of Gondor,Gondor Man,NA,NA,NA,19,NA,NA
+The Return Of The King,36: The Siege Of Gondor,Gothmog,NA,NA,NA,NA,46,NA
+The Return Of The King,36: The Siege Of Gondor,Irolas,NA,NA,NA,7,NA,NA
+The Return Of The King,36: The Siege Of Gondor,Orc,NA,NA,NA,NA,25,NA
+The Return Of The King,36: The Siege Of Gondor,Pippin,NA,NA,15,NA,NA,NA
+The Return Of The King,37: The Corsairs Of Umbar,Aragorn,NA,NA,NA,21,NA,NA
+The Return Of The King,37: The Corsairs Of Umbar,Boson,NA,NA,NA,7,NA,NA
+The Return Of The King,37: The Corsairs Of Umbar,Gimli,14,NA,NA,NA,NA,NA
+The Return Of The King,37: The Corsairs Of Umbar,Mercenary,NA,NA,NA,6,NA,NA
+The Return Of The King,38: Shelob's Lair,Frodo,NA,NA,60,NA,NA,NA
+The Return Of The King,38: Shelob's Lair,Galadriel,NA,51,NA,NA,NA,NA
+The Return Of The King,38: Shelob's Lair,Sam,NA,NA,1,NA,NA,NA
+The Return Of The King,39: Merry's Simple Courage,Eomer,NA,NA,NA,22,NA,NA
+The Return Of The King,39: Merry's Simple Courage,Eowyn,NA,NA,NA,10,NA,NA
+The Return Of The King,39: Merry's Simple Courage,Merry,NA,NA,83,NA,NA,NA
+The Return Of The King,39: Merry's Simple Courage,Theoden,NA,NA,NA,13,NA,NA
+The Return Of The King,40: Grond ~ The Hammer Of The Underworld,Gandalf,NA,NA,NA,NA,NA,5
+The Return Of The King,41: The Tomb Of The Stewards,Denethor,NA,NA,NA,68,NA,NA
+The Return Of The King,42: Breaking The Gate Of Gondor,Gandalf,NA,NA,NA,NA,NA,21
+The Return Of The King,43: The Choices Of Master Samwise Gamgee,Orc,NA,NA,NA,NA,15,NA
+The Return Of The King,43: The Choices Of Master Samwise Gamgee,Sam,NA,NA,48,NA,NA,NA
+The Return Of The King,43: The Choices Of Master Samwise Gamgee,Shagrat,NA,NA,NA,NA,55,NA
+The Return Of The King,44: Denethor's Madness,Denethor,NA,NA,NA,36,NA,NA
+The Return Of The King,44: Denethor's Madness,Gondor Man,NA,NA,NA,10,NA,NA
+The Return Of The King,44: Denethor's Madness,Pippin,NA,NA,17,NA,NA,NA
+The Return Of The King,45: The Witch King's Hour,Gandalf,NA,NA,NA,NA,NA,48
+The Return Of The King,45: The Witch King's Hour,Gondor Man,NA,NA,NA,7,NA,NA
+The Return Of The King,45: The Witch King's Hour,Gothmog,NA,NA,NA,NA,9,NA
+The Return Of The King,45: The Witch King's Hour,Pippin,NA,NA,13,NA,NA,NA
+The Return Of The King,46: The Ride Of The Rohirrim,Eomer,NA,NA,NA,2,NA,NA
+The Return Of The King,46: The Ride Of The Rohirrim,Eowyn,NA,NA,NA,17,NA,NA
+The Return Of The King,46: The Ride Of The Rohirrim,Gothmog,NA,NA,NA,NA,15,NA
+The Return Of The King,46: The Ride Of The Rohirrim,Merry,NA,NA,2,NA,NA,NA
+The Return Of The King,46: The Ride Of The Rohirrim,Theoden,NA,NA,NA,71,NA,NA
+The Return Of The King,47: The Pyre Of Denethor,Denethor,NA,NA,NA,42,NA,NA
+The Return Of The King,47: The Pyre Of Denethor,Gandalf,NA,NA,NA,NA,NA,9
+The Return Of The King,47: The Pyre Of Denethor,Pippin,NA,NA,2,NA,NA,NA
+The Return Of The King,48: The Battle Of The Pelennor Fields,Eomer,NA,NA,NA,9,NA,NA
+The Return Of The King,48: The Battle Of The Pelennor Fields,Eowyn,NA,NA,NA,8,NA,NA
+The Return Of The King,48: The Battle Of The Pelennor Fields,Rohan Warrior,NA,NA,NA,3,NA,NA
+The Return Of The King,48: The Battle Of The Pelennor Fields,Theoden,NA,NA,NA,26,NA,NA
+The Return Of The King,49: A Far Green Country,Gandalf,NA,NA,NA,NA,NA,54
+The Return Of The King,49: A Far Green Country,Pippin,NA,NA,17,NA,NA,NA
+The Return Of The King,50: The Nazgul And His Prey,Eowyn,NA,NA,NA,8,NA,NA
+The Return Of The King,50: The Nazgul And His Prey,Theoden,NA,NA,NA,5,NA,NA
+The Return Of The King,51: The Black Ships,Gimli,12,NA,NA,NA,NA,NA
+The Return Of The King,51: The Black Ships,Orc,NA,NA,NA,NA,19,NA
+The Return Of The King,52: Shieldmaiden Of Rohan,Eowyn,NA,NA,NA,4,NA,NA
+The Return Of The King,53: Victory At Minar Tirith,Aragorn,NA,NA,NA,1,NA,NA
+The Return Of The King,53: Victory At Minar Tirith,Eowyn,NA,NA,NA,1,NA,NA
+The Return Of The King,53: Victory At Minar Tirith,Gimli,6,NA,NA,NA,NA,NA
+The Return Of The King,53: Victory At Minar Tirith,Legolas,NA,6,NA,NA,NA,NA
+The Return Of The King,53: Victory At Minar Tirith,Orc,NA,NA,NA,NA,5,NA
+The Return Of The King,54: The Passing Of Theoden,Eowyn,NA,NA,NA,8,NA,NA
+The Return Of The King,54: The Passing Of Theoden,Theoden,NA,NA,NA,38,NA,NA
+The Return Of The King,55: Oaths Fulfilled,Aragorn,NA,NA,NA,9,NA,NA
+The Return Of The King,55: Oaths Fulfilled,Gimli,15,NA,NA,NA,NA,NA
+The Return Of The King,56: The Houses Of Healing,Eomer,NA,NA,NA,3,NA,NA
+The Return Of The King,56: The Houses Of Healing,Pippin,NA,NA,1,NA,NA,NA
+The Return Of The King,57: Pippin Looks After Merry,Merry,NA,NA,11,NA,NA,NA
+The Return Of The King,57: Pippin Looks After Merry,Pippin,NA,NA,16,NA,NA,NA
+The Return Of The King,58: The Tower Of Cirith Ungol,Frodo,NA,NA,64,NA,NA,NA
+The Return Of The King,58: The Tower Of Cirith Ungol,Grobag,NA,NA,NA,NA,23,NA
+The Return Of The King,58: The Tower Of Cirith Ungol,Sam,NA,NA,96,NA,NA,NA
+The Return Of The King,58: The Tower Of Cirith Ungol,Shagrat,NA,NA,NA,NA,35,NA
+The Return Of The King,59: The Last Debate,Aragorn,NA,NA,NA,82,NA,NA
+The Return Of The King,59: The Last Debate,Eomer,NA,NA,NA,8,NA,NA
+The Return Of The King,59: The Last Debate,Gandalf,NA,NA,NA,NA,NA,59
+The Return Of The King,59: The Last Debate,Gimli,24,NA,NA,NA,NA,NA
+The Return Of The King,59: The Last Debate,Legolas,NA,2,NA,NA,NA,NA
+The Return Of The King,60: Aragorn Masters The Palantir,Aragorn,NA,NA,NA,17,NA,NA
+The Return Of The King,61: The Captain And The White Lady,Eowyn,NA,NA,NA,17,NA,NA
+The Return Of The King,61: The Captain And The White Lady,Faramir,NA,NA,NA,17,NA,NA
+The Return Of The King,62: In The Company Of Orcs,Frodo,NA,NA,16,NA,NA,NA
+The Return Of The King,62: In The Company Of Orcs,Orc,NA,NA,NA,NA,104,NA
+The Return Of The King,62: In The Company Of Orcs,Sam,NA,NA,46,NA,NA,NA
+The Return Of The King,63: The Land Of Shadow,Frodo,NA,NA,30,NA,NA,NA
+The Return Of The King,63: The Land Of Shadow,Sam,NA,NA,56,NA,NA,NA
+The Return Of The King,64: The Mouth Of Sauron,Aragorn,NA,NA,NA,23,NA,NA
+The Return Of The King,64: The Mouth Of Sauron,Gandalf,NA,NA,NA,NA,NA,32
+The Return Of The King,64: The Mouth Of Sauron,Gimli,5,NA,NA,NA,NA,NA
+The Return Of The King,64: The Mouth Of Sauron,Merry,NA,NA,1,NA,NA,NA
+The Return Of The King,64: The Mouth Of Sauron,Mouth Of Sauron,NA,NA,NA,NA,87,NA
+The Return Of The King,64: The Mouth Of Sauron,Pippin,NA,NA,5,NA,NA,NA
+The Return Of The King,65: The Black Gate Opens,Aragorn,NA,NA,NA,103,NA,NA
+The Return Of The King,65: The Black Gate Opens,Gimli,16,NA,NA,NA,NA,NA
+The Return Of The King,65: The Black Gate Opens,Legolas,NA,8,NA,NA,NA,NA
+The Return Of The King,65: The Black Gate Opens,Sam,NA,NA,16,NA,NA,NA
+The Return Of The King,66: I Can't Carry It For You… But I Can Carry You,Frodo,NA,NA,44,NA,NA,NA
+The Return Of The King,66: I Can't Carry It For You… But I Can Carry You,Sam,NA,NA,85,NA,NA,NA
+The Return Of The King,67: The Last Move,Aragorn,NA,NA,NA,2,NA,NA
+The Return Of The King,67: The Last Move,Voice Of Sauron,NA,NA,NA,NA,NA,2
+The Return Of The King,68: Mount Doom,Frodo,NA,NA,9,NA,NA,NA
+The Return Of The King,68: Mount Doom,Sam,NA,NA,10,NA,NA,NA
+The Return Of The King,69: The Eagles Are Coming,Pippin,NA,NA,6,NA,NA,NA
+The Return Of The King,70: The Crack Of Doom,Frodo,NA,NA,7,NA,NA,NA
+The Return Of The King,70: The Crack Of Doom,Sam,NA,NA,38,NA,NA,NA
+The Return Of The King,71: Sauron Defeated,Merry,NA,NA,2,NA,NA,NA
+The Return Of The King,71: Sauron Defeated,Pippin,NA,NA,1,NA,NA,NA
+The Return Of The King,72: The End Of All Things,Frodo,NA,NA,37,NA,NA,NA
+The Return Of The King,72: The End Of All Things,Sam,NA,NA,31,NA,NA,NA
+The Return Of The King,73: The Fellowship Reunited,Frodo,NA,NA,4,NA,NA,NA
+The Return Of The King,73: The Fellowship Reunited,Gimli,1,NA,NA,NA,NA,NA
+The Return Of The King,73: The Fellowship Reunited,Merry,NA,NA,1,NA,NA,NA
+The Return Of The King,74: The Return Of The King,Aragorn,NA,NA,NA,45,NA,NA
+The Return Of The King,74: The Return Of The King,Gandalf,NA,NA,NA,NA,NA,11
+The Return Of The King,75: Homeward Bound,Frodo,NA,NA,98,NA,NA,NA
+The Return Of The King,75: Homeward Bound,Hobbits,NA,NA,4,NA,NA,NA
+The Return Of The King,75: Homeward Bound,Pippin,NA,NA,2,NA,NA,NA
+The Return Of The King,75: Homeward Bound,Rosie,NA,NA,2,NA,NA,NA
+The Return Of The King,75: Homeward Bound,Sam,NA,NA,27,NA,NA,NA
+The Return Of The King,76: The Grey Havens,Bilbo,NA,NA,56,NA,NA,NA
+The Return Of The King,76: The Grey Havens,Elrond,NA,6,NA,NA,NA,NA
+The Return Of The King,76: The Grey Havens,Frodo,NA,NA,132,NA,NA,NA
+The Return Of The King,76: The Grey Havens,Galadriel,NA,17,NA,NA,NA,NA
+The Return Of The King,76: The Grey Havens,Gandalf,NA,NA,NA,NA,NA,42
+The Return Of The King,76: The Grey Havens,Sam,NA,NA,14,NA,NA,NA

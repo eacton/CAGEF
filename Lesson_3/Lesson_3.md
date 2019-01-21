@@ -91,12 +91,39 @@ Last lesson, we learned how to filter and select data subsets we were interested
 
 Let's read in our dataset, store it in a variable, and remind ourselves about the original structure.
 
-```{r message = FALSE, warning=FALSE}
+
+```r
 library(readr)
 
 dat <- read_csv("data/SPE_pitlatrine.csv")
 head(dat)
+```
 
+```
+## # A tibble: 6 x 82
+##   Taxa  T_2_1 T_2_10 T_2_12 T_2_2 T_2_3 T_2_6 T_2_7 T_2_9 T_3_2 T_3_3 T_3_5
+##   <chr> <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+## 1 Acid…     0      0      0     0     0     0     0     0     0     0     0
+## 2 Acid…     0      0      0     0     0     0     0     0     0     0     0
+## 3 Acid…     0      0      0     0     0     0     0     0     0     0     0
+## 4 Acid…     0      0      0     0     0     0     0     0     0     0     0
+## 5 Acid…     0      0      0     0     0     0     0     0     0     0     0
+## 6 Acid…     0      0      0     2     2     5     0    15     2     1     0
+## # … with 70 more variables: T_4_3 <dbl>, T_4_4 <dbl>, T_4_5 <dbl>,
+## #   T_4_6 <dbl>, T_4_7 <dbl>, T_5_2 <dbl>, T_5_3 <dbl>, T_5_4 <dbl>,
+## #   T_5_5 <dbl>, T_6_2 <dbl>, T_6_5 <dbl>, T_6_7 <dbl>, T_6_8 <dbl>,
+## #   T_9_1 <dbl>, T_9_2 <dbl>, T_9_3 <dbl>, T_9_4 <dbl>, T_9_5 <dbl>,
+## #   V_1_2 <dbl>, V_10_1 <dbl>, V_11_1 <dbl>, V_11_2 <dbl>, V_11_3 <dbl>,
+## #   V_12_1 <dbl>, V_12_2 <dbl>, V_13_1 <dbl>, V_13_2 <dbl>, V_14_1 <dbl>,
+## #   V_14_2 <dbl>, V_14_3 <dbl>, V_15_1 <dbl>, V_15_2 <dbl>, V_15_3 <dbl>,
+## #   V_16_1 <dbl>, V_16_2 <dbl>, V_17_1 <dbl>, V_17_2 <dbl>, V_18_1 <dbl>,
+## #   V_18_2 <dbl>, V_18_3 <dbl>, V_18_4 <dbl>, V_19_1 <dbl>, V_19_2 <dbl>,
+## #   V_19_3 <dbl>, V_2_1 <dbl>, V_2_2 <dbl>, V_2_3 <dbl>, V_20_1 <dbl>,
+## #   V_21_1 <dbl>, V_21_4 <dbl>, V_22_1 <dbl>, V_22_3 <dbl>, V_22_4 <dbl>,
+## #   V_3_1 <dbl>, V_3_2 <dbl>, V_4_1 <dbl>, V_4_2 <dbl>, V_5_1 <dbl>,
+## #   V_5_3 <dbl>, V_6_1 <dbl>, V_6_2 <dbl>, V_6_3 <dbl>, V_7_1 <dbl>,
+## #   V_7_2 <dbl>, V_7_3 <dbl>, V_8_2 <dbl>, V_9_1 <dbl>, V_9_2 <dbl>,
+## #   V_9_3 <dbl>, V_9_4 <dbl>
 ```
 
 
@@ -128,7 +155,8 @@ Fortunately, Hadley has also given us the tools to solve these problems.
 
 The tidyverse is the universe of packages created by Hadley Wickham for data analysis. There are packages to help import, tidy, transform, model and visualize data. His packages are pretty popular, so he made a package to load all of his packages at once. This wrapper package is `tidyverse`. In this lesson series we have used `readr` and `readxl`, and we will be using `dplyr` and `tidyr` today, and `stringr` and `ggplot2` in future lessons. Install the package now.
 
-```{r eval=FALSE}
+
+```r
 install.packages("tidyverse")
 ```
 
@@ -174,8 +202,26 @@ Each result is the same observational unit (ie. relative abundances of bacteria)
 
 First let's load our library. Loading `tidyverse` will include the `tidyr` package that the `gather()` function is from.
 
-```{r}
+
+```r
 library(tidyverse)
+```
+
+```
+## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+```
+
+```
+## ✔ ggplot2 3.1.0     ✔ purrr   0.2.5
+## ✔ tibble  2.0.0     ✔ dplyr   0.7.8
+## ✔ tidyr   0.8.2     ✔ stringr 1.3.1
+## ✔ ggplot2 3.1.0     ✔ forcats 0.3.0
+```
+
+```
+## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
 ```
 
 Note that 8 different packages are loaded, and that 2 functions from the `stats` package have been replaced by functions of the same name by `dplyr`. Note that you can still access the `stats` version of the function by calling it directly as `stats::filter()`. 
@@ -184,11 +230,25 @@ We can use the `gather()` function to collect our columns. This will make our da
 
 We need to provide `gather()` with information on our new columns. The first argument is our data frame, the second argument is the __key__, which is the name for the variable we want to gather (a set of column names). In this case our columns represent latrine sites, so we can assign the name 'Sites' to our key. The next argument is the __value__, which is the name for the measurements (usually numeric or integer) we have. In this case our values are Operational Taxonomic Units, so we can assign the name 'OTUs' to our value. The third argument is all of the columns that we want to gather. You can specify the columns by listing their names or positions. 
 
-```{r }
+
+```r
 dat %>% gather(key = Site, value = OTUs, T_2_1:V_9_4) %>% head()
 ```
 
-```{r eval=FALSE}
+```
+## # A tibble: 6 x 3
+##   Taxa               Site   OTUs
+##   <chr>              <chr> <dbl>
+## 1 Acidobacteria_Gp1  T_2_1     0
+## 2 Acidobacteria_Gp10 T_2_1     0
+## 3 Acidobacteria_Gp14 T_2_1     0
+## 4 Acidobacteria_Gp16 T_2_1     0
+## 5 Acidobacteria_Gp17 T_2_1     0
+## 6 Acidobacteria_Gp18 T_2_1     0
+```
+
+
+```r
 #equivalent to
 dat %>% gather(key = Site, value = OTUs, 2:82) %>% head()
 #equivalent to
@@ -201,7 +261,8 @@ In the above examples "-" means gather every column except the 1st, or gather ev
 
 Let's save the last variation into a data frame called gather_dat.
 
-```{r}
+
+```r
 gather_dat <- dat %>% gather(Site, OTUs, -Taxa)
 ```
 
@@ -209,16 +270,50 @@ Note how the dimensions of your dataframe have changed relative to dat. Instead 
 
 Next, we can use the `separate()` function to get the Country, Latrine_Number, and Depth information from our Site column. `separate()` takes in your dataframe, the name of the column to be split, the names of your new columns, and the character that you want to split the columns by (in this case an underscore). Note that the default is to remove your original column - if you want to keep it, you can add the additional argument `remove = FALSE`, keeping in mind that you now have redundant data. 
 
-```{r eval=1}
+
+```r
 split_dat <- gather_dat %>% separate(Site, c("Country", "Latrine_Number", "Depth"), sep = "_")
-#equivalent to
-split_dat <- gather_dat %>% separate(Site, c("Country", "Latrine_Number", "Depth"), sep = "_", remove = TRUE)
+## #equivalent to
+## split_dat <- gather_dat %>% separate(Site, c("Country", "Latrine_Number", "Depth"), sep = "_", remove = TRUE)
 ```
 
 We may also want to do this for the 'Group' of Acidobacteria. Try the code, but do not save the answer in a variable.
 
-```{r}
+
+```r
 split_dat %>% separate(Taxa, c("Taxa", "Group"), sep = "_Gp") %>% head(20)
+```
+
+```
+## Warning: Expected 2 pieces. Missing pieces filled with `NA` in 3078 rows
+## [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
+## 33, 34, ...].
+```
+
+```
+## # A tibble: 20 x 6
+##    Taxa                Group Country Latrine_Number Depth  OTUs
+##    <chr>               <chr> <chr>   <chr>          <chr> <dbl>
+##  1 Acidobacteria       1     T       2              1         0
+##  2 Acidobacteria       10    T       2              1         0
+##  3 Acidobacteria       14    T       2              1         0
+##  4 Acidobacteria       16    T       2              1         0
+##  5 Acidobacteria       17    T       2              1         0
+##  6 Acidobacteria       18    T       2              1         0
+##  7 Acidobacteria       21    T       2              1         0
+##  8 Acidobacteria       22    T       2              1         0
+##  9 Acidobacteria       3     T       2              1         0
+## 10 Acidobacteria       4     T       2              1         0
+## 11 Acidobacteria       5     T       2              1         0
+## 12 Acidobacteria       6     T       2              1         0
+## 13 Acidobacteria       7     T       2              1         0
+## 14 Acidobacteria       9     T       2              1         0
+## 15 Actinobacteria      <NA>  T       2              1       110
+## 16 Alphaproteobacteria <NA>  T       2              1        11
+## 17 Anaerolineae        <NA>  T       2              1         2
+## 18 Bacilli             <NA>  T       2              1        19
+## 19 Bacteroidia         <NA>  T       2              1      1547
+## 20 Betaproteobacteria  <NA>  T       2              1         2
 ```
 
 We get a warning from R that it has filled in 'NA' for the bacteria that did not have groups. Note that I chose to split Taxa using '_Gp' since I did not need 'Gp'. 
@@ -241,31 +336,93 @@ Use the `glimpse()` function to look  at the type of each variable in our new da
 
 ***
 
-```{r include = FALSE}
-#Latrine_Number and Depth are characters, not numeric or integer because they were derived from a character string
-#glimpse is customized for tibbles and data frames and shows as much data as possible
-```
+
 
 
 There is a useful function `group_by()` that you can use to group variables or sets of variables together. This is useful for calculations and plotting on subsets of your data without having to turn your variables into factors. Say I wanted to look at a combination of Country and Well Depth. While visually, you wouldn't notice any changes to your data frame, if you look at the structure it will now be a 'grouped_df'. There are 15 groupings resulting from Country and Depth. After I have performed my desired operation, I can return my data frame to its original structure by calling `ungroup()`. First we will examine the structure of grouped and ungrouped output without any additional operations.  
 
-```{r}
+
+```r
 str(split_dat)
+```
 
+```
+## Classes 'tbl_df', 'tbl' and 'data.frame':	4212 obs. of  5 variables:
+##  $ Taxa          : chr  "Acidobacteria_Gp1" "Acidobacteria_Gp10" "Acidobacteria_Gp14" "Acidobacteria_Gp16" ...
+##  $ Country       : chr  "T" "T" "T" "T" ...
+##  $ Latrine_Number: chr  "2" "2" "2" "2" ...
+##  $ Depth         : chr  "1" "1" "1" "1" ...
+##  $ OTUs          : num  0 0 0 0 0 0 0 0 0 0 ...
+```
+
+```r
 str(split_dat %>% group_by(Country, Depth))
+```
 
+```
+## Classes 'grouped_df', 'tbl_df', 'tbl' and 'data.frame':	4212 obs. of  5 variables:
+##  $ Taxa          : chr  "Acidobacteria_Gp1" "Acidobacteria_Gp10" "Acidobacteria_Gp14" "Acidobacteria_Gp16" ...
+##  $ Country       : chr  "T" "T" "T" "T" ...
+##  $ Latrine_Number: chr  "2" "2" "2" "2" ...
+##  $ Depth         : chr  "1" "1" "1" "1" ...
+##  $ OTUs          : num  0 0 0 0 0 0 0 0 0 0 ...
+##  - attr(*, "vars")= chr  "Country" "Depth"
+##  - attr(*, "drop")= logi TRUE
+##  - attr(*, "indices")=List of 15
+##   ..$ : int  0 1 2 3 4 5 6 7 8 9 ...
+##   ..$ : int  52 53 54 55 56 57 58 59 60 61 ...
+##   ..$ : int  104 105 106 107 108 109 110 111 112 113 ...
+##   ..$ : int  156 157 158 159 160 161 162 163 164 165 ...
+##   ..$ : int  208 209 210 211 212 213 214 215 216 217 ...
+##   ..$ : int  624 625 626 627 628 629 630 631 632 633 ...
+##   ..$ : int  520 521 522 523 524 525 526 527 528 529 ...
+##   ..$ : int  260 261 262 263 264 265 266 267 268 269 ...
+##   ..$ : int  312 313 314 315 316 317 318 319 320 321 ...
+##   ..$ : int  1196 1197 1198 1199 1200 1201 1202 1203 1204 1205 ...
+##   ..$ : int  364 365 366 367 368 369 370 371 372 373 ...
+##   ..$ : int  1560 1561 1562 1563 1564 1565 1566 1567 1568 1569 ...
+##   ..$ : int  1508 1509 1510 1511 1512 1513 1514 1515 1516 1517 ...
+##   ..$ : int  1716 1717 1718 1719 1720 1721 1722 1723 1724 1725 ...
+##   ..$ : int  2652 2653 2654 2655 2656 2657 2658 2659 2660 2661 ...
+##  - attr(*, "group_sizes")= int  104 52 52 260 260 156 260 104 156 52 ...
+##  - attr(*, "biggest_group_size")= int 1040
+##  - attr(*, "labels")='data.frame':	15 obs. of  2 variables:
+##   ..$ Country: chr  "T" "T" "T" "T" ...
+##   ..$ Depth  : chr  "1" "10" "12" "2" ...
+##   ..- attr(*, "vars")= chr  "Country" "Depth"
+##   ..- attr(*, "drop")= logi TRUE
+```
+
+```r
 str(split_dat %>% group_by(Country, Depth) %>% ungroup())
+```
+
+```
+## Classes 'tbl_df', 'tbl' and 'data.frame':	4212 obs. of  5 variables:
+##  $ Taxa          : chr  "Acidobacteria_Gp1" "Acidobacteria_Gp10" "Acidobacteria_Gp14" "Acidobacteria_Gp16" ...
+##  $ Country       : chr  "T" "T" "T" "T" ...
+##  $ Latrine_Number: chr  "2" "2" "2" "2" ...
+##  $ Depth         : chr  "1" "1" "1" "1" ...
+##  $ OTUs          : num  0 0 0 0 0 0 0 0 0 0 ...
 ```
 
 
 
 Now we can see an example of how `group_by` in action with `summarize()`, can easily calculate summary statistics for groups of data. Whereas in our messy data frame it was difficult to do calculations based on Country, Well Number or Latrine Depth, this is now an easy task. Let's get the mean, median, standard deviation and maximum for the number of OTUs collected in Tanzania vs Vietnam.
 
-```{r}
+
+```r
 split_dat %>% 
   group_by(Country) %>% 
   summarize(mean = mean(OTUs), median = median(OTUs), sd = sd(OTUs), maximum = max(OTUs))
+```
 
+```
+## # A tibble: 2 x 5
+##   Country  mean median    sd maximum
+##   <chr>   <dbl>  <dbl> <dbl>   <dbl>
+## 1 T        122.      0  896.   17471
+## 2 V        186.      0  863.   17572
 ```
 
 In dealing with grouped data, we no longer have to grab a Country by subsetting or using helper functions to grab letters from their names. Group by recognizes that we have 2 countries and will perform calculations for both of them.
@@ -289,37 +446,80 @@ __Okay, Go!__
 Which latrine depth has the greatest mean number of OTUs?
 
 
-```{r}
+
+```r
 split_dat %>% 
   group_by(Latrine_Number) %>% 
   summarize(mean = mean(OTUs)) %>% 
   arrange(desc(mean))
+```
 
+```
+## # A tibble: 22 x 2
+##    Latrine_Number  mean
+##    <chr>          <dbl>
+##  1 17              415.
+##  2 16              403.
+##  3 11              338.
+##  4 20              335.
+##  5 10              328.
+##  6 8               236.
+##  7 15              207.
+##  8 3               206.
+##  9 18              201.
+## 10 12              188.
+## # … with 12 more rows
 ```
 Without data being in 'tidy' format - with all variables that were mashed together into a Site (Country_LatrineNo_Depth)  having their own columns - this is a difficult question to answer. Once Latrine_Number is a variable, we can simply group our data to perform our mean calculation and get an answer.
 
 Is there more Clostridia on average in sites from Tanzania or Vietnam?
 
-```{r}
+
+```r
 split_dat %>%
   filter(Taxa == "Clostridia") %>%
   group_by(Country) %>%
   summarise(mean = mean(OTUs)) %>%
   arrange(desc(mean))
+```
 
+```
+## # A tibble: 2 x 2
+##   Country  mean
+##   <chr>   <dbl>
+## 1 T       3490.
+## 2 V       3386.
 ```
 Again, being able to filter by Taxa and group by Country (as an isolated variable) helps a lot. With `dplyr` syntax we can perform all data manipulations and calculations in a code block that is readable. 
 
 
 Which site had the greatest number of Taxa represented? 
 
-```{r}
+
+```r
 split_dat %>% 
   group_by(Country, Latrine_Number, Depth) %>% 
   filter(OTUs != 0) %>%
   summarize(count = n()) %>% 
   arrange(desc(count))
+```
 
+```
+## # A tibble: 81 x 4
+## # Groups:   Country, Latrine_Number [28]
+##    Country Latrine_Number Depth count
+##    <chr>   <chr>          <chr> <int>
+##  1 V       7              3        36
+##  2 V       22             1        31
+##  3 V       7              2        29
+##  4 T       2              6        27
+##  5 V       11             1        27
+##  6 V       11             3        27
+##  7 T       2              9        26
+##  8 V       15             2        26
+##  9 V       15             3        26
+## 10 V       18             4        26
+## # … with 71 more rows
 ```
 
 Since we can group by the 3 variables that were in the Site name, there is no disadvantage to having our data in tidy format compared to our original wide data frame. However now we are able to filter for non-zero OTUs, which was impossible in the wide format. Since we know from earlier in the lesson that each Taxa is only represented once for each site, we only have to count and order the number of observations to get our answer. 
@@ -352,10 +552,7 @@ __Challenge__
 
 Collapse Country, Latrine_Number and Depth back into one variable, 'Site', using the `unite()` function. Store the output in a data frame called unite_dat.
 
-```{r include = FALSE, eval = TRUE}
-unite_dat <- split_dat %>% 
-  unite("Site", c("Country", "Latrine_Number", "Depth"), sep = "_") 
-```
+
 
 
 </br>
@@ -374,10 +571,7 @@ __Challenge__
 
 Use the `spread()` function to turn unite_dat into the wide shape of our original dataset. Save the output into a data frame called 'spread_dat'.
 
-```{r include = FALSE}
-spread_dat <- unite_dat %>% 
-  spread(key = Site, value = OTUs)
-```
+
 
 </br>
 </br>
@@ -394,32 +588,22 @@ __Challenge__
 
 Read in the gapminder_wide.csv. What rules of tidy data does it break? Transform the dataset to the format below. How many rows do you have?
 
-```{r echo = FALSE}
 
-gap <- gapminder::gapminder[1:6,]
-
-knitr::kable(gap)
-```
+country       continent    year   lifeExp        pop   gdpPercap
+------------  ----------  -----  --------  ---------  ----------
+Afghanistan   Asia         1952    28.801    8425333    779.4453
+Afghanistan   Asia         1957    30.332    9240934    820.8530
+Afghanistan   Asia         1962    31.997   10267083    853.1007
+Afghanistan   Asia         1967    34.020   11537966    836.1971
+Afghanistan   Asia         1972    36.088   13079460    739.9811
+Afghanistan   Asia         1977    38.438   14880372    786.1134
 
 
 </br>
 
 </br>
 
-```{r include=FALSE}
-gap <- read_csv("data/gapminder_wide.csv")
-#broken rules: multiple variables per column (gdpPercap + year, lifeExp + year, population + year), multiple observation types in one table
 
-gap <- gap %>% gather(obs_type, obs_value, -continent, -country)
-
-gap <- gap %>% separate(obs_type, c("obs_type", "year"), sep="_", convert = TRUE)
-
-gap <- gap %>% spread(key = obs_type, value = obs_value)
-
-gap <- gap %>% select(continent, country, year, lifeExp, pop, gdpPercap)
-
-nrow(gap)
-```
 
 
 ***    
@@ -428,10 +612,40 @@ nrow(gap)
 
 We are going to use a subset of the collected environmental data from the study to practice adding rows and columns to a data frame. We can use our pipe while reading in our data to do this subsetting.
 
-```{r}
-jdat <- read_csv("data/ENV_pitlatrine.csv") %>% select(1:4)
 
+```r
+jdat <- read_csv("data/ENV_pitlatrine.csv") %>% select(1:4)
+```
+
+```
+## Parsed with column specification:
+## cols(
+##   Samples = col_character(),
+##   pH = col_double(),
+##   Temp = col_double(),
+##   TS = col_double(),
+##   VS = col_double(),
+##   VFA = col_double(),
+##   CODt = col_double(),
+##   CODs = col_double(),
+##   perCODsbyt = col_double(),
+##   NH4 = col_double(),
+##   Prot = col_double(),
+##   Carbo = col_double()
+## )
+```
+
+```r
 glimpse(jdat)
+```
+
+```
+## Observations: 81
+## Variables: 4
+## $ Samples <chr> "T_2_1", "T_2_10", "T_2_12", "T_2_2", "T_2_3", "T_2_6", …
+## $ pH      <dbl> 7.82, 9.08, 8.84, 6.49, 6.46, 7.69, 7.48, 7.60, 7.55, 7.…
+## $ Temp    <dbl> 25.1, 24.2, 25.1, 29.6, 27.9, 28.7, 29.8, 25.0, 28.8, 28…
+## $ TS      <dbl> 14.53, 37.76, 71.11, 13.91, 29.45, 65.52, 36.03, 46.87, …
 ```
 
 There is a function from `dplyr`, `bind_rows()`, which tries to save you from human error when joining a row of observations to a data frame by ensuring that your column names match (so data is not entered in the wrong column). If you do not give column names, an error will be thrown.
@@ -440,15 +654,32 @@ What data structure should you be using to add a row to a data frame?
 
 If you give `bind_rows()` the correct column information in vector format, it will only add a vector as a row IF THE CHARACTER TYPE MATCHES ALL DATA FRAME COLUMN TYPES (ie. if our data frame was all character data). Otherwise, it actually gives you the useful error that your character types are not matching. 
 
-```{r error = TRUE}
+
+```r
 bind_rows(jdat, c(Samples = "V_2_10", pH = 6, Temp = 5, TS = 5)) %>% tail()
+```
+
+```
+## Error in bind_rows_(x, .id): Column `pH` can't be converted from numeric to character
 ```
 
 A list allows us to add the data we can't add in vector format, by retaining the data types that match the data frame columns.
 
-```{r}
-bind_rows(jdat, list(Samples = "V_2_10", pH = 6, Temp = 5, TS = 5)) %>% tail()
 
+```r
+bind_rows(jdat, list(Samples = "V_2_10", pH = 6, Temp = 5, TS = 5)) %>% tail()
+```
+
+```
+## # A tibble: 6 x 4
+##   Samples    pH  Temp    TS
+##   <chr>   <dbl> <dbl> <dbl>
+## 1 V_8_2    9.3   19.5  36.8
+## 2 V_9_1    7.3   18.8  31.3
+## 3 V_9_2    4.04  20.5  32  
+## 4 V_9_3    4.36  19.9  92.6
+## 5 V_9_4    4.3   19.8  36.5
+## 6 V_2_10   6      5     5
 ```
 
 If you give `bind_rows()` the correct column information in list format, it will add your row. 
@@ -457,8 +688,21 @@ A _sanity check_ is making sure things are turning out as you expect them to - i
 
 Here is a sanity check on switching the order of the columns.
 
-```{r}
+
+```r
 bind_rows(jdat, list(Samples = "V_2_10", Temp = 5, pH = 6, TS = 5)) %>% tail()
+```
+
+```
+## # A tibble: 6 x 4
+##   Samples    pH  Temp    TS
+##   <chr>   <dbl> <dbl> <dbl>
+## 1 V_8_2    9.3   19.5  36.8
+## 2 V_9_1    7.3   18.8  31.3
+## 3 V_9_2    4.04  20.5  32  
+## 4 V_9_3    4.36  19.9  92.6
+## 5 V_9_4    4.3   19.8  36.5
+## 6 V_2_10   6      5     5
 ```
 
 Since we have named our values, `bind_rows()` will add the value to the appropriate column. 
@@ -466,8 +710,21 @@ Since we have named our values, `bind_rows()` will add the value to the appropri
 
 What happens if column name do not match? `bind_rows()` will match your columns as much as possible, and then create new columns for the data that does not fit at the end of your data frame. Note that 'NA's will be created for all missing data.
 
-```{r error = TRUE}
+
+```r
 bind_rows(jdat, list(Turtles = "V_2_10", pH = 5, Volatility = 5, TS = 5)) %>% tail()
+```
+
+```
+## # A tibble: 6 x 6
+##   Samples    pH  Temp    TS Turtles Volatility
+##   <chr>   <dbl> <dbl> <dbl> <chr>        <dbl>
+## 1 V_8_2    9.3   19.5  36.8 <NA>            NA
+## 2 V_9_1    7.3   18.8  31.3 <NA>            NA
+## 3 V_9_2    4.04  20.5  32   <NA>            NA
+## 4 V_9_3    4.36  19.9  92.6 <NA>            NA
+## 5 V_9_4    4.3   19.8  36.5 <NA>            NA
+## 6 <NA>     5     NA     5   V_2_10           5
 ```
 
 
@@ -486,10 +743,7 @@ Why doesn't jdat change after all these operations?
 
 </br>
 
-```{r include=FALSE}
-#This is just a reminder that if you want to retain the addition of a row from 'bind_rows' you need to save it into a variable. You can reassign the data frame object that you have (jdat) or create a new data frame object.
-#ie. new_dat <- rbind(jdat, c(Samples = "V_2_10", Temp = 5, pH = 6, TS = 5))
-```
+
 
 
 ***
@@ -497,9 +751,14 @@ Why doesn't jdat change after all these operations?
 
 
 Whenever you are adding rows or columns, I strongly advise checking to see that the dimensions of the resulting data frame are what you expect. 
-```{r}
+
+```r
 jdat <- bind_rows(jdat, list(Samples = "V_2_10", pH = 6, Temp = 5, TS = 5)) 
 dim(jdat)
+```
+
+```
+## [1] 82  4
 ```
 
 
@@ -517,11 +776,7 @@ __Challenge__
 Make a column and add it to jdat using the `dplyr` function `bind_cols()`. Do you forsee any problems in using this function?
 
 
-```{r include = FALSE, eval=FALSE}
-pdat <- bind_cols(jdat, Turtles = c(rep(5, 75)))
 
-#these don't match row by identity, safer to use a join 
-```
 
 </br>
 </br>
@@ -579,16 +834,13 @@ Filter unite_dat to remove all non-zero values, and store it in an object ndat. 
 
 ***
 
-```{r eval=TRUE, echo=FALSE}
 
-ndat <- unite_dat %>% filter(OTUs!=0) %>% arrange(desc(OTUs)) %>% .[1:20, ]
-```
 
 We will remove some observations from jdat, just so our key columns don't match perfectly.
 
-```{r}
-jdat <- jdat[-c(4,7,9,12,20,22) , 1:4]
 
+```r
+jdat <- jdat[-c(4,7,9,12,20,22) , 1:4]
 ```
 
 As a starting point for the next exercise ndat has 20 rows and 3 columns, and jdat has 76 rows and 4 columns.
@@ -607,10 +859,33 @@ A set of graphics from _'R for Data Science'_ makes the description clearer:
 ![img borrowed from r4ds.had.co.nz](img/join-inner.png){width=500px}  
 
 
-```{r}
 
+```r
 inner_join(ndat, jdat, by = c("Site" = "Samples"))
+```
 
+```
+## # A tibble: 18 x 6
+##    Taxa                Site    OTUs    pH  Temp    TS
+##    <chr>               <chr>  <dbl> <dbl> <dbl> <dbl>
+##  1 Clostridia          V_16_2 17572  6.26  16.3  24  
+##  2 Clostridia          T_2_9  17471  7.6   25    46.9
+##  3 Clostridia          V_17_2 13875  8.14  15.4  25.6
+##  4 Clostridia          T_2_6  12169  7.69  28.7  65.5
+##  5 Bacteroidia         V_17_1 11392  7.39  15.7  25.3
+##  6 Clostridia          V_10_1 11180  9.12  18.6  46.3
+##  7 Clostridia          T_2_3  10944  6.46  27.9  29.4
+##  8 Unknown             T_9_2  10624  7.86  28.5  13.6
+##  9 Clostridia          T_4_4  10545  7.84  26.3  28.8
+## 10 Clostridia          V_16_1 10043  7.83  17.7  25.1
+## 11 Clostridia          T_5_3   8981  7.53  27.5  12.6
+## 12 Alphaproteobacteria V_3_2   8660  8.08  20.7  52  
+## 13 Clostridia          V_15_1  8244  7.44  18.9  25.4
+## 14 Clostridia          V_17_1  7722  7.39  15.7  25.3
+## 15 Clostridia          V_18_1  7481  7.09  22.5  35.1
+## 16 Alphaproteobacteria V_3_1   7322  8.9   22.4  56.2
+## 17 Clostridia          V_18_4  6246  8.25  19.4  29.9
+## 18 Clostridia          T_2_1   6213  7.82  25.1  14.5
 ```
 
 We have 6 columns in the resulting data frame - all columns minus the 'Samples' column which was a duplicated id column (equal to ndat's 'Site' column). We can see that there are 18 rows in the resulting data frame. Rows from ndat that did not have a matching site in jdat were removed.
@@ -628,19 +903,60 @@ __Outer joins__ are a set of mutating joins. There are 3 outer joins: left, righ
 __Left join__ returns all rows from x, and all columns from x and y. Rows in x with no match in y will have NA values in the new columns. If there are multiple matches between x and y, all combinations of the matches are returned.
 
 
-```{r}
 
+```r
 left_join(ndat, jdat, by = c("Site" = "Samples"))
+```
 
+```
+## # A tibble: 20 x 6
+##    Taxa                Site    OTUs    pH  Temp    TS
+##    <chr>               <chr>  <dbl> <dbl> <dbl> <dbl>
+##  1 Clostridia          V_16_2 17572  6.26  16.3  24  
+##  2 Clostridia          T_2_9  17471  7.6   25    46.9
+##  3 Clostridia          V_17_2 13875  8.14  15.4  25.6
+##  4 Clostridia          T_2_6  12169  7.69  28.7  65.5
+##  5 Bacteroidia         V_17_1 11392  7.39  15.7  25.3
+##  6 Clostridia          V_10_1 11180  9.12  18.6  46.3
+##  7 Clostridia          T_2_3  10944  6.46  27.9  29.4
+##  8 Unknown             T_9_2  10624  7.86  28.5  13.6
+##  9 Clostridia          T_4_4  10545  7.84  26.3  28.8
+## 10 Clostridia          V_16_1 10043  7.83  17.7  25.1
+## 11 Clostridia          T_2_2   8999 NA     NA    NA  
+## 12 Clostridia          T_5_3   8981  7.53  27.5  12.6
+## 13 Alphaproteobacteria V_3_2   8660  8.08  20.7  52  
+## 14 Clostridia          V_15_1  8244  7.44  18.9  25.4
+## 15 Clostridia          V_17_1  7722  7.39  15.7  25.3
+## 16 Betaproteobacteria  T_4_3   7710 NA     NA    NA  
+## 17 Clostridia          V_18_1  7481  7.09  22.5  35.1
+## 18 Alphaproteobacteria V_3_1   7322  8.9   22.4  56.2
+## 19 Clostridia          V_18_4  6246  8.25  19.4  29.9
+## 20 Clostridia          T_2_1   6213  7.82  25.1  14.5
 ```
 That means that we will have our 20 rows from ndat and 6 columns; any Sites that weren't found in jdat (in this case T_2_2 and T_4_3) will be filled with NA.
 
 __Right join__ returns all rows from y, and all columns from x and y. Rows in y with no match in x will have NA values in the new columns. If there are multiple matches between x and y, all combinations of the matches are returned.
 
-```{r}
 
+```r
 right_join(ndat, jdat, by = c("Site" = "Samples"))
+```
 
+```
+## # A tibble: 77 x 6
+##    Taxa       Site    OTUs    pH  Temp    TS
+##    <chr>      <chr>  <dbl> <dbl> <dbl> <dbl>
+##  1 Clostridia T_2_1   6213  7.82  25.1  14.5
+##  2 <NA>       T_2_10    NA  9.08  24.2  37.8
+##  3 <NA>       T_2_12    NA  8.84  25.1  71.1
+##  4 Clostridia T_2_3  10944  6.46  27.9  29.4
+##  5 Clostridia T_2_6  12169  7.69  28.7  65.5
+##  6 Clostridia T_2_9  17471  7.6   25    46.9
+##  7 <NA>       T_3_3     NA  7.68  28.9  14.6
+##  8 <NA>       T_3_5     NA  7.69  28.7  14.9
+##  9 Clostridia T_4_4  10545  7.84  26.3  28.8
+## 10 <NA>       T_4_5     NA  7.95  27.9  46.8
+## # … with 67 more rows
 ```
 
 That means that we will have our 76 rows from jdat, and any items that weren't found in ndat will be filled with NA. Since there are 77 rows in the final data frame, this means there must have been multiple rows matching from ndat. In other words, we had a duplicate key (Site) in ndat. Again, we have 6 columns.
@@ -656,11 +972,20 @@ That means that we will have our 76 rows from jdat, and any items that weren't f
 
 Let's try to find which Site was duplicated by using `n()`.
 
-```{r}
+
+```r
 right_join(ndat, jdat, by = c("Site" = "Samples")) %>% 
   group_by(Site) %>% 
   filter(n()>1)
+```
 
+```
+## # A tibble: 2 x 6
+## # Groups:   Site [1]
+##   Taxa        Site    OTUs    pH  Temp    TS
+##   <chr>       <chr>  <dbl> <dbl> <dbl> <dbl>
+## 1 Bacteroidia V_17_1 11392  7.39  15.7  25.3
+## 2 Clostridia  V_17_1  7722  7.39  15.7  25.3
 ```
 
 Note that Bacteriodia and Clostridia have different OTUs (from ndat), but the same pH, Temp and TS (from jdat). 
@@ -675,10 +1000,26 @@ Note that Bacteriodia and Clostridia have different OTUs (from ndat), but the sa
 __Full join__ returns all rows and all columns from both x and y. Where there are not matching values, NAs are filled in for missing values.
 
 
-```{r}
 
+```r
 full_join(ndat, jdat, by = c("Site" = "Samples"))
+```
 
+```
+## # A tibble: 79 x 6
+##    Taxa        Site    OTUs    pH  Temp    TS
+##    <chr>       <chr>  <dbl> <dbl> <dbl> <dbl>
+##  1 Clostridia  V_16_2 17572  6.26  16.3  24  
+##  2 Clostridia  T_2_9  17471  7.6   25    46.9
+##  3 Clostridia  V_17_2 13875  8.14  15.4  25.6
+##  4 Clostridia  T_2_6  12169  7.69  28.7  65.5
+##  5 Bacteroidia V_17_1 11392  7.39  15.7  25.3
+##  6 Clostridia  V_10_1 11180  9.12  18.6  46.3
+##  7 Clostridia  T_2_3  10944  6.46  27.9  29.4
+##  8 Unknown     T_9_2  10624  7.86  28.5  13.6
+##  9 Clostridia  T_4_4  10545  7.84  26.3  28.8
+## 10 Clostridia  V_16_1 10043  7.83  17.7  25.1
+## # … with 69 more rows
 ```
 The full join returns all of the rows from both ndat and jdat as well as the 6 columns - we have the 75 rows from jdat, plus the second V_17_1 as seen in the right_join and T_2_2 and T_4_3 that we present in ndat but NA in jdat for a total of 79 rows.
 
@@ -686,9 +1027,33 @@ Lastly, we have the 2 filtering joins. These will not add columns, but rather fi
 
 __Semi join__ returns all rows from x where there are matching values in y, keeping just columns from x. A semi join differs from an inner join because an inner join will return one row of x for each matching row of y, where a semi join will never duplicate rows of x.
 
-```{r}
-semi_join(ndat, jdat, by = c("Site" = "Samples"))
 
+```r
+semi_join(ndat, jdat, by = c("Site" = "Samples"))
+```
+
+```
+## # A tibble: 18 x 3
+##    Taxa                Site    OTUs
+##    <chr>               <chr>  <dbl>
+##  1 Clostridia          V_16_2 17572
+##  2 Clostridia          T_2_9  17471
+##  3 Clostridia          V_17_2 13875
+##  4 Clostridia          T_2_6  12169
+##  5 Bacteroidia         V_17_1 11392
+##  6 Clostridia          V_10_1 11180
+##  7 Clostridia          T_2_3  10944
+##  8 Unknown             T_9_2  10624
+##  9 Clostridia          T_4_4  10545
+## 10 Clostridia          V_16_1 10043
+## 11 Clostridia          T_5_3   8981
+## 12 Alphaproteobacteria V_3_2   8660
+## 13 Clostridia          V_15_1  8244
+## 14 Clostridia          V_17_1  7722
+## 15 Clostridia          V_18_1  7481
+## 16 Alphaproteobacteria V_3_1   7322
+## 17 Clostridia          V_18_4  6246
+## 18 Clostridia          T_2_1   6213
 ```
 `semi_join()` returns the 18 rows of ndat that have a Site match in jdat. Note that we have 3 columns; the columns from jdat have not been added.
 
@@ -698,9 +1063,17 @@ It is easier to see the effect of semi-join by switching the order of our data f
 
 __Anti join__ returns all rows from x where there are not matching values in y, keeping just columns from x.
 
-```{r}
-anti_join(ndat, jdat, by = c("Site" = "Samples"))
 
+```r
+anti_join(ndat, jdat, by = c("Site" = "Samples"))
+```
+
+```
+## # A tibble: 2 x 3
+##   Taxa               Site   OTUs
+##   <chr>              <chr> <dbl>
+## 1 Clostridia         T_2_2  8999
+## 2 Betaproteobacteria T_4_3  7710
 ```
 This returns our 2 rows in ndat that did not have a match in jdat. Again, we have 3 columns; the columns from jdat have not been added.
 
@@ -714,21 +1087,7 @@ __Challenge__
 Given the definitions for the inner_, left_, right_, full_, semi_ and anti_joins, what would you expect the resulting data frame to be if jdat and ndat were reversed? Write down the number of rows and columns you would expect the data frame to have, then run the code. Did you find any surprises?
 
 
-```{r include = FALSE}
-inner_join(jdat, ndat, by = c("Samples" = "Site"))
-#18 rows, 6 columns - note order - Samples column is returned instead of Site column
-left_join(jdat, ndat, by = c("Samples" = "Site"))
-#77 rows, 6 columns
-right_join(jdat, ndat, by = c("Samples" = "Site"))
-#20 rows, 6 columns
-full_join(jdat, ndat, by = c("Samples" = "Site"))
-#79 rows, 6 columns as above
-semi_join(jdat, ndat, by = c("Samples" = "Site"))
-#17 rows (V_17_1 not duplicated), 4 columns
-anti_join(jdat, ndat, by = c("Samples" = "Site"))
-#59 rows, 4 columns - 18 rows of ndat have a match in jdat, but one has a site duplication (76-17 = 59)
 
-```
 
 
 </br>

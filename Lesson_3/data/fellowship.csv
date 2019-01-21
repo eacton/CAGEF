@@ -1,0 +1,218 @@
+Film,Chapter,Character,Dwarf,Elf,Hobbit,Man,Orc,Wizard
+The Fellowship Of The Ring,01: Prologue,Bilbo,NA,NA,4,NA,NA,NA
+The Fellowship Of The Ring,01: Prologue,Elrond,NA,5,NA,NA,NA,NA
+The Fellowship Of The Ring,01: Prologue,Galadriel,NA,460,NA,NA,NA,NA
+The Fellowship Of The Ring,02: Concerning Hobbits,Bilbo,NA,NA,214,NA,NA,NA
+The Fellowship Of The Ring,03: The Shire,Bilbo,NA,NA,70,NA,NA,NA
+The Fellowship Of The Ring,03: The Shire,Frodo,NA,NA,128,NA,NA,NA
+The Fellowship Of The Ring,03: The Shire,Gandalf,NA,NA,NA,NA,NA,197
+The Fellowship Of The Ring,03: The Shire,Hobbit Kids,NA,NA,10,NA,NA,NA
+The Fellowship Of The Ring,03: The Shire,Hobbits,NA,NA,12,NA,NA,NA
+The Fellowship Of The Ring,04: Very Old Friends,Bilbo,NA,NA,339,NA,NA,NA
+The Fellowship Of The Ring,04: Very Old Friends,Gandalf,NA,NA,NA,NA,NA,64
+The Fellowship Of The Ring,04: Very Old Friends,Lobelia Sackville-Baggins,NA,NA,8,NA,NA,NA
+The Fellowship Of The Ring,05: A Long Expected Party,Bilbo,NA,NA,326,NA,NA,NA
+The Fellowship Of The Ring,05: A Long Expected Party,Frodo,NA,NA,32,NA,NA,NA
+The Fellowship Of The Ring,05: A Long Expected Party,Gandalf,NA,NA,NA,NA,NA,12
+The Fellowship Of The Ring,05: A Long Expected Party,Hobbits,NA,NA,8,NA,NA,NA
+The Fellowship Of The Ring,05: A Long Expected Party,Lobelia Sackville-Baggins,NA,NA,1,NA,NA,NA
+The Fellowship Of The Ring,05: A Long Expected Party,Merry,NA,NA,19,NA,NA,NA
+The Fellowship Of The Ring,05: A Long Expected Party,Mrs. Bracegirdle,NA,NA,2,NA,NA,NA
+The Fellowship Of The Ring,05: A Long Expected Party,Pippin,NA,NA,15,NA,NA,NA
+The Fellowship Of The Ring,05: A Long Expected Party,Proudfoot,NA,NA,1,NA,NA,NA
+The Fellowship Of The Ring,05: A Long Expected Party,Sam,NA,NA,7,NA,NA,NA
+The Fellowship Of The Ring,06: Farewell Dear Bilbo,Bilbo,NA,NA,182,NA,NA,NA
+The Fellowship Of The Ring,06: Farewell Dear Bilbo,Gandalf,NA,NA,NA,NA,NA,148
+The Fellowship Of The Ring,"07: Keep It Secret, Keep It Safe",Bilbo,NA,NA,6,NA,NA,NA
+The Fellowship Of The Ring,"07: Keep It Secret, Keep It Safe",Frodo,NA,NA,33,NA,NA,NA
+The Fellowship Of The Ring,"07: Keep It Secret, Keep It Safe",Gandalf,NA,NA,NA,NA,NA,60
+The Fellowship Of The Ring,08: The Account of Isildur,Gandalf,NA,NA,NA,NA,NA,107
+The Fellowship Of The Ring,08: The Account of Isildur,Hobbits,NA,NA,12,NA,NA,NA
+The Fellowship Of The Ring,09: At The Green Dragon,Frodo,NA,NA,17,NA,NA,NA
+The Fellowship Of The Ring,09: At The Green Dragon,Gaffer,NA,NA,21,NA,NA,NA
+The Fellowship Of The Ring,09: At The Green Dragon,Hobbits,NA,NA,53,NA,NA,NA
+The Fellowship Of The Ring,09: At The Green Dragon,Merry,NA,NA,53,NA,NA,NA
+The Fellowship Of The Ring,09: At The Green Dragon,Pippin,NA,NA,61,NA,NA,NA
+The Fellowship Of The Ring,09: At The Green Dragon,Rosie,NA,NA,3,NA,NA,NA
+The Fellowship Of The Ring,09: At The Green Dragon,Sam,NA,NA,10,NA,NA,NA
+The Fellowship Of The Ring,09: At The Green Dragon,Sandyman,NA,NA,17,NA,NA,NA
+The Fellowship Of The Ring,09: At The Green Dragon,Ted,NA,NA,55,NA,NA,NA
+The Fellowship Of The Ring,10: The Shadow Of The Past,Bilbo,NA,NA,28,NA,NA,NA
+The Fellowship Of The Ring,10: The Shadow Of The Past,Frodo,NA,NA,139,NA,NA,NA
+The Fellowship Of The Ring,10: The Shadow Of The Past,Gandalf,NA,NA,NA,NA,NA,541
+The Fellowship Of The Ring,10: The Shadow Of The Past,Hobbits,NA,NA,3,NA,NA,NA
+The Fellowship Of The Ring,10: The Shadow Of The Past,Sam,NA,NA,84,NA,NA,NA
+The Fellowship Of The Ring,11: The Passing Of The Elves,Frodo,NA,NA,43,NA,NA,NA
+The Fellowship Of The Ring,11: The Passing Of The Elves,Sam,NA,NA,40,NA,NA,NA
+The Fellowship Of The Ring,12: Saruman The White,Gandalf,NA,NA,NA,NA,NA,85
+The Fellowship Of The Ring,12: Saruman The White,Saruman,NA,NA,NA,NA,NA,274
+The Fellowship Of The Ring,13: A Shortcut To Mushrooms,Farmer Maggot,NA,NA,21,NA,NA,NA
+The Fellowship Of The Ring,13: A Shortcut To Mushrooms,Frodo,NA,NA,37,NA,NA,NA
+The Fellowship Of The Ring,13: A Shortcut To Mushrooms,Merry,NA,NA,58,NA,NA,NA
+The Fellowship Of The Ring,13: A Shortcut To Mushrooms,Pippin,NA,NA,32,NA,NA,NA
+The Fellowship Of The Ring,13: A Shortcut To Mushrooms,Sam,NA,NA,48,NA,NA,NA
+The Fellowship Of The Ring,14: Buckleberry Ferry,Frodo,NA,NA,20,NA,NA,NA
+The Fellowship Of The Ring,14: Buckleberry Ferry,Merry,NA,NA,43,NA,NA,NA
+The Fellowship Of The Ring,14: Buckleberry Ferry,Pippin,NA,NA,14,NA,NA,NA
+The Fellowship Of The Ring,14: Buckleberry Ferry,Sam,NA,NA,9,NA,NA,NA
+The Fellowship Of The Ring,15: At The Sign of the Prancing Pony,Aragorn,NA,NA,NA,76,NA,NA
+The Fellowship Of The Ring,15: At The Sign of the Prancing Pony,Frodo,NA,NA,68,NA,NA,NA
+The Fellowship Of The Ring,15: At The Sign of the Prancing Pony,Gatekeeper,NA,NA,NA,38,NA,NA
+The Fellowship Of The Ring,15: At The Sign of the Prancing Pony,Innkeeper,NA,NA,NA,76,NA,NA
+The Fellowship Of The Ring,15: At The Sign of the Prancing Pony,Man,NA,NA,NA,13,NA,NA
+The Fellowship Of The Ring,15: At The Sign of the Prancing Pony,Merry,NA,NA,6,NA,NA,NA
+The Fellowship Of The Ring,15: At The Sign of the Prancing Pony,Pippin,NA,NA,39,NA,NA,NA
+The Fellowship Of The Ring,15: At The Sign of the Prancing Pony,Sam,NA,NA,30,NA,NA,NA
+The Fellowship Of The Ring,15: At The Sign of the Prancing Pony,Voice Of The Ring,NA,NA,NA,NA,NA,19
+The Fellowship Of The Ring,16: The Nazgul,Aragorn,NA,NA,NA,96,NA,NA
+The Fellowship Of The Ring,16: The Nazgul,Frodo,NA,NA,29,NA,NA,NA
+The Fellowship Of The Ring,16: The Nazgul,Merry,NA,NA,28,NA,NA,NA
+The Fellowship Of The Ring,16: The Nazgul,Pippin,NA,NA,25,NA,NA,NA
+The Fellowship Of The Ring,16: The Nazgul,Sam,NA,NA,17,NA,NA,NA
+The Fellowship Of The Ring,17: The Midgewater Marshes,Aragorn,NA,NA,NA,33,NA,NA
+The Fellowship Of The Ring,17: The Midgewater Marshes,Frodo,NA,NA,12,NA,NA,NA
+The Fellowship Of The Ring,17: The Midgewater Marshes,Merry,NA,NA,9,NA,NA,NA
+The Fellowship Of The Ring,18: The Spoiling Of Isengard,Orc,NA,NA,NA,NA,20,NA
+The Fellowship Of The Ring,18: The Spoiling Of Isengard,Saruman,NA,NA,NA,NA,NA,22
+The Fellowship Of The Ring,18: The Spoiling Of Isengard,Voice Of Sauron,NA,NA,NA,NA,NA,7
+The Fellowship Of The Ring,19: A Knife In The Dark,Aragorn,NA,NA,NA,53,NA,NA
+The Fellowship Of The Ring,19: A Knife In The Dark,Frodo,NA,NA,16,NA,NA,NA
+The Fellowship Of The Ring,19: A Knife In The Dark,Merry,NA,NA,13,NA,NA,NA
+The Fellowship Of The Ring,19: A Knife In The Dark,Pippin,NA,NA,12,NA,NA,NA
+The Fellowship Of The Ring,19: A Knife In The Dark,Sam,NA,NA,24,NA,NA,NA
+The Fellowship Of The Ring,20: The Caverns Of Isengard,Gandalf,NA,NA,NA,NA,NA,5
+The Fellowship Of The Ring,21: Flight To The Ford,Aragorn,NA,NA,NA,48,NA,NA
+The Fellowship Of The Ring,21: Flight To The Ford,Arwen,NA,131,NA,NA,NA,NA
+The Fellowship Of The Ring,21: Flight To The Ford,Merry,NA,NA,5,NA,NA,NA
+The Fellowship Of The Ring,21: Flight To The Ford,Pippin,NA,NA,9,NA,NA,NA
+The Fellowship Of The Ring,21: Flight To The Ford,Sam,NA,NA,34,NA,NA,NA
+The Fellowship Of The Ring,22: Rivendell,Elrond,NA,7,NA,NA,NA,NA
+The Fellowship Of The Ring,23: Many Meetings,Bilbo,NA,NA,36,NA,NA,NA
+The Fellowship Of The Ring,23: Many Meetings,Elrond,NA,5,NA,NA,NA,NA
+The Fellowship Of The Ring,23: Many Meetings,Frodo,NA,NA,107,NA,NA,NA
+The Fellowship Of The Ring,23: Many Meetings,Gandalf,NA,NA,NA,NA,NA,104
+The Fellowship Of The Ring,23: Many Meetings,Sam,NA,NA,63,NA,NA,NA
+The Fellowship Of The Ring,23: Many Meetings,Saruman,NA,NA,NA,NA,NA,33
+The Fellowship Of The Ring,24: The Fate Of The Ring,Elrond,NA,260,NA,NA,NA,NA
+The Fellowship Of The Ring,24: The Fate Of The Ring,Gandalf,NA,NA,NA,NA,NA,102
+The Fellowship Of The Ring,24: The Fate Of The Ring,Isildur,NA,NA,NA,1,NA,NA
+The Fellowship Of The Ring,25: The Sword That Was Broken,Aragorn,NA,NA,NA,25,NA,NA
+The Fellowship Of The Ring,25: The Sword That Was Broken,Arwen,NA,47,NA,NA,NA,NA
+The Fellowship Of The Ring,25: The Sword That Was Broken,Boromir,NA,NA,NA,39,NA,NA
+The Fellowship Of The Ring,26: The Evenstar,Aragorn,NA,NA,NA,24,NA,NA
+The Fellowship Of The Ring,26: The Evenstar,Arwen,NA,57,NA,NA,NA,NA
+The Fellowship Of The Ring,27: The Council Of Elrond,Aragorn,NA,NA,NA,40,NA,NA
+The Fellowship Of The Ring,27: The Council Of Elrond,Boromir,NA,NA,NA,220,NA,NA
+The Fellowship Of The Ring,27: The Council Of Elrond,Elrond,NA,167,NA,NA,NA,NA
+The Fellowship Of The Ring,27: The Council Of Elrond,Frodo,NA,NA,24,NA,NA,NA
+The Fellowship Of The Ring,27: The Council Of Elrond,Gandalf,NA,NA,NA,NA,NA,85
+The Fellowship Of The Ring,27: The Council Of Elrond,Gimli,38,NA,NA,NA,NA,NA
+The Fellowship Of The Ring,27: The Council Of Elrond,Legolas,NA,34,NA,NA,NA,NA
+The Fellowship Of The Ring,27: The Council Of Elrond,Man,NA,NA,NA,4,NA,NA
+The Fellowship Of The Ring,27: The Council Of Elrond,Merry,NA,NA,24,NA,NA,NA
+The Fellowship Of The Ring,27: The Council Of Elrond,Pippin,NA,NA,18,NA,NA,NA
+The Fellowship Of The Ring,27: The Council Of Elrond,Sam,NA,NA,8,NA,NA,NA
+The Fellowship Of The Ring,27: The Council Of Elrond,Voice Of The Ring,NA,NA,NA,NA,NA,12
+The Fellowship Of The Ring,28: Gilraen's Memorial,Aragorn,NA,NA,NA,11,NA,NA
+The Fellowship Of The Ring,28: Gilraen's Memorial,Elrond,NA,65,NA,NA,NA,NA
+The Fellowship Of The Ring,29: Bilbo's Gifts,Bilbo,NA,NA,105,NA,NA,NA
+The Fellowship Of The Ring,29: Bilbo's Gifts,Frodo,NA,NA,3,NA,NA,NA
+The Fellowship Of The Ring,30: The Departure Of The Fellowship,Elrond,NA,48,NA,NA,NA,NA
+The Fellowship Of The Ring,30: The Departure Of The Fellowship,Frodo,NA,NA,7,NA,NA,NA
+The Fellowship Of The Ring,30: The Departure Of The Fellowship,Gandalf,NA,NA,NA,NA,NA,7
+The Fellowship Of The Ring,31: The Ring Goes South,Aragorn,NA,NA,NA,12,NA,NA
+The Fellowship Of The Ring,31: The Ring Goes South,Boromir,NA,NA,NA,15,NA,NA
+The Fellowship Of The Ring,31: The Ring Goes South,Gandalf,NA,NA,NA,NA,NA,68
+The Fellowship Of The Ring,31: The Ring Goes South,Gimli,47,NA,NA,NA,NA,NA
+The Fellowship Of The Ring,31: The Ring Goes South,Legolas,NA,3,NA,NA,NA,NA
+The Fellowship Of The Ring,31: The Ring Goes South,Merry,NA,NA,17,NA,NA,NA
+The Fellowship Of The Ring,31: The Ring Goes South,Pippin,NA,NA,10,NA,NA,NA
+The Fellowship Of The Ring,31: The Ring Goes South,Sam,NA,NA,3,NA,NA,NA
+The Fellowship Of The Ring,32: The Pass Of Caradhras,Aragorn,NA,NA,NA,30,NA,NA
+The Fellowship Of The Ring,32: The Pass Of Caradhras,Boromir,NA,NA,NA,61,NA,NA
+The Fellowship Of The Ring,32: The Pass Of Caradhras,Frodo,NA,NA,6,NA,NA,NA
+The Fellowship Of The Ring,32: The Pass Of Caradhras,Gandalf,NA,NA,NA,NA,NA,18
+The Fellowship Of The Ring,32: The Pass Of Caradhras,Gimli,19,NA,NA,NA,NA,NA
+The Fellowship Of The Ring,32: The Pass Of Caradhras,Legolas,NA,8,NA,NA,NA,NA
+The Fellowship Of The Ring,32: The Pass Of Caradhras,Saruman,NA,NA,NA,NA,NA,68
+The Fellowship Of The Ring,33: Moria,Aragorn,NA,NA,NA,31,NA,NA
+The Fellowship Of The Ring,33: Moria,Boromir,NA,NA,NA,31,NA,NA
+The Fellowship Of The Ring,33: Moria,Frodo,NA,NA,30,NA,NA,NA
+The Fellowship Of The Ring,33: Moria,Gandalf,NA,NA,NA,NA,NA,202
+The Fellowship Of The Ring,33: Moria,Gimli,52,NA,NA,NA,NA,NA
+The Fellowship Of The Ring,33: Moria,Legolas,NA,7,NA,NA,NA,NA
+The Fellowship Of The Ring,33: Moria,Merry,NA,NA,9,NA,NA,NA
+The Fellowship Of The Ring,33: Moria,Pippin,NA,NA,11,NA,NA,NA
+The Fellowship Of The Ring,33: Moria,Sam,NA,NA,7,NA,NA,NA
+The Fellowship Of The Ring,34: A Journey In The Dark,Frodo,NA,NA,39,NA,NA,NA
+The Fellowship Of The Ring,34: A Journey In The Dark,Gandalf,NA,NA,NA,NA,NA,349
+The Fellowship Of The Ring,34: A Journey In The Dark,Gimli,6,NA,NA,NA,NA,NA
+The Fellowship Of The Ring,34: A Journey In The Dark,Merry,NA,NA,8,NA,NA,NA
+The Fellowship Of The Ring,34: A Journey In The Dark,Pippin,NA,NA,10,NA,NA,NA
+The Fellowship Of The Ring,34: A Journey In The Dark,Sam,NA,NA,7,NA,NA,NA
+The Fellowship Of The Ring,35: Balin's Tomb,Aragorn,NA,NA,NA,22,NA,NA
+The Fellowship Of The Ring,35: Balin's Tomb,Boromir,NA,NA,NA,5,NA,NA
+The Fellowship Of The Ring,35: Balin's Tomb,Frodo,NA,NA,8,NA,NA,NA
+The Fellowship Of The Ring,35: Balin's Tomb,Gandalf,NA,NA,NA,NA,NA,89
+The Fellowship Of The Ring,35: Balin's Tomb,Gimli,37,NA,NA,NA,NA,NA
+The Fellowship Of The Ring,35: Balin's Tomb,Legolas,NA,8,NA,NA,NA,NA
+The Fellowship Of The Ring,35: Balin's Tomb,Sam,NA,NA,13,NA,NA,NA
+The Fellowship Of The Ring,36: The Bridge Of Khazad-dûm,Aragorn,NA,NA,NA,45,NA,NA
+The Fellowship Of The Ring,36: The Bridge Of Khazad-dûm,Boromir,NA,NA,NA,17,NA,NA
+The Fellowship Of The Ring,36: The Bridge Of Khazad-dûm,Frodo,NA,NA,4,NA,NA,NA
+The Fellowship Of The Ring,36: The Bridge Of Khazad-dûm,Gandalf,NA,NA,NA,NA,NA,83
+The Fellowship Of The Ring,36: The Bridge Of Khazad-dûm,Gimli,7,NA,NA,NA,NA,NA
+The Fellowship Of The Ring,36: The Bridge Of Khazad-dûm,Legolas,NA,4,NA,NA,NA,NA
+The Fellowship Of The Ring,37: Lothlorien,Aragorn,NA,NA,NA,26,NA,NA
+The Fellowship Of The Ring,37: Lothlorien,Boromir,NA,NA,NA,27,NA,NA
+The Fellowship Of The Ring,37: Lothlorien,Galadriel,NA,19,NA,NA,NA,NA
+The Fellowship Of The Ring,37: Lothlorien,Gimli,84,NA,NA,NA,NA,NA
+The Fellowship Of The Ring,37: Lothlorien,Haldir,NA,51,NA,NA,NA,NA
+The Fellowship Of The Ring,37: Lothlorien,Legolas,NA,7,NA,NA,NA,NA
+The Fellowship Of The Ring,37: Lothlorien,Sam,NA,NA,2,NA,NA,NA
+The Fellowship Of The Ring,38: Caras Galadhon,Aragorn,NA,NA,NA,16,NA,NA
+The Fellowship Of The Ring,38: Caras Galadhon,Boromir,NA,NA,NA,149,NA,NA
+The Fellowship Of The Ring,38: Caras Galadhon,Celeborn,NA,61,NA,NA,NA,NA
+The Fellowship Of The Ring,38: Caras Galadhon,Galadriel,NA,135,NA,NA,NA,NA
+The Fellowship Of The Ring,38: Caras Galadhon,Haldir,NA,19,NA,NA,NA,NA
+The Fellowship Of The Ring,38: Caras Galadhon,Legolas,NA,41,NA,NA,NA,NA
+The Fellowship Of The Ring,38: Caras Galadhon,Merry,NA,NA,6,NA,NA,NA
+The Fellowship Of The Ring,38: Caras Galadhon,Sam,NA,NA,49,NA,NA,NA
+The Fellowship Of The Ring,39: The Mirror Of Galadriel,Frodo,NA,NA,36,NA,NA,NA
+The Fellowship Of The Ring,39: The Mirror Of Galadriel,Galadriel,NA,214,NA,NA,NA,NA
+The Fellowship Of The Ring,40: The Fighting Uruk-hai,Lurtz,NA,NA,NA,NA,1,NA
+The Fellowship Of The Ring,40: The Fighting Uruk-hai,Saruman,NA,NA,NA,NA,NA,83
+The Fellowship Of The Ring,41: Farewell To Lorien,Aragorn,NA,NA,NA,13,NA,NA
+The Fellowship Of The Ring,41: Farewell To Lorien,Celeborn,NA,99,NA,NA,NA,NA
+The Fellowship Of The Ring,41: Farewell To Lorien,Galadriel,NA,166,NA,NA,NA,NA
+The Fellowship Of The Ring,41: Farewell To Lorien,Gimli,81,NA,NA,NA,NA,NA
+The Fellowship Of The Ring,41: Farewell To Lorien,Legolas,NA,20,NA,NA,NA,NA
+The Fellowship Of The Ring,41: Farewell To Lorien,Merry,NA,NA,5,NA,NA,NA
+The Fellowship Of The Ring,41: Farewell To Lorien,Pippin,NA,NA,1,NA,NA,NA
+The Fellowship Of The Ring,41: Farewell To Lorien,Sam,NA,NA,13,NA,NA,NA
+The Fellowship Of The Ring,42: The Great River,Aragorn,NA,NA,NA,64,NA,NA
+The Fellowship Of The Ring,42: The Great River,Boromir,NA,NA,NA,103,NA,NA
+The Fellowship Of The Ring,42: The Great River,Frodo,NA,NA,16,NA,NA,NA
+The Fellowship Of The Ring,42: The Great River,Sam,NA,NA,37,NA,NA,NA
+The Fellowship Of The Ring,43: Parth Galen,Aragorn,NA,NA,NA,79,NA,NA
+The Fellowship Of The Ring,43: Parth Galen,Boromir,NA,NA,NA,202,NA,NA
+The Fellowship Of The Ring,43: Parth Galen,Frodo,NA,NA,54,NA,NA,NA
+The Fellowship Of The Ring,43: Parth Galen,Gimli,48,NA,NA,NA,NA,NA
+The Fellowship Of The Ring,43: Parth Galen,Legolas,NA,31,NA,NA,NA,NA
+The Fellowship Of The Ring,43: Parth Galen,Merry,NA,NA,2,NA,NA,NA
+The Fellowship Of The Ring,43: Parth Galen,Voice Of The Ring,NA,NA,NA,NA,NA,3
+The Fellowship Of The Ring,44: The Breaking Of The Fellowship,Aragorn,NA,NA,NA,2,NA,NA
+The Fellowship Of The Ring,44: The Breaking Of The Fellowship,Boromir,NA,NA,NA,2,NA,NA
+The Fellowship Of The Ring,44: The Breaking Of The Fellowship,Legolas,NA,6,NA,NA,NA,NA
+The Fellowship Of The Ring,44: The Breaking Of The Fellowship,Lurtz,NA,NA,NA,NA,6,NA
+The Fellowship Of The Ring,44: The Breaking Of The Fellowship,Merry,NA,NA,18,NA,NA,NA
+The Fellowship Of The Ring,44: The Breaking Of The Fellowship,Pippin,NA,NA,17,NA,NA,NA
+The Fellowship Of The Ring,44: The Breaking Of The Fellowship,Sam,NA,NA,2,NA,NA,NA
+The Fellowship Of The Ring,45: The Departure Of Boromir,Aragorn,NA,NA,NA,72,NA,NA
+The Fellowship Of The Ring,45: The Departure Of Boromir,Boromir,NA,NA,NA,72,NA,NA
+The Fellowship Of The Ring,46: The Road Goes Ever On…,Aragorn,NA,NA,NA,102,NA,NA
+The Fellowship Of The Ring,46: The Road Goes Ever On…,Frodo,NA,NA,59,NA,NA,NA
+The Fellowship Of The Ring,46: The Road Goes Ever On…,Gandalf,NA,NA,NA,NA,NA,34
+The Fellowship Of The Ring,46: The Road Goes Ever On…,Gimli,12,NA,NA,NA,NA,NA
+The Fellowship Of The Ring,46: The Road Goes Ever On…,Legolas,NA,15,NA,NA,NA,NA
+The Fellowship Of The Ring,46: The Road Goes Ever On…,Sam,NA,NA,50,NA,NA,NA

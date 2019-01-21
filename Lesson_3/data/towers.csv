@@ -1,0 +1,219 @@
+Film,Chapter,Character,Dwarf,Elf,Hobbit,Man,Orc,Wizard
+The Two Towers,01: The Foundations Of Stone,Boromir,NA,NA,NA,2,NA,NA
+The Two Towers,01: The Foundations Of Stone,Frodo,NA,NA,9,NA,NA,NA
+The Two Towers,01: The Foundations Of Stone,Gandalf,NA,NA,NA,NA,NA,39
+The Two Towers,01: The Foundations Of Stone,Sam,NA,NA,5,NA,NA,NA
+The Two Towers,02: Elven Rope,Frodo,NA,NA,46,NA,NA,NA
+The Two Towers,02: Elven Rope,Sam,NA,NA,97,NA,NA,NA
+The Two Towers,03: The Taming of Sméagol,Frodo,NA,NA,123,NA,NA,NA
+The Two Towers,03: The Taming of Sméagol,Sam,NA,NA,181,NA,NA,NA
+The Two Towers,04: The Uruk-Hai,Grishnakh,NA,NA,NA,NA,10,NA
+The Two Towers,04: The Uruk-Hai,Mauhur,NA,NA,NA,NA,2,NA
+The Two Towers,04: The Uruk-Hai,Merry,NA,NA,19,NA,NA,NA
+The Two Towers,04: The Uruk-Hai,Pippin,NA,NA,26,NA,NA,NA
+The Two Towers,04: The Uruk-Hai,Ugluk,NA,NA,NA,NA,51,NA
+The Two Towers,05: The Three Hunters,Aragorn,NA,NA,NA,59,NA,NA
+The Two Towers,05: The Three Hunters,Gimli,35,NA,NA,NA,NA,NA
+The Two Towers,05: The Three Hunters,Legolas,NA,25,NA,NA,NA,NA
+The Two Towers,06: The Burning of the Westfold,Eothain,NA,NA,NA,2,NA,NA
+The Two Towers,06: The Burning of the Westfold,Freda,NA,NA,NA,24,NA,NA
+The Two Towers,06: The Burning of the Westfold,Morwen,NA,NA,NA,37,NA,NA
+The Two Towers,06: The Burning of the Westfold,Orc,NA,NA,NA,NA,29,NA
+The Two Towers,06: The Burning of the Westfold,Saruman,NA,NA,NA,NA,NA,187
+The Two Towers,06: The Burning of the Westfold,Wild Man,NA,NA,NA,11,NA,NA
+The Two Towers,07: Massacre at the Fords of Isen,Eomer,NA,NA,NA,13,NA,NA
+The Two Towers,07: Massacre at the Fords of Isen,Rohan Warrior,NA,NA,NA,10,NA,NA
+The Two Towers,08: The Banishment of Éomer,Eomer,NA,NA,NA,88,NA,NA
+The Two Towers,08: The Banishment of Éomer,Eowyn,NA,NA,NA,8,NA,NA
+The Two Towers,08: The Banishment of Éomer,Grima Wormtongue,NA,NA,NA,81,NA,NA
+The Two Towers,08: The Banishment of Éomer,Theoden,NA,NA,NA,3,NA,NA
+The Two Towers,09: On The Trail Of The Uruk-Hai,Gimli,6,NA,NA,NA,NA,NA
+The Two Towers,09: On The Trail Of The Uruk-Hai,Legolas,NA,13,NA,NA,NA,NA
+The Two Towers,10: Night Camp At Fangorn,Grishnakh,NA,NA,NA,NA,44,NA
+The Two Towers,10: Night Camp At Fangorn,Legolas,NA,10,NA,NA,NA,NA
+The Two Towers,10: Night Camp At Fangorn,Merry,NA,NA,68,NA,NA,NA
+The Two Towers,10: Night Camp At Fangorn,Orc,NA,NA,NA,NA,20,NA
+The Two Towers,10: Night Camp At Fangorn,Pippin,NA,NA,14,NA,NA,NA
+The Two Towers,10: Night Camp At Fangorn,Ugluk,NA,NA,NA,NA,33,NA
+The Two Towers,10: Night Camp At Fangorn,Uruk-hai,NA,NA,NA,NA,13,NA
+The Two Towers,11: The Riders Of Rohan,Aragorn,NA,NA,NA,68,NA,NA
+The Two Towers,11: The Riders Of Rohan,Eomer,NA,NA,NA,156,NA,NA
+The Two Towers,11: The Riders Of Rohan,Gimli,24,NA,NA,NA,NA,NA
+The Two Towers,11: The Riders Of Rohan,Legolas,NA,7,NA,NA,NA,NA
+The Two Towers,12: The Fate Of Merry And Pippin,Aragorn,NA,NA,NA,33,NA,NA
+The Two Towers,12: The Fate Of Merry And Pippin,Gimli,16,NA,NA,NA,NA,NA
+The Two Towers,12: The Fate Of Merry And Pippin,Merry,NA,NA,3,NA,NA,NA
+The Two Towers,13: Treebeard,Grishnakh,NA,NA,NA,NA,18,NA
+The Two Towers,13: Treebeard,Merry,NA,NA,28,NA,NA,NA
+The Two Towers,13: Treebeard,Pippin,NA,NA,36,NA,NA,NA
+The Two Towers,14: The Passage Of The Marshes,Frodo,NA,NA,54,NA,NA,NA
+The Two Towers,14: The Passage Of The Marshes,Sam,NA,NA,69,NA,NA,NA
+The Two Towers,15: The White Rider,Aragorn,NA,NA,NA,68,NA,NA
+The Two Towers,15: The White Rider,Gandalf,NA,NA,NA,NA,NA,298
+The Two Towers,15: The White Rider,Gimli,73,NA,NA,NA,NA,NA
+The Two Towers,15: The White Rider,Legolas,NA,63,NA,NA,NA,NA
+The Two Towers,16: The Song Of The Entwives,Merry,NA,NA,4,NA,NA,NA
+The Two Towers,17: The Heir Of Númenor,Aragorn,NA,NA,NA,7,NA,NA
+The Two Towers,17: The Heir Of Númenor,Gandalf,NA,NA,NA,NA,NA,226
+The Two Towers,18: The Black Gate Is Closed,Frodo,NA,NA,39,NA,NA,NA
+The Two Towers,18: The Black Gate Is Closed,Sam,NA,NA,68,NA,NA,NA
+The Two Towers,19: Ent Draft,Merry,NA,NA,63,NA,NA,NA
+The Two Towers,19: Ent Draft,Pippin,NA,NA,122,NA,NA,NA
+The Two Towers,20: The King Of The Golden Hall,Aragorn,NA,NA,NA,18,NA,NA
+The Two Towers,20: The King Of The Golden Hall,Eowyn,NA,NA,NA,28,NA,NA
+The Two Towers,20: The King Of The Golden Hall,Gandalf,NA,NA,NA,NA,NA,151
+The Two Towers,20: The King Of The Golden Hall,Gimli,15,NA,NA,NA,NA,NA
+The Two Towers,20: The King Of The Golden Hall,Grima Wormtongue,NA,NA,NA,166,NA,NA
+The Two Towers,20: The King Of The Golden Hall,Hama,NA,NA,NA,21,NA,NA
+The Two Towers,20: The King Of The Golden Hall,Theoden,NA,NA,NA,56,NA,NA
+The Two Towers,21: The Funeral Of Théodred,Eowyn,NA,NA,NA,24,NA,NA
+The Two Towers,22: Simbelmynë on the Burial Mounds,Gandalf,NA,NA,NA,NA,NA,28
+The Two Towers,22: Simbelmynë on the Burial Mounds,Theoden,NA,NA,NA,55,NA,NA
+The Two Towers,23: The King's Decision,Aragorn,NA,NA,NA,59,NA,NA
+The Two Towers,23: The King's Decision,Eowyn,NA,NA,NA,24,NA,NA
+The Two Towers,23: The King's Decision,Freda,NA,NA,NA,3,NA,NA
+The Two Towers,23: The King's Decision,Gandalf,NA,NA,NA,NA,NA,165
+The Two Towers,23: The King's Decision,Gimli,21,NA,NA,NA,NA,NA
+The Two Towers,23: The King's Decision,Hama,NA,NA,NA,29,NA,NA
+The Two Towers,23: The King's Decision,Theoden,NA,NA,NA,49,NA,NA
+The Two Towers,24: Brego,Aragorn,NA,NA,NA,22,NA,NA
+The Two Towers,24: Brego,Eowyn,NA,NA,NA,36,NA,NA
+The Two Towers,24: Brego,Rohan Warrior,NA,NA,NA,13,NA,NA
+The Two Towers,25: The Ring Of Barahir,Grima Wormtongue,NA,NA,NA,51,NA,NA
+The Two Towers,25: The Ring Of Barahir,Saruman,NA,NA,NA,NA,NA,68
+The Two Towers,25: The Ring Of Barahir,Theoden,NA,NA,NA,18,NA,NA
+The Two Towers,26: A Daughter Of Kings,Aragorn,NA,NA,NA,31,NA,NA
+The Two Towers,26: A Daughter Of Kings,Eowyn,NA,NA,NA,45,NA,NA
+The Two Towers,27: Exodus From Edoras,Grima Wormtongue,NA,NA,NA,52,NA,NA
+The Two Towers,27: Exodus From Edoras,Saruman,NA,NA,NA,NA,NA,4
+The Two Towers,28: The Forests Of Ithilien,Frodo,NA,NA,81,NA,NA,NA
+The Two Towers,28: The Forests Of Ithilien,Sam,NA,NA,87,NA,NA,NA
+The Two Towers,30: Of Herbs And Stewed Rabbit,Faramir,NA,NA,NA,76,NA,NA
+The Two Towers,30: Of Herbs And Stewed Rabbit,Frodo,NA,NA,39,NA,NA,NA
+The Two Towers,30: Of Herbs And Stewed Rabbit,Sam,NA,NA,91,NA,NA,NA
+The Two Towers,31: Dwarf Women,Aragorn,NA,NA,NA,3,NA,NA
+The Two Towers,31: Dwarf Women,Gimli,68,NA,NA,NA,NA,NA
+The Two Towers,32: One of the Dúnedain,Aragorn,NA,NA,NA,33,NA,NA
+The Two Towers,32: One of the Dúnedain,Eowyn,NA,NA,NA,76,NA,NA
+The Two Towers,32: One of the Dúnedain,Gimli,6,NA,NA,NA,NA,NA
+The Two Towers,32: One of the Dúnedain,Theoden,NA,NA,NA,59,NA,NA
+The Two Towers,33: The Evenstar,Aragorn,NA,NA,NA,97,NA,NA
+The Two Towers,33: The Evenstar,Arwen,NA,119,NA,NA,NA,NA
+The Two Towers,33: The Evenstar,Elrond,NA,55,NA,NA,NA,NA
+The Two Towers,33: The Evenstar,Eowyn,NA,NA,NA,11,NA,NA
+The Two Towers,34: The Wolves Of Isengard,Aragorn,NA,NA,NA,9,NA,NA
+The Two Towers,34: The Wolves Of Isengard,Eowyn,NA,NA,NA,10,NA,NA
+The Two Towers,34: The Wolves Of Isengard,Gamling,NA,NA,NA,5,NA,NA
+The Two Towers,34: The Wolves Of Isengard,Gimli,45,NA,NA,NA,NA,NA
+The Two Towers,34: The Wolves Of Isengard,Hama,NA,NA,NA,3,NA,NA
+The Two Towers,34: The Wolves Of Isengard,Legolas,NA,5,NA,NA,NA,NA
+The Two Towers,34: The Wolves Of Isengard,Snaga,NA,NA,NA,NA,10,NA
+The Two Towers,34: The Wolves Of Isengard,Theoden,NA,NA,NA,50,NA,NA
+The Two Towers,35: Helm's Deep,Eowyn,NA,NA,NA,22,NA,NA
+The Two Towers,35: Helm's Deep,Freda,NA,NA,NA,1,NA,NA
+The Two Towers,35: Helm's Deep,Gamling,NA,NA,NA,14,NA,NA
+The Two Towers,35: Helm's Deep,Gimli,4,NA,NA,NA,NA,NA
+The Two Towers,35: Helm's Deep,Morwen,NA,NA,NA,2,NA,NA
+The Two Towers,35: Helm's Deep,Rohan Maiden,NA,NA,NA,15,NA,NA
+The Two Towers,35: Helm's Deep,Rohan Warrior,NA,NA,NA,22,NA,NA
+The Two Towers,35: Helm's Deep,Theoden,NA,NA,NA,49,NA,NA
+The Two Towers,36: Isengard Unleashed,Grima Wormtongue,NA,NA,NA,66,NA,NA
+The Two Towers,36: Isengard Unleashed,Merry,NA,NA,8,NA,NA,NA
+The Two Towers,36: Isengard Unleashed,Pippin,NA,NA,9,NA,NA,NA
+The Two Towers,36: Isengard Unleashed,Saruman,NA,NA,NA,NA,NA,50
+The Two Towers,37: The Grace Of The Valar,Arwen,NA,8,NA,NA,NA,NA
+The Two Towers,38: Arwen's Fate,Arwen,NA,14,NA,NA,NA,NA
+The Two Towers,38: Arwen's Fate,Elrond,NA,188,NA,NA,NA,NA
+The Two Towers,39: The Story Foreseen From Lórien,Galadriel,NA,190,NA,NA,NA,NA
+The Two Towers,40: The Windows On The West,Faramir,NA,NA,NA,143,NA,NA
+The Two Towers,40: The Windows On The West,Frodo,NA,NA,75,NA,NA,NA
+The Two Towers,40: The Windows On The West,Gondor Man,NA,NA,NA,63,NA,NA
+The Two Towers,40: The Windows On The West,Sam,NA,NA,8,NA,NA,NA
+The Two Towers,41: Sons Of The Steward,Boromir,NA,NA,NA,132,NA,NA
+The Two Towers,41: Sons Of The Steward,Crowd,NA,NA,NA,6,NA,NA
+The Two Towers,41: Sons Of The Steward,Denethor,NA,NA,NA,250,NA,NA
+The Two Towers,41: Sons Of The Steward,Faramir,NA,NA,NA,35,NA,NA
+The Two Towers,42: The Forbidden Pool,Faramir,NA,NA,NA,92,NA,NA
+The Two Towers,42: The Forbidden Pool,Frodo,NA,NA,89,NA,NA,NA
+The Two Towers,42: The Forbidden Pool,Gondor Man,NA,NA,NA,16,NA,NA
+The Two Towers,42: The Forbidden Pool,Sam,NA,NA,64,NA,NA,NA
+The Two Towers,43: Aragorn's Return,Aragorn,NA,NA,NA,69,NA,NA
+The Two Towers,43: Aragorn's Return,Gamling,NA,NA,NA,9,NA,NA
+The Two Towers,43: Aragorn's Return,Gimli,51,NA,NA,NA,NA,NA
+The Two Towers,43: Aragorn's Return,Legolas,NA,5,NA,NA,NA,NA
+The Two Towers,43: Aragorn's Return,Rohan Maiden,NA,NA,NA,2,NA,NA
+The Two Towers,43: Aragorn's Return,Theoden,NA,NA,NA,206,NA,NA
+The Two Towers,44: Entmoot,Merry,NA,NA,6,NA,NA,NA
+The Two Towers,45: The Glittering Caves,Aragorn,NA,NA,NA,78,NA,NA
+The Two Towers,45: The Glittering Caves,Eowyn,NA,NA,NA,65,NA,NA
+The Two Towers,45: The Glittering Caves,Gimli,13,NA,NA,NA,NA,NA
+The Two Towers,45: The Glittering Caves,Legolas,NA,36,NA,NA,NA,NA
+The Two Towers,45: The Glittering Caves,Rohan Warrior,NA,NA,NA,12,NA,NA
+The Two Towers,46: Where Is The Horse And The Rider,Gamling,NA,NA,NA,30,NA,NA
+The Two Towers,46: Where Is The Horse And The Rider,Theoden,NA,NA,NA,64,NA,NA
+The Two Towers,"47: Don't Be Hasty, Master Meriadoc!",Merry,NA,NA,18,NA,NA,NA
+The Two Towers,"47: Don't Be Hasty, Master Meriadoc!",Pippin,NA,NA,7,NA,NA,NA
+The Two Towers,48: The Host Of The Eldar,Aragorn,NA,NA,NA,34,NA,NA
+The Two Towers,48: The Host Of The Eldar,Gimli,14,NA,NA,NA,NA,NA
+The Two Towers,48: The Host Of The Eldar,Haldir,NA,37,NA,NA,NA,NA
+The Two Towers,48: The Host Of The Eldar,Haleth,NA,NA,NA,23,NA,NA
+The Two Towers,48: The Host Of The Eldar,Legolas,NA,24,NA,NA,NA,NA
+The Two Towers,48: The Host Of The Eldar,Rohan Warrior,NA,NA,NA,17,NA,NA
+The Two Towers,48: The Host Of The Eldar,Theoden,NA,NA,NA,4,NA,NA
+The Two Towers,49: The Battle Of The Hornburg,Aragorn,NA,NA,NA,18,NA,NA
+The Two Towers,49: The Battle Of The Hornburg,Gamling,NA,NA,NA,1,NA,NA
+The Two Towers,49: The Battle Of The Hornburg,Gimli,50,NA,NA,NA,NA,NA
+The Two Towers,49: The Battle Of The Hornburg,Legolas,NA,37,NA,NA,NA,NA
+The Two Towers,49: The Battle Of The Hornburg,Rohan Warrior,NA,NA,NA,1,NA,NA
+The Two Towers,49: The Battle Of The Hornburg,Theoden,NA,NA,NA,7,NA,NA
+The Two Towers,50: Old Entish,Merry,NA,NA,30,NA,NA,NA
+The Two Towers,50: Old Entish,Pippin,NA,NA,5,NA,NA,NA
+The Two Towers,51: The Breach Of The Deeping Wall,Aragorn,NA,NA,NA,12,NA,NA
+The Two Towers,51: The Breach Of The Deeping Wall,Gimli,6,NA,NA,NA,NA,NA
+The Two Towers,51: The Breach Of The Deeping Wall,Theoden,NA,NA,NA,17,NA,NA
+The Two Towers,52: The Entmoot Decides,Merry,NA,NA,58,NA,NA,NA
+The Two Towers,52: The Entmoot Decides,Pippin,NA,NA,29,NA,NA,NA
+The Two Towers,53: The Retreat To The Hornburg,Aragorn,NA,NA,NA,31,NA,NA
+The Two Towers,53: The Retreat To The Hornburg,Gamling,NA,NA,NA,6,NA,NA
+The Two Towers,53: The Retreat To The Hornburg,Gimli,34,NA,NA,NA,NA,NA
+The Two Towers,53: The Retreat To The Hornburg,Legolas,NA,1,NA,NA,NA,NA
+The Two Towers,53: The Retreat To The Hornburg,Rohan Warrior,NA,NA,NA,22,NA,NA
+The Two Towers,53: The Retreat To The Hornburg,Theoden,NA,NA,NA,58,NA,NA
+The Two Towers,54: Master Peregrin's Plan,Merry,NA,NA,6,NA,NA,NA
+The Two Towers,54: Master Peregrin's Plan,Pippin,NA,NA,46,NA,NA,NA
+The Two Towers,55: Osgiliath,Faramir,NA,NA,NA,1,NA,NA
+The Two Towers,55: Osgiliath,Frodo,NA,NA,23,NA,NA,NA
+The Two Towers,55: Osgiliath,Gondor Man,NA,NA,NA,6,NA,NA
+The Two Towers,56: The Last March Of The Ents,Merry,NA,NA,5,NA,NA,NA
+The Two Towers,56: The Last March Of The Ents,Pippin,NA,NA,8,NA,NA,NA
+The Two Towers,57: The Nazgûl Attack,Faramir,NA,NA,NA,31,NA,NA
+The Two Towers,57: The Nazgûl Attack,Frodo,NA,NA,15,NA,NA,NA
+The Two Towers,57: The Nazgûl Attack,Gondor Man,NA,NA,NA,20,NA,NA
+The Two Towers,57: The Nazgûl Attack,Sam,NA,NA,53,NA,NA,NA
+The Two Towers,58: Forth Eorlingas,Aragorn,NA,NA,NA,73,NA,NA
+The Two Towers,58: Forth Eorlingas,Eomer,NA,NA,NA,6,NA,NA
+The Two Towers,58: Forth Eorlingas,Gamling,NA,NA,NA,20,NA,NA
+The Two Towers,58: Forth Eorlingas,Gandalf,NA,NA,NA,NA,NA,21
+The Two Towers,58: Forth Eorlingas,Gimli,5,NA,NA,NA,NA,NA
+The Two Towers,58: Forth Eorlingas,Rohan Maiden,NA,NA,NA,7,NA,NA
+The Two Towers,58: Forth Eorlingas,Theoden,NA,NA,NA,63,NA,NA
+The Two Towers,59: The Flooding Of Isengard,Merry,NA,NA,3,NA,NA,NA
+The Two Towers,59: The Flooding Of Isengard,Pippin,NA,NA,1,NA,NA,NA
+The Two Towers,60: The Tales That Really Mattered…,Faramir,NA,NA,NA,16,NA,NA
+The Two Towers,60: The Tales That Really Mattered…,Frodo,NA,NA,12,NA,NA,NA
+The Two Towers,60: The Tales That Really Mattered…,Gondor Man,NA,NA,NA,22,NA,NA
+The Two Towers,60: The Tales That Really Mattered…,Sam,NA,NA,186,NA,NA,NA
+The Two Towers,60: The Tales That Really Mattered…,Theoden,NA,NA,NA,4,NA,NA
+The Two Towers,61: Fangorn Comes To Helm's Deep,Eomer,NA,NA,NA,10,NA,NA
+The Two Towers,62: The Final Tally,Gimli,35,NA,NA,NA,NA,NA
+The Two Towers,62: The Final Tally,Legolas,NA,7,NA,NA,NA,NA
+The Two Towers,63: Flotsam And Jetsam,Merry,NA,NA,77,NA,NA,NA
+The Two Towers,63: Flotsam And Jetsam,Pippin,NA,NA,56,NA,NA,NA
+The Two Towers,64: Farewell To Faramir,Faramir,NA,NA,NA,95,NA,NA
+The Two Towers,64: Farewell To Faramir,Frodo,NA,NA,18,NA,NA,NA
+The Two Towers,64: Farewell To Faramir,Sam,NA,NA,54,NA,NA,NA
+The Two Towers,65: The Battle For Middle Earth Is About To Begin,Frodo,NA,NA,30,NA,NA,NA
+The Two Towers,65: The Battle For Middle Earth Is About To Begin,Gandalf,NA,NA,NA,NA,NA,36
+The Two Towers,65: The Battle For Middle Earth Is About To Begin,Sam,NA,NA,69,NA,NA,NA
+The Two Towers,66: Gollum's Plan,Frodo,NA,NA,11,NA,NA,NA
+The Two Towers,66: Gollum's Plan,Sam,NA,NA,12,NA,NA,NA
