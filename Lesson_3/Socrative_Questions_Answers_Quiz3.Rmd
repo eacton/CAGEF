@@ -1,0 +1,201 @@
+---
+title: "Answers to Socrative Quiz - Lesson 3"
+author: "EA"
+date: "January 25, 2019"
+output: html_document
+---
+<br/>
+
+1. Which latrine depth has the greatest mean number of OTUs?
+  
+```{r eval=FALSE}
+split_dat %>% 
+  group_by(Depth) %>% 
+  summarize(mean = mean(OTUs)) %>% 
+  arrange(desc(mean))
+```
+__9 cm__ is the latrine depth with the greatest mean number of OTUs.
+
+<br/>
+
+2. Is there more Clostridia on average in sites from Tanzania or Vietnam?
+
+
+```{r eval = FALSE}
+split_dat %>%
+  filter(Taxa == "Clostridia") %>%
+  group_by(Country) %>%
+  summarise(mean = mean(OTUs)) %>%
+  arrange(desc(mean))
+```
+
+There is more Clostridia in __Tanzania__.
+
+<br/>
+
+3. Which site had the greatest number of Taxa represented?
+
+
+```{r eval = FALSE}
+split_dat %>% 
+  group_by(Country, Latrine_Number, Depth) %>% 
+  filter(OTUs != 0) %>%
+  summarize(count = n()) %>% 
+  arrange(desc(count))
+```
+
+
+__V_7_3__ has the greatest number of Taxa represented.
+
+<br/>
+
+4. The gapminder_wide dataset ignores the following rules of tidy data:
+
+__a__. Multiple variables are in one column      
+__&__ 
+__c__. Variables are stored in both rows and columns.
+
+<br/>
+
+5. How many rows will the final gapminder data frame have?
+
+```{r eval = FALSE}
+gap %>% 
+  gather(obs_type, obs_value, -continent, -country) %>% 
+  separate(obs_type, c("obs_type", "year"), sep="_", convert = TRUE) %>% 
+  spread(key = obs_type, value = obs_value) %>% 
+  select(continent, country, year, lifeExp, pop, gdpPercap) %>%
+  nrow()
+```
+
+The final gapminder data frame will have __1704__ rows.
+
+<br/>
+
+6. What is/are the resulting data type(s) of this vector?
+
+c(Samples = "V_2_10", Temp = 5, pH = 6, TS = 5)
+
+<br/>
+
+Each element in the vector will be coerced to __character__, which is the most inclusive data type out of integer and character.
+
+<br/>
+
+7. Make a column and add it to jdat using the dplyr function bind_cols().
+
+```{r eval = FALSE}
+#one possible answer 
+jdat <- bind_cols(jdat, new_col = rep(1, nrow(jdat)))
+```
+
+<br/>
+
+8. What is the total number of characters in the trilogy?
+
+```{r eval=FALSE}
+#read in the book data frames, which contain the character info
+fellowship <- read_csv("data/fellowship.csv")
+towers <- read_csv("data/towers.csv")
+return <- read_csv("data/returnking.csv")
+
+#bind data frames together to get characters from all 3 books
+lotr <- fellowship %>% bind_rows(towers, return) 
+
+#get the unique set of characters
+lotr %>% select(Character) %>% unique() %>% nrow()
+```
+There are __68__ characters in the trilogy.
+
+<br/>
+
+9. Which race speaks the most?
+
+```{r eval=FALSE}
+#gather Races into tidy data format
+lotr <- lotr %>% gather(key = Race, value = Words, Dwarf:Wizard, na.rm=TRUE) 
+
+lotr %>% 
+  group_by(Race) %>% 
+  summarize(sum = sum(Words)) %>% 
+  top_n(1) #or arrange(desc(sum))
+```
+
+__Hobbits__ speak the most overall.
+
+<br/>
+
+10. True or false. Hobbits speak the most in all 3 films.
+
+```{r eval = FALSE}
+lotr %>% 
+  group_by(Film, Race) %>% 
+  summarize(sum = sum(Words)) %>% 
+  top_n(1)
+```
+
+__False__. Men speak more than hobbits in 2 of the 3 films.
+
+<br/>
+
+11. Which character is the chattiest?
+
+
+```{r eval = FALSE}
+lotr %>% 
+  group_by(Character) %>% 
+  summarize(sum = sum(Words)) %>% 
+  top_n(1)
+```
+__Gandalf__ is the character that speaks the most.
+
+<br/>
+
+12. Which gender speaks the most for Elvish characters?
+
+```{r eval = FALSE}
+#read in the gender datasets
+female <- read_csv("data/Female.csv")
+male <- read_csv("data/Male.csv")
+#bind the datasets together
+gender <- bind_rows(female, male) %>%
+#gather Races together
+  gather(Race, Words, Elf:Man, na.rm=T)
+
+gender %>% 
+  filter(Race == "Elf") %>% 
+  group_by(Gender) %>% 
+  summarize(sum = sum(Words)) %>%
+  arrange(desc(sum))
+```
+
+Overall, __male__ elves speak more than female elves.
+
+<br/>
+
+13. True or false. Male elves speak more than female elves across all 3 films.
+
+```{r eval=FALSE}
+gender %>% 
+  filter(Race == "Elf") %>% 
+  group_by(Film, Gender) %>% 
+  summarize(sum = sum(Words)) %>%
+  top_n(1)
+```
+__False__. Female elves speak more than male elves in one of the three films.
+
+<br/>
+
+14. Who is the top speaking elf in each film?
+
+```{r eval=FALSE}
+lotr %>% 
+  filter(Race == "Elf") %>% 
+  group_by(Film, Character) %>% 
+  summarize(sum = sum(Words)) %>% 
+  top_n(1)
+```
+__Galadriel, Erlond, Legolas__ are the top speaking elves in The Fellowship of the Ring, The Two Towers, and The Return of the King, respectively.
+
+
+
