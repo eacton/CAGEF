@@ -12,29 +12,10 @@ output:
 
 </br>
 
-##A quick intro to the intro to R Lesson Series
+***
 
-</br>
+__Objective:__ At the end of this session you will be able to use regular expressions to 'clean' your data. 
 
-This 'Intro to R Lesson Series' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This course was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
-
-
-
-This lesson is the fourth in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, and test a regression model. 
-
-
-![](img/data-science-explore.png)
-
-</br>
-
-How do we get there? Today we are going to be learning data cleaning and string manipulation; this is really the battleground of coding - getting your data into the format where you can analyse it. In the next lesson we will learn how to do t-tests and perform regression and modeling in R. 
-
-
-![](img/spotify-howtobuildmvp.gif)
-
-</br>
-
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at https://github.com/eacton/CAGEF, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (https://www.surveymonkey.com/r/PVHDKDB), it will help me further develop this course and would be greatly appreciated. 
 
 ***
 
@@ -43,6 +24,7 @@ The structure of the class is a code-along style. It is hands on. The lecture AN
 The following packages are used in this lesson:
 
 `tidyverse` (`stringr`, `dplyr`)     
+`mgsub`     
 
 Please install and load these packages for the lesson. In this document I will load each package separately, but I will not be reminding you to install the package. Remember: these packages may be from CRAN OR Bioconductor. 
 
@@ -66,8 +48,6 @@ These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Le
 
 Or click on the blue hyperlink at the start of the README.md at <https://github.com/eacton/CAGEF/tree/master/Lesson_4> to download the entire folder at DownGit.
 
-***
-__Objective:__ At the end of this session you will be able to use regular expressions to 'clean' your data. 
 
 ***
 
@@ -157,6 +137,42 @@ __What does the language look like?__
 
 The language is based on _meta-characters_ which have a special meaning rather than their literal meaning. For example, '$' is used to match the end of a string, and this use supercedes its use as a character in a string (ie 'Joe paid \$2.99 for chips.'). 
 
+Let's start with a simple string. A string can be captured with single or double quotes.
+
+```{r}
+x <- "The quick brown fox is quick."
+#is equivalent to
+x <- 'The quick brown fox is quick.'
+```
+
+
+In order to understand regular expressions we will use 2 functions:
+
+`writeLines()` is a function that outputs lines of text.
+
+`str_view()` is a function that will highlight the regular expression for our string. 
+
+For example, given our string:
+```{r}
+writeLines(text = x)
+
+str_view(string = x, pattern = "quick")
+str_view_all(string = x, pattern = "quick")
+```
+Note that the output of `writeLines()` does not contain the quotations. You can think of the quotations as a container for our string, rather than a part of the string itself. 
+
+To match the pattern 'quick' `str_view()` will match the first instance of a match in _each_ character string. `str_view_all()` will highlight all matches. This behaviour can be seen more easily with strings:
+
+```{r}
+y <- c("The quick brown fox is quick.", "The quick brown fox is quick.")
+
+writeLines(text = y)
+
+str_view(string = y, pattern = "quick")
+str_view_all(string = y, pattern = "quick")
+```
+</br>
+
 
 ###Classes
 
@@ -175,6 +191,31 @@ kable(text_table, "html") %>%
 ```
 
 
+Examples:
+
+```{r}
+a <- "Joe paid $2.99 for chips."
+
+#word characters (letters + digits)
+str_view_all(a, "[[:alnum:]]")
+#digits
+str_view_all(a, "\\d")
+#alphabetical characters
+str_view_all(a, "[A-z]")
+#space
+str_view_all(a, "\\s")
+
+#not word characters
+str_view_all(a, "[^A-z0-9]")
+#not spaces
+str_view_all(a, "\\S")
+
+```
+
+
+
+
+
 ###Quantifiers
 
 How many times will a character appear?
@@ -191,6 +232,22 @@ kable(text_table, "html") %>%
   column_spec(2, italic = T, width = "40em")
 ```
 
+Examples:
+
+```{r}
+#0 or 1
+str_view_all(a, "9?")
+#0 or more
+str_view_all(a, "9*")
+#1 or more
+str_view_all(a, "9+")
+#exactly n
+str_view(a, "9{1}")
+#at least 
+str_view(a, "9{1,}")
+
+```
+
 
 ###Operators
 
@@ -199,7 +256,7 @@ Helper actions to match your characters.
 ```{r echo = FALSE, eval = TRUE, warning = FALSE}
 text_table <- data.frame(
   Expression = c("|", ".", "[  ]", "[ - ]", "[^ ]", "( )"),
-  Meaning = c("or", "matches any single character", "matches ANY of the characters inside the brackets", "matches a RANGE of characters inside the brackets", "matches any character EXCEPT those inside the bracket", "grouping - used for [backreferencing](https://www.regular-expressions.info/backref.html)")
+  Meaning = c("or", "matches any single character", "matches ANY of the characters inside the brackets", "matches a RANGE of characters inside the brackets", "matches any character EXCEPT those inside the bracket", "grouping - used for [backreferencing](https://www.regular-expressions.info/backref.html) or [look arounds](https://stringr.tidyverse.org/articles/regular-expressions.html)")
 )
 
 kable(text_table, "html") %>%
@@ -207,6 +264,27 @@ kable(text_table, "html") %>%
   column_spec(1, border_right = T) %>%
   column_spec(2, italic = T, width = "40em")
 ```
+
+
+Examples:
+
+```{r}
+#or
+str_view_all(a, "(o|i)")
+#any single character
+str_view_all(a, "f.r")
+#any characters inside the brackets
+str_view_all(a, "[aps]")
+#any characters that are not found inside the brackets
+str_view_all(a, "[^a-e]")
+#grouping for a 'positive look-ahead'
+str_view_all(a, "\\d(?=\\.)")
+#grouping for a 'positive look-behind'
+str_view_all(a, "(?<=\\$)\\d")
+
+```
+
+
 
 ###Matching by position
 
@@ -225,9 +303,22 @@ kable(text_table, "html") %>%
   column_spec(2, italic = T, width = "40em")
 ```
 
+Examples:
+
+```{r}
+#empty string at either edge of a word boundary
+str_view_all(y, "\\b")
+#start of string
+str_view_all(y, "^\\w+\\b")
+#end of string
+str_view_all(y, "\\b\\w+[[:punct:]]$")
+
+```
+
+
 ###Escape characters
 
-Sometimes a meta-character is just a character. _Escaping_ allows you to use a character 'as is' rather than its special function. In R, regex gets evaluated as a string before a regular expression, and a backslash is used to escape the string - so you really need 2 backslashes to escape, say, a '$' sign (`"\\\$"`). 
+Sometimes a meta-character is just a character. _Escaping_ allows you to use a character 'as is' rather than its special function. In R, y gets evaluated as a string before a regular expression, and a backslash is used to escape the string - so you really need 2 backslashes to escape, say, a '$' sign (`"\\\$"`). 
 
 ```{r echo = FALSE, eval = TRUE, warning = FALSE}
 text_table <- data.frame(
@@ -241,6 +332,32 @@ kable(text_table, "html") %>%
   column_spec(1, border_right = T) %>%
   column_spec(2, italic = T, width = "40em")
 ```
+
+Examples:
+
+```{r error=TRUE}
+#escaping meta characters
+str_view_all(a, "\\$|\\.")
+
+b <- "'Joe paid $2.99 for chips.'"
+
+writeLines(b)
+#escaping quotations
+str_view_all(b, "\'")
+
+#escaping escape characters
+c <-  "\escape this!\'"
+```
+
+
+```{r}
+c <-  "\\escape this!\\"
+
+writeLines(c)
+#remember to escape the string as well
+str_view_all(c, "\\\\")
+```
+
 
 Trouble-shooting with escaping meta-characters means adding backslashes until something works. 
 
@@ -421,11 +538,23 @@ Let's translate this into mRNA!
 
 __Replacement:__
 
-To replace multiple patterns at once, a character vector is supplied to `str_replace_all` of patterns and their matched replacements. This allows us to perform multiple replacements multiple times.
+To replace one pattern or multiple patterns with one replacement, `str_replace_all` can be used.
+
+However, to replace multiple patterns at once with multiple replacements, we need another package. `str_replace_all` works iteratively, which means a replacement can be replaced. `mgsub` from the `mgsub` package averts this behaviour by performing simultaneous replacement.
 
 ```{r}
-mrna <- str_replace_all(dna, c("G" = "C", "C" = "G", "A" = "U", "T" = "A"))
-  
+#all G replaced with C - one pattern, one replacement
+str_replace_all(dna, pattern = "G", replacement = "C")
+#all AGT replaced with C - multiple patterns, one replacement
+str_replace_all(dna, pattern = "[AGT]", replacement = "C")
+#multiple patterns with multiple replacement works iteratively, G is replaced with C, but then ALL C get replaced with G, as such, our replacement was replaced
+str_replace_all(dna, c("G" = "C", "C" = "G", "A" = "U", "T" = "A"))
+
+library(mgsub)
+#multiple patterns with multiple replacements working simultaneously - safe!
+mrna <- mgsub::mgsub(dna, pattern = c("G", "C", "A", "T"), replacement = c("C", "G", "U", "A"))
+
+mrna
 ```
 
 
@@ -459,7 +588,7 @@ __Splitting:__
 Let's split this string into substrings of codons, starting at the position of our start codon. We have the position of our start codon from `str_locate`. We can use `str_sub` to subset the string by position (we will just go to the end of the string for now).
 
 ```{r}
-str_sub(mrna, 21, 1200)
+str_sub(mrna, 90, 1200)
 #is equivalent to
 mrna <- str_sub(mrna, str_locate(mrna, "AUG")[1])
 
@@ -493,7 +622,7 @@ which(str_detect(codons, "(UAG)|(UGA)|(UAA)") == TRUE)
 Let's subset our codon strings to end at the first stop codon. 
 
 ```{r}
-translation <- codons[1:121]
+translation <- codons[1:98]
 
 #equivalent to 
 translation <- codons[1:which(str_detect(codons, "(UAG)|(UGA)|(UAA)") == TRUE)[1]]
@@ -503,13 +632,13 @@ translation <- codons[1:which(str_detect(codons, "(UAG)|(UGA)|(UAA)") == TRUE)[1
 
 __More Replacing:__
 
-After finding our unique codons, we can translate codons into their respective proteins by using `str_replace_all` using multiple patterns and replacements as before.
+After finding our unique codons, we can translate codons into their respective proteins by using `mgsub` using multiple patterns and replacements as before.
 
 
 ```{r}
 unique(translation)
 
-translation <- str_replace_all(translation, c("AUG"="M", "GGA" = "G",  "GGG" = "G",  "AGU" = "S",  "GGU" = "G",  "GUU" = "V",  "UUU" = "F", "AGG" = "R", "UGG" = "W",  "UUG" = "L", "UGU" = "C",  "GAU" = "D", "AUU" = "I",  "GUG" = "V", "AAA"="K",  "GAG" = "E",  "AAG" = "K",  "AAU" = "N",  "GUA" = "V", "AGA" = "R", "GAA" = "E", "AUA" = "M", "UAA" = ""))
+translation <- mgsub::mgsub(translation, pattern = c("AUG", "GUC", "CGC", "AAA", "GGG", "GGA", "CCU", "UCG", "AGG", "GAG", "CAC", "AAG", "GCU", "ACG", "GCG", "AAU", "GGC", "CUA", "UGG", "ACA", "GAA", "GCC", "CUU", "ACC", "GAC", "UGC", "GAU", "AGA", "CCA", "CAU", "GCA", "AGC", "GUU", "CGA", "CCC", "CGG", "CAA", "CUG", "UUG", "AUA", "CUC", "UUC", "AUC", "UCC", "AGU", "CAG", "UAA"), replacement = c("M", "V", "R", "K", "G", "G", "P", "S", "R", "E", "H", "K", "A", "T", "A", "N", "G", "L", "W", "T", "E", "A", "L", "T", "D", "C", "D", "R", "P", "H", "A", "S", "V", "R", "P", "R", "Q", "L", "L", "I", "L", "F", "I", "S", "S", "Q", ""))
 
 translation
 ```
@@ -567,9 +696,8 @@ I must admit I have been guilty of messing with people who have made databases w
 What I want to know is: 
 
   1. List 3 problems with this dataset that require data cleaning.
-  1. What is the mean cost of publishing for the top 3 most popular publishers? 
   1. What is the number of publications by PLOS One in dataset?                 
-  1. Convert sterling to CAD. What is the median cost of publishing with Elsevier in CAD?
+  1. What is the median cost of publishing with Elsevier?
 
 
 The route I suggest to take in answering these question is:
@@ -577,12 +705,12 @@ The route I suggest to take in answering these question is:
 * Inspect your dataset. Are the data types what you expect?
 * Identify any immediate problems. (Answer Question #1)
 * Clean up column names.
-* Data clean the publisher column.
-    - convert all entries to lowercase
-    - correct typos
-    - correct multiple names for a publisher to one name
-    - remove newline characters and trailing whitespace
-* Answer Questions #2-4
+* Data clean the publisher column for publications from Elsevier and PLOS One by:
+    - converting all entries to lowercase
+    - correcting typos
+    - correcting multiple names for a publisher to one name
+    - removing newline characters and trailing whitespace
+* Answer Questions #2-3
 
 
 
@@ -590,14 +718,7 @@ There is a [README](https://github.com/eacton/CAGEF/blob/master/Lesson_4/data/Re
 
 </br>
 
-
-The blogger's opinion of cleaning this dataset:
-
-_'I now have no hair left; I’ve torn it all out.  My teeth are just stumps from excessive gnashing.  My faith in humanity has been destroyed!'_
-
-Don't get to this point. The dataset doesn't need to be perfect. No datasets are 100% clean. Just do what you gotta do to answer these questions.  
-
-We can talk about how this went at the beginnning of next week's lesson.
+The dataset doesn't need to be perfect. No datasets are 100% clean. Just do what you gotta do to answer these questions.  
 
 ***
 
@@ -618,16 +739,10 @@ __Resources:__
 <https://www.regular-expressions.info/backref.html>     
 <https://www.regular-expressions.info/unicode.html>     
 <https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf>     
-<https://simongoring.shinyapps.io/RegularExpressionR/>   
+<https://simongoring.shinyapps.io/RegularExpressionR/>     
+<https://github.com/bmewing/mgsub>     
 
 
-#Post-Lesson Assessment
-***
-
-Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
-https://www.surveymonkey.com/r/PVHDKDB
-
-</br>
 
 ***
 
