@@ -13,33 +13,14 @@ output:
 
 ![xkcd](img/xkcd_linear_regression.png)
 
-![Real-Life Confusion from Cross-Validated: Linear model seems off in R?](img/plot_confusion.png){width=500px}
-
-(Why is the solid line the best fit and not the dashed line?)
 
 </br>
 
-##A quick intro to the Introduction to R for Data Science
+***
 
-</br>
-
-This 'Introduction to R for Data Science' is brought to you by the Centre for the Analysis of Genome Evolution & Function's (CAGEF) bioinformatics training initiative. This CSB1020 was developed based on feedback on the needs and interests of the Department of Cell & Systems Biology and the Department of Ecology and Evolutionary Biology. 
+__Objective:__ At the end of this session you will be able to perform simple and multiple linear regression, one- and multiway analysis of variance (ANOVA) and analysis of covariance (ANCOVA). You will be able to interpret the statistics that come out of this model, be cognizant of the assumptions the model makes, and use an F-test to select the best model for the job. 
 
 
-This lesson is the last in a 6-part series. The idea is that at the end of the series, you will be able to import and manipulate your data, make exploratory plots, perform some basic statistical tests, test a regression model, and make some even prettier plots and documents to share your results. 
-
-
-![](img/data-science-explore.png)
-
-</br>
-
-How do we get there? Today we are going to be testing and interpreting the output of different regression models. We are also going to learn how to compare models and choose the best model that fits our data. 
-
-![](img/spotify-howtobuildmvp.gif)
-
-</br>
-
-The structure of the class is a code-along style. It is hands on. The lecture AND code we are going through are available on GitHub for download at <https://github.com/eacton/CAGEF>, so you can spend the time coding and not taking notes. As we go along, there will be some challenge questions and multiple choice questions on Socrative. At the end of the class if you could please fill out a post-lesson survey (<https://www.surveymonkey.com/r/3RKC6MP>), it will help me further develop this course and would be greatly appreciated. 
 
 ***
 ####Highlighting
@@ -74,10 +55,6 @@ Please install and load these packages for the lesson. In this document I will l
 These files can be downloaded at <https://github.com/eacton/CAGEF/tree/master/Lesson_6/data>. Right-click on the filename and select 'Save Link As...' to save the file locally. The files should be saved in the same folder you plan on using for your R script for this lesson.
 
 Or click on the blue hyperlink at the start of the README.md at <https://github.com/eacton/CAGEF/tree/master/Lesson_6> to download the entire folder at DownGit.
-
-
-***
-__Objective:__ At the end of this session you will be able to perform simple and multiple linear regression, one- and multiway analysis of variance (ANOVA) and analysis of covariance (ANCOVA). You will be able to interpret the statistics that come out of this model, be cognizant of the assumptions the model makes, and use an F-test to select the best model for the job. 
 
 
 
@@ -1071,14 +1048,6 @@ __Resources:__
 </br>
 </br>
 
-
-#Post-Lesson Assessment
-***
-
-Your feedback is essential to help the next cohort of trainees. Please take a minute to complete the following short survey:
-https://www.surveymonkey.com/r/3RKC6MP
-
-</br>
 
 ***
 
